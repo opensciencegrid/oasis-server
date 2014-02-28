@@ -1,0 +1,14 @@
+#
+#  probes for VO ATLAS
+#
+
+[yes]
+
+enabled = True
+probetype = yes
+
+[nodelete]
+enabled = True
+probetype = nodelete
+apply_to_directory = /path/to/dir
+level = abort

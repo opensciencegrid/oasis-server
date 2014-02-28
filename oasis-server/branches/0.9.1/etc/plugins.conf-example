@@ -1,0 +1,36 @@
+#
+# plugins.conf  Configuration for all plugins implementing Tasks actions
+#
+
+
+[PublishcvmfsFile]
+# path to the lock file
+# This lock file is created by some scripts 
+# after running condor user jobs,
+# and then they wait until the oasisd daemon
+# sees it, re-publish, and deletes it. 
+path = /var/run/oasis/publish
+
+# maximum amount of time to wait between
+# the lock script is created until it is 
+# deleted by the oasisd daemon. 
+timeout = 300 
+
+
+
+[PublishcvmfsDB]
+# maximum amount of time to wait between
+# the lock script is created until it is 
+# deleted by the oasisd daemon. 
+timeout = 300 
+
+
+
+[persistence]
+persistence.dbengine=sqlite://
+persistence.dbuser=""
+persistence.dbpassword=""
+persistence.dbhost=""
+persistence.dbport=""
+persistence.dbpath=/var/run/oasis/sqldb.sq3
+

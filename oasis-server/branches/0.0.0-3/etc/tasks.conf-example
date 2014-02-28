@@ -1,0 +1,20 @@
+#
+# tasks.conf  Configuration file for the Tasks threads in OASIS
+#
+
+# Each task has only three mandatory options:
+#       - enabled: True/False
+#       - the sleep time between cycles
+#       - the name of the plugin with the actual task code
+# The rest of the options are meant to be read by the plugin.
+
+[Fake]
+enabled = False
+sleep = 60 
+plugin = FakeExample
+
+[PublishcvmfsFile]
+enabled = True 
+sleep = 3600
+plugin = PublishcvmfsFile
+path = /var/run/oasis/publish

@@ -1,0 +1,6 @@
+-- Inconsistency in the case of OASIS triggering the CVMFS daemon to re-publish
+   using a file as a message mechanism between the user job and 
+   the OASIS daemon:
+        -- the OASIS plugin reads the path from tasks.conf
+        -- the script invoked by USER_JOB_WRAPPER has that path hardcoded
+   

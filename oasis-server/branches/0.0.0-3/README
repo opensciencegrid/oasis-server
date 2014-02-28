@@ -1,0 +1,14 @@
+Architecture in this branch is as follows:
+
+    --  The daemon can launch an arbitrary number 
+        of parallel threads, one per each section
+        if the tasks.conf configuration file.
+
+    --  Each one of these threads executes
+        a given plugin. The plugin name comes from 
+        the tasks.conf configuration file. 
+
+    --  Therefore three is no any predetermined plugin
+        or task to be done. 
+       
+

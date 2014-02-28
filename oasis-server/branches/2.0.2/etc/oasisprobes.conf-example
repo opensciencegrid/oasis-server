@@ -1,0 +1,61 @@
+#
+# default probes.conf for all VOs
+# and documentation
+#
+
+#
+# the section name [<name>] is just an uniq string,
+# it is not the actual name of the probe.
+# The name of the probe, and also the plugin implementing it,
+# is the attribute  probetype. 
+# The reason for this is to be able to have several probes
+# of the same type, but with different sets of parameters. 
+#
+
+#
+# All sections have an probetype variable.
+# It is the actual name of the probe, and the plugin.
+#
+
+#
+# All sections have an enabled = True|False variable.
+# The probe plugin is only executed is enabled = True
+#
+
+# -------------------------------------------------------------------
+#               P R O B E    T Y P E S 
+# -------------------------------------------------------------------
+
+#
+# probetype = yes
+#
+#       just for testing, always return 0 (probe passed)
+#   
+
+#   
+# probetype = yes
+#   
+#       just for testing, always return 1 (probe failed)
+#   
+
+#   
+# probetype = nodelete
+#   
+#       checks if files in a given directory have been deleted
+#       Only checks one directory. 
+#       For more than one directory, use the same probe several times
+#       with different section names [<name>]
+# 
+# apply_to_dir = <path>
+#       tells the directory to check
+#
+# level = warning|abort
+#       if warning, just logs a WARNING message, but return 0 (OK)
+#       if abort, logs a CRITICAL message and return 1 (probe failed)
+#
+
+
+[yes]
+
+enabled = True
+probetype = yes

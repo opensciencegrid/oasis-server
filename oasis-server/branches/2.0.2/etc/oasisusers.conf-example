@@ -1,0 +1,17 @@
+[DEFAULT]
+
+VO = ${VO_FROM_X509}
+#OSG_APP = /home/oasis
+OSG_APP = ${OSG_APP_FROM_ENV} 
+
+[ouser.atlas]
+VO = atlas
+
+[usatlas1]
+VO = atlas
+
+[caballer]
+VO = atlas
+OSG_APP = /home/caballer/src
+
+

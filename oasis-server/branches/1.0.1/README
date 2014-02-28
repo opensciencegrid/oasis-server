@@ -1,0 +1,3 @@
+This is our own version of OASIS 1.
+It intents to organize the OASIS 1 set of scripts to make it RPM-able.
+Also, eventually, to make OASIS 1 to work VO-by-VO, instead of being global.

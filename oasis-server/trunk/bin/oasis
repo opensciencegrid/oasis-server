@@ -1,0 +1,44 @@
+#!/usr/bin/python
+
+import getopt
+import os
+import sys
+import time
+
+from oasispackage.oasisAPI import oasisCLI, FlagFile
+
+
+"""
+This is the CLI interface to OASIS package. 
+It can be used to run the user part of OASIS, 
+either directly from command line
+or from another client, e.g. HTCondor.
+"""
+#
+# FIXME
+# this script is very similar to bin/oasisd
+# should they be merged?
+#
+
+def main(args):
+    '''
+    args are the user payload and inputs options, as a python list.
+    For example, when invoked by condor, it looks like this:
+
+            ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
+    '''
+
+    oasis = oasisCLI()
+
+    # FIXME !! figure out how to pass the path to oasis.conf as a variable instead of hardcoded
+    # set the path to config file oasis.conf
+    oasis.conffile = '/etc/oasis/oasis.conf'
+
+    # run
+    rc = oasis.run(args)
+    return rc
+
+
+if __name__ == '__main__':
+    rc = main(sys.argv[1:])
+    sys.exit(rc)

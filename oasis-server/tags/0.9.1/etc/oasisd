@@ -1,0 +1,133 @@
+#!/bin/bash
+#
+#   /etc/rc.d/init.d/oasisd
+#
+# Starts the OASIS daemon
+#
+# chkconfig: 345 26 74
+# description: Runs OASIS services. 
+# processname: oasis 
+# config: /etc/oasis/oasis.conf 
+# pidfile: /var/run/oasis/oasisd.pid
+#
+#
+
+### BEGIN INIT INFO
+# Provides: oasis.py
+# Required-Start: $syslog $local_fs
+# Required-Stop: $syslog $local_fs
+# Default-Start:  2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: start and stop oasis daemon 
+# Description: Runs OASIS services. 
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+SYSCONF=/etc/sysconfig/oasis.sysconfig
+BINDIR=/usr/bin
+ETCDIR=/etc/oasis
+PIDFILE=/var/run/oasisd.pid
+CONFFILE=$ETCDIR/oasis.conf
+
+# Source settings from sysconfig
+# overriding default if present
+if [ -f $SYSCONF ]; then
+   . $SYSCONF
+fi
+
+if [ -f /etc/profile ]; then
+   . /etc/profile
+fi
+
+RETVAL=0
+#
+# See how we were called.
+#
+check() {
+    
+    # Check if oasis main script is executable
+    test -x $BINDIR/oasis || exit 5
+}
+
+start() {
+    # Check if it is already running
+    if [ ! -f $PIDFILE ]; then
+        echo -n $"Starting OASIS daemon: "  
+        # daemon --pidfile=${PIDFILE} "$BINDIR/oasis --conf $CONFFILE $OPTIONS "
+        $BINDIR/oasis --conf $CONFFILE $OPTIONS &
+        # NOTE: $OPTIONS is defined in oasis.sysconfig
+        RETVAL=$?
+        [ $RETVAL -eq 0 ] && echo $! > $PIDFILE
+        [ "$?" -eq 0 ] && success $"OASIS startup" || failure $"OASIS startup"
+        echo
+    else
+        echo "$0: PID file exists: $PIDFILE" 
+    fi
+    return $RETVAL
+}
+
+stop() {
+
+    check
+    echo -n $"Stopping OASIS daemon: "
+    killproc -p $PIDFILE oasisd
+    RETVAL=$?
+    [ $RETVAL -eq 0 ] && rm -f $PIDFILE
+    echo
+    return $RETVAL
+}
+
+
+restart() {
+    stop
+    sleep 2
+    start
+    RETVAL=$?
+    return $RETVAL
+}   
+
+reload() {
+
+    check
+    
+    trap "" SIGHUP
+    action $"Reloading OASIS daemon:" killall -HUP oasis.py
+    RETVAL=$?
+    return $RETVAL
+}   
+
+case "$1" in
+start)
+    start
+    ;;
+stop)
+    stop
+    ;;
+reload)
+    echo "$0: Unimplemented feature."
+    RETVAL=3
+    ;;
+force-reload)
+    echo "$0: Unimplemented feature."
+    RETVAL=3
+    ;;
+restart)
+    restart
+    ;;
+condrestart)
+    if [ -f /var/lock/subsys/oasisd ]; then
+        restart
+    fi
+    ;;
+status)
+    status -p $PIDFILE oasisd
+    RETVAL=$?
+    ;;
+*)
+    echo $"Usage: $0 {start|stop|status|restart|condrestart|reload|force-reload}"
+    RETVAL=2
+esac
+
+exit $RETVAL

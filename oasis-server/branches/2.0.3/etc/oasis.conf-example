@@ -1,0 +1,8 @@
+[PROJECTS]
+
+projectconf = /etc/oasis/oasisprojects.conf
+
+[PROBES]
+
+oasisconf = /etc/oasis/oasisprobes.conf
+directoryconf = /etc/oasis/oasisprobes.d

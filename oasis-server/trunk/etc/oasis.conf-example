@@ -1,0 +1,47 @@
+#
+#   oasis.conf 
+#
+# Initial configuration file for OASIS
+# Includes some basic variables -in section [OASIS]-
+# and the path to the rest of configuration files
+# in the other sections
+#
+
+# =========================================================================== 
+#               VARIABLES
+# =========================================================================== 
+
+# [OASIS]
+#
+# time.sleep = it is the time between cycles for the daemon,
+#              waiting to see if all threads, one per Project, 
+#              need to be shutdown
+#
+
+# [PROJECTS]
+#
+# projectsconf = path to the oasisproject.conf configuration file
+#
+
+# [PROBES]
+#
+# oasisconf = path to the oasisprobes.conf configuration file,
+#
+# directoryconf = path to the directory with all probes configuration
+#                 files for Projects 
+#
+
+# =========================================================================== 
+
+[OASIS]
+
+time.sleep = 100
+
+[PROJECTS]
+
+projectsconf = /etc/oasis/oasisprojects.conf
+
+[PROBES]
+
+oasisconf = /etc/oasis/oasisprobes.conf
+directoryconf = /etc/oasis/oasisprobes.d

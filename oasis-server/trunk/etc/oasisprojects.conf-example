@@ -1,0 +1,79 @@
+#
+# oasisprojects.conf
+#
+# Configuration file for Projects.
+# Each section is a Project. A project will be typically a VO, but not always.
+# The name of the section has no meaning, just a string. 
+#
+
+# =========================================================================== 
+#               VARIABLES
+# =========================================================================== 
+
+# VO = The Virtual Organization, when makes sense.
+#
+# OSG_APP = for legacy reasons, we maintain the environment variable OSG_APP
+#
+# user = the UNIX ID of the entity calling oasisCLI or 
+#        the UNIX ID the daemon needs to drop privileges to.
+#        It will be the only UNIX ID allowed to do some tasks,
+#        e.g. to write in the project scratch area.
+#
+# project = the name of the project, typically the same than the VO.
+#          
+# PROJECT_SRC_DIRECTORY = path to the project scratch area. 
+#        It is the place where the user payload will put new content.
+#        Typically it will be the same than 
+#
+#                   ${OSG_APP}/<vo>
+#
+# PROJECT_DEST_DIRECTORY = path to the final place for the files to be
+#        distributed. E.g.  /cvmfs/<vo>.opensciencegrid.org/
+#
+# projectprobes = name of the configuration files for probes 
+#        underneath the directory pointed by varible 'directoryconf'
+#        in oasis.conf
+#
+# time.sleep = time between cycles for each thread (one per project)
+#
+# time.timeout = maximum time the user process can stay waiting for the 
+#        daemon process to finish.
+#        When the user process runs the installation payload it leaves
+#        a flagfile asking for publication.
+#        The daemon process will see that flagfile, run probes on the new
+#        content, transfer files to final place, publish them, 
+#        and notify the user process (via the same flagfile) everything is
+#        done. 
+#        This waiting time needs a timeout.
+#
+
+# =========================================================================== 
+
+[DEFAULT]
+
+OSG_APP = /tmp/
+PROJECT_SRC_DIRECTORY = ${OSG_APP}/${VO}
+PROJECT_DEST_DIRECTORY = /cvmfs/${VO}.opensciencegrid.org 
+distributiontool = cvmfs21
+time.sleep = 100
+time.timeout = 600
+
+enabled = True
+
+[ATLAS]
+VO = ATLAS
+project = ATLAS
+user = usatlas1
+projectprobes = atlas.conf
+
+[PROJECT1]
+
+VO = OSG
+project = project1
+user = osgproject1
+PROJECT_SRC_DIRECTORY = ${OSG_APP}/${VO}/project1/
+PROJECT_DEST_DIRECTORY = /cvmfs/${project}.opensciencegrid.org 
+projectprobes = project1.conf
+
+
+

@@ -1,0 +1,82 @@
+#!/bin/bash
+
+
+# --------------------------------------------------------
+#    source oasis setup.sh file
+# --------------------------------------------------------
+
+. /etc/oasis/oasis_setup.sh
+
+f_update(){
+
+    VO=$1
+
+    # ---------------------------------------------------------------
+    # defining the lock files    
+    #
+    # ---------------------------------------------------------------
+
+    OASIS_UPDATE_LOCK=${OASIS_USER_WORKING_DIRECTORY}/oasis_update_lock.$VO
+    OASIS_UPDATE_IN_PROGRESS=${OASIS_USER_WORKING_DIRECTORY}/oasis_update_in_progress.$VO
+    VO_UPDATE_REQUESTED=${OASIS_USER_WORKING_DIRECTORY}/vo_update_requested.$VO
+
+
+
+    ## was an update requested?
+    if [ -f $OASIS_UPDATE_LOCK ]; then
+    ## update was requested
+    ## is an update in progress?
+        if [ -f $OASIS_UPDATE_IN_PROGRESS ]; then
+    	exit 0
+        fi
+        if [ -f $VO_UPDATE_REQUESTED ]; then
+    ##      updating a single VO
+    	touch $OASIS_UPDATE_IN_PROGRESS
+    	###vo=`cat $VO_UPDATE_REQUESTED`
+    	now=`date`
+    	echo "$now starting vo update for $VO" >> /var/log/oasis/oasis_update.stdout
+    	rsync -a -l --delete ${OASIS_USER_WORKING_DIRECTORY}/ouser.${VO}/ /cvmfs/oasis.opensciencegrid.org/$VO
+    ##  update requested, none in progress
+    	now=`date`
+    	echo "$now starting cvmfs-sync" >>/var/log/oasis/oasis_update.stdout
+    	/usr/bin/cvmfs-sync 1>>/var/log/oasis_update.stdout 2>>/var/log/oasis/oasis_update.stderr
+    	stat=$?
+    	now=`date`
+    	if [ $stat -eq 0 ]; then
+    	    echo "$now finished cvmfs-sync" >>/var/log/oasis/oasis_update.stdout
+    	else
+    	    echo "$now cvmfs-sync returned $stat" >>/var/log/oasis/oasis_update.stderr
+    	    echo "$now failed cvmfs-sync">>/var/log/oasis/oasis_update.stderr
+    	fi
+    	echo "$now starting cvmfs_server publish" >>/var/log/oasis/oasis_update.stdout
+    	/usr/bin/cvmfs_server publish $VO 1>>/var/log/oasis_update.stdout 2>>/var/log/oasis/oasis_update.stderr
+    	stat=$?
+    	now=`date`
+    	if [ $stat -eq 0 ]; then
+    	    echo "$now finished cvmfs_server publish" >>/var/log/oasis/oasis_update.stdout
+    	else
+    	    echo "$now cvmfs-server publish returned $stat" >>/var/log/oasis/oasis_update.stderr
+    	    echo "$now finished cvmfs_server publish">>/var/log/oasis/oasis_update.stderr
+    	fi
+    	rm -f $OASIS_UPDATE_IN_PROGRESS
+    	rm -f $OASIS_UPDATE_LOCK
+    	/usr/libexec/oasis_status.sh
+        fi
+    fi
+    exit 0
+    
+}
+
+# -------------------------------------------------------------------
+# get the list of all lock files, one per vo
+# -------------------------------------------------------------------
+
+LIST_LOCK_FILES=`find ${OASIS_USER_WORKING_DIRECTORY}/oasis_update_lock.* 2>/dev/null`
+for LOCKFILE in $LIST_LOCK_FILES; do
+    VO=`echo $LOCKFILE | awk -F\. '{print $NF}'`  
+    f_update $VO
+done
+
+
+
+

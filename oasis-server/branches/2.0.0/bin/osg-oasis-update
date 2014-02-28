@@ -1,0 +1,87 @@
+#!/bin/bash
+
+
+
+# --------------------------------------------------------
+#    source oasis setup.sh file
+# --------------------------------------------------------
+# NOTE: not needed if it is sourced by USER_JOB_WRAPPER
+. /etc/oasis/oasis_setup.sh
+
+# --------------------------------------------------------
+#   determine the vo requesting the update
+# --------------------------------------------------------
+vo=`whoami | awk -F. '{print $2}'`
+
+# --------------------------------------------------------
+#   defining lock file
+# --------------------------------------------------------
+VO_UPDATE_REQUEST=${OASIS_USER_WORKING_DIRECTORY}/vo_update_requested.${vo}
+
+
+if [ -f $VO_UPDATE_REQUEST ]; then
+   echo "An update is in progress, please try again later"
+   exit 0
+fi
+
+if [ $vo ]; then
+## VO name is not null
+   if [ -d /home/ouser.$vo ]; then
+
+##     home directory for VO exists
+       echo "Found /home/ouser.$vo"
+       echo $vo > ${VO_UPDATE_REQUEST}
+       mkdir -p ${OASIS_USER_WORKING_DIRECTORY}/ouser.$vo
+#
+# As of 20/Feb we go directly from the nas device
+#
+#       echo "Beginning sync"
+#       rsync -r /home/ouser.$vo/* /net/nas01/Public/ouser.$vo
+#       chmod -R ugoa+x /net/nas01/Public/ouser.$vo 
+
+#
+# Write a file to track update initiator
+#
+	user=`whoami`
+	cert=$X509_USER_PROXY
+
+	now=`date`
+	echo "Update initiated: $now">/tmp/update.details
+	now=`date +%s`
+	echo "Update unix time: $now">>/tmp/update.details
+
+	if [ ! -f $cert ] ; then
+    		echo "No proxy found for user $user" >>/tmp/update.details
+	else
+    		certinfo=`openssl x509 -noout -in $cert -subject`
+    		echo "Initiated by: "$user>>/tmp/update.details
+    		echo "With proxy  : "$certinfo>>/tmp/update.details
+	fi
+	initIP=`echo $SSH_CLIENT | awk '{print $1}'`
+	initName=`host $initIP | awk '{print $5}'`
+	echo "via ssh from: $initName  ($initIP)">>/tmp/update.details
+	cp /tmp/update.details ${OASIS_USER_WORKING_DIRECTORY}/ouser.$vo/update.details
+	rm /tmp/update.details
+       echo "Beginning oasis server update"
+       #. /usr/local/oasis-login/bin/request_oasis_update $vo
+       #. /usr/libexec/request_oasis_update $vo
+       /usr/libexec/request_oasis_update $vo
+       echo "Finished, publish_age here: http://oasis.opensciencegrid.org/stamp should be zero"
+       rm $VO_UPDATE_REQUEST
+       exit 0
+   else
+       echo "/home/ouser.$vo does not exist"
+       exit 1
+   fi
+else
+
+## no VO name provided
+    youare=`whoami`
+    echo "$youare is not a valid account for requesting an update"
+    echo "Valid accounts are:"
+    list=`ls -1 /home | grep ouser`
+    for vo in $list ; do
+	echo $vo
+    done
+    exit 1
+fi

@@ -1,0 +1,50 @@
+#
+# probes.conf 
+#
+# Configuration file for the generic OASIS probes.
+# Each project-specific probes configuration file will
+# also the same format.
+#
+# the section name is just an uniq string,
+# it is not the actual name of the probe.
+# This allows to have several probes
+# of the same type, but with different sets of parameters. 
+
+# =========================================================================== 
+#               VARIABLES
+# =========================================================================== 
+
+
+# probe = is the actual name of probe.
+#        The probe code will be invoked by a wrapper whose name is
+#
+#               /usr/bin/oasis-runprobe-<probe>
+#
+#        where <probe> is the value of this variable 'probe'
+#        In case of a project-specific probe, therefore, 
+#        it can be something like  <project>-<probe>, which
+#        will be invoked by wrapper
+#
+#               /usr/bin/oasis-runprobe-<project>-<probe>
+#
+# options = list of input options to be passed raw to the probe
+#
+# enabled = True|False variable.
+# The probe is only executed is enabled = True
+#
+# level = warning|abort
+#       if warning, just logs a WARNING message, but return 0 (OK)
+#       if abort, logs a CRITICAL message and return 1 (probe failed) 
+#       or some other RC
+#
+
+# =========================================================================== 
+
+
+[yes]
+
+enabled = True
+probe = yes
+options = ""
+level = warning
+

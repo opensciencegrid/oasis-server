@@ -1,0 +1,19 @@
+
+
+---------------------------------------------------------------------
+    1.0.1
+---------------------------------------------------------------------
+
+* all scripts now create lock files VO by VO
+
+* files are reorganized in directories: libexec/, etc/, misc/
+
+* created setup file etc/oasis_setup.sh
+
+* oasis_setup.sh export the new variable OASIS_USER_WORKING_DIRECTORY
+  to avoid having "/net/nas01/Public/" hardcoded 
+
+
+---------------------------------------------------------------------
+    OASIS 1 created at GOC
+---------------------------------------------------------------------

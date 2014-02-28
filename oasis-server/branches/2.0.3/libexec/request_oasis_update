@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# -------------------------------------------------------------------
+# getting the VO from the input option
+# -------------------------------------------------------------------
+VO=$1
+
+# -------------------------------------------------------------------
+#  defining lock file
+# -------------------------------------------------------------------
+OASIS_UPDATE_LOCK=${OASIS_USER_WORKING_DIRECTORY}/ouser.$VO/oasis/oasis_update_lock
+OASIS_UPDATE_IN_PROGRESS=${OASIS_USER_WORKING_DIRECTORY}/ouser.$VO/oasis/oasis_update_in_progress
+
+## A cron job will detect that this file exists
+touch $OASIS_UPDATE_LOCK
+
+## Assure the cron job has started
+sleep 62
+
+## don't return until the update is complete
+while [ -f $OASIS_UPDATE_IN_PROGRESS ]; do
+    sleep 10
+done
+
+exit 0
+
