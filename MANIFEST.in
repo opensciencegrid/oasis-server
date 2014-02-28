@@ -1,0 +1,8 @@
+include CHANGELOG LICENSE
+include etc/*
+include etc/oasisprobes.d/*
+include libexec/*
+include bin/*
+include misc/*
+include src/*
+#recursive-include oasispackage *.py *.pyc *.pyo

@@ -1,0 +1,23 @@
+#
+# Sysconfig file for OASIS daemon
+#
+
+#
+#  VERY IMPORTANT : place this file underneath  /etc/sysconfig/
+#
+
+#  OPTIONS:
+#   
+#  --conf=FILE           Load configuration from FILE
+#
+#  --loglevel    
+#    --debug             Set logging level to DEBUG [default WARNING]
+#    --info              Set logging level to INFO [default WARNING]
+#    --warning           Set logging level to WARNING [default WARNING]
+#
+#  --logfile=LOGFILE     Send logging output to LOGFILE or SYSLOG or stdout
+#                        [default <syslog>]
+
+OPTIONS="--conf=/etc/oasis/oasis.conf --loglevel=info --logfile=/var/log/oasis/oasisd.log"
+#CONSOLE_LOG=/var/log/oasis/console.log
+

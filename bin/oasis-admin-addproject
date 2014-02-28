@@ -1,0 +1,22 @@
+#!/bin/env python
+
+        # TO BE IMPLEMENTED #
+
+# ??? maybe should be just bash instead of python ???
+
+
+"""
+OASIS admin tool to add a new project to the server
+Steps:
+
+    -- create an UNIX ID
+
+    -- add the UNIX ID to the gridmapfile
+
+    -- if needed, add the UNIX ID to a dedicated OASIS group (for example the group included in sudoers)
+
+    -- Maybe, create an empty user scratch are for that UNIX ID.
+
+    -- create a CVMFS repo
+
+"""
