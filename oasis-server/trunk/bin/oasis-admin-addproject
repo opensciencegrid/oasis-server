@@ -41,8 +41,18 @@ class addproject(object):
     def __init__(self, options):
         '''    
         options are the input options from the command line, as result of argv[1:]
-        options can be
+        '''    
 
+
+        self.options = options
+
+        self._setuploggin()
+        self._parseoptions()
+
+
+    def _parseoptions(self):
+        '''    
+        options can be
             --user <username> MANDATORY
             --project <projectname> MANDATORY
             --disttool <tool for file distribution>  MANDATORY ?  example: cvmfs
@@ -52,13 +62,6 @@ class addproject(object):
             --gums
             --force
         '''    
-
-        self.options = options
-
-        self._parseoptions()
-
-
-    def _parseoptions(self):
 
 
     def _setuploggin(self):
