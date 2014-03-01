@@ -32,6 +32,9 @@ class addproject(object):
     # it could be inherited 
     # from an Interface class generic
     # for all oasis-admin- tools
+    # For example, setting the logger is going to be the same
+    # for all admin tools...
+    # QUESTION: ?? where the base class would be placed ?? underneath site-packages/ ??
 
 
     def __init__(self, options):
@@ -44,6 +47,9 @@ class addproject(object):
             --disttool <tool for file distribution>  MANDATORY ?  example: cvmfs
             --loglevel <log level> DEFAULT=DEBUG  
             --conffile <path to config file oasisprojects.conf> OPTIONAL can be used to double check if user/project already setup
+            --gridmpafile
+            --gums
+            --force
         '''    
 
         self.options = options
@@ -75,6 +81,20 @@ class addproject(object):
         '''
         creates the UNIX ID
         '''
+
+    def addusertogridmapfile(self):
+        '''
+        adds the user to the gridmapfile
+        '''
+
+
+    def addusertogums(self):
+        '''
+        adds the user to GUMS
+        '''
+        # QUESTION ?? has GUMS a CLI that can be used ??
+
+
 
     def createrepo(self):
         '''
