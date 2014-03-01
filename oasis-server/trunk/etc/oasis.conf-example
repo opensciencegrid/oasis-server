@@ -6,6 +6,11 @@
 # and the path to the rest of configuration files
 # in the other sections
 #
+# The path to this config file is setup in two different places:
+#       -- within /usr/bin/oasis for the user
+#       -- /etc/sysconfig/oasis.sysconfig  for the daemon
+# This config file may be split in the future into two different files,
+# so it is a good thing to have it setup separately by these two clients.
 
 # =========================================================================== 
 #               VARIABLES
