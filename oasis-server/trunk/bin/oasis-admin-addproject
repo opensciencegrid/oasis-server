@@ -6,6 +6,7 @@
 import getopt
 import logging
 import sys
+import time
 
 """
 OASIS admin tool to add a new project to the server
@@ -13,7 +14,7 @@ Steps:
 
     -- create an UNIX ID
 
-    -- add the UNIX ID to the gridmapfile ??
+    -- add the UNIX ID to the gridmapfile or GUMS ??
 
     -- if needed, add the UNIX ID to a dedicated OASIS group (for example the group included in sudoers)
 
@@ -58,6 +59,26 @@ class addproject(object):
 
 
     def _parseoptions(self):
+
+
+    def _setuploggin(self):
+
+        
+        self.log = logging.getLogger('admin-addproject')
+ 
+        # set the messages format
+        if major == 2 and minor == 4:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d : %(message)s'
+        else:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d %(funcName)s(): %(message)s'
+        logfile_formatter = logging.Formatter(LOGFILE_FORMAT)
+        logfile_formatter.converter = time.gmtime  # to convert timestamps to UTC
+ 
+        logStream = logging.FileHandler('/var/log/oasis/oasis.log')
+        logStream.setFormatter(logfile_formatter)
+        self.log.addHandler(logStream)
+        self.log.setLevel(self.loglevel)
+
 
 
     def run(self):
