@@ -2,8 +2,10 @@
 
         # TO BE IMPLEMENTED #
 
-# ??? maybe should be just bash instead of python ???
 
+import getopt
+import logging
+import sys
 
 """
 OASIS admin tool to add a new project to the server
@@ -11,7 +13,7 @@ Steps:
 
     -- create an UNIX ID
 
-    -- add the UNIX ID to the gridmapfile
+    -- add the UNIX ID to the gridmapfile ??
 
     -- if needed, add the UNIX ID to a dedicated OASIS group (for example the group included in sudoers)
 
@@ -19,4 +21,73 @@ Steps:
 
     -- create a CVMFS repo
 
+    -- if possible, creates a template for oasisprojects.conf
+
+Everything being done is logged to  /var/log/oasis/oasis.log
 """
+
+
+class addproject(object):
+    # In the future, if makes sense, 
+    # it could be inherited 
+    # from an Interface class generic
+    # for all oasis-admin- tools
+
+
+    def __init__(self, options):
+        '''    
+        options are the input options from the command line, as result of argv[1:]
+        options can be
+
+            --user <username> MANDATORY
+            --project <projectname> MANDATORY
+            --disttool <tool for file distribution>  MANDATORY ?  example: cvmfs
+            --loglevel <log level> DEFAULT=DEBUG  
+            --conffile <path to config file oasisprojects.conf> OPTIONAL can be used to double check if user/project already setup
+        '''    
+
+        self.options = options
+
+        self._parseoptions()
+
+
+    def _parseoptions(self):
+
+
+    def run(self):
+        '''
+        main method performing all checks, running commands, etc.
+        '''
+
+
+
+    def _checkuser(self):
+        '''
+        checks if that username already exists
+        '''
+
+    def _checkproject(self)
+        '''
+        checks if that project already exists
+        '''
+
+    def adduser(self):
+        '''
+        creates the UNIX ID
+        '''
+
+    def createrepo(self):
+        '''
+        creates a directory in the destination space. 
+        For example, a new repo in CVMFS
+        '''
+
+    
+
+
+
+
+if __name__ == '__main__':
+
+    obj = addproject(sys.argv[1:])
+    obj.run()
