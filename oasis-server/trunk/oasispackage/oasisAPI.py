@@ -1236,4 +1236,4 @@ class ProjectThread(threading.Thread):
         self.stopevent.set()
         self.log.info('Stopping thread for Project %s...' %self.project.projectname)
         threading.Thread.join(self, timeout)
-        self.log.debug('Leaving')    
+        self.log.debug('All threads stop. Leaving')    
