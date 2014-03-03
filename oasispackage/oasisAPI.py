@@ -100,6 +100,7 @@ class FlagFile(object):
         # FIXME !! put the open in a try-except block in case something bad happens when creating the file
         open(self.flagfile, 'w').close() 
         self.log.debug('File %s created.' %self.flagfile)
+
         self.log.debug('Leaving.')
 
     def setprobes(self):
@@ -108,9 +109,12 @@ class FlagFile(object):
         Updates the self.flagfile attribute
         '''
 
+        self.log.debug('Starting.')
         new = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, 'probes'))
         os.rename(self.flagfile, new) 
         self.flagfile = new
+        self.log.debug('Flagfile renamed to %s.' %self.flagfile)
+        self.log.debug('Leaving.')
 
     def setdone(self):
         '''
