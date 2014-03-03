@@ -562,7 +562,7 @@ class Project(object):
         # one mandatory for every probe is the root directory 
         # the rest comes from the config file
         options = '--oasisproberootdir=%s ' %self.srcdir
-        options = '--oasisprobedestdir=%s ' %self.destdir
+        options += '--oasisprobedestdir=%s ' %self.destdir
         options += opts
 
         cmd = 'sudo -u %s %s %s' %(username, probepath, options)
