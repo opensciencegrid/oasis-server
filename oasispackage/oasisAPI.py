@@ -852,10 +852,13 @@ class oasisCLI(object):
             return rc
 
         rc = self._loop()
-        self.log.debug('Leaving')
+        self.log.debug('Leaving with rc=%s' %rc)
         return rc
 
     def _loop(self):
+        '''
+        loop waiting for flagfile to be changed by the daemon
+        '''
         # FIXME ?? is a while loop the best way to implement it???
 
         self.log.debug('Start')
