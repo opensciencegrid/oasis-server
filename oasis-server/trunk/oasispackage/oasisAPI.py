@@ -831,16 +831,24 @@ class oasisCLI(object):
             5. if no timeout, delete the flagfile a exit
         '''
 
+        self.log.debug('Start with args: %s' %args)
+
         rc = self.preinstall()
         if rc != 0:
+            self.log.critical('preinstall step failed. Aborting.')
+            self.console.critical('preinstall step failed. Aborting.')
             return rc
 
         rc = self.runpayload(args)
         if rc != 0:
+            self.log.critical('installation step failed. Aborting.')
+            self.console.critical('installation step failed. Aborting.')
             return rc
 
         rc = self.postinstall()
         if rc != 0:
+            self.log.critical('postintall step failed. Aborting.')
+            self.console.critical('postintall step failed. Aborting.')
             return rc
 
         # FIXME ?? is a while loop the best way to implement it???
@@ -858,13 +866,15 @@ class oasisCLI(object):
                
             flagfilepath = flagfile.search('done')
             if flagfilepath:
+                self.log.debug('content of flagfile \n%s' %flagfile.read())
                 self.console.info('content of flagfile \n%s' %flagfile.read())
                 flagfile.clean()
                 return 0
 
             flagfilepath = flagfile.search('failed')
             if flagfilepath:
-                self.console.info('content of flagfile \n%s' %flagfile.read())
+                self.log.error('content of flagfile \n%s' %flagfile.read())
+                self.console.error('content of flagfile \n%s' %flagfile.read())
                 flagfile.clean()
                 return 1
 
@@ -879,6 +889,7 @@ class oasisCLI(object):
 
 
         # loop is done 
+        self.log.debug('Leaving')
         return 0
 
 
