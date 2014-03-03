@@ -286,6 +286,8 @@ class Project(object):
             # FIXME !! do not exit, propagate an exception and oasisCLI or oasisd exit
             sys.exit(1)
 
+        self.log.debug('Object Project created.')
+
 
     # =========================================================================
     #                   READ CONFIG FILES AND SETS OBJECT ATTRIBUTES
@@ -301,9 +303,11 @@ class Project(object):
         '''
         # Maybe temporary solution
     
+        self.log.debug('Starting.')
         oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
         oasisprojectsconf = SafeConfigParser()
         oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+        self.log.debug('Leaving returning config object %s.' %oasisprojectsconf)
         return oasisprojectsconf
 
     def _getprobesconfig(self):
@@ -311,9 +315,11 @@ class Project(object):
         gets the OASIS probes configurations
         '''
 
+        self.log.debug('Starting.')
         oasisprobesconffilename = self.oasisconf.get('PROBES', 'oasisconf')
         oasisprobesconf = SafeConfigParser()
         oasisprobesconf.readfp(open(oasisprobesconffilename))
+        self.log.debug('Leaving returning config object %s.' %oasisprobesconf)
         return oasisprobesconf
 
     def _getprojectprobesconfig(self):
