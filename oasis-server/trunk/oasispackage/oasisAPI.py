@@ -640,6 +640,9 @@ class oasisCLI(object):
             self.oasisconf = self._getbasicconfig()
             self.username = self._getusername()
             self.projectsection = self._getprojectsection()
+            # FIXME
+            # there is no yet a self.log. 
+            # use __logerror() within _getbasicconfig(), _getusername() and _getprojectsection()
         except:
             self.__logerror()
             sys.exit(1)
