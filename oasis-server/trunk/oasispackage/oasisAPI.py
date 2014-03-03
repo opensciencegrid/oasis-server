@@ -742,13 +742,11 @@ class oasisCLI(object):
         returns a ConfigParser object for oasis.conf
         the variable self.conffile is setup by the client /usr/bin/oasis
         '''
-        ###self.log.debug('Starting.')
 
         oasisconf = SafeConfigParser()
         #oasisconf.readfp(open("/etc/oasis/oasis.conf"))
         oasisconf.readfp(open(self.conffile))
 
-        ###self.log.debug('Leaving with value %s.' %oasisconf)
         return oasisconf
 
 
@@ -756,12 +754,10 @@ class oasisCLI(object):
         '''
         get the username of whoever is calling this API
         '''
-        ###self.log.debug('Starting.')
         
         #username = getpass.getuser()
         username = pwd.getpwuid(os.getuid()).pw_name  
 
-        ###self.log.debug('Leaving with value %s.' %username)
         return username
 
 
@@ -772,7 +768,6 @@ class oasisCLI(object):
         '''
         # FIXME !! this is also done in Project() class
 
-        ###self.log.debug('Starting.')
 
         # first get the OASIS projects ConfigFile
         oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
@@ -782,10 +777,8 @@ class oasisCLI(object):
         # second get the section name  
         project = self.__getprojectsectionfromuser(oasisprojectsconf, self.username)
         if project:
-            ###self.log.debug('Leaving with value %s.' %project)
             return project
         else:
-            ###self.log.critical('Not possible to get the project section. Raising an exception.')
             raise Exception
 
     def __getprojectsectionfromuser(self, conf, username):
