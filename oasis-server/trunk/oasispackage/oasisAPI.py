@@ -627,6 +627,7 @@ class Project(object):
         '''
         runs a single probe
         '''
+        self.log.debug('Starting')
 
         # create the list of input options
         # one mandatory for every probe is the root directory 
@@ -636,12 +637,15 @@ class Project(object):
         options += opts
 
         cmd = 'sudo -u %s %s %s' %(username, probepath, options)
+        self.log.info('command to run probe is "%s"' %cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out = None
         (out, err) = p.communicate()
         rc = p.returncode
         self.log.info('output of probe %s: %s' %(probe, out))
         self.flagfile.write('output of probe %s: %s\n' %(probe, out))
+
+        self.log.debug('Leaving.')
         return out, err, rc
 
     # ===========================================================================
