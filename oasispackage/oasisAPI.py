@@ -154,18 +154,24 @@ class FlagFile(object):
         # There could be more than one, from previous unfinished processes.
         # We need to figure out how to deal with that situation
 
+        self.log.debug('Starting.')
+
         RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s?$" %(self.projectname, status))
         # remember, the filename format is  yyyy-mm-dd:hh-mm-ss.<project>.<status>
 
         files = os.listdir(self.basedir)
         for candidate in files:
+            self.log.debug('Analyzing candidate file %s' %candidate)
             if RE.match(candidate) is not None:
+                self.log.debug('Candidate file %s matches pattern' %candidate)
                 # as soon as I find a flag, I return it. 
                 self.timestamp = candidate.split('.')[1]
                 self.flagfile = os.path.join(self.basedir, candidate) 
+                self.log.info('Found flag file %s' %self.flagfile)
                 return self.flagfile
 
         # if no flagfile was found...
+        self.log.info('No flagfile found. Leaving.')
         return None
 
     def clean(self):
