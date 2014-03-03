@@ -529,8 +529,10 @@ class Project(object):
         #  self.flagfile = FlagFile() is done twice in this class. 
         #  maybe it should be done in the __init__()
 
+        self.log.debug('Starting.')
         self.flagfile = FlagFile(self.projectname)
         flag = self.flagfile.search('request')
+        self.log.debug('Found flagfile %s' %flag)
         return flag
 
     def runprobes(self):
