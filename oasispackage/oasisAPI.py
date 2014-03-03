@@ -1172,8 +1172,8 @@ class ProjectThread(threading.Thread):
 
         threading.Thread.__init__(self) # init the thread
 
-        self.log = logging.getLogger('main.projectthread[%s]' %project)
-        self.log.info('Starting thread for project %s' %project)
+        self.log = logging.getLogger('main.projectthread[%s]' %project.projectname)
+        self.log.info('Starting thread for project %s' %project.projectname)
  
         self.stopevent = threading.Event()
 
