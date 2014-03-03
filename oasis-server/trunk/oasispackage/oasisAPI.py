@@ -1074,7 +1074,7 @@ class ProjectThreadMgr(object):
         """
 
         self.log = logging.getLogger('main.projectthreadmgr')
-        self.log.info('Creating object Oasis')
+        self.log.info('Creating object ProjectThreadMgr')
 
         self.oasisd = oasisd
 
@@ -1086,7 +1086,7 @@ class ProjectThreadMgr(object):
 
         self.threads = {}  # dicionary to host all threads
 
-        self.log.info("Oasis: object initialized.")
+        self.log.info("Object ProjectThreadMgr initialized.")
 
 
     def mainLoop(self):
