@@ -68,7 +68,7 @@ class FlagFile(object):
         '''
         # FIXME ?? should I pass a Project() object
 
-        logging.getLogger('main.flagfile')
+        self.log = logging.getLogger('main.flagfile')
 
         self.projectname = projectname
         # 
