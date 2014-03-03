@@ -178,7 +178,9 @@ class FlagFile(object):
         '''
         delete the flagfile
         '''
+        self.log.debug('Starting.')
         os.remove(self.flagfile)
+        self.log.debug('Leaving.')
 
     def setstatus(self, status):
         # it would be a generic method, instead of 
@@ -194,10 +196,13 @@ class FlagFile(object):
         # if the class FlagFile had an attribute self.status,
         # this method would not be needed
        
+        self.log.debug('Starting.')
         if self.flagfile:
-            return self.flagfile.split('.')[-1]
-
+            status = self.flagfile.split('.')[-1]
+            self.log.debug('Returning status %s' %status)
+            return status
         else:
+            self.log.debug('Returning None')
             return None
  
    
