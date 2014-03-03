@@ -327,10 +327,12 @@ class Project(object):
         gets the OASIS project probes configurations
         '''
 
+        self.log.debug('Starting.')
         oasisconfigdir = self.oasisconf.get('PROBES', 'directoryconf')
         oasisprojectprobesconffilename = self.projectsconf.get(self.projectsection, 'projectprobes')
         oasisprojectprobesconf = SafeConfigParser()
         oasisprojectprobesconf.readfp(open('%s/%s' %(oasisconfigdir, oasisprojectprobesconffilename)))
+        self.log.debug('Leaving returning config object %s.' %oasisprojectprobesconf)
         return oasisprojectprobesconf
 
 
