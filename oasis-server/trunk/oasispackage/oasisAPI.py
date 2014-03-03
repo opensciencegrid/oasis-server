@@ -211,17 +211,23 @@ class FlagFile(object):
         adds content to the flagfile
         '''
 
+        self.log.debug('Starting.')
+        # FIXME !! put the writing part in a try-except block, in case something goes wrong
         with open(self.flagfile, 'a') as flagfile:
             print >> flagfile, str
         flagfile.close()
+        self.log.debug('Leaving.')
 
     def read(self):
         '''
         returns the content of the flagfile
         '''
         
+        self.log.debug('Starting.')
+        # FIXME !! put the read part in a try-except block, in case something goes wrong
         flagfile = open(self.flagfile, 'r')
         content = flagfile.read()
+        self.log.debug('Leaving returning flagfile content.')
         return content
 
 
