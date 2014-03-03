@@ -1179,11 +1179,7 @@ class ProjectThread(threading.Thread):
 
         self.project = project
 
-
-        # recording moment the object was created
-        #self.inittime = datetime.datetime.now()
-
-        self.log.info('Thread for project %s initialized' %self.project)
+        self.log.info('Thread for project %s initialized' %self.project.projectname)
 
 
     # -------------------------------------------------------------------------
