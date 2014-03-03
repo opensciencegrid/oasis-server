@@ -19,13 +19,13 @@ class filesize(BaseProbe):
 
     def run(self):
        
-        cmd = 'find %s -size +1G -type f' %self.rootdir
+        cmd = 'find %s -size +1G -type f -exec ls -lh {} \;' %self.rootdir
         out = commands.getoutput(cmd)
         if out == '':
             return 0
         else:
             # FIXME for the time being, it is just a print 
-            print 'filesize probe failed. Output of cmd %s was %s' %(cmd, out)
+            print 'Probe failed. Output of cmd "%s" was\n %s' %(cmd, out)
             return 1
 
 
