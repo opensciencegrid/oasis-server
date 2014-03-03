@@ -468,6 +468,7 @@ class Project(object):
         For example:
            ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
         '''
+        self.log.debug('Starting.')
        
         self.payload = payload
         cmd = ' '.join(self.payload)
@@ -505,11 +506,15 @@ class Project(object):
         prepare flag to let the daemon to know publishing is requested
         """
 
+        self.log.debug('Starting.')
+
         # FIXME 
         #  self.flagfile = FlagFile() is done twice in this class. 
         #  do it in the __init__()
         self.flagfile = FlagFile(self.projectname)
         self.flagfile.create()
+
+        self.log.debug('Leaving.')
     
 
     # =========================================================================
