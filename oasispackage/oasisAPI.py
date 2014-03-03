@@ -122,9 +122,12 @@ class FlagFile(object):
         Updates the self.flagfile attribute
         '''
 
+        self.log.debug('Starting.')
         new = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, 'done'))
         os.rename(self.flagfile, new) 
         self.flagfile = new
+        self.log.debug('Flagfile renamed to %s.' %self.flagfile)
+        self.log.debug('Leaving.')
 
     def setfailed(self):
         '''
@@ -132,9 +135,12 @@ class FlagFile(object):
         Updates the self.flagfile attribute
         '''
 
+        self.log.debug('Starting.')
         new = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, 'failed'))
         os.rename(self.flagfile, new) 
         self.flagfile = new
+        self.log.debug('Flagfile renamed to %s.' %self.flagfile)
+        self.log.debug('Leaving.')
 
     def search(self, status):
         '''
