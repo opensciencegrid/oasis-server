@@ -555,9 +555,10 @@ class Project(object):
         self.log.debug('running probes from oasis probes config file')
         rc = self._runprobesfromconfig(self.oasisprobesconf)
         if rc != 0:
+            self.log.critical('running probes from oasis probes config file failed')
             #self.probes_rc = rc
             return rc
-        self.log.debug('all probes from oasis probes config file passed OK')
+        self.log.info('all probes from oasis probes config file passed OK')
 
         # ---------------------------------------------------------------------
         # 2nd run the specific VO probes
@@ -566,10 +567,11 @@ class Project(object):
         self.log.debug('running probes from project %s probes config file' %self.projectsection)
         rc = self._runprobesfromconfig(self.oasisprojectprobesconf)
         if rc != 0:
+            self.log.critical('running probes from project %s probes config file failed' %self.projectsection)
             #self.probes_rc = rc
             return rc
 
-        self.log.debug('all probes from project %s probes config file passed OK' %self.projectsection)
+        self.log.info('all probes from project %s probes config file passed OK' %self.projectsection)
 
         # if everything went OK...
         return 0
