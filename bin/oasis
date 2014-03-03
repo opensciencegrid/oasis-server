@@ -28,11 +28,10 @@ def main(args):
             ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
     '''
 
-    oasis = oasisCLI()
-
     # FIXME !! figure out how to pass the path to oasis.conf as a variable instead of hardcoded
     # set the path to config file oasis.conf
-    oasis.conffile = '/etc/oasis/oasis.conf'
+    conffile = '/etc/oasis/oasis.conf'
+    oasis = oasisCLI(conffile)
 
     # run
     rc = oasis.run(args)
