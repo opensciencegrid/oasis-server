@@ -1151,17 +1151,12 @@ class ProjectThreadMgr(object):
         '''
         Method to cleanly shut down all activity, joining threads, etc. 
         '''
-    
         logging.debug(" Shutting down all threads...")
         self.log.info("Joining all threads...")
-
         for thread in self.threads.values():
             thread.join()
-
         self.log.info("All threads joined.")
         
-
-
 
 
 
