@@ -756,7 +756,7 @@ class oasisCLI(object):
 
         oasisconf = SafeConfigParser()
         #oasisconf.readfp(open("/etc/oasis/oasis.conf"))
-        oasisconf.readfp(open(self.conffile)
+        oasisconf.readfp(open(self.conffile))
 
         self.log.debug('Leaving with value %s.' %oasisconf)
         return oasisconf
