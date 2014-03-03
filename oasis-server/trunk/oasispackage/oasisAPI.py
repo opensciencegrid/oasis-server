@@ -1232,7 +1232,8 @@ class ProjectThread(threading.Thread):
         Stop the thread. 
         Overriding this method required to handle Ctrl-C from console.
         '''
-    
+        self.log.debug('Start')    
         self.stopevent.set()
-        self.log.debug('Stopping thread for Project %s...' %self.project.projectname)
+        self.log.info('Stopping thread for Project %s...' %self.project.projectname)
         threading.Thread.join(self, timeout)
+        self.log.debug('Leaving')    
