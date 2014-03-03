@@ -657,6 +657,8 @@ class oasisCLI(object):
             self.console.critical('Internal OASIS malfunction. Aborting')
             sys.exit(1)
 
+        self.log.debug('Object oasisCLI created.')
+
 
     # --------------------------------------------------------------
     #      P R E L I M I N A R I E S
@@ -946,6 +948,8 @@ class oasisd(object):
         except:
             self.log.critical('Configuration cannot be read. Aborting.')
             sys.exit(1)
+
+        self.log.debug('Object oasisd created.')
 
 
     # --------------------------------------------------------------
