@@ -851,7 +851,14 @@ class oasisCLI(object):
             self.console.critical('postintall step failed. Aborting.')
             return rc
 
+        rc = self._loop()
+        self.log.debug('Leaving')
+        return rc
+
+    def _loop(self):
         # FIXME ?? is a while loop the best way to implement it???
+
+        self.log.debug('Start')
 
         projectname = self.project.projectname
 
@@ -886,7 +893,6 @@ class oasisCLI(object):
                 flagfile.search('request')
                 flagfile.clean() 
                 return 1
-
 
         # loop is done 
         self.log.debug('Leaving')
