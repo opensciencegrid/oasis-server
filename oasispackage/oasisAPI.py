@@ -1031,17 +1031,18 @@ class oasisd(object):
         creates an object ProjectThreadMgr and enters main loop
         This method is intended to be called by the daemon.
         """
+        self.log.debug('Start')
 
         try: 
-            self.log.info('creating Oasis object and entering main loop')
+            self.log.info('creating ProjectThreadMgr object and entering main loop')
             self.projectthreadmgr = ProjectThreadMgr(self)
             self.projectthreadmgr.mainLoop()
         except KeyboardInterrupt:
             self.log.info('Caught keyboard interrupt - exitting')
             sys.exit(0)
-        #except ImportError, errorMsg:
-        #    self.log.error('Failed to import necessary python module: %s' % errorMsg)
-        #    sys.exit(0)
+        except ImportError, errorMsg:
+            self.log.error('Failed to import necessary python module: %s' % errorMsg)
+            sys.exit(0)
         except:
             self.log.error('Unexpected exception')
             self.log.error(traceback.format_exc(None))
