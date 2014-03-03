@@ -666,7 +666,6 @@ class oasisCLI(object):
         '''
         this method is just to log somehow that
         the configuration could not be read, 
-        and/or an object of class Project() could not be created.
         '''
 
         #
