@@ -349,6 +349,7 @@ class Project(object):
         is not the final value and requires later interpolation.
         '''
         
+        self.log.debug('Starting.')
         vo = self.projectsconf.get(self.projectsection, 'VO')
         # try to get VO from x509, and interpolate just in case
         #try:    
@@ -359,6 +360,7 @@ class Project(object):
         #except:
         #    pass
 
+        self.log.debug('Returning VO %s.' %vo)
         return vo
 
 #    def _getosgapp(self):
@@ -382,8 +384,10 @@ class Project(object):
         is not the final value and requires later interpolation.
         '''
 
+        self.log.debug('Starting.')
         src = self.projectsconf.get(self.projectsection, "PROJECT_SRC_DIRECTORY")
         src = string.Template(src).substitute(OSG_APP=self.osg_app, VO=self.vo, project=self.projectname)
+        self.log.debug('Returning src dir %s.' %src)
         return src
 
     def _getdestdir(self):
@@ -396,8 +400,10 @@ class Project(object):
         is not the final value and requires later interpolation.
         '''
 
+        self.log.debug('Starting.')
         dest = self.projectsconf.get(self.projectsection, "PROJECT_DEST_DIRECTORY")
         dest = string.Template(dest).substitute(VO=self.vo, project=self.projectname)
+        self.log.debug('Returning dest dir %s.' %dest)
         return dest
 
 
