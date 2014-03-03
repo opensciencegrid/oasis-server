@@ -437,23 +437,27 @@ class Project(object):
         """
         things to be done before running the user payload
         """
-
-        rc = self._syncronize_back()
+        self.log.debug('Starting.')
+        rc = self._synchronize_back()
+        self.log.debug('Leaving with RC=%s' %rc)
         return rc
 
-    def _syncronize_back(self):
+    def _synchronize_back(self):
         """
         ensure the user scratch area has a perfect copy of what 
         is currently in the final destination area 
         """
+        self.log.debug('Starting.')
 
         # FIXME temporary solution ??
         cmd = 'rsync -a -l --delete %s/ %s/' %(self.destdir, self.srcdir)
+        self.log.debug('synchronization cmd = %s' %cmd)
         
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         (out, err) = p.communicate()
         rc = p.returncode
 
+        self.log.debug('Leaving with RC=%s' %rc)
         return rc
 
 
