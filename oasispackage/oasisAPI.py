@@ -1119,15 +1119,18 @@ class ProjectThreadMgr(object):
         method to start all threads.
         Threads being created are stored in a dictionary.
         '''
+        self.log.debug('Start')
 
         listprojects = self.oasisd.projectsconf.sections()
         for projectsection in listprojects:
 
             # create an object Project() for each section in project config 
+            self.log.info('Candidate for a project in project section %s' %projectsection)
+            self.log.info('Creating object Project')
             project = Project(projectsection, self.oasisd.oasisconf)
 
             if project.enabled:
-                self.log.info('Project %s enabled. Creating thread' %project.projectname)
+                self.log.info('Project %s is enabled. Creating thread' %project.projectname)
                 try:
 
                     thread = ProjectThread(project)
@@ -1140,6 +1143,8 @@ class ProjectThreadMgr(object):
                     
             else:
                 self.log.info('Project %s not enabled.' %project.projectname)
+
+        self.log.debug('Leaving')
 
 
     def shutdown(self):
