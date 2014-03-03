@@ -457,6 +457,7 @@ class Project(object):
         (out, err) = p.communicate()
         rc = p.returncode
 
+        self.log.debug('Output of synchronization cmd = %s' %out)
         self.log.debug('Leaving with RC=%s' %rc)
         return rc
 
