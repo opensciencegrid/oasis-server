@@ -623,7 +623,7 @@ class oasisCLI(object):
     invoked only by root. 
     '''
 
-    def __init__(self):
+    def __init__(self, conffile=None):
 
         # 
         #  !!! FIXME !!!
@@ -632,7 +632,7 @@ class oasisCLI(object):
         # maybe they both should inherit from a base class
         #
 
-        self.conffile = None  # path to oasis.conf
+        self.conffile = conffile  # path to oasis.conf
 
         self.probes_rc = 0  # ?? do we need it ??
 
