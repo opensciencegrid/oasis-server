@@ -581,12 +581,13 @@ class Project(object):
         '''
         run all probes from a single config file
         '''
-        
+        self.log.debug('Starting for probesconf = %s' probesconf)
+         
         # get list of probes
         list_probes = probesconf.sections()
 
         for probe in list_probes:
-
+            self.log.debug('candidate probe %s' %probe)
             enabled = probesconf.getboolean(probe, 'enabled')
             probename = probesconf.get(probe, 'probe')
             level = probesconf.get(probe, 'level')
@@ -600,8 +601,12 @@ class Project(object):
             executable = os.path.join(executabledir, executablename)
 
             if enabled:
-            
+                self.log.debug('candidate probe %s is enabled' %probe) 
+
                 out, err, rc = self._runprobe(self.username, probe, executable, options)
+                self.log.debug('Output of probe %s was\n%s' %(probe, out))
+                self.log.err('Error of probe %s was\n%s' %(probe, err))
+                self.log.err('RC of probe %s was %s' %(probe, rc))
    
                 if rc == 0:
                     self.log.info('probe <%s> passed OK' %probe)
@@ -615,6 +620,7 @@ class Project(object):
                         return 0
 
         # if everything went OK... 
+        self.log.debug('Leaving')
         return 0
 
     def _runprobe(self, username, probe, probepath, opts):
