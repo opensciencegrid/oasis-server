@@ -91,11 +91,16 @@ class FlagFile(object):
         with the whole path in the filesystem to the flagfile
         '''
 
+        self.log.debug('Starting.')
+
         now = time.gmtime() # gmtime() is like localtime() but in UTC
         timestr = "%04d-%02d-%02d:%02d:%02d:%02d" % (now[0], now[1], now[2], now[3], now[4], now[5])
-
         self.flagfile = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, timestr,  'request'))
+
+        # FIXME !! put the open in a try-except block in case something bad happens when creating the file
         open(self.flagfile, 'w').close() 
+        self.log.debug('File %s created.' %self.flagfile)
+        self.log.debug('Leaving.')
 
     def setprobes(self):
         '''
