@@ -1006,19 +1006,21 @@ class oasisd(object):
         '''
         returns a ConfigParser object for oasis.conf
         '''
-
+        self.log.debug('Start')
         oasisconf = SafeConfigParser()
         oasisconf.readfp(open(self.conffile))
+        self.log.debug('Leaving with config object %s' %oasisconf)
         return oasisconf
 
     def _getprojectconfig(self):
         '''
         returns a ConfigParser object for oasisproject.conf
         '''
-
+        self.log.debug('Start')
         oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
         oasisprojectsconf = SafeConfigParser()
         oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+        self.log.debug('Leaving with config object %s' %oasisprojectsconf)
         return oasisprojectsconf
 
 
