@@ -654,6 +654,7 @@ class Project(object):
         """
         transfers files from user scratch area to final destination
         """
+        self.log.debug('Starting')
 
         rc = self.distributionplugin.transfer() 
         if rc == 0:
@@ -661,12 +662,14 @@ class Project(object):
         else:
             self.log.critical('transferring files failed')
 
+        self.log.debug('Leaving with rc %s' %rc)
         return rc
 
     def publish(self):
         """
         publishes files once they are in the final destination
         """
+        self.log.debug('Starting')
 
         rc = self.distributionplugin.publish() 
         if rc == 0:
@@ -674,6 +677,7 @@ class Project(object):
         else:
             self.log.critical('publishing failed')
 
+        self.log.debug('Leaving with rc %s' %rc)
         return rc
 
 
