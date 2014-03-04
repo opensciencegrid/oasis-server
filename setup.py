@@ -63,14 +63,24 @@ setup(
               'oasispackage.distributionplugins',
               'oasispackage.probes',
               ],
-    scripts = [ # -- main scripts --
+    scripts = [# =============================
+               #    main scripts   
+               # =============================
                'bin/oasis',
                'bin/oasisd',
 
-               # -- utilities --
+               # =============================
+               #    admin tools 
+               # =============================
                'bin/osg-oasis-update',
-                
-               # -- wrappers to the probes --
+               #'bin/oasis-admin-addproject',
+               #'bin/oasis-admin-delproject',
+               #'bin/oasis-admin-list',
+               #'bin/oasis-admin-rollback',
+                               
+               # =============================
+               #  wrappers to the probes
+               # =============================
                'bin/oasis-runprobe-filesize',
                'bin/oasis-runprobe-forbiddenfiles',
                'bin/oasis-runprobe-no',
