@@ -14,8 +14,6 @@ Steps:
 
     -- create an UNIX ID
 
-    -- add the UNIX ID to the gridmapfile or GUMS ??
-
     -- if needed, add the UNIX ID to a dedicated OASIS group (for example the group included in sudoers)
 
     -- Maybe, create an empty user scratch are for that UNIX ID.
@@ -58,8 +56,6 @@ class addproject(object):
             --disttool <tool for file distribution>  MANDATORY ?  example: cvmfs
             --loglevel <log level> DEFAULT=DEBUG  
             --conffile <path to config file oasisprojects.conf> OPTIONAL can be used to double check if user/project already setup
-            --gridmpafile
-            --gums
             --force
         '''    
 
@@ -105,20 +101,6 @@ class addproject(object):
         '''
         creates the UNIX ID
         '''
-
-    def addusertogridmapfile(self):
-        '''
-        adds the user to the gridmapfile
-        '''
-
-
-    def addusertogums(self):
-        '''
-        adds the user to GUMS
-        '''
-        # QUESTION ?? has GUMS a CLI that can be used ??
-
-
 
     def createrepo(self):
         '''
