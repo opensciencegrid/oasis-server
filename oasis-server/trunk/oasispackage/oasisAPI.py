@@ -581,7 +581,7 @@ class Project(object):
         '''
         run all probes from a single config file
         '''
-        self.log.debug('Starting for probesconf = %s' probesconf)
+        self.log.debug('Starting for probesconf = %s' %probesconf)
          
         # get list of probes
         list_probes = probesconf.sections()
