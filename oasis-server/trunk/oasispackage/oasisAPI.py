@@ -605,8 +605,8 @@ class Project(object):
 
                 out, err, rc = self._runprobe(self.username, probe, executable, options)
                 self.log.debug('Output of probe %s was\n%s' %(probe, out))
-                self.log.err('Error of probe %s was\n%s' %(probe, err))
-                self.log.err('RC of probe %s was %s' %(probe, rc))
+                self.log.error('Error of probe %s was\n%s' %(probe, err))
+                self.log.error('RC of probe %s was %s' %(probe, rc))
    
                 if rc == 0:
                     self.log.info('probe <%s> passed OK' %probe)
