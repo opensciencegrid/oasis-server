@@ -170,6 +170,22 @@ class FlagFile(object):
                 self.log.info('Found flag file %s' %self.flagfile)
                 return self.flagfile
 
+        # ----------------------------------------------
+        #  for the future
+        #  instead of just returning the first flagfile
+        #  found, keep of all them 
+        #  (in case there is more than one)
+        #  to decide what to do with them
+        # ----------------------------------------------
+        # list_flagfiles = []
+        # files = os.listdir(self.basedir)
+        # for candidate in files:
+        #     if RE.match(candidate) is not None:
+        #         flagfile = os.path.join(self.basedir, candidate) 
+        #         list_flagfiles.append(flagfile)
+        # ----------------------------------------------
+
+
         # if no flagfile was found...
         self.log.info('No flagfile found. Leaving.')
         return None
