@@ -957,7 +957,7 @@ class oasisCLI(object):
             flagfilepath = flagfile.search('done')
             if flagfilepath:
                 self.log.debug('content of flagfile \n%s' %flagfile.read())
-                self.console.info('content of flagfile \n%s' %flagfile.read())
+                self.console.debug('content of flagfile \n%s' %flagfile.read())
                 flagfile.clean()
                 return 0
 
