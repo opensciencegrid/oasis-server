@@ -604,9 +604,9 @@ class Project(object):
                 self.log.debug('candidate probe %s is enabled' %probe) 
 
                 out, err, rc = self._runprobe(self.username, probe, executable, options)
-                self.log.debug('Output of probe %s was\n%s' %(probe, out))
-                self.log.debug('Error of probe %s was\n%s' %(probe, err))
-                self.log.debug('RC of probe %s was %s' %(probe, rc))
+                self.log.info('Output of probe %s was\n%s' %(probe, out))
+                self.log.info('Error of probe %s was\n%s' %(probe, err))
+                self.log.info('RC of probe %s was %s' %(probe, rc))
    
                 if rc == 0:
                     self.log.info('probe <%s> passed OK' %probe)
