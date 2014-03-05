@@ -929,6 +929,12 @@ class oasisCLI(object):
 
         self.log.debug('Start with args: %s' %args)
 
+        rc = self.checknoblock()
+        if rc != 0:
+            self.log.critical('There is already a flagfile for this project. Aborting.')
+            self.console.critical('Aborting installation job. Apparently there is another job still running. If that is not true, please contact with OASIS administrators.')
+            return rc
+
         rc = self.preinstall()
         if rc != 0:
             self.log.critical('preinstall step failed. Aborting.')
@@ -950,6 +956,10 @@ class oasisCLI(object):
         rc = self._loop()
         self.log.debug('Leaving with rc=%s' %rc)
         return rc
+
+    def checknoblock(self):
+
+        return 0
 
     def _loop(self):
         '''
