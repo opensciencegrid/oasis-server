@@ -18,4 +18,9 @@ chmod go+w /var/log/oasis/oasis.log
 
 # FIXME !! temporary solution??
 # creates, if does not exist already, system account "oasis"
-useradd -r -m oasis
+id oasis &> /dev/null
+rc=$?
+if [ $rc -eq 0 ]; then
+    useradd -r -m oasis
+fi
+
