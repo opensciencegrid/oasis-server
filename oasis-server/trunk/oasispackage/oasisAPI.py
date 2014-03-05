@@ -929,7 +929,11 @@ class oasisCLI(object):
 
         self.log.debug('Start with args: %s' %args)
 
-        rc = self.checknoblock()
+        rc = self._checknoflagfile()
+        # For the time being, we abort right away is there is a flagfile.
+        # In the future, we may consider something different, 
+        # for example to wait in a loop (until a timeout)
+        # or not aborting if we allow multiple jobs from the same project.
         if rc != 0:
             self.log.critical('There is already a flagfile for this project. Aborting.')
             self.console.critical('Aborting installation job. Apparently there is another job still running. If that is not true, please contact with OASIS administrators.')
@@ -957,9 +961,29 @@ class oasisCLI(object):
         self.log.debug('Leaving with rc=%s' %rc)
         return rc
 
-    def checknoblock(self):
+    def _checknoflagfile(self):
+        '''
+        checks if there is already a flagfile for this project
+        '''
 
+        flagfile = FlagFile(self.project.projectname)
+
+        # in the future, we may return different RC, depending on the status,
+        # and react differently
+        # For example, a flagfile in "done" or "failed" should disappear quite soon
+        # so it would make sense to wait. 
+        if flagfile.search('request'):
+            return 1
+        if flagfile.search('probes'):
+            return 1
+        if flagfile.search('done'):
+            return 1
+        if flagfile.search('failed'):
+            return 1
+
+        # no flagfile
         return 0
+
 
     def _loop(self):
         '''
