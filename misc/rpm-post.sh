@@ -16,3 +16,6 @@
 touch /var/log/oasis/oasis.log
 chmod go+w /var/log/oasis/oasis.log
 
+# FIXME !! temporary solution??
+# creates, if does not exist already, system account "oasis"
+useradd -r -m oasis
