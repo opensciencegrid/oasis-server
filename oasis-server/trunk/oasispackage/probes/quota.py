@@ -29,13 +29,15 @@ class quota(BaseProbe):
         out = commands.getoutput(cmd)
         out = int(out)
 
-        if out > self.limit:
-            return 1
-        else:
+        if out < self.limit:
             return 0
+        else:
+            # FIXME for the time being, it is just a print 
+            print 'Probe failed. Quota limit is %s and used space is %s' %(self.limit, out )
+            return 1
 
 
 if __name__ == '__main__':
-    probe = qouta(sys.argv[1:])
+    probe = quota(sys.argv[1:])
     rc = probe.run() 
     sys.exit(rc)
