@@ -379,7 +379,7 @@ class Project(object):
         self.log.debug('Returning VO %s.' %vo)
         return vo
 
-#    def _getosgapp(self):
+    def _getosgapp(self):
 #
 #        osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
 #        # if needed, interpolate
