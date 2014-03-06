@@ -22,9 +22,11 @@ from distutils.command.install_data import install_data as install_data_org
 
 libexec_files = ['libexec/%s' %file for file in os.listdir('libexec') if os.path.isfile('libexec/%s' %file)]
 
-oasis_etc_files = ['etc/oasisprobes.conf-example', 'etc/oasis.conf-example', 'etc/oasisprojects.conf-example', 'etc/oasisd.sysconfig-example']
+oasis_etc_files = ['etc/oasis.conf']
+oasis_sysconfig = ['etc/oasisd.sysconfig']
+oasis_etc_docs = ['etc/oasisprobes.conf-example', 'etc/oasisprojects.conf-example']
 probes_etc_directory = ['etc/oasisprobes.d/%s' %file for file in os.listdir('etc/oasisprobes.d') if os.path.isfile('etc/oasisprobes.d/%s' %file) ]
-condor_etc_files = ['etc/condor_oasis.conf-example',]
+condor_etc_files = ['etc/condor_oasis.conf',]
 
 utils_files = ['misc/generate_adduser',
                'misc/generate_condormap',
@@ -41,7 +43,9 @@ rpm_data_files=[('/usr/libexec', libexec_files),
                 ('/etc/oasis', oasis_etc_files),
                 ('/etc/oasis/oasisprobes.d', probes_etc_directory), 
                 ('/etc/oasis', condor_etc_files),
+                ('/etc/sysconfig', oasis_sysconfig),
                 ('/usr/share/oasis', utils_files),
+                ('/usr/share/doc/oasis-server-%s' %release_version, oasis_etc_docs),
                 ('/etc/init.d', initd_files),
                ]
 
