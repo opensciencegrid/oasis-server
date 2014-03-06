@@ -359,14 +359,16 @@ class Project(object):
     def _getvo(self):
         '''
         gets the VO from the oasisprojects.conf config file.
-
-        Reason to have a dedicated method is to allow
-        the possibility that variable VO in the config file
-        is not the final value and requires later interpolation.
         '''
         
         self.log.debug('Starting.')
-        vo = self.projectsconf.get(self.projectsection, 'VO')
+        
+        if self.projectsconf.has_option(self.projectsection, "VO")
+            vo = self.projectsconf.get(self.projectsection, 'VO')
+        else:
+            self.log.warning('There is no variable VO defined in the config file')
+            vo = None
+
         # try to get VO from x509, and interpolate just in case
         #try:    
         #    st, vo = commands.getstatusoutput('voms-proxy-info -vo')
@@ -380,22 +382,19 @@ class Project(object):
         return vo
 
     def _getosgapp(self):
-#
-#        osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
-#        # if needed, interpolate
-#        osg_app_env = os.environ.get("OSG_APP", None)
-#        if osg_app_env:
-#            osg_app_temp = string.Template(osg_app)
-#            osg_app = osg_app_temp.substitute(OSG_APP_FROM_ENV=osg_app_env)
-#
-#        return osg_app
+        '''
+        gets the variable OSG_APP from the oasisprojects.conf config file.
+        '''
 
+        self.log.debug('Starting.')
         
         if self.projectsconf.has_option(self.projectsection, "OSG_APP")
             osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
         else:
+            self.log.warning('There is no variable OSG_APP defined in the config file')
             osg_app = None
 
+        self.log.debug('Returning OSG_APP %s.' %vo)
         reutrn osg_app
 
 
