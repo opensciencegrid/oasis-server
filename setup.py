@@ -45,7 +45,8 @@ rpm_data_files=[('/usr/libexec', libexec_files),
                 ('/etc/oasis', condor_etc_files),
                 ('/etc/sysconfig', oasis_sysconfig),
                 ('/usr/share/oasis', utils_files),
-                ('/usr/share/doc/oasis-server-%s' %release_version, oasis_etc_docs),
+                #('/usr/share/doc/oasis-server-%s' %release_version, oasis_etc_docs),
+                ('/etc/oasis' , oasis_etc_docs),
                 ('/etc/init.d', initd_files),
                ]
 
