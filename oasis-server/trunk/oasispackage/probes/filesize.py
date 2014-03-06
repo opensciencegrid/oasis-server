@@ -22,6 +22,8 @@ class filesize(BaseProbe):
         cmd = 'find %s -size +1G -type f -exec ls -lh {} \;' %self.rootdir
         out = commands.getoutput(cmd)
         if out == '':
+            # FIXME for the time being, it is just a print 
+            print 'Probe passed OK. Output of cmd "%s" was\n %s' %(cmd, out)
             return 0
         else:
             # FIXME for the time being, it is just a print 
