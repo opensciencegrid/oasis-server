@@ -25,7 +25,7 @@ libexec_files = ['libexec/%s' %file for file in os.listdir('libexec') if os.path
 oasis_etc_files = ['etc/oasis.conf']
 oasis_sysconfig = ['etc/oasisd.sysconfig']
 oasis_etc_docs = ['etc/oasisprobes.conf-example', 'etc/oasisprojects.conf-example']
-probes_etc_directory = ['etc/oasisprobes.d/%s' %file for file in os.listdir('etc/oasisprobes.d') if os.path.isfile('etc/oasisprobes.d/%s' %file) ]
+#probes_etc_directory = ['etc/oasisprobes.d/%s' %file for file in os.listdir('etc/oasisprobes.d') if os.path.isfile('etc/oasisprobes.d/%s' %file) ]
 condor_etc_files = ['etc/condor_oasis.conf',]
 
 utils_files = ['misc/generate_adduser',
