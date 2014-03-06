@@ -11,10 +11,10 @@
 # =========================================================================== 
 
 # VO = The Virtual Organization, when makes sense.
-#      NOT MANDATORY, unless it is being used for interpolation in other variables.
+#        NOT MANDATORY, unless it is being used for interpolation in other variables.
 #
 # OSG_APP = for legacy reasons, we maintain the environment variable OSG_APP
-#      NOT MANDATORY, unless it is being used for interpolation in other variables.
+#        NOT MANDATORY, unless it is being used for interpolation in other variables.
 #
 # user = the UNIX ID of the entity calling oasisCLI or 
 #        the UNIX ID the daemon needs to drop privileges to.
@@ -30,6 +30,7 @@
 #        Typically it will be the same than 
 #
 #                   ${OSG_APP}/<vo>
+#
 #        MANDATORY
 #
 # PROJECT_DEST_DIRECTORY = path to the final place for the files to be
