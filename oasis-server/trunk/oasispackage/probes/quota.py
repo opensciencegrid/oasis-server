@@ -19,7 +19,16 @@ class quota(BaseProbe):
         super(quota, self).__init__(options)
 
     def run(self):
-        return 0
+
+        limit = 1000
+
+        cmd = 'du -s %s | awk \'{print $1}\'' %self.rootdir
+        out = commands.getoutput(cmd)
+
+        if int(out) > limit:
+            return 1
+        else:
+            return 0
 
 
 if __name__ == '__main__':
