@@ -274,9 +274,9 @@ class Project(object):
         # pass more reasonable inputs 
         #
 
-        # FIXME  those names 'logfile.foo' and 'console.bar' are part of the message FORMAT. Use something less ugly
+        # FIXME  those names 'logfile.foo' and 'user.bar' are part of the message FORMAT. Use something less ugly
         self.log = logging.getLogger('logfile.%s' %projectsection)
-        self.console = logging.getLogger('console.%s' %projectsection)
+        self.console = logging.getLogger('user.%s' %projectsection)
 
         self.projectsection = projectsection
         self.oasisconf = oasisconf
@@ -795,9 +795,9 @@ class oasisCLI(object):
             -- self.console to send to stdout only those messages relevant to the users
         '''
 
-        # FIXME  those names 'logfile' and 'console' are part of the message FORMAT. Use something less ugly
+        # FIXME  those names 'logfile' and 'user' are part of the message FORMAT. Use something less ugly
         self.log = logging.getLogger('logfile')
-        self.console = logging.getLogger('console')
+        self.console = logging.getLogger('user')
 
         # set the messages format
         if major == 2 and minor == 4:
