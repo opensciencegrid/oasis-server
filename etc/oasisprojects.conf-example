@@ -11,30 +11,38 @@
 # =========================================================================== 
 
 # VO = The Virtual Organization, when makes sense.
+#      NOT MANDATORY, unless it is being used for interpolation in other variables.
 #
 # OSG_APP = for legacy reasons, we maintain the environment variable OSG_APP
+#      NOT MANDATORY, unless it is being used for interpolation in other variables.
 #
 # user = the UNIX ID of the entity calling oasisCLI or 
 #        the UNIX ID the daemon needs to drop privileges to.
 #        It will be the only UNIX ID allowed to do some tasks,
 #        e.g. to write in the project scratch area.
+#        MANDATORY
 #
 # project = the name of the project, typically the same than the VO.
+#        MANDATORY
 #          
 # PROJECT_SRC_DIRECTORY = path to the project scratch area. 
 #        It is the place where the user payload will put new content.
 #        Typically it will be the same than 
 #
 #                   ${OSG_APP}/<vo>
+#        MANDATORY
 #
 # PROJECT_DEST_DIRECTORY = path to the final place for the files to be
 #        distributed. E.g.  /cvmfs/<vo>.opensciencegrid.org/
+#        MANDATORY
 #
 # projectprobes = name of the configuration files for probes 
 #        underneath the directory pointed by varible 'directoryconf'
 #        in oasis.conf
+#        MANDATORY
 #
 # time.sleep = time between cycles for each thread (one per project)
+#        MANDATORY
 #
 # time.timeout = maximum time the user process can stay waiting for the 
 #        daemon process to finish.
@@ -45,6 +53,7 @@
 #        and notify the user process (via the same flagfile) everything is
 #        done. 
 #        This waiting time needs a timeout.
+#        MANDATORY
 #
 
 # =========================================================================== 
