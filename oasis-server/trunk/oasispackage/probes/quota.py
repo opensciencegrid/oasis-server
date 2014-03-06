@@ -30,6 +30,8 @@ class quota(BaseProbe):
         out = int(out)
 
         if out < self.limit:
+            # FIXME for the time being, it is just a print 
+            print 'Probe passed OK. Quota limit is %s and used space is %s' %(self.limit, out )
             return 0
         else:
             # FIXME for the time being, it is just a print 
