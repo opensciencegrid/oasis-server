@@ -287,8 +287,8 @@ class Project(object):
             self.username = self.projectsconf.get(self.projectsection, 'user')
             self.projectname = self.projectsconf.get(self.projectsection, 'project')
             self.vo = self._getvo()
-            #self.osg_app = self._getosgapp()
-            self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+            self.osg_app = self._getosgapp()
+            #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
             self.distributiontool = self.projectsconf.get(self.projectsection, 'distributiontool')
             self.srcdir = self._getsrcdir()
             self.destdir = self._getdestdir()
@@ -389,6 +389,16 @@ class Project(object):
 #            osg_app = osg_app_temp.substitute(OSG_APP_FROM_ENV=osg_app_env)
 #
 #        return osg_app
+
+        
+        if self.projectsconf.has_option(self.projectsection, "OSG_APP")
+            osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+        else:
+            osg_app = None
+
+        reutrn osg_app
+
+
 
     def _getsrcdir(self):
         '''
