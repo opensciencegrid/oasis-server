@@ -41,7 +41,7 @@ initd_files = ['etc/oasis']
 
 rpm_data_files=[('/usr/libexec', libexec_files),
                 ('/etc/oasis', oasis_etc_files),
-                ('/etc/oasis/oasisprobes.d', probes_etc_directory), 
+                #('/etc/oasis/oasisprobes.d', probes_etc_directory), 
                 ('/etc/oasis', condor_etc_files),
                 ('/etc/sysconfig', oasis_sysconfig),
                 ('/usr/share/oasis', utils_files),
