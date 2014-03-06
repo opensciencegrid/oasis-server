@@ -18,14 +18,18 @@ class quota(BaseProbe):
     def __init__(self, options):
         super(quota, self).__init__(options)
 
-    def run(self):
+        opts, args = getopt.getopt(self.options, '', ['limit='])
+        for o, a in opts:
+            if o == '--limit':
+                self.limit = int(a)
 
-        limit = 1000
+    def run(self):
 
         cmd = 'du -s %s | awk \'{print $1}\'' %self.rootdir
         out = commands.getoutput(cmd)
+        out = int(out)
 
-        if int(out) > limit:
+        if out > self.limit:
             return 1
         else:
             return 0
