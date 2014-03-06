@@ -20,7 +20,7 @@ chmod go+w /var/log/oasis/oasis.log
 # creates, if does not exist already, system account "oasis"
 id oasis &> /dev/null
 rc=$?
-if [ $rc -eq 0 ]; then
+if [ $rc -ne 0 ]; then
     useradd -r -m oasis
 fi
 
