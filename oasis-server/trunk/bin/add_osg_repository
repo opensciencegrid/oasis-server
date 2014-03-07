@@ -55,7 +55,7 @@ if [ -f $MASTERKEY ]; then
 else
     # on stratum 1
     cvmfs_server add-replica -o root $1 /etc/cvmfs/keys/opensciencegrid.org.pub
-    rm -f /etc/httpd/conf.d/cvmfs.$1
+    rm -f /etc/httpd/conf.d/cvmfs.$REPONAME.conf
     # make this also look like a master because other stratum 1s
     #   may read from it
     touch /srv/cvmfs/$REPONAME/.cvmfs_master_replica
