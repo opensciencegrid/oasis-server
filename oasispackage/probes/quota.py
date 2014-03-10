@@ -25,6 +25,7 @@ class quota(BaseProbe):
 
     def run(self):
 
+        # FIXME !! use df instead of du
         cmd = 'du -s %s | awk \'{print $1}\'' %self.rootdir
         out = commands.getoutput(cmd)
         out = int(out)
