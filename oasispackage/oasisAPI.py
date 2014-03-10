@@ -394,7 +394,7 @@ class Project(object):
             self.log.warning('There is no variable OSG_APP defined in the config file')
             osg_app = None
 
-        self.log.debug('Returning OSG_APP %s.' %vo)
+        self.log.debug('Returning OSG_APP %s.' %osg_app)
         return osg_app
 
 
