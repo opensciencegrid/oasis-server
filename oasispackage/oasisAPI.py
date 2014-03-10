@@ -363,7 +363,7 @@ class Project(object):
         
         self.log.debug('Starting.')
         
-        if self.projectsconf.has_option(self.projectsection, "VO")
+        if self.projectsconf.has_option(self.projectsection, "VO"):
             vo = self.projectsconf.get(self.projectsection, 'VO')
         else:
             self.log.warning('There is no variable VO defined in the config file')
@@ -388,7 +388,7 @@ class Project(object):
 
         self.log.debug('Starting.')
         
-        if self.projectsconf.has_option(self.projectsection, "OSG_APP")
+        if self.projectsconf.has_option(self.projectsection, "OSG_APP"):
             osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
         else:
             self.log.warning('There is no variable OSG_APP defined in the config file')
