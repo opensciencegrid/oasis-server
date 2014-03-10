@@ -395,7 +395,7 @@ class Project(object):
             osg_app = None
 
         self.log.debug('Returning OSG_APP %s.' %vo)
-        reutrn osg_app
+        return osg_app
 
 
 
