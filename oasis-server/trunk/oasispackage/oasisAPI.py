@@ -403,7 +403,7 @@ class Project(object):
             osg_app_from_env = os.environ.get('OSG_APP', None)
             if not osg_app_from_env:
                 self.log.critical('OSG_APP requested to be read from environment, but environment does not have $OSG_APP')
-                return None 
+                osg_app = None 
             else:
                 osg_app = string.Template(osg_app).substitute(OSG_APP=osg_app_from_env)
         
