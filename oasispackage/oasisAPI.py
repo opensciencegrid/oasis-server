@@ -283,6 +283,10 @@ class Project(object):
         self.projectsconf = self._getprojectsconfig() 
 
         try:
+            # !! FIXME !!
+            # some variables, like VO or OSG_APP, may end up with value None
+            # but then being needed for interpolation to srcdir, destdir, etc.
+            # in that case, an exception should be raised, and abort
             self.enabled = self.projectsconf.get(self.projectsection, 'enabled')
             self.username = self.projectsconf.get(self.projectsection, 'user')
             self.projectname = self.projectsconf.get(self.projectsection, 'project')
@@ -394,10 +398,18 @@ class Project(object):
             self.log.warning('There is no variable OSG_APP defined in the config file')
             osg_app = None
 
+        # if needed, interpolate with the value from environment
+        if osg_app == "${OSG_APP}":
+            osg_app_from_env = os.environ.get('OSG_APP', None)
+            if not osg_app_from_env:
+                self.log.critical('OSG_APP requested to be read from environment, but environment does not have $OSG_APP')
+                return None
+            else:
+                osg_app = string.Template(osg_app).substitute(OSG_APP=osg_app_from_env)
+        
+
         self.log.debug('Returning OSG_APP %s.' %osg_app)
         return osg_app
-
-
 
     def _getsrcdir(self):
         '''
