@@ -108,6 +108,10 @@ class addproject(object):
         For example, a new repo in CVMFS
         '''
 
+        # FIXME
+        # at this step, if it is the first repo being created, 
+        # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
+
     
 
 
