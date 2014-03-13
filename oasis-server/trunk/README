@@ -1,0 +1,35 @@
+-------------------------------------------------------------------------------
+        OASIS README
+-------------------------------------------------------------------------------
+
+
+INTRO
+
+OASIS is a high level end-to-end software to manage grid-based file distribution.
+
+
+INSTALLATION
+
+To install using RPMs (i.e. installing as root) read INSTALL-ROOT.
+Once installed, there are two components:
+
+    -- the client:
+       the user client is placed in /usr/bin/oasis
+       It can be called directly from the command line,
+       or it is automatically called by the condor wrapper
+       in case of jobs submitted via a gatekeeper.
+
+    -- the daemon:
+       The service  /etc/init.d/oasis needs to be started
+       in order to allow OASIS to complete the distribution process:
+       passing the sanity checks -or probes- on the new user content,
+       transferring the new content to final distribution tree,
+       and triggering the file distribution.
+       Configuration for the daemon is in /etc/sysconfig/oasis.sysconfig
+
+
+DEVELOPERS
+
+Jose Caballero <caballer@bnl.gov>      
+
+
