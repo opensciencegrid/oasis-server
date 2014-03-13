@@ -1,4 +1,4 @@
-include CHANGELOG LICENSE
+include CHANGELOG LICENSE README
 include etc/*
 include etc/oasisprobes.d/*
 include libexec/*
