@@ -466,9 +466,27 @@ class Project(object):
         things to be done before running the user payload
         """
         self.log.debug('Starting.')
+        #self._set_env_osg_app()
         rc = self._synchronize_back()
         self.log.debug('Leaving with RC=%s' %rc)
         return rc
+
+    def _set_env_osg_app(self):
+        '''
+        method to add to the environment the variable OSG_APP.
+
+        This variable may, most probably, already exist in the environment.
+        However, what really matters is the value of OSG_APP in the
+        OASIS config files. So, just in case, we override the value
+        in the environment. 
+        '''
+
+        self.log.debug('Starting')
+        if self.osg_app:
+            self.log.info('Adding to environment OSG_APP = %s' %self.osg_app) 
+            os.environ['OSG_APP'] = self.osg_app
+        self.log.debug('Leaving')
+
 
     def _synchronize_back(self):
         """
