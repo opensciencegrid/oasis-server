@@ -597,6 +597,14 @@ class Project(object):
         Probes code is not invoked directly. A wrapper in /usr/bin/ is run,
         and this wrapper calls the probes code.
         '''
+
+        #
+        # !! FIXME !!
+        # maybe this should be implemented in two classes:
+        #       -- class Probe()
+        #       -- class ProbesManager()
+        #
+        
        
         # ---------------------------------------------------------------------
         # 1st run the default OASIS probes
