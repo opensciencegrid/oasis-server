@@ -14,8 +14,6 @@
 #        NOT MANDATORY, unless it is being used for interpolation in other variables.
 #
 # OSG_APP = for legacy reasons, we maintain the environment variable OSG_APP
-#        If the actual value is "${OSG_APP}" that means the environment variable $OSG_APP
-#        will be used to fill this variable.
 #        NOT MANDATORY, unless it is being used for interpolation in other variables.
 #
 # user = the UNIX ID of the entity calling oasisCLI or 
@@ -63,7 +61,7 @@
 
 [DEFAULT]
 
-OSG_APP = ${OSG_APP}
+OSG_APP = /tmp/
 PROJECT_SRC_DIRECTORY = ${OSG_APP}/${VO}
 PROJECT_DEST_DIRECTORY = /cvmfs/${VO}.opensciencegrid.org 
 distributiontool = cvmfs21
