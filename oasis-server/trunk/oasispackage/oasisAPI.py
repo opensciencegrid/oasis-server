@@ -415,6 +415,8 @@ class Project(object):
         self.log.debug('Starting.')
         src = self.projectsconf.get(self.projectsection, "PROJECT_SRC_DIRECTORY")
         src = string.Template(src).substitute(OSG_APP=self.osg_app, VO=self.vo, project=self.projectname)
+        # normalize, just in case
+        src = os.path.normpath(src)
         self.log.debug('Returning src dir %s.' %src)
         return src
 
@@ -431,6 +433,8 @@ class Project(object):
         self.log.debug('Starting.')
         dest = self.projectsconf.get(self.projectsection, "PROJECT_DEST_DIRECTORY")
         dest = string.Template(dest).substitute(VO=self.vo, project=self.projectname)
+        # normalize, just in case
+        src = os.path.normpath(src)
         self.log.debug('Returning dest dir %s.' %dest)
         return dest
 
