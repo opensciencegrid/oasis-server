@@ -466,7 +466,7 @@ class Project(object):
         things to be done before running the user payload
         """
         self.log.debug('Starting.')
-        #self._set_env_osg_app()
+        self._set_env_osg_app()
         rc = self._synchronize_back()
         self.log.debug('Leaving with RC=%s' %rc)
         return rc
