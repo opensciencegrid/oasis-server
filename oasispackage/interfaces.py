@@ -40,6 +40,11 @@ class BaseProbe(object):
 
         # start parsing the input options,
         # at least for the generic ones
+
+        # FIXME !!
+        # parsing input options maybe should not be done in the __init__()'s
+        # either the base class (this one) or each probe class.
+        # Consider parsing the options in the __main__ section
         opts, args = getopt.getopt(self.options, '', ['oasisproberootdir=', 'oasisprobedestdir='])
         for o, a in opts:
             if o == '--oasisproberootdir':
