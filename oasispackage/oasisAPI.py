@@ -600,11 +600,14 @@ class Project(object):
 
         #
         # !! FIXME !!
-        # maybe this should be implemented in two classes:
+        # there is a lot of duplicated lines
+        # this should be implemented in two classes:
         #       -- class Probe()
         #       -- class ProbesManager()
         #
         
+
+        self.flagfile.write('<probes>')
        
         # ---------------------------------------------------------------------
         # 1st run the default OASIS probes
@@ -614,7 +617,8 @@ class Project(object):
         rc = self._runprobesfromconfig(self.oasisprobesconf)
         if rc != 0:
             self.log.critical('running probes from oasis probes config file failed')
-            #self.probes_rc = rc
+            #self.probes_rc = rc 
+            self.flagfile.write('</probes>')
             return rc
         self.log.info('all probes from oasis probes config file passed OK')
 
@@ -627,11 +631,13 @@ class Project(object):
         if rc != 0:
             self.log.critical('running probes from project %s probes config file failed' %self.projectsection)
             #self.probes_rc = rc
+            self.flagfile.write('</probes>')
             return rc
 
         self.log.info('all probes from project %s probes config file passed OK' %self.projectsection)
 
         # if everything went OK...
+        self.flagfile.write('</probes>')
         return 0
 
 
@@ -701,7 +707,14 @@ class Project(object):
         (out, err) = p.communicate()
         rc = p.returncode
         self.log.info('output of probe %s: %s' %(probe, out))
-        self.flagfile.write('output of probe %s: %s\n' %(probe, out))
+
+        #self.flagfile.write('output of probe %s: %s\n' %(probe, out))
+        self.flagfile.write('   <probe>')
+        self.flagfile.write('       <a n="probe"><s>%s</s></a>' %probe)
+        self.flagfile.write('       <a n="out"><s>%s</s></a>' %out)
+        self.flagfile.write('       <a n="rc"><i>%d</i></a>' %rc)
+        self.flagfile.write('   </probe>')
+
 
         self.log.debug('Leaving.')
         return out, err, rc
