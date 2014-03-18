@@ -35,6 +35,11 @@ def main(args):
 
     # run
     rc = oasis.run(args)
+    # FIXME!!
+    # maybe it is not a good idea to pass that type of args, 
+    # because they have equals '=' and those stuffs.
+    # perhaps the parsing should be done in the __main__ section
+    # and pass to the class a nice result
     return rc
 
 
