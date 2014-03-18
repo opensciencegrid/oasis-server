@@ -32,9 +32,9 @@ def main():
 
     oasis.project.runprobes()
     # FIXME
-    # It does not work, because runprobes() calls each probe with sudo
-    # therefore, when running this directly as user, it fails because the user
-    # is not in the sudoers file
+    # to make this work I had to modify runprobes()
+    # If user is root, calls the probes with sudo
+    # If user is regular user (the one running this script), calls the probes normally
 
     return rc
 
