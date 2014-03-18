@@ -17,6 +17,11 @@ import time
 from oasispackage.oasisAPI import oasisCLI, FlagFile
 
 
+# FIXME
+# if the daemon is running, 
+# how to prevent to run probes and publish itself
+# in parallel ???
+
 def main():
 
     conffile = '/etc/oasis/oasis.conf'
