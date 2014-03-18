@@ -1,0 +1,37 @@
+#!/usr/bin/python
+
+#####################################################################
+#                                                                   #
+#  this is just a temporary solution                                #
+#                                                                   #
+#  the functionalities of this script will be included              #
+#  in /usr/bin/oasis                                                #
+#                                                                   #
+#####################################################################
+
+import getopt
+import os
+import sys
+import time
+
+from oasispackage.oasisAPI import oasisCLI, FlagFile
+
+
+def main():
+
+    conffile = '/etc/oasis/oasis.conf'
+
+    oasis = oasisCLI(conffile)
+
+    projectname = oasis.project.projectname
+
+    
+
+
+
+    return rc
+
+
+if __name__ == '__main__':
+    rc = main()
+    sys.exit(rc)
