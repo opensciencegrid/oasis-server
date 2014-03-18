@@ -30,7 +30,7 @@ def main():
 
     oasis.project._checkflagfile()  # temporary solution ?
 
-    oasis.project.runprobes()
+    rc = oasis.project.runprobes()
     # FIXME
     # to make this work I had to modify runprobes()
     # If user is root, calls the probes with sudo
