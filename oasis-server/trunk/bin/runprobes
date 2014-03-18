@@ -25,9 +25,11 @@ def main():
 
     projectname = oasis.project.projectname
 
-    
+    flag = FlagFile(projectname)
+    flag.create()
 
-
+    oasis.project._checkflagfile()  # temporary solution ?
+    oasis.project.runprobes()
 
     return rc
 
