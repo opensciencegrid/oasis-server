@@ -27,7 +27,7 @@ class numberfiles(BaseProbe):
 
 
 if __name__ == '__main__':
-    probe = number(sys.argv[1:])
+    probe = numberfiles(sys.argv[1:])
     rc = probe.run() 
     sys.exit(rc)
 
