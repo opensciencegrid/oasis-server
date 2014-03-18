@@ -21,6 +21,9 @@ from oasispackage.oasisAPI import oasisCLI, FlagFile
 # if the daemon is running, 
 # how to prevent to run probes and publish itself
 # in parallel ???
+#
+# The solution would be to run the probes without a flagfile,
+# or a flagfile in a place the daemon does not find it.
 
 def main():
 
