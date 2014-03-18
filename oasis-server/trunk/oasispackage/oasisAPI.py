@@ -434,7 +434,7 @@ class Project(object):
         dest = self.projectsconf.get(self.projectsection, "PROJECT_DEST_DIRECTORY")
         dest = string.Template(dest).substitute(VO=self.vo, project=self.projectname)
         # normalize, just in case
-        src = os.path.normpath(src)
+        dest = os.path.normpath(dest)
         self.log.debug('Returning dest dir %s.' %dest)
         return dest
 
