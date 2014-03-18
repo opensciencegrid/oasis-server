@@ -74,6 +74,7 @@ setup(
                # =============================
                'bin/oasis',
                'bin/oasisd',
+               'bin/runprobes', #temporary script, to be merge with oasis
 
                # =============================
                #    admin tools 
