@@ -96,6 +96,7 @@ setup(
                'bin/oasis-runprobe-quota',
                'bin/oasis-runprobe-relocatable',
                'bin/oasis-runprobe-yes',
+               'bin/oasis-runprobe-readable',
               ], 
     data_files = rpm_data_files
 )
