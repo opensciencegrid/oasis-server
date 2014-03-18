@@ -61,7 +61,6 @@ def main():
     # just in case the daemon is also running.
     # This flag file is hidden to the daemon, so it is not going to trigger
     # running probes and publishing in parallel
-    # FIXME !! the flagfile should be removed at the end
     import tempfile
     flag.basedir = tempfile.mkdtemp(dir='/tmp/')
     flag.create()
@@ -72,6 +71,10 @@ def main():
     # to make this work I had to modify runprobes()
     # If user is root, calls the probes with sudo
     # If user is regular user (the one running this script), calls the probes normally
+
+    # now delete the flagfile and the random directory
+    os.remove(flag.flagfile)
+    os.rmdir(flag.basedir)
 
     return rc
 
