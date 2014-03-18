@@ -1074,14 +1074,14 @@ class oasisCLI(object):
             flagfilepath = flagfile.search('done')
             if flagfilepath:
                 self.log.debug('content of flagfile \n%s' %flagfile.read())
-                self.console.debug('content of flagfile \n%s' %flagfile.read())
+                self.console.debug('output from the OASIS daemon \n%s' %flagfile.read())
                 flagfile.clean()
                 return 0
 
             flagfilepath = flagfile.search('failed')
             if flagfilepath:
                 self.log.error('content of flagfile \n%s' %flagfile.read())
-                self.console.error('content of flagfile \n%s' %flagfile.read())
+                self.console.error('output from the OASIS daemon \n%s' %flagfile.read())
                 flagfile.clean()
                 return 1
 
