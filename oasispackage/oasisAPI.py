@@ -882,6 +882,8 @@ class oasisCLI(object):
         logStdout = logging.StreamHandler(sys.stdout)
         logStdout.setFormatter(stdout_formatter)
         self.console.addHandler(logStdout)
+        # FIXME 
+        # the log level should be a configuration variable, not hardcoded
         self.console.setLevel(logging.DEBUG)  
 
 
