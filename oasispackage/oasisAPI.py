@@ -699,8 +699,16 @@ class Project(object):
         options = '--oasisproberootdir=%s ' %self.srcdir
         options += '--oasisprobedestdir=%s ' %self.destdir
         options += opts
+        
+        # if user is root (this process is run by the daemon)
+        #       call the probes with sudo to drop privileges
+        # if the user is a regular user (this process is run from CLI by the user directly)
+        #       call the probes normally 
+        if os.getuid() == 0:
+            cmd = 'sudo -u %s %s %s' %(username, probepath, options)
+        else:
+            cmd = '%s %s' %(probepath, options)
 
-        cmd = 'sudo -u %s %s %s' %(username, probepath, options)
         self.log.info('command to run probe is "%s"' %cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out = None
