@@ -9,6 +9,8 @@
 #  the functionalities of this script will be included              #
 #  in /usr/bin/oasis                                                #
 #                                                                   #
+#  The point of this script is to run probes and nothing else       #
+#                                                                   #
 #####################################################################
 
 import getopt
