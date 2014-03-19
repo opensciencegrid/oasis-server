@@ -33,6 +33,7 @@ def main():
     flag.create()
     # this will create a flagfile. 
     # then the daemon will see it and finish
+    oasis._loop() # we wait until the daemon is done
 
 
     return rc
