@@ -30,6 +30,9 @@ def main():
     projectname = oasis.project.projectname
 
     flag = FlagFile(projectname)
+    flag.create()
+    # this will create a flagfile. 
+    # then the daemon will see it and finish
 
 
     return rc
