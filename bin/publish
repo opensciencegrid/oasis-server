@@ -31,7 +31,7 @@ def main():
 
     flag = FlagFile(projectname)
     flag.create()
-    # this will create a flagfile. 
+    # this will create a flagfile in the regular place
     # then the daemon will see it and finish
     oasis._loop() # we wait until the daemon is done
 
