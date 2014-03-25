@@ -4,13 +4,21 @@
 # OASIS admin tool to resign the CVMFS .whitelist file
 # ------------------------------------------------------------------- #
 
- 
+import getopt 
+import sys
+
 from oasispackage.oasisAPI import Project, ProjectFactory
+
+opts, args = getopt.getopt(sys.argv[1:], '', ['projectname='])
+        for o, a in opts:
+            if o == '--projectname':
+                projectname = a
 
 oasisconf = '/etc/oasis/oasis.conf'
 
 project = ProjectFactory(oasisconf, projectname=projectname)
 project.distributionplugin.resign()
+
 
 
 
