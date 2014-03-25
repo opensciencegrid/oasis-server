@@ -226,7 +226,7 @@ f_exit(){
         f_print_info_msg 'OASIS ends'
         exit 0
     else
-        f_print_error_msg "OASIS failure." 
+        f_print_error_msg "OASIS failure. Please contact OASIS admins to report the problem." 
         f_print_error_msg "Exiting with return code $1" 
         f_print_info_msg 'OASIS ends'
         exit $rc
