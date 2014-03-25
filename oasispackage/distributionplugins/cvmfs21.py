@@ -77,6 +77,7 @@ class cvmfs21(BaseDistribution):
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
         return st
-
-        
+    
+    def resign(self):
+        pass 
         
