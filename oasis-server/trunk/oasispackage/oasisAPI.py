@@ -1468,23 +1468,41 @@ class ProjectThread(threading.Thread):
                 flagfile = self.project._checkflagfile()
                 if flagfile: 
                     # if flagfile exists for this project, do stuffs 
-                    rc = self.project.runprobes()
 
+                    # ------------------------------------
+                    #   run probes
+                    # ------------------------------------
+                    rc = self.project.runprobes()
                     if rc == 0:
-                        self.log.info('probes ran OK, publishing')
-                        rc = self.project.transferfiles()
-                        if rc == 0:
-                            #
-                            #   !! FIXME !!
-                            #   abort if transfer failed
-                            #   maybe abort if publish failed
-                            #   perhaps some cleaning if transfer or publish failed ??
-                            self.project.publish()
-                            self.project.flagfile.setdone()
+                        self.log.info('probes ran OK')
                     else:
                         self.log.critical('probes failed with rc=%s, aborting installation and stopping thread' %rc)
                         self.project.flagfile.setfailed()
                         self.stopevent.set()
+
+                    # ------------------------------------
+                    #   transfer files 
+                    # ------------------------------------
+                    rc = self.project.transferfiles()
+                    if rc == 0:
+                        self.log.info('files transferred OK')
+                    else:
+                        self.log.critical('transferring files failed with rc=%s, aborting installation and stopping thread' %rc)
+                        self.project.flagfile.setfailed()
+                        self.stopevent.set()
+
+                    # ------------------------------------
+                    #   publish 
+                    # ------------------------------------
+                    rc = self.project.publish()
+                    if rc == 0:
+                        self.log.info('publishing OK')
+                        self.project.flagfile.setdone()
+                    else:
+                        self.log.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
+                        self.project.flagfile.setfailed()
+                        self.stopevent.set()
+
  
             except Exception, e:
                 ms = str(e)
