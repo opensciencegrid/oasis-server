@@ -268,6 +268,9 @@ class Project(object):
         '''
         projectsection is the section name in the oasisprojects.conf config file
         oasisconf is the ConfigParser object for oasis.conf
+
+        We pass oasis.conf and not oasisprojects.conf directly 
+        because we need it to get some variables like directoryconf
         '''
         #
         # !!  FIXME !!
@@ -279,6 +282,7 @@ class Project(object):
         # it would also require to change oasisCLI and ProjectThreadManager
         # where objects of class Project() are created
         #
+
 
         # FIXME  those names 'logfile.foo' and 'user.bar' are part of the message FORMAT. Use something less ugly
         self.log = logging.getLogger('logfile.%s' %projectsection)
