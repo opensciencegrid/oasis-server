@@ -875,6 +875,7 @@ class oasisCLI(object):
         # get the Project object for that project
         try:
             self.project = Project(self.projectsection, self.oasisconf)
+            # FIXME: use ProjectFactory()
         except:
             self.log.critical('object Project can not be created. Aborting')
             self.console.critical('Internal OASIS malfunction. Aborting')
@@ -1460,6 +1461,7 @@ class ProjectThreadMgr(object):
             self.log.info('Candidate for a project in project section %s' %projectsection)
             self.log.info('Creating object Project')
             project = Project(projectsection, self.oasisd.oasisconf)
+            # FIXME: use ProjectFactory()
 
             if project.enabled:
                 self.log.info('Project %s is enabled. Creating thread' %project.projectname)
