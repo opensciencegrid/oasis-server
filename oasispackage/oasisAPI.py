@@ -271,7 +271,13 @@ class Project(object):
         '''
         #
         # !!  FIXME !!
-        # pass more reasonable inputs 
+        # pass more reasonable inputs:
+        # instead of <project section name> and oasisconf
+        # maybe it should projectname and oasisconf
+        # in that case, we would need to do a reverse lookup again
+        # to find out the projectsection based on projectname
+        # it would also require to change oasisCLI and ProjectThreadManager
+        # where objects of class Project() are created
         #
 
         # FIXME  those names 'logfile.foo' and 'user.bar' are part of the message FORMAT. Use something less ugly
