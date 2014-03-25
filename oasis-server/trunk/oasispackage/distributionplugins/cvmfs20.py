@@ -18,8 +18,6 @@ class cvmfs20(BaseDistribution):
 
 
     def transfer(self):
-        """
-        """
 
         self.log.info('transfering files from %s to %s' %(self.src, self.dest))
 
@@ -36,8 +34,6 @@ class cvmfs20(BaseDistribution):
         return st
 
     def publish(self):
-        """
-        """
 
         rc = self._publish()
         if rc:
@@ -46,8 +42,6 @@ class cvmfs20(BaseDistribution):
         return rc
 
     def _publish(self):
-        """
-        """
 
         #
         #  !! FIXME !!
@@ -59,5 +53,7 @@ class cvmfs20(BaseDistribution):
         st, out = commands.getstatusoutput(cmd)
         return st
 
+    def resign(self):
+        pass
         
         
