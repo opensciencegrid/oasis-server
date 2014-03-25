@@ -29,27 +29,32 @@ class cvmfs21(BaseDistribution):
         ## cmd = 'cvmfs_server transaction %s' %self.repo
         # example:   cvmfs_server transaction atlas.opensciencegrid.org
         cmd = 'sudo -u oasis cvmfs_server transaction %s' %self.repo
+        self.log.info('command = %s' %cmd)
 
 
         st, out = commands.getstatusoutput(cmd)
         if st:
             self.log.critical('interaction with cvmfs server failed.')
+            self.log.critical('RC = %s' %st)
+            self.log.critical('output = %s' %out)
             return st
 
         ## cmd = 'rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
         # example:   rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
         cmd = 'sudo -u oasis rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
+        self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
+        if st:
+            self.log.critical('transferring files failed.')
+            self.log.critical('RC = %s' %st)
+            self.log.critical('output = %s' %out)
+            return st
+
         return st
 
     def publish(self):
         
-        #rc = self._transfer()
-        #if rc:
-        #    self.log.critical('transferring files from scratch area to destination failed. Aborting.')
-        #    return rc
-
         rc = self._publish()
         if rc:
             self.log.critical('publishing failed. Aborting.')
@@ -64,8 +69,13 @@ class cvmfs21(BaseDistribution):
         ## cmd = 'cvmfs_server publish %s' %self.repo 
         # example:   cvmfs_server publish atlas.opensciencegrid.org
         cmd = 'sudo -u oasis cvmfs_server publish %s' %self.repo 
+        self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
+        if st:
+            self.log.critical('publishing failed.')
+            self.log.critical('RC = %s' %st)
+            self.log.critical('output = %s' %out)
         return st
 
         
