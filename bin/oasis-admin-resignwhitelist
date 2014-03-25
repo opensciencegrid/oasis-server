@@ -5,21 +5,12 @@
 # ------------------------------------------------------------------- #
 
  
-
-#   class Project(object):
-#      def __init__(self, projectsection, oasisconf):
-
-#   from oasispackage.interfaces import BaseDistribution
-#   class cvmfs21(BaseDistribution):
-#       def __init__(self, project):
-#           super(cvmfs21, self).__init__(project)
-
-
-from oasispackage.oasisAPI import Project
+from oasispackage.oasisAPI import Project, ProjectFactory
 
 oasisconf = '/etc/oasis/oasis.conf'
 
+project = ProjectFactory(oasisconf, projectname=projectname)
+project.distributionplugin.resign()
 
-if __name__ == '__main__':
 
 
