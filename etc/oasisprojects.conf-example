@@ -76,14 +76,14 @@ project = ATLAS
 user = usatlas1
 projectprobes = atlas.conf
 
-[PROJECT1]
+[MIS]
 
-VO = OSG
-project = project1
-user = osgproject1
-PROJECT_SRC_DIRECTORY = ${OSG_APP}/${VO}/project1/
-PROJECT_DEST_DIRECTORY = /cvmfs/${project}.opensciencegrid.org 
-projectprobes = project1.conf
+VO = MIS 
+project = MIS 
+user = ouser.mis
+PROJECT_SRC_DIRECTORY = ${OSG_APP}/${VO}
+PROJECT_DEST_DIRECTORY = /cvmfs/${VO}.opensciencegrid.org 
+projectprobes = mis.conf
 
 
 
