@@ -247,6 +247,57 @@ class FlagFile(object):
         return content
 
 
+class ProjectFactory(object):
+    '''
+    class to create objects Project passing different types of inputs
+    '''
+
+    def __init__(self, oasisconf, username=None, projectname=None, projectsection=None):
+        self.oasisconf = oasisconf
+        self.username = username
+        self.projectname = projectname
+        self.projectsection = projectsection
+    
+    def getProject(self):
+    
+        if self.projectsection:
+            return Project(self.projectsection, self.oasisconf)
+    
+        if self.username:
+            projectsection = self._getprojectsectionfromusername(self.username)
+            return Project(projectsection, self.oasisconf)
+    
+        if self.projectname:
+            projectsection = self._getprojectsectionfromprojectname(self.projectname)
+            return Project(projectsection, self.oasisconf)
+    
+    def _getprojectsectionfromusername(self, username):
+    
+        # first get the OASIS projects ConfigFile
+        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconf = SafeConfigParser()
+        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+
+        # second get the section name  
+        for section in oasisprojectsconf.sections():
+            if oasisprojectsconf.get(section, 'user') == username:
+                return section
+        return None
+    
+    def _getprojectsectionfromprojectname(self, projectname):
+    
+        # first get the OASIS projects ConfigFile
+        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconf = SafeConfigParser()
+        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+
+        # second get the section name  
+        for section in oasisprojectsconf.sections():
+            if oasisprojectsconf.get(section, 'project') == projectname:
+                return section
+        return None
+    
+
 
 class Project(object):
     '''
