@@ -282,6 +282,11 @@ class Project(object):
         # it would also require to change oasisCLI and ProjectThreadManager
         # where objects of class Project() are created
         #
+        # IDEA: 
+        # write a class ProjectManager() or ProjectFactory() or something like that
+        # that accepts any input -project name, or username, or project section...-
+        # do whatever is needed, creates an object Project and returns it
+        #
 
 
         # FIXME  those names 'logfile.foo' and 'user.bar' are part of the message FORMAT. Use something less ugly
