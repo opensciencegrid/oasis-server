@@ -61,6 +61,9 @@ class BaseProbe(object):
 #    Base Class (and API) for distribution plugins
 # -----------------------------------------------------------------------
 
+# FIXME: ?? do we need a hierarchy of classes ??
+# for example, cvmfs21 -> cvmfs -> BaseDistribution
+
 class BaseDistribution(object):
 
     def __init__(self, project):
@@ -89,6 +92,25 @@ class BaseDistribution(object):
         To be implemented by the transfer plugin.
         '''
         raise NotImplementedError
+
+    def resign(self):
+        '''
+        when makes sense (maybe not always)
+        resign the repo. 
+        For example, in the case of CVMFS, resign the file .cvmfswhitelist
+        '''
+        raise NotImplementedError
+
+
+
+
+
+
+
+
+
+
+
 
 
 
