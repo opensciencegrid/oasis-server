@@ -1,0 +1,25 @@
+#!/bin/env python
+
+# ------------------------------------------------------------------- #
+# OASIS admin tool to resign the CVMFS .whitelist file
+# ------------------------------------------------------------------- #
+
+ 
+
+#   class Project(object):
+#      def __init__(self, projectsection, oasisconf):
+
+#   from oasispackage.interfaces import BaseDistribution
+#   class cvmfs21(BaseDistribution):
+#       def __init__(self, project):
+#           super(cvmfs21, self).__init__(project)
+
+
+from oasispackage.oasisAPI import Project
+
+oasisconf = '/etc/oasis/oasis.conf'
+
+
+if __name__ == '__main__':
+
+
