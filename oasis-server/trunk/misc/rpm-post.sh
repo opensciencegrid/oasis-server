@@ -15,6 +15,7 @@
 # creates directory /var/log/oasis/
 if [ ! -d /var/log/oasis ]; then
     mkdir /var/log/oasis
+    chmod go+w /var/log/oasis
 fi
 
 # FIXME !! temporary solution
