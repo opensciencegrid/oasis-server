@@ -12,9 +12,16 @@
 
 
 # FIXME !! temporary solution
+# creates directory /var/log/oasis/
+if [ ! -d /var/log/oasis ]; then
+    mkdir /var/log/oasis
+fi
+
+# FIXME !! temporary solution
 # enforce /var/log/oasis.log is writeable
 touch /var/log/oasis/oasis.log
 chmod go+w /var/log/oasis/oasis.log
+
 
 # FIXME !! temporary solution??
 # creates, if does not exist already, system account "oasis"
