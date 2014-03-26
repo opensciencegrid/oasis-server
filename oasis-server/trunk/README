@@ -25,7 +25,11 @@ Once installed, there are two components:
        passing the sanity checks -or probes- on the new user content,
        transferring the new content to final distribution tree,
        and triggering the file distribution.
-       Configuration for the daemon is in /etc/sysconfig/oasis.sysconfig
+       An example of sysconfig file is deployed as
+       /etc/oasis/oasisd.sysconfig-example
+       A copy of that example file should be placed in the final destination:
+       /etc/sysconfig/oasisd.sysconfig
+       
 
     -- configuration files:
        examples of configuration files are deployed underneath /etc/oasis/
