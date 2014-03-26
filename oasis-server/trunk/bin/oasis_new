@@ -42,6 +42,8 @@ class Action(object):
 
     def run(self, args):
         '''
+        runs all steps: payload, probes and publishing.
+
         args are the user payload and inputs options, as a python list.
         For example, when invoked by condor, it looks like this:
     
@@ -59,6 +61,9 @@ class Action(object):
 
 
     def runprobes(self):
+        '''
+        only run the probes
+        '''
 
         flag = FlagFile(self.projectname)
         
@@ -85,6 +90,9 @@ class Action(object):
         
 
     def publish(self):
+        '''
+        runs the publishing, which will force internally running the probes
+        '''
 
         flag = FlagFile(self.projectname)
         flag.create()
