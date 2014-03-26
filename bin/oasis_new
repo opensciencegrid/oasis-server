@@ -78,7 +78,7 @@ class Action(object):
         self.oasis.project.flagfile = flag
         
         rc = self.oasis.project.runprobes()
-        # FIXME
+        # NOTE:
         # to make this work I had to modify runprobes()
         # If user is root, calls the probes with sudo
         # If user is regular user (the one running this script), calls the probes normally
