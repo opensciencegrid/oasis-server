@@ -37,6 +37,8 @@ class Action(object):
         # set the path to config file oasis.conf
         self.conffile = '/etc/oasis/oasis.conf'
 
+        self.oasis = oasisCLI(self.conffile)
+        self.projectname = self.oasis.project.projectname
 
     def run(self, args):
         '''
@@ -46,10 +48,8 @@ class Action(object):
                 ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
         '''
     
-        oasis = oasisCLI(self.conffile)
-    
         # run
-        rc = oasis.run(args)
+        rc = self.oasis.run(args)
         # FIXME!!
         # maybe it is not a good idea to pass that type of args, 
         # because they have equals '=' and those stuffs.
@@ -60,11 +60,7 @@ class Action(object):
 
     def runprobes(self):
 
-        oasis = oasisCLI(self.conffile)
-        
-        projectname = oasis.project.projectname
-        
-        flag = FlagFile(projectname)
+        flag = FlagFile(self.projectname)
         
         # we force the creation of the flagfile in a random directory underneath /tmp/
         # just in case the daemon is also running.
@@ -73,7 +69,7 @@ class Action(object):
         import tempfile
         flag.basedir = tempfile.mkdtemp(dir='/tmp/')
         flag.create()
-        oasis.project.flagfile = flag
+        self.oasis.project.flagfile = flag
         
         rc = oasis.project.runprobes()
         # FIXME
@@ -90,11 +86,7 @@ class Action(object):
 
     def publish(self):
 
-        oasis = oasisCLI(conffile)
-        
-        projectname = oasis.project.projectname
-        
-        flag = FlagFile(projectname)
+        flag = FlagFile(self.projectname)
         flag.create()
         # this will create a flagfile in the regular place
         # then the daemon will see it and finish
