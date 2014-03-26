@@ -8,6 +8,7 @@
 # =========================================================================== #
 
 import getopt
+import logging
 import os
 import sys
 import time
@@ -81,7 +82,11 @@ class Action(object):
         # to make this work I had to modify runprobes()
         # If user is root, calls the probes with sudo
         # If user is regular user (the one running this script), calls the probes normally
-        
+       
+        # dump content of flagfile
+        log = logging.getLogger('logfile.%s' %self.projectname)
+        log.debug('Content of flag file was \n %s' %flag.read() ) 
+ 
         # now delete the flagfile and the random directory
         os.remove(flag.flagfile)
         os.rmdir(flag.basedir)
