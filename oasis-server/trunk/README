@@ -35,7 +35,7 @@ Once installed, there are two components:
     -- configuration files:
        examples of configuration files are deployed underneath /etc/oasis/
        They are called *.conf-example, so a copy without the suffix -example is needed.
-       The only one with a hardcoded path is the clients is /etc/oasis/oasis.conf
+       The only one whose path is hardcoded in the clients -for the time being- is /etc/oasis/oasis.conf
        The paths to the others config files are indeed variables in oasis.conf
 
 
