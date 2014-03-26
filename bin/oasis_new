@@ -27,29 +27,107 @@ or from another client, e.g. HTCondor.
 # should they be merged?
 #
 
-def main(args):
-    '''
-    args are the user payload and inputs options, as a python list.
-    For example, when invoked by condor, it looks like this:
 
-            ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
-    '''
+class Action(object):
+    # FIXME: search for a less ugly name
 
-    # FIXME !! figure out how to pass the path to oasis.conf as a variable instead of hardcoded
-    # set the path to config file oasis.conf
-    conffile = '/etc/oasis/oasis.conf'
-    oasis = oasisCLI(conffile)
+    def __init__(self):
 
-    # run
-    rc = oasis.run(args)
-    # FIXME!!
-    # maybe it is not a good idea to pass that type of args, 
-    # because they have equals '=' and those stuffs.
-    # perhaps the parsing should be done in the __main__ section
-    # and pass to the class a nice result
-    return rc
+        # FIXME !! figure out how to pass the path to oasis.conf as a variable instead of hardcoded
+        # set the path to config file oasis.conf
+        self.conffile = '/etc/oasis/oasis.conf'
 
+
+    def run(self, args):
+        '''
+        args are the user payload and inputs options, as a python list.
+        For example, when invoked by condor, it looks like this:
+    
+                ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
+        '''
+    
+        oasis = oasisCLI(self.conffile)
+    
+        # run
+        rc = oasis.run(args)
+        # FIXME!!
+        # maybe it is not a good idea to pass that type of args, 
+        # because they have equals '=' and those stuffs.
+        # perhaps the parsing should be done in the __main__ section
+        # and pass to the class a nice result
+        return rc
+
+
+    def runprobes(self):
+
+        oasis = oasisCLI(self.conffile)
+        
+        projectname = oasis.project.projectname
+        
+        flag = FlagFile(projectname)
+        
+        # we force the creation of the flagfile in a random directory underneath /tmp/
+        # just in case the daemon is also running.
+        # This flag file is hidden to the daemon, so it is not going to trigger
+        # running probes and publishing in parallel
+        import tempfile
+        flag.basedir = tempfile.mkdtemp(dir='/tmp/')
+        flag.create()
+        oasis.project.flagfile = flag
+        
+        rc = oasis.project.runprobes()
+        # FIXME
+        # to make this work I had to modify runprobes()
+        # If user is root, calls the probes with sudo
+        # If user is regular user (the one running this script), calls the probes normally
+        
+        # now delete the flagfile and the random directory
+        os.remove(flag.flagfile)
+        os.rmdir(flag.basedir)
+        
+        return rc
+        
+
+    def publish(self):
+
+        oasis = oasisCLI(conffile)
+        
+        projectname = oasis.project.projectname
+        
+        flag = FlagFile(projectname)
+        flag.create()
+        # this will create a flagfile in the regular place
+        # then the daemon will see it and finish
+        oasis._loop() # we wait until the daemon is done
+        
+        return rc
+
+
+# =============================================================================
+    
 
 if __name__ == '__main__':
-    rc = main(sys.argv[1:])
+
+    # parsing the input options
+    opts, args = getopt(sys.argv[1:],
+                        '',
+                        ['runprobes', 'publish'])
+                        # FIXME: add input options for log level (INFO, DEBUG...), for confffile, ...
+
+    mode = 'deploy' # default
+    for o, a in opts:
+        if o == '--runprobes':
+            mode = 'runprobes' 
+        if o == '--publish':
+            mode = 'publish' 
+
+    action = Action()
+
+    if mode == 'deploy':
+        rc = action.run(args)
+    if mode == 'runprobes':
+        rc = action.runprobes()
+    if mode == 'publish':
+        rc = action.publish()
+
     sys.exit(rc)
