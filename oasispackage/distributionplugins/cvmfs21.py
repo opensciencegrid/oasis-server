@@ -46,6 +46,28 @@ class cvmfs21(BaseDistribution):
         cmd = 'sudo -u oasis rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
         self.log.info('command = %s' %cmd)
 
+        # FIXME
+        # add option --stats to rsync command.
+        # When doing that, the output is like this
+        #   
+        #       Number of files: 2
+        #       Number of files transferred: 1
+        #       Total file size: 0 bytes
+        #       Total transferred file size: 0 bytes
+        #       Literal data: 0 bytes
+        #       Matched data: 0 bytes
+        #       File list size: 31
+        #       File list generation time: 0.001 seconds
+        #       File list transfer time: 0.000 seconds
+        #       Total bytes sent: 82
+        #       Total bytes received: 34
+        #       
+        #       sent 82 bytes  received 34 bytes  232.00 bytes/sec
+        #       total size is 0  speedup is 0.00
+        #       
+        # which includes the total size transferred !!
+        # that can be useful to collect statistics
+
         st, out = commands.getstatusoutput(cmd)
         if st:
             self.log.critical('transferring files failed.')
