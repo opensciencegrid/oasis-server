@@ -13,11 +13,13 @@ INSTALLATION
 To install using RPMs (i.e. installing as root) read INSTALL-ROOT.
 Once installed, there are two components:
 
+
     -- the client:
        the user client is placed in /usr/bin/oasis
        It can be called directly from the command line,
        or it is automatically called by the condor wrapper
        in case of jobs submitted via a gatekeeper.
+
 
     -- the daemon:
        The service  /etc/init.d/oasis needs to be started
