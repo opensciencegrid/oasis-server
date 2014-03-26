@@ -73,8 +73,9 @@ setup(
                #    main scripts   
                # =============================
                'bin/oasis',
+               'bin/oasis_new',  # temporary script. It will replace oasis
                'bin/oasisd',
-               'bin/runprobes', #temporary script, to be merge with oasis
+               #'bin/runprobes', #temporary script, to be merge with oasis
 
                # =============================
                #    admin tools 
