@@ -87,6 +87,9 @@ class cvmfs21(BaseDistribution):
 
         return 0 
 
+        #   #FIXME
+        #   # allow re-signing from remote host
+        #
         #   masterkey = '/etc/cvmfs/keys/%s.masterkey' %self.repo
         #   # FIXME
         #   # check if masterkey file exists, and raise an exception otherwise 
