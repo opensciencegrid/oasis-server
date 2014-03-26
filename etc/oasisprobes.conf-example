@@ -39,6 +39,23 @@
 #
 
 # =========================================================================== 
+#       LIST OF CURRENTLY AVAILABLE PROBES
+# =========================================================================== 
+
+# yes:
+#   it is just for testing purposes. Always returns 0 (OK)
+#
+# no:
+#   it is just for testing purposes. Always returns 1 (Failure)
+#
+# filesize:
+#   checks no file is larger than 1G
+#
+# quota:
+#   checks total space is smaller than the value of option --limit
+#
+
+# =========================================================================== 
 
 
 [yes]
