@@ -83,9 +83,12 @@ class Action(object):
         # If user is root, calls the probes with sudo
         # If user is regular user (the one running this script), calls the probes normally
        
-        # dump content of flagfile
+        # dump content of flagfile into logfile
         log = logging.getLogger('logfile.%s' %self.projectname)
         log.debug('Content of flag file was \n %s' %flag.read() ) 
+        # dump content of flagfile to console
+        console = logging.getLogger('user.%s' %self.projectname)
+        console.debug('Content of flag file was \n %s' %flag.read() ) 
  
         # now delete the flagfile and the random directory
         os.remove(flag.flagfile)
