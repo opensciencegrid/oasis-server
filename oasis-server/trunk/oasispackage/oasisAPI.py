@@ -1548,6 +1548,8 @@ class ProjectThread(threading.Thread):
                         self.project.flagfile.setfailed()
                         self.stopevent.set()
 
+                    # FIXME: measure the time consumed running probes and log it
+
                     # ------------------------------------
                     #   transfer files 
                     # ------------------------------------
@@ -1558,6 +1560,8 @@ class ProjectThread(threading.Thread):
                         self.log.critical('transferring files failed with rc=%s, aborting installation and stopping thread' %rc)
                         self.project.flagfile.setfailed()
                         self.stopevent.set()
+
+                    # FIXME: measure the time consumed transferring files and log it
 
                     # ------------------------------------
                     #   publish 
@@ -1570,6 +1574,8 @@ class ProjectThread(threading.Thread):
                         self.log.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
                         self.project.flagfile.setfailed()
                         self.stopevent.set()
+
+                    # FIXME: measure the time consumed publishing files and log it
 
  
             except Exception, e:
