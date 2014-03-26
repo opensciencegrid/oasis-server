@@ -229,8 +229,8 @@ class FlagFile(object):
 
         self.log.debug('Starting.')
         # FIXME !! put the writing part in a try-except block, in case something goes wrong
-        with open(self.flagfile, 'a') as flagfile:
-            print >> flagfile, str
+        flagfile = open(self.flagfile, 'a')
+        print >> flagfile, str
         flagfile.close()
         self.log.debug('Leaving.')
 
