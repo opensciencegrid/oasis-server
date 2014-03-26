@@ -116,19 +116,19 @@ class cvmfs21(BaseDistribution):
         #   # FIXME
         #   # check if masterkey file exists, and raise an exception otherwise 
         #   # for example, if this code is run at a Replica host
-
+        #
         #   whitelist = '/srv/cvmfs/%s/.cvmfswhitelist' %sef.repo
-
+        #
         #   self.log.info('Signing 7-day whitelist for repo %s  with master key...' %self.repo)
-
+        #
         #   now = datetime.datetime.utcnow()
         #   now_str = now.strftime('%Y%m%d%H%M%S')
         #   # this is equivalent to date -u "+%Y%m%d%H%M%S"
-
+        #
         #   nextweek = now + datetime.timedelta(days=7) 
         #   nextweek_str = nextweek.strftime('%Y%m%d%H%M%S')
         #   # this is equivalent to date -u --date='next week' "+%Y%m%d%H%M%S"
-
+        #
         #   # read the whitelist file
         #   # content of whitelist file is like this
         #   #
@@ -148,16 +148,16 @@ class cvmfs21(BaseDistribution):
 
 
         #   ------  VERSION IN BASH  -----------
-
-
+        #
+        #
         #           echo `date -u "+%Y%m%d%H%M%S"` > ${whitelist}.unsigned
         #           echo "E`date -u --date='next week' "+%Y%m%d%H%M%S"`" >> ${whitelist}.unsigned
-
+        #
         #           # copy the repo name and the fingerprint(s) from original
         #           awk '/^N/ {doprint=1}
         #            /^--/ {exit}
         #            doprint==1 {print}' ${whitelist} >> ${whitelist}.unsigned
-
+        #
         #           sha1=`cat ${whitelist}.unsigned | openssl sha1 | head -c40`
         #           echo "--" >> ${whitelist}.unsigned
         #           echo $sha1 >> ${whitelist}.unsigned
