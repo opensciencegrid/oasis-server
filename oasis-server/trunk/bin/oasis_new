@@ -76,7 +76,7 @@ class Action(object):
         flag.create()
         self.oasis.project.flagfile = flag
         
-        rc = oasis.project.runprobes()
+        rc = self.oasis.project.runprobes()
         # FIXME
         # to make this work I had to modify runprobes()
         # If user is root, calls the probes with sudo
@@ -98,7 +98,7 @@ class Action(object):
         flag.create()
         # this will create a flagfile in the regular place
         # then the daemon will see it and finish
-        oasis._loop() # we wait until the daemon is done
+        self.oasis._loop() # we wait until the daemon is done
         
         return rc
 
