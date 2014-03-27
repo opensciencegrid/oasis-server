@@ -167,5 +167,7 @@ class cvmfs21(BaseDistribution):
         #           rm -f ${whitelist}.unsigned ${whitelist}.signature ${whitelist}.sha1
 
 
+    def createrepository(self):
+        pass
 
 
