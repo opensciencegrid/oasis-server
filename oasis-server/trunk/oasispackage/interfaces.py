@@ -101,7 +101,11 @@ class BaseDistribution(object):
         '''
         raise NotImplementedError
 
-
+    def createrepository(self):
+        '''
+        when makes sense, creates a new repository.
+        '''
+        raise NotImplementedError
 
 
 
