@@ -102,6 +102,9 @@ class addproject(object):
         '''
         checks if that project already exists
         '''
+        # FIXME what is this for?
+        pass
+
 
     def adduser(self):
         '''
