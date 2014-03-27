@@ -141,22 +141,27 @@ class addproject(object):
 
     
 
-if __name__ == '__main__':
+def main(options):
 
-    #  parse the options
-    #
-    #  options may be
-    #        --user <username> MANDATORY
-    #        --project <projectname> MANDATORY
-    #        --disttool <tool for file distribution>  MANDATORY ?  example: cvmfs
-    #        --loglevel <log level> DEFAULT=DEBUG  
-    #        --conffile <path to config file oasisprojects.conf> OPTIONAL can be used to double check if user/project already setup
-    #        --force
+    # parse input options
+    opts, args = getopt.getopt(options, 
+                               '', 
+                               ['project=', 'user='])
 
-    
-    opts, args = getopt.getopt(sys.argv[1:], , [])
+    project = None
+    user = None
 
+    for o,a in opts:
+        if o == '--project':
+            project = a
+        if o == '--user':
+            user = a
+        
 
-    obj = addproject()
+    # run the processes
+    obj = addproject(project)
     obj.run()
 
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
