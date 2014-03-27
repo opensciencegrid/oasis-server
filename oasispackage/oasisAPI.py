@@ -775,16 +775,20 @@ class Project(object):
         #       call the probes with sudo to drop privileges
         # if the user is a regular user (this process is run from CLI by the user directly)
         #       call the probes normally 
+
         if os.getuid() == 0:
             cmd = 'sudo -u %s %s %s' %(username, probepath, options)
         else:
             cmd = '%s %s' %(probepath, options)
-
         self.log.info('command to run probe is "%s"' %cmd)
+
+        inittime = datetime.datetime.now()
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out = None
         (out, err) = p.communicate()
         rc = p.returncode
+        delta = datetime.datetime.now() - inittime
+
         self.log.info('output of probe %s: %s' %(probe, out))
 
         #self.flagfile.write('output of probe %s: %s\n' %(probe, out))
@@ -792,6 +796,7 @@ class Project(object):
         self.flagfile.write('       <a n="probe"><s>%s</s></a>' %probe)
         self.flagfile.write('       <a n="out"><s>%s</s></a>' %out)
         self.flagfile.write('       <a n="rc"><i>%d</i></a>' %rc)
+        self.flagfile.write('       <a n="time"><i>%d</i></a>' %(delta.days*24*3600 + delta.seconds))
         self.flagfile.write('   </probe>')
 
 
