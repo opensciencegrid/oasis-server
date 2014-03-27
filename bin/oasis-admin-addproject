@@ -79,10 +79,23 @@ class addproject(object):
         main method performing all checks, running commands, etc.
         '''
 
-        self._checkproject()
-        self._checkuser()
         self.adduser()
+        self._checkproject()
         self.createrepository()
+
+
+    def adduser(self):
+        '''
+        creates the UNIX ID
+        '''
+
+        uid = self._checkuser()
+        if not uid:
+            user = self.project.username
+            group = self.project.username  # maybe in the future is a generic group name like 'oasis'?
+   
+            cmd = '/usr/bin/adduser -m %s' %user
+            rc, out = commands.getstatusoutput(cmd)
 
     def _checkuser(self):
         '''
@@ -104,18 +117,6 @@ class addproject(object):
         '''
         # FIXME what is this for?
         pass
-
-
-    def adduser(self):
-        '''
-        creates the UNIX ID
-        '''
-
-        user = self.project.username
-        group = self.project.username  # maybe in the future is a generic group name like 'oasis'?
-   
-        cmd = '/usr/bin/adduser -m %s' %user
-        rc, out = commands.getstatusoutput(cmd)
 
 
     def createrepository(self):
