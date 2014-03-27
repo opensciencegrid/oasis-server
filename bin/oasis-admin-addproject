@@ -3,6 +3,7 @@
 import commands
 import getopt
 import logging
+import os
 import sys
 import time
 import pwd
@@ -88,6 +89,7 @@ class addproject(object):
         '''
 
         self.adduser()
+        self.createsrcdir()
         self._checkproject()
         self.createrepository()
 
@@ -114,9 +116,24 @@ class addproject(object):
         user = self.project.username
         try:
             pw = pwd.getpwnam(user)
-            return pw.pwd_uid 
+            return pw.pw_uid 
         except:
             return None
+
+
+    def createsrcdir(self):
+        '''
+        creates the source directory
+        '''
+
+        user = self.project.username
+        uid = pwd.getpwnam(user).pw_uid
+
+        srcdir = self.project.srcdir
+
+        if not os.path.isdir(srcdir):
+            os.makedirs(srcdir)
+            os.fchown(srcdir, uid , uid)
 
 
     def _checkproject(self)
