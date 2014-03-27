@@ -2,7 +2,7 @@
 
         # TO BE IMPLEMENTED #
 
-
+import commands
 import getopt
 import logging
 import sys
@@ -97,6 +97,13 @@ class addproject(object):
         '''
         creates the UNIX ID
         '''
+
+        user = self.project.username
+        group = self.project.username  # maybe in the future is a generic group name like 'oasis'?
+   
+        cmd = '/usr/bin/adduser -m %s' %user
+        rc, out = commands.getstatusoutput(cmd)
+
 
     def createrepository(self):
         '''
