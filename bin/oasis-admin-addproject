@@ -41,6 +41,19 @@ class addproject(object):
         '''    
 
         self._setuploggin()
+        # do still need to setup logging if I get a Project class?
+
+        # create an object Project(), 
+        # which includes an attribute self.distributionplugin
+
+        from oasispackage.oasisAPI import Project, ProjectFactory
+        
+        oasisconf = '/etc/oasis/oasis.conf'
+        
+        projectfactory = ProjectFactory(oasisconf, projectname=projectname)
+        project = projectfactory.getProject()
+
+
 
 
 
