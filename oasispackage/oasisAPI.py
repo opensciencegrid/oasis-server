@@ -328,15 +328,10 @@ class Project(object):
         # pass more reasonable inputs:
         # instead of <project section name> and oasisconf
         # maybe it should projectname and oasisconf
-        # in that case, we would need to do a reverse lookup again
-        # to find out the projectsection based on projectname
-        # it would also require to change oasisCLI and ProjectThreadManager
-        # where objects of class Project() are created
+        # or even projectname and projectsconf
         #
-        # IDEA: 
-        # write a class ProjectManager() or ProjectFactory() or something like that
-        # that accepts any input -project name, or username, or project section...-
-        # do whatever is needed, creates an object Project and returns it
+        # also, if oasisconf is only needed for one or two things, 
+        # just pass them as input to __init__() directly
         #
 
 
