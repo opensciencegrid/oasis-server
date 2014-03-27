@@ -36,28 +36,12 @@ class addproject(object):
     # QUESTION: ?? where the base class would be placed ?? underneath site-packages/ ??
 
 
-    def __init__(self, options):
+    def __init__(self):
         '''    
-        options are the input options from the command line, as result of argv[1:]
         '''    
-
-
-        self.options = options
 
         self._setuploggin()
-        self._parseoptions()
 
-
-    def _parseoptions(self):
-        '''    
-        options can be
-            --user <username> MANDATORY
-            --project <projectname> MANDATORY
-            --disttool <tool for file distribution>  MANDATORY ?  example: cvmfs
-            --loglevel <log level> DEFAULT=DEBUG  
-            --conffile <path to config file oasisprojects.conf> OPTIONAL can be used to double check if user/project already setup
-            --force
-        '''    
 
 
     def _setuploggin(self):
@@ -116,7 +100,17 @@ class addproject(object):
 
 if __name__ == '__main__':
 
-    obj = addproject(sys.argv[1:])
+    #  parse the options
+    #
+    #  options may be
+    #        --user <username> MANDATORY
+    #        --project <projectname> MANDATORY
+    #        --disttool <tool for file distribution>  MANDATORY ?  example: cvmfs
+    #        --loglevel <log level> DEFAULT=DEBUG  
+    #        --conffile <path to config file oasisprojects.conf> OPTIONAL can be used to double check if user/project already setup
+    #        --force
+
+    obj = addproject()
     obj.run()
 
 
