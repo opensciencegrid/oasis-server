@@ -121,3 +121,74 @@ if __name__ == '__main__':
 
     obj = addproject(sys.argv[1:])
     obj.run()
+
+
+# ============================================================================
+#       version in bash  
+# ============================================================================
+
+#       #!/bin/bash
+#       # Add a repository to the OSG cvmfs distribution.
+#       # Run this on the stratum 0 (oasis) first, then after the repository has
+#       #  started reading the signed .cvmfswhitelist from the stratum 0, run
+#       #  this also on the stratum 1 (oasis-replica).
+#       
+#       ME="`basename $0`"
+#       MYDIR="`dirname $0`"
+#       STRATUM0=oasis.opensciencegrid.org
+#       
+#       usage()
+#       {
+#           echo "Usage: $ME http_url_of_repo_server" >&2
+#           exit 1
+#       }
+#       
+#       if [ $# != 1 ]; then
+#           usage
+#       fi
+#       
+#       case "$1" in
+#           http://*)
+#       	;;
+#           *)
+#       	usage
+#       	;;
+#       esac
+#       
+#       TMPFILE="/tmp/addosgrepo$$"
+#       trap "rm -f ${TMPFILE}" 0
+#       if ! wget -qO$TMPFILE "$1/.cvmfswhitelist"; then
+#           echo "$ME: unable to wget $1/.cvmfswhitelist" >&2
+#           exit 1
+#       fi
+#       REPONAME="`cat -v $TMPFILE|sed -n 's/^N//p'`"
+#       
+#       set -e
+#       
+#       MASTERKEY=/etc/cvmfs/keys/$STRATUM0.masterkey
+#       if [ -f $MASTERKEY ]; then
+#           # on stratum 0
+#           case "$REPONAME" in
+#       	"") echo "$ME: no repository name found in $1/.cvmfswhitelist" >&2
+#       	    exit 1
+#       	    ;;
+#       	*.opensciencegrid.org)
+#       	    ;;
+#       	*)  echo "$ME: repository $REPONAME not in opensciencegrid.org" >&2
+#       	    exit 1
+#       	    ;;
+#           esac
+#           CATDIR="/srv/cvmfs/$REPONAME/pub/catalogs"
+#           su cvmfs -c "mkdir -p $CATDIR && cp $TMPFILE $CATDIR/.cvmfswhitelist"
+#           $MYDIR/resign_osg_whitelist "$REPONAME"
+#       else
+#           # on stratum 1
+#           cvmfs_server add-replica -o root $1 /etc/cvmfs/keys/opensciencegrid.org.pub
+#           rm -f /etc/httpd/conf.d/cvmfs.$REPONAME.conf
+#           # make this also look like a master because other stratum 1s
+#           #   may read from it
+#           touch /srv/cvmfs/$REPONAME/.cvmfs_master_replica
+#           # pull initial snapshot
+#           cvmfs_server snapshot $REPONAME
+#       fi
+#       
