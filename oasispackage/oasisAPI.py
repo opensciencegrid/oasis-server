@@ -1079,7 +1079,10 @@ class oasisCLI(object):
             5. if no timeout, delete the flagfile a exit
         '''
 
-        self.log.debug('Start with args: %s' %args)
+        #
+        # !!  FIXME !!
+        # check if passing args as a python list (result of sys.argv[]) is the best way to do it.
+        #
 
         rc = self._checknoflagfile()
         # For the time being, we abort right away is there is a flagfile.
