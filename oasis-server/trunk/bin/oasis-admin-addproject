@@ -95,17 +95,17 @@ class addproject(object):
         creates the UNIX ID
         '''
 
-    def createrepo(self):
+    def createrepository(self):
         '''
         uses the distribution plugin included in the Project() object,
-        and calls the method createrepo() 
+        and calls the method createrepository() 
         '''
 
         # FIXME
         # at this step, if it is the first repo being created, 
         # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
     
-        self.project.distributionplugin.createrepo()
+        self.project.distributionplugin.createrepository()
 
     
 
