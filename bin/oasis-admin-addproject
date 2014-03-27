@@ -90,7 +90,6 @@ class addproject(object):
 
         self.adduser()
         self.createsrcdir()
-        self._checkproject()
         self.createrepository()
 
 
@@ -134,14 +133,6 @@ class addproject(object):
         if not os.path.isdir(srcdir):
             os.makedirs(srcdir)
             os.fchown(srcdir, uid , uid)
-
-
-    def _checkproject(self)
-        '''
-        checks if that project already exists
-        '''
-        # FIXME what is this for?
-        pass
 
 
     def createrepository(self):
