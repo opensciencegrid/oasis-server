@@ -1287,6 +1287,8 @@ class oasisd(object):
 
         self.probes_rc = 0
 
+        # FIXME
+        # maybe parsing the input options should have be done already
         self._parseopts()
 
         self._setuplogging()
