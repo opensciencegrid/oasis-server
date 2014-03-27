@@ -45,11 +45,11 @@ class addproject(object):
     # QUESTION: ?? where the base class would be placed ?? underneath site-packages/ ??
 
 
-    def __init__(self):
+    def __init__(self, projectname):
         '''    
         '''    
 
-        self._setuploggin()
+        self._setuplogging()
         # do we still need to setup logging if I get a Project class?
 
         # create an object Project(), 
@@ -63,7 +63,7 @@ class addproject(object):
         self.project = projectfactory.getProject()
 
 
-    def _setuploggin(self):
+    def _setuplogging(self):
         
         self.log = logging.getLogger('admin-addproject')
  
