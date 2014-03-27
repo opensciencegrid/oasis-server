@@ -671,7 +671,9 @@ class Project(object):
         #       -- class Probe()
         #       -- class ProbesManager()
         #
-        
+       
+         
+        inittime = datetime.datetime.now()
 
         self.flagfile.write('<probes>')
        
@@ -700,7 +702,10 @@ class Project(object):
             self.flagfile.write('</probes>')
             return rc
 
+        delta = datetime.datetime.now() - inittime
+
         self.log.info('all probes from project %s probes config file passed OK' %self.projectsection)
+        self.log.debug('time to run probes: %s seconds' %(delta.days*24*3600 + delta.seconds))
 
         # if everything went OK...
         self.flagfile.write('</probes>')
