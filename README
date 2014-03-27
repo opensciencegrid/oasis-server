@@ -18,6 +18,11 @@ Once installed, there are two components:
        It can be called directly from the command line,
        or it is automatically called by the condor wrapper
        in case of jobs submitted via a gatekeeper.
+       If called from the command line, 
+       the path to the installation job and arguments are passed. 
+       Users do not run the installation jobs by themselves. 
+
+            $ /usr/bin/oasis <path_to_job> <job_args>
 
 
     -- the daemon:
