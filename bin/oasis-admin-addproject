@@ -146,17 +146,12 @@ def main(options):
     # parse input options
     opts, args = getopt.getopt(options, 
                                '', 
-                               ['project=', 'user='])
+                               ['project='])
 
     project = None
-    user = None
-
     for o,a in opts:
         if o == '--project':
             project = a
-        if o == '--user':
-            user = a
-        
 
     # run the processes
     obj = addproject(project)
