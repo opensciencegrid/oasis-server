@@ -1,7 +1,5 @@
 #!/bin/env python
 
-        # TO BE IMPLEMENTED #
-
 import commands
 import getopt
 import logging
@@ -21,9 +19,14 @@ Steps:
 
     -- create a CVMFS repo
 
-    -- if possible, creates a template for oasisprojects.conf
+    -- if possible, creates a template for oasisprojects.conf  ????
 
 Everything being done is logged to  /var/log/oasis/oasis.log
+
+The username and the name of the repo 
+are read from the oasisprojects.conf configuration file
+So it must be written before calling this tool
+(maybe unless I pass the arguments from command line)
 """
 
 
