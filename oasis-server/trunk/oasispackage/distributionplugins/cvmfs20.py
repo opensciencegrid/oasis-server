@@ -56,4 +56,6 @@ class cvmfs20(BaseDistribution):
     def resign(self):
         pass
         
+    def createrepository(self):
+        pass
         
