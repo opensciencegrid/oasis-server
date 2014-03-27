@@ -801,9 +801,13 @@ class Project(object):
         """
         self.log.debug('Starting')
 
+        inittime = datetime.datetime.now()
         rc = self.distributionplugin.transfer() 
+        delta = inittime - datetime.datetime.now()
+
         if rc == 0:
             self.log.info('transferring files done OK')
+            self.log.debug('time to transfer files: %s seconds' %(delta.days*24*3600 + delta.seconds))
         else:
             self.log.critical('transferring files failed')
 
@@ -816,9 +820,13 @@ class Project(object):
         """
         self.log.debug('Starting')
 
+        inittime = datetime.datetime.now()
         rc = self.distributionplugin.publish() 
+        delta = inittime - datetime.datetime.now()
+
         if rc == 0:
             self.log.info('publishing done OK')
+            self.log.debug('time to publish: %s seconds' %(delta.days*24*3600 + delta.seconds))
         else:
             self.log.critical('publishing failed')
 
