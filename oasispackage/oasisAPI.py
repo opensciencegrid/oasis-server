@@ -1289,6 +1289,8 @@ class oasisd(object):
 
         # FIXME
         # maybe parsing the input options should have be done already
+        # in that case, the client /usr/bin/oasisd
+        # would call a factory class, instead of directly class oasisd() 
         self._parseopts()
 
         self._setuplogging()
