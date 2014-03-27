@@ -41,7 +41,7 @@ class addproject(object):
         '''    
 
         self._setuploggin()
-        # do still need to setup logging if I get a Project class?
+        # do we still need to setup logging if I get a Project class?
 
         # create an object Project(), 
         # which includes an attribute self.distributionplugin
@@ -51,14 +51,10 @@ class addproject(object):
         oasisconf = '/etc/oasis/oasis.conf'
         
         projectfactory = ProjectFactory(oasisconf, projectname=projectname)
-        project = projectfactory.getProject()
-
-
-
+        self.project = projectfactory.getProject()
 
 
     def _setuploggin(self):
-
         
         self.log = logging.getLogger('admin-addproject')
  
@@ -101,13 +97,15 @@ class addproject(object):
 
     def createrepo(self):
         '''
-        creates a directory in the destination space. 
-        For example, a new repo in CVMFS
+        uses the distribution plugin included in the Project() object,
+        and calls the method createrepo() 
         '''
 
         # FIXME
         # at this step, if it is the first repo being created, 
         # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
+    
+        self.project.distributionplugin.createrepo()
 
     
 
