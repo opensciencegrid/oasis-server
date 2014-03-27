@@ -27,7 +27,12 @@ The username and the name of the repo
 are read from the oasisprojects.conf configuration file
 So it must be written before calling this tool
 (maybe unless I pass the arguments from command line)
+
 """
+
+# FIXME write an usage() function
+
+
 
 
 class addproject(object):
@@ -147,6 +152,10 @@ if __name__ == '__main__':
     #        --loglevel <log level> DEFAULT=DEBUG  
     #        --conffile <path to config file oasisprojects.conf> OPTIONAL can be used to double check if user/project already setup
     #        --force
+
+    
+    opts, args = getopt.getopt(sys.argv[1:], , [])
+
 
     obj = addproject()
     obj.run()
