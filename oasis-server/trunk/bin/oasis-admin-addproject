@@ -7,6 +7,7 @@ import getopt
 import logging
 import sys
 import time
+import pwd
 
 """
 OASIS admin tool to add a new project to the server
@@ -87,6 +88,15 @@ class addproject(object):
         '''
         checks if that username already exists
         '''
+        # FIXME is this really needed?
+
+        user = self.project.username
+        try:
+            pw = pwd.getpwnam(user)
+            return pw.pwd_uid 
+        except:
+            return None
+
 
     def _checkproject(self)
         '''
