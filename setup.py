@@ -80,7 +80,7 @@ setup(
                # =============================
                #    admin tools 
                # =============================
-               'bin/osg-oasis-update',
+               #'bin/osg-oasis-update',
                #'bin/oasis-admin-addproject',
                #'bin/oasis-admin-delproject',
                #'bin/oasis-admin-list',
