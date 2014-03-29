@@ -25,7 +25,7 @@
 # project = the name of the project, typically the same than the VO.
 #        MANDATORY
 #          
-# PROJECT_SRC_DIRECTORY = path to the project scratch area. 
+# srcdir = path to the project scratch area. 
 #        It is the place where the user payload will put new content.
 #        Typically it will be the same than 
 #
@@ -33,7 +33,7 @@
 #
 #        MANDATORY
 #
-# PROJECT_DEST_DIRECTORY = path to the final place for the files to be
+# destdir = path to the final place for the files to be
 #        distributed. E.g.  /cvmfs/<vo>.opensciencegrid.org/
 #        MANDATORY
 #
@@ -68,8 +68,8 @@
 [DEFAULT]
 
 OSG_APP = /tmp/
-PROJECT_SRC_DIRECTORY = ${OSG_APP}/${VO}
-PROJECT_DEST_DIRECTORY = /cvmfs/${VO}.opensciencegrid.org 
+srcdir = ${OSG_APP}/${VO}
+destdir = /cvmfs/${VO}.opensciencegrid.org 
 distributiontool = cvmfs21
 time.sleep = 100
 time.timeout = 600
@@ -87,8 +87,8 @@ projectprobes = atlas.conf
 VO = MIS 
 project = MIS 
 user = ouser.mis
-PROJECT_SRC_DIRECTORY = ${OSG_APP}/${VO}
-PROJECT_DEST_DIRECTORY = /cvmfs/${VO}.opensciencegrid.org 
+srcdir = ${OSG_APP}/${VO}
+destdir = /cvmfs/${VO}.opensciencegrid.org 
 projectprobes = mis.conf
 
 
