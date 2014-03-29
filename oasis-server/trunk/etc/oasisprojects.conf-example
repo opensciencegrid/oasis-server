@@ -37,6 +37,10 @@
 #        distributed. E.g.  /cvmfs/<vo>.opensciencegrid.org/
 #        MANDATORY
 #
+# destdiruser = the owner of the destination tree filesystem.
+#       Typically, the owner of the CVMFS repository.
+#        MANDATORY
+#
 # projectprobes = name of the configuration files for probes 
 #        underneath the directory pointed by varible 'directoryconf'
 #        in oasis.conf
@@ -73,6 +77,7 @@ destdir = /cvmfs/${VO}.opensciencegrid.org
 distributiontool = cvmfs21
 time.sleep = 100
 time.timeout = 600
+destdiruser = oasis
 
 enabled = True
 
