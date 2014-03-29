@@ -30,7 +30,7 @@ class cvmfs21(BaseDistribution):
 
         ## cmd = 'cvmfs_server transaction %s' %self.repo
         # example:   cvmfs_server transaction atlas.opensciencegrid.org
-        cmd = 'sudo -u oasis cvmfs_server transaction %s' %self.repo
+        cmd = 'sudo -u %s cvmfs_server transaction %s' %(self.project.destdiruser, self.repo)
         self.log.info('command = %s' %cmd)
 
 
@@ -43,7 +43,7 @@ class cvmfs21(BaseDistribution):
 
         ## cmd = 'rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
         # example:   rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
-        cmd = 'sudo -u oasis rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
+        cmd = 'sudo -u %s rsync -a -l --delete %s/ %s' %(self.project.destdiruser, self.project.srcdir, self.project.destdir)
         self.log.info('command = %s' %cmd)
 
         # FIXME
@@ -92,7 +92,7 @@ class cvmfs21(BaseDistribution):
 
         ## cmd = 'cvmfs_server publish %s' %self.repo 
         # example:   cvmfs_server publish atlas.opensciencegrid.org
-        cmd = 'sudo -u oasis cvmfs_server publish %s' %self.repo 
+        cmd = 'sudo -u %s cvmfs_server publish %s' %(self.project.destdiruser, self.repo)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
