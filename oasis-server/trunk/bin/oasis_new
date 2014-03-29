@@ -34,6 +34,7 @@ or from another client, e.g. HTCondor.
 
 def version():
     print "OASIS (OSG Application Software Installation Service) version %s (%s)" %(__version__, __versionname__)
+    return 0
 
 
 
@@ -148,6 +149,6 @@ if __name__ == '__main__':
     if mode == 'publish':
         rc = action.publish()
     if mode == 'version':
-        version()
+        rc = version()
 
     sys.exit(rc)
