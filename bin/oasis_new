@@ -7,6 +7,9 @@
 #                                                                             #
 # =========================================================================== #
 
+__version__ = "2.0.0"
+__versionname__ = "Dakhla"
+
 import getopt
 import logging
 import os
@@ -27,6 +30,11 @@ or from another client, e.g. HTCondor.
 # this script is very similar to bin/oasisd
 # should they be merged?
 #
+
+
+def version():
+    print "OASIS (OSG Application Software Installation Service) version %s (%s)" %(__version__, __versionname__)
+
 
 
 class Action(object):
@@ -119,7 +127,7 @@ if __name__ == '__main__':
     # parsing the input options
     opts, args = getopt.getopt(sys.argv[1:],
                                '',
-                               ['runprobes', 'publish'])
+                               ['version', 'runprobes', 'publish'])
                                # FIXME: add input options for log level (INFO, DEBUG...), for confffile, ...
 
     mode = 'deploy' # default
@@ -128,6 +136,8 @@ if __name__ == '__main__':
             mode = 'runprobes' 
         if o == '--publish':
             mode = 'publish' 
+        if o == '--version':
+            mode = 'version' 
 
     action = Action()
 
@@ -137,5 +147,7 @@ if __name__ == '__main__':
         rc = action.runprobes()
     if mode == 'publish':
         rc = action.publish()
+    if mode == 'version':
+        version()
 
     sys.exit(rc)
