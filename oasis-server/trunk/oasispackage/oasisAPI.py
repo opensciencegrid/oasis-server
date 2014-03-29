@@ -474,7 +474,7 @@ class Project(object):
         '''
 
         self.log.debug('Starting.')
-        src = self.projectsconf.get(self.projectsection, "PROJECT_SRC_DIRECTORY")
+        src = self.projectsconf.get(self.projectsection, "srcdir")
         src = string.Template(src).substitute(OSG_APP=self.osg_app, VO=self.vo, project=self.projectname)
         # normalize, just in case
         src = os.path.normpath(src)
@@ -492,7 +492,7 @@ class Project(object):
         '''
 
         self.log.debug('Starting.')
-        dest = self.projectsconf.get(self.projectsection, "PROJECT_DEST_DIRECTORY")
+        dest = self.projectsconf.get(self.projectsection, "destdir")
         dest = string.Template(dest).substitute(VO=self.vo, project=self.projectname)
         # normalize, just in case
         dest = os.path.normpath(dest)
