@@ -124,134 +124,92 @@ class cvmfs21(BaseDistribution):
 
         # FIXME: TEST THE FOLLOWING CODE 
 
-        #       #FIXME
-        #       # allow re-signing from remote host
-        #       
-        #       masterkey = '/etc/cvmfs/keys/%s.masterkey' %self.repo
-        #       # FIXME
-        #       # check if masterkey file exists, and raise an exception otherwise 
-        #       # for example, if this code is run at a Replica host
-        #       
-        #       whitelist = '/srv/cvmfs/%s/.cvmfswhitelist' %sef.repo
-        #       
-        #       self.log.info('Signing 7-day whitelist for repo %s  with master key...' %self.repo)
-        #       
-        #       now = datetime.datetime.utcnow()
-        #       now_str = now.strftime('%Y%m%d%H%M%S')
-        #       # this is equivalent to date -u "+%Y%m%d%H%M%S"
-        #       
-        #       nextweek = now + datetime.timedelta(days=7) 
-        #       nextweek_str = nextweek.strftime('%Y%m%d%H%M%S')
-        #       # this is equivalent to date -u --date='next week' "+%Y%m%d%H%M%S"
-        #       
-        #       # read the whitelist file
-        #       # content of whitelist file is like this
-        #       #
-        #       #   ['20140325141252\n', 
-        #       #    'E20140401141252\n', 
-        #       #    'Nmis.opensciencegrid.org\n', 
-        #       #    '4E:6C:E9:0D:92:83:F0:D5:22:82:02:CD:C5:DA:0C:E3:C1:86:74:FB\n', 
-        #       #    '--\n', 
-        #       #    '(stdin)= e034cf1b9f11801ffcefdbf64d04c\n', 
-        #       #    '\xad\xb0\xc6g\x96....4\xc7\xdb\x\x8b@\xb5\x97Z\xd3?\x0baS\n', 
-        #       #    '\x83\xd4|\x98b\xf7~\xe3\xe1E.....4r\xe6=^\xfc\xc2b7\xf1\x06']
-        #       #
-        #       f = open(whitelist)
-        #       lines = f.readlines()
-        #       content_repo = lines[2][:-1]
-        #       content_fingerprint = lines[3][:-1]
-        #       
-        #       # create a temporary unsigned file
-        #       import tempfile
-        #       tmpdir = tempfile.mkdtemp(dir='/tmp/')
-        #       path_new_whitelist = os.path.join(tmpdir, 'whitelist') 
-        #       f_new_whitelist = open(path_new_whitelist, 'w')
-        #       print >> f_new_whitelist, now_str
-        #       print >> f_new_whitelist, 'E%s' %nextweek_str
-        #       print >> f_new_whitelist, 'N%s' %content_repo
-        #       print >> f_new_whitelist, content_fingerprint
-        #       f_new_whitelist.close()
-        #       
-        #       sha1 = commands.getoutput('cat %s | openssl sha1 | head -c40' % path_new_whitelist)
-        #       f_new_whitelist = open(tmppath, 'a')
-        #       print >> f_new_whitelist, '--'
-        #       print >> f_new_whitelist, sha1
-        #       f_new_whitelist.close()
-        #       
-        #       path_sha1 = os.path.join(tmpdir, 'sha1')
-        #       f_sha1 = open(path_sha1, 'w')
-        #       print >> f_sha1, sha1, # the last comma is to avoid the trailing newline
-        #       f_sha1.close()
-        #       
-        #       path_signature = os.path.join(tmpdir, 'signature')
-        #       commands.getoutput('openssl rsautl -inkey %s -sign -in %s -out %s' %(masterkey, path_sha1, path_signature) )
-        #       
-        #       # add the signature to file_unsigned
-        #       f_new_whitelist = open(path_new_whitelist, 'a')
-        #       f_signature = open(path_signature)
-        #       lines = f_signature.readlines()
-        #       for line in lines:
-        #           line = line[:-1]
-        #           print >> f_new_whitelist, line
-        #       
-        #       f_new_whitelist.close()
-        #       
-        #       # replace old .cmvfswhitelist by new one (file_unsigned)
-        #       shutil.copyfile(path_new_whitelist, whitelist)
-        #       
-        #       # delete everything in the temporary directory
-        #       shutil.rmtree(tmpdir)
+
+        #FIXME: allow re-signing from remote host
+        
+        masterkey = '/etc/cvmfs/keys/%s.masterkey' %self.repo
+        # FIXME
+        # check if masterkey file exists, and raise an exception otherwise 
+        # for example, if this code is run at a Replica host
+        
+        whitelist = '/srv/cvmfs/%s/.cvmfswhitelist' %sef.repo
+        
+        self.log.info('Signing 7-day whitelist for repo %s  with master key...' %self.repo)
+        
+        now = datetime.datetime.utcnow()
+        now_str = now.strftime('%Y%m%d%H%M%S')
+        # this is equivalent to date -u "+%Y%m%d%H%M%S"
+        
+        nextweek = now + datetime.timedelta(days=7) 
+        nextweek_str = nextweek.strftime('%Y%m%d%H%M%S')
+        # this is equivalent to date -u --date='next week' "+%Y%m%d%H%M%S"
+        
+        # read the whitelist file
+        # content of whitelist file is like this
+        #
+        #   ['20140325141252\n', 
+        #    'E20140401141252\n', 
+        #    'Nmis.opensciencegrid.org\n', 
+        #    '4E:6C:E9:0D:92:83:F0:D5:22:82:02:CD:C5:DA:0C:E3:C1:86:74:FB\n', 
+        #    '--\n', 
+        #    '(stdin)= e034cf1b9f11801ffcefdbf64d04c\n', 
+        #    '\xad\xb0\xc6g\x96....4\xc7\xdb\x\x8b@\xb5\x97Z\xd3?\x0baS\n', 
+        #    '\x83\xd4|\x98b\xf7~\xe3\xe1E.....4r\xe6=^\xfc\xc2b7\xf1\x06']
+        #
+        f = open(whitelist)
+        lines = f.readlines()
+        content_repo = lines[2][:-1]
+        content_fingerprint = lines[3][:-1]
+        
+        # create a temporary unsigned file
+        import tempfile
+        tmpdir = tempfile.mkdtemp(dir='/tmp/')
+        path_new_whitelist = os.path.join(tmpdir, 'whitelist') 
+        f_new_whitelist = open(path_new_whitelist, 'w')
+        print >> f_new_whitelist, now_str
+        print >> f_new_whitelist, 'E%s' %nextweek_str
+        print >> f_new_whitelist, 'N%s' %content_repo
+        print >> f_new_whitelist, content_fingerprint
+        f_new_whitelist.close()
+        
+        sha1 = commands.getoutput('cat %s | openssl sha1 | head -c40' % path_new_whitelist)
+        f_new_whitelist = open(tmppath, 'a')
+        print >> f_new_whitelist, '--'
+        print >> f_new_whitelist, sha1
+        f_new_whitelist.close()
+        
+        path_sha1 = os.path.join(tmpdir, 'sha1')
+        f_sha1 = open(path_sha1, 'w')
+        print >> f_sha1, sha1, # the last comma is to avoid the trailing newline
+        f_sha1.close()
+        
+        path_signature = os.path.join(tmpdir, 'signature')
+        commands.getoutput('openssl rsautl -inkey %s -sign -in %s -out %s' %(masterkey, path_sha1, path_signature) )
+        
+        # add the signature to file_unsigned
+        f_new_whitelist = open(path_new_whitelist, 'a')
+        f_signature = open(path_signature)
+        lines = f_signature.readlines()
+        for line in lines:
+            line = line[:-1]
+            print >> f_new_whitelist, line
+        
+        f_new_whitelist.close()
+        
+        # replace old .cmvfswhitelist by new one (file_unsigned)
+        shutil.copyfile(path_new_whitelist, whitelist)
+        
+        # delete everything in the temporary directory
+        shutil.rmtree(tmpdir)
 
 
 
 
     def createrepository(self):
-        pass
 
-        #   ------  VERSION IN BASH  -----------
-        #
-        #       ME="`basename $0`"
-        #       MYDIR="`dirname $0`"
-        #       STRATUM0=oasis.opensciencegrid.org
-        #
-        #       TMPFILE="/tmp/addosgrepo$$"
-        #       trap "rm -f ${TMPFILE}" 0
-        #       if ! wget -qO$TMPFILE "$1/.cvmfswhitelist"; then
-        #           echo "$ME: unable to wget $1/.cvmfswhitelist" >&2
-        #           exit 1
-        #       fi
-        #       REPONAME="`cat -v $TMPFILE|sed -n 's/^N//p'`"
-        #       
-        #       set -e
-        #       
-        #       MASTERKEY=/etc/cvmfs/keys/$STRATUM0.masterkey
-        #       if [ -f $MASTERKEY ]; then
-        #           # on stratum 0
-        #           case "$REPONAME" in
-        #           "") echo "$ME: no repository name found in $1/.cvmfswhitelist" >&2
-        #               exit 1
-        #               ;;
-        #           *.opensciencegrid.org)
-        #               ;;
-        #           *)  echo "$ME: repository $REPONAME not in opensciencegrid.org" >&2
-        #               exit 1
-        #               ;;
-        #           esac
-        #           CATDIR="/srv/cvmfs/$REPONAME/pub/catalogs"
-        #           su cvmfs -c "mkdir -p $CATDIR && cp $TMPFILE $CATDIR/.cvmfswhitelist"
-        #           $MYDIR/resign_osg_whitelist "$REPONAME"
-        #       else
-        #           # on stratum 1
-        #           cvmfs_server add-replica -o root $1 /etc/cvmfs/keys/opensciencegrid.org.pub
-        #           rm -f /etc/httpd/conf.d/cvmfs.$REPONAME.conf
-        #           # make this also look like a master because other stratum 1s
-        #           #   may read from it
-        #           touch /srv/cvmfs/$REPONAME/.cvmfs_master_replica
-        #           # pull initial snapshot
-        #           cvmfs_server snapshot $REPONAME
-        #       fi
-        #       
-        
-        
-        
-        
+        return 0 
+
+        # FIXME: TEST THE FOLLOWING CODE 
+
+        commands.getoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
+   
