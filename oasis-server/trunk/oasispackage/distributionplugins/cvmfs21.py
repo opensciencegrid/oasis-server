@@ -210,6 +210,9 @@ class cvmfs21(BaseDistribution):
 
         #   ------  VERSION IN BASH  -----------
         #
+        #       ME="`basename $0`"
+        #       MYDIR="`dirname $0`"
+        #       STRATUM0=oasis.opensciencegrid.org
         #
         #       TMPFILE="/tmp/addosgrepo$$"
         #       trap "rm -f ${TMPFILE}" 0
