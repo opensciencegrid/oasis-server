@@ -202,9 +202,6 @@ class cvmfs21(BaseDistribution):
 
 
 
-
-
-
     def createrepository(self):
         pass
 
