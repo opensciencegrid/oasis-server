@@ -357,7 +357,7 @@ class Project(object):
             self.distributiontool = self.projectsconf.get(self.projectsection, 'distributiontool')
             self.srcdir = self._getsrcdir()
             self.destdir = self._getdestdir()
-            self.destdiruser = self.projectsconf.get(self.projectsconf, 'destdiruser') 
+            self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
             self.distributionplugin = self._getdistributionplugin()
             self.oasisprobesconf = self._getprobesconfig()
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
