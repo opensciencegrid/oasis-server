@@ -7,6 +7,20 @@ import logging
 import os
 import time
 
+
+# ----------------------------------------------------------------------------
+#
+# FIXME !!
+#
+# allow the cvmfs server to be a remote host:
+#
+#       -- the cmfs_server transaction and publish command with ssh
+#
+#       -- the rsync command with either remote ssh access or rsync access
+#
+# ----------------------------------------------------------------------------
+
+
 from oasispackage.interfaces import BaseDistribution
 
 class cvmfs21(BaseDistribution):
