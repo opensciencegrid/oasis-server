@@ -57,12 +57,14 @@ class cvmfs21(BaseDistribution):
 
         ## cmd = 'rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
         # example:   rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
-        cmd = 'sudo -u %s rsync -a -l --delete %s/ %s' %(self.project.destdiruser, self.project.srcdir, self.project.destdir)
+        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.destdiruser, self.project.srcdir, self.project.destdir)
         self.log.info('command = %s' %cmd)
 
         # FIXME
-        # add option --stats to rsync command.
-        # When doing that, the output is like this
+        #  perhaps parsing the output of rsync --stats instead of 
+        #  logging the entire output???
+        #   
+        #       # rsync --stats ...
         #   
         #       Number of files: 2
         #       Number of files transferred: 1
@@ -79,8 +81,6 @@ class cvmfs21(BaseDistribution):
         #       sent 82 bytes  received 34 bytes  232.00 bytes/sec
         #       total size is 0  speedup is 0.00
         #       
-        # which includes the total size transferred !!
-        # that can be useful to collect statistics
 
         st, out = commands.getstatusoutput(cmd)
         if st:
