@@ -34,6 +34,7 @@ So it must be written before calling this tool
 # FIXME write an usage() function
 
 
+# FIXME should this type of tools executable only by root??
 
 
 class addproject(object):
