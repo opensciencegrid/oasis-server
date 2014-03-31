@@ -122,6 +122,8 @@ class cvmfs21(BaseDistribution):
         '''
         return 0 
 
+        # FIXME: TEST THE FOLLOWING CODE 
+
         #       #FIXME
         #       # allow re-signing from remote host
         #       
@@ -158,47 +160,48 @@ class cvmfs21(BaseDistribution):
         #       lines = f.readlines()
         #       content_repo = lines[2][:-1]
         #       content_fingerprint = lines[3][:-1]
-        #
+        #       
         #       # create a temporary unsigned file
         #       import tempfile
         #       tmpdir = tempfile.mkdtemp(dir='/tmp/')
-        #       tmppath = os.path.join(tmpdir, 'unsigned') 
-        #       file_unsigned = open(tmppath, 'w')
-        #       print >> unsigned, now_str
-        #       print >> unsigned, 'E%s' %nextweek_str
-        #       print >> unsigned, 'N%s' %content_repo
-        #       print >> unsigned, content_fingerprint
-        #       file_unsigned.close()
+        #       path_new_whitelist = os.path.join(tmpdir, 'whitelist') 
+        #       f_new_whitelist = open(path_new_whitelist, 'w')
+        #       print >> f_new_whitelist, now_str
+        #       print >> f_new_whitelist, 'E%s' %nextweek_str
+        #       print >> f_new_whitelist, 'N%s' %content_repo
+        #       print >> f_new_whitelist, content_fingerprint
+        #       f_new_whitelist.close()
         #       
-        #       sha1 = commands.getoutput('cat %s | openssl sha1 | head -c40' % tmppath)
-        #       file_unsigned = open(tmppath, 'a')
-        #       print >> unsigned, '--'
-        #       print >> unsigned, sha1
-        #       file_unsigned.close()
-        #
+        #       sha1 = commands.getoutput('cat %s | openssl sha1 | head -c40' % path_new_whitelist)
+        #       f_new_whitelist = open(tmppath, 'a')
+        #       print >> f_new_whitelist, '--'
+        #       print >> f_new_whitelist, sha1
+        #       f_new_whitelist.close()
+        #       
         #       path_sha1 = os.path.join(tmpdir, 'sha1')
-        #       file_sha1 = open(path_sha1, 'w')
-        #       print >> file_sha1, sha1, # the last comma is to avoid the trailing newline
-        #       file_sha1.close()
+        #       f_sha1 = open(path_sha1, 'w')
+        #       print >> f_sha1, sha1, # the last comma is to avoid the trailing newline
+        #       f_sha1.close()
         #       
         #       path_signature = os.path.join(tmpdir, 'signature')
         #       commands.getoutput('openssl rsautl -inkey %s -sign -in %s -out %s' %(masterkey, path_sha1, path_signature) )
         #       
         #       # add the signature to file_unsigned
-        #       file_unsigned = open(tmppath, 'a')
-        #       file_signature = open(path_signature)
-        #       lines = file_signature.readlines()
+        #       f_new_whitelist = open(path_new_whitelist, 'a')
+        #       f_signature = open(path_signature)
+        #       lines = f_signature.readlines()
         #       for line in lines:
         #           line = line[:-1]
-        #           print >> file_unsigned, line
-        #
-        #       file_unsigned.close()
-        #
+        #           print >> f_new_whitelist, line
+        #       
+        #       f_new_whitelist.close()
+        #       
         #       # replace old .cmvfswhitelist by new one (file_unsigned)
-        #       shutil.copyfile(tmppath, whitelist)
-        #
+        #       shutil.copyfile(path_new_whitelist, whitelist)
+        #       
         #       # delete everything in the temporary directory
         #       shutil.rmtree(tmpdir)
+
 
 
 
