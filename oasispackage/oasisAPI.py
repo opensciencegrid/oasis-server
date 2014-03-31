@@ -565,7 +565,7 @@ class Project(object):
         #       maybe it should be implemented in the distribution plugin?
         #       for example, to allow easier sync from remote host
         #
-        cmd = 'rsync -a -l --delete %s/ %s/' %(self.destdir, self.srcdir)
+        cmd = 'rsync --stats -a -l --delete %s/ %s/' %(self.destdir, self.srcdir)
         self.log.debug('synchronization cmd = %s' %cmd)
         
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
