@@ -71,7 +71,7 @@
 
 [DEFAULT]
 
-OSG_APP = /tmp/
+OSG_APP = /home/data/
 srcdir = ${OSG_APP}/${VO}
 destdir = /cvmfs/${VO}.opensciencegrid.org 
 distributiontool = cvmfs21
