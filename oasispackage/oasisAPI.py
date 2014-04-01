@@ -360,6 +360,7 @@ class Project(object):
             self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
             self.distributionplugin = self._getdistributionplugin()
             self.oasisprobesconf = self._getprobesconfig()
+            # FIXME : maybe allow VO with no own probes, so "projectprobes" is undefined
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
             self.sleep = self.projectsconf.getint(self.projectsection, 'time.sleep')
             self.timeout = self.projectsconf.getint(self.projectsection, 'time.timeout')
