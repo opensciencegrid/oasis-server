@@ -191,9 +191,10 @@ class cvmfs21(BaseDistribution):
         f_new_whitelist = open(path_new_whitelist, 'a')
         f_signature = open(path_signature)
         lines = f_signature.readlines()
-        for line in lines:
+        for line in lines[:-1]: # all lines except the last one
             line = line[:-1]
             print >> f_new_whitelist, line
+        print >> f_new_whitelist, lines[-1],  # print last line, but this one without newline character at the end
         
         f_new_whitelist.close()
         
