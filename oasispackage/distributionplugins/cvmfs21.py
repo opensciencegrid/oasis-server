@@ -174,7 +174,7 @@ class cvmfs21(BaseDistribution):
         f_new_whitelist.close()
         
         sha1 = commands.getoutput('cat %s | openssl sha1 | head -c40' % path_new_whitelist)
-        f_new_whitelist = open(tmppath, 'a')
+        f_new_whitelist = open(path_new_whitelist, 'a')
         print >> f_new_whitelist, '--'
         print >> f_new_whitelist, sha1
         f_new_whitelist.close()
