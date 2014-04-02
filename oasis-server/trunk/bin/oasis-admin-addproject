@@ -8,6 +8,8 @@ import sys
 import time
 import pwd
 
+from ConfigParser import SafeConfigParser
+
 major, minor, release, st, num = sys.version_info
 
 """
@@ -61,7 +63,9 @@ class addproject(object):
 
         from oasispackage.oasisAPI import Project, ProjectFactory
         
-        oasisconf = '/etc/oasis/oasis.conf'
+        oasisconfpath = '/etc/oasis/oasis.conf'
+        oasisconf = SafeConfigParser()
+        oasisconf.readfp(open(oasisconfpath))
         
         projectfactory = ProjectFactory(oasisconf, projectname=projectname)
         self.project = projectfactory.getProject()
