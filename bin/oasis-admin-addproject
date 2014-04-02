@@ -111,7 +111,7 @@ class addproject(object):
             user = self.project.username
             group = self.project.username  # maybe in the future is a generic group name like 'oasis'?
    
-            cmd = '/usr/bin/adduser -m %s' %user
+            cmd = '/usr/sbin/adduser -m %s' %user
             rc, out = commands.getstatusoutput(cmd)
 
     def _checkuser(self):
