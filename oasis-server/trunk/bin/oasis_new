@@ -25,6 +25,12 @@ It can be used to run the user part of OASIS,
 either directly from command line
 or from another client, e.g. HTCondor.
 """
+
+#
+# FIXME
+# write an usage() function
+#
+
 #
 # FIXME
 # this script is very similar to bin/oasisd
