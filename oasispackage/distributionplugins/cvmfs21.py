@@ -209,9 +209,5 @@ class cvmfs21(BaseDistribution):
 
     def createrepository(self):
 
-        return 0 
-
-        # FIXME: TEST THE FOLLOWING CODE 
-
         commands.getoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
    
