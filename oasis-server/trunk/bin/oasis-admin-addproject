@@ -128,9 +128,9 @@ class addproject(object):
 
         user = self.project.username
         uid = pwd.getpwnam(user).pw_uid
-
+        
         srcdir = self.project.srcdir
-
+        
         if not os.path.isdir(srcdir):
             os.makedirs(srcdir)
             os.fchown(srcdir, uid , uid)
