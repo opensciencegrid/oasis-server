@@ -54,8 +54,11 @@ class cvmfs20(BaseDistribution):
         return st
 
     def resign(self):
+        # FIXME !!!
         pass
         
     def createrepository(self):
-        pass
-        
+       
+        # FIXME  ??? does this work also for CVMFS 2.0 ??? 
+        commands.getoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
+
