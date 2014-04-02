@@ -159,6 +159,9 @@ class addproject(object):
 
 def main(options):
 
+    # FIXME
+    # if the section in projects.conf is not defined, it should abort. 
+
     # parse input options
     opts, args = getopt.getopt(options, 
                                '', 
