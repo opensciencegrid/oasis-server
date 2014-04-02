@@ -140,7 +140,7 @@ class addproject(object):
         
         if not os.path.isdir(srcdir):
             os.makedirs(srcdir)
-            os.fchown(srcdir, uid , uid)
+            os.chown(srcdir, uid , uid)
 
 
     def createrepository(self):
