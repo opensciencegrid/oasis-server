@@ -50,6 +50,8 @@ class addproject(object):
 
 
     def __init__(self, projectname):
+        # FIXME!! if projectname is None, it should abort !!
+
 
         self._setuplogging()
         # do we still need to setup logging if I get a Project class?
