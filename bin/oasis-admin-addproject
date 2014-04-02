@@ -80,7 +80,8 @@ class addproject(object):
         logStream = logging.FileHandler('/var/log/oasis/oasis.log')
         logStream.setFormatter(logfile_formatter)
         self.log.addHandler(logStream)
-        self.log.setLevel(self.loglevel)
+        #self.log.setLevel(self.loglevel)   #FIXME
+        self.log.setLevel(logging.DEBUG)
 
 
 
