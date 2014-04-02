@@ -8,6 +8,8 @@ import sys
 import time
 import pwd
 
+major, minor, release, st, num = sys.version_info
+
 """
 OASIS admin tool to add a new project to the server
 Steps:
