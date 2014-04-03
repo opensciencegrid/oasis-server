@@ -33,7 +33,7 @@ utils_files = ['misc/generate_adduser',
                'misc/generate_gridmap',
               ]
 
-initd_files = ['etc/oasis']
+initd_files = ['etc/oasisd']
 
 
 
