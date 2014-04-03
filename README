@@ -34,7 +34,7 @@ Once installed, there are two components:
        An example of sysconfig file is deployed as
        /etc/oasis/oasisd.sysconfig-example
        A copy of that example file should be placed in the final destination:
-       /etc/sysconfig/oasisd.sysconfig
+       /etc/sysconfig/oasisd
        
 
     -- configuration files:
