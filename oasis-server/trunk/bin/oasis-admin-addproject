@@ -41,7 +41,7 @@ So it must be written before calling this tool
 # FIXME should this type of tools executable only by root??
 
 
-class addproject(object):
+class ProjectHandler(object):
     # In the future, if makes sense, 
     # it could be inherited 
     # from an Interface class generic
@@ -64,10 +64,10 @@ class addproject(object):
         from oasispackage.oasisAPI import Project, ProjectFactory
         
         oasisconfpath = '/etc/oasis/oasis.conf'
-        oasisconf = SafeConfigParser()
-        oasisconf.readfp(open(oasisconfpath))
+        self.oasisconf = SafeConfigParser()
+        self.oasisconf.readfp(open(oasisconfpath))
         
-        projectfactory = ProjectFactory(oasisconf, projectname=projectname)
+        projectfactory = ProjectFactory(self.oasisconf, projectname=projectname)
         self.project = projectfactory.getProject()
 
 
@@ -88,7 +88,6 @@ class addproject(object):
         self.log.addHandler(logStream)
         #self.log.setLevel(self.loglevel)   #FIXME
         self.log.setLevel(logging.DEBUG)
-
 
 
     def run(self):
@@ -165,17 +164,41 @@ def main(options):
     # parse input options
     opts, args = getopt.getopt(options, 
                                '', 
-                               ['project='])
+                               ['project=', 'allprojects'])
 
     project = None
     for o,a in opts:
         if o == '--project':
             project = a
+        if o == '--allprojects':
+            project = None  #FIXME
 
     # run the processes
-    obj = addproject(project)
+    obj = ProjectHandler(project)
     obj.run()
 
 
 if __name__ == '__main__':
     main(sys.argv[1:])
+
+
+# ================================================================
+
+
+
+
+    def _getprojectsconfig(self):
+        '''
+        gets the ConfigParser object for oasisprojects.conf
+        '''
+        # FIXME  this code is duplicated from oasisAPI
+        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconf = SafeConfigParser()
+        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+        return oasisprojectsconf
+
+
+    def addallprojects(self):
+        listprojects = self.oasisd.projectsconf.sections()
+        for projectsection in listprojects:
+            project = Project(projectsection, self.oasisd.oasisconf)
