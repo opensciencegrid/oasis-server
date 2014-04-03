@@ -73,7 +73,14 @@ class Action(object):
         # because they have equals '=' and those stuffs.
         # perhaps the parsing should be done in the __main__ section
         # and pass to the class a nice result
+
+        # FIXME
+        # with condor there is no problem.
+        # but from CLI, the user gets the fake impression that the process hung, 
+        # which is not true. It is waiting for the daemon.  
+        # But a message "now wait", would be confussing in the condor output file...
         return rc
+
 
 
     def runprobes(self):
