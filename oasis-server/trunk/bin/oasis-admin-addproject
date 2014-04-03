@@ -41,6 +41,12 @@ So it must be written before calling this tool
 # FIXME should this type of tools executable only by root??
 
 
+# FIXME should the functionalities included in class oasisAPI::Project()
+#       in the same way some of them are in the distributionplugin 
+#       ???
+
+
+
 class ProjectHandler(object):
     # In the future, if makes sense, 
     # it could be inherited 
