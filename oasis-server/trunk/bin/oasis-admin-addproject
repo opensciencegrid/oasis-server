@@ -160,7 +160,29 @@ class ProjectHandler(object):
     
         self.project.distributionplugin.createrepository()
 
+
+class ProjectHandlerManager(object):
+
+    def __init__(self):
+        pass
     
+    def _getprojectsconfig(self):
+        '''
+        gets the ConfigParser object for oasisprojects.conf
+        '''
+        # FIXME  this code is duplicated from oasisAPI
+        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconf = SafeConfigParser()
+        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+        return oasisprojectsconf
+
+    def addallprojects(self):
+        listprojects = self.oasisd.projectsconf.sections()
+        for projectsection in listprojects:
+            project = Project(projectsection, self.oasisd.oasisconf)
+
+
+
 
 def main(options):
 
@@ -193,18 +215,3 @@ if __name__ == '__main__':
 
 
 
-    def _getprojectsconfig(self):
-        '''
-        gets the ConfigParser object for oasisprojects.conf
-        '''
-        # FIXME  this code is duplicated from oasisAPI
-        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
-        oasisprojectsconf = SafeConfigParser()
-        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
-        return oasisprojectsconf
-
-
-    def addallprojects(self):
-        listprojects = self.oasisd.projectsconf.sections()
-        for projectsection in listprojects:
-            project = Project(projectsection, self.oasisd.oasisconf)
