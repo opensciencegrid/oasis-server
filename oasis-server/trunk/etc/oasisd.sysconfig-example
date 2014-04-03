@@ -3,7 +3,7 @@
 #
 
 #
-#  VERY IMPORTANT : place this file underneath  /etc/sysconfig/
+#  VERY IMPORTANT : cp this file to /etc/sysconfig/oasisd
 #
 
 #  OPTIONS:
