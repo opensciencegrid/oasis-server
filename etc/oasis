@@ -65,14 +65,14 @@ f_factdir
 
 if [ `id -u` = 0 ]; then
     OASISHEAD=/
-    SYSCONF=/etc/sysconfig/oasisd.sysconfig
+    SYSCONF=/etc/sysconfig/oasisd
     BINDIR=/usr/bin
     ETCDIR=/etc/oasis
     PIDFILE=/var/run/oasisd.pid
 else
     OASISHEAD=`dirname $OASISDIR`
 
-    SYSCONF=$OASISHEAD/etc/oasisd.sysconfig
+    SYSCONF=$OASISHEAD/etc/oasisd
     BINDIR=$OASISHEAD/bin
     ETCDIR=$OASISHEAD/etc
     PIDFILE=$OASISHEAD/var/run/oasisd.pid
