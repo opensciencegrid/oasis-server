@@ -89,11 +89,12 @@ class makecatalogdirs(BaseProbe):
             print(root)
             print(" %s" % dirs)
             print(" %d files" % len(files))
+            
 
 
 if __name__ == '__main__':
     argv = sys.argv[1:]
-	usage = """
+    usage = """
     usage: $0 [options]
 
 Run probe against given  
@@ -106,7 +107,7 @@ OPTIONS:
     -t --destdir      Root of destination path. 
 
 """
-	# Handle command line options
+    # Handle command line options
 
     try:
         opts, args = getopt.getopt(argv, 
