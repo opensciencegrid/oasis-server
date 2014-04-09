@@ -31,7 +31,7 @@ print(nlibpath)
 print(tail)
 sys.path.append(nlibpath)
 
-from oasispackage.interfaces import BaseProbe
+#from oasispackage.interfaces import BaseProbe
 
 
 def mywalk(top, topdown=True, onerror=None, followlinks=False):
@@ -75,10 +75,12 @@ def mywalk(top, topdown=True, onerror=None, followlinks=False):
         yield top, dirs, nondirs
 
 
-class makecatalogdirs(BaseProbe):
+#class makecatalogdirs(BaseProbe):
+class makecatalogdirs(object):
 
-    def __init__(self, options):
-        super(makecatalogdirs, self).__init__(options)
+    def __init__(self, oasisproberootdir="/var", oasisprobedestdir="/var"):
+        self.rootdir = oasisproberootdir
+        self.destdir = oasisprobedestdir
 
     def run(self):
         print("src = %s dest = %s" % (self.rootdir, self.destdir))
