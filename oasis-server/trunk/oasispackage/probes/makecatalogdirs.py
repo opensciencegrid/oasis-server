@@ -9,6 +9,7 @@ CVMFS is supposed to deal with new *and removed* .cvmfscatalog files during a pu
 
 Catalogs should contain between 1000 and 200,000 files. 
 
+Need to do depth-first, *postorder* traversal of tree. 
 
 '''
 import getopt
