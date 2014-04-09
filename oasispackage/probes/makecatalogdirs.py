@@ -3,7 +3,7 @@
 '''
 create .catalogdirs in root of cmvfs scratch area
 
-maximum files per catalog =  
+maximum files per catalog =  100000
 
 CVMFS is supposed to deal with new *and removed* .cvmfscatalog files during a publishing attempt. 
 
@@ -92,6 +92,48 @@ class makecatalogdirs(BaseProbe):
 
 
 if __name__ == '__main__':
-    probe = makecatalogdirs(sys.argv[1:])
+	usage = """
+    usage: $0 [options]
+
+Run probe against given  
+
+OPTIONS:
+    -h --help         Print help.
+    -d --debug        Debug logging.      
+    -v --verbose      Verbose logging. 
+    -r --rootdir      Root of source path. 
+    -t --destdir      Root of destination path. 
+
+"""
+	
+	# Handle command line options
+    argv = sys.argv[1:]
+    try:
+        opts, args = getopt.getopt(argv, 
+                                   "hdvr:t:", 
+                                   ["help",
+                                    "debug",
+                                    "verbose", 
+                                    "rootdir=", 
+                                    "destdir=", 
+                                    ])
+    except getopt.GetoptError, error:
+        print( str(error))
+        print( usage )                          
+        sys.exit(1)
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            print(usage)                     
+            sys.exit()            
+        elif opt in ("-d", "--debug"):
+            loglevel = logging.DEBUG
+        elif opt in ("-v", "--verbose"):
+            loglevel = logging.INFO
+        elif opt in ("-r", "--rootdir"):
+            collector_host = arg
+        elif opt in ("-t", "--destdir"):
+            collector_port = int(arg)
+                    
+    probe = makecatalogdirs( oasisproberootdir=rootdir, oasisprobedestdir=destdir )
     rc = probe.run() 
     sys.exit(rc)
