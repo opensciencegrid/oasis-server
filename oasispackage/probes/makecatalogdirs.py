@@ -109,6 +109,9 @@ OPTIONS:
 
 """
     # Handle command line options
+    rootdir = "/var"
+    destdir = "/var"
+
 
     try:
         opts, args = getopt.getopt(argv, 
@@ -132,9 +135,9 @@ OPTIONS:
         elif opt in ("-v", "--verbose"):
             loglevel = logging.INFO
         elif opt in ("-r", "--rootdir"):
-            collector_host = arg
+            rootdir = arg
         elif opt in ("-t", "--destdir"):
-            collector_port = int(arg)
+            dstdir = int(arg)
                     
     probe = makecatalogdirs( oasisproberootdir=rootdir, oasisprobedestdir=destdir )
     rc = probe.run() 
