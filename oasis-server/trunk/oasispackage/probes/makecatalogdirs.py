@@ -92,6 +92,7 @@ class makecatalogdirs(BaseProbe):
 
 
 if __name__ == '__main__':
+    argv = sys.argv[1:]
 	usage = """
     usage: $0 [options]
 
@@ -105,9 +106,8 @@ OPTIONS:
     -t --destdir      Root of destination path. 
 
 """
-	
 	# Handle command line options
-    argv = sys.argv[1:]
+
     try:
         opts, args = getopt.getopt(argv, 
                                    "hdvr:t:", 
@@ -137,3 +137,5 @@ OPTIONS:
     probe = makecatalogdirs( oasisproberootdir=rootdir, oasisprobedestdir=destdir )
     rc = probe.run() 
     sys.exit(rc)
+    
+    
