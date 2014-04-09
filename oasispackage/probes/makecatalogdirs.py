@@ -11,6 +11,7 @@ Catalogs should contain between 1000 and 200,000 files.
 
 
 '''
+import getopt
 import os
 import sys
 
