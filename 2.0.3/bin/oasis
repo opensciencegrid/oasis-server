@@ -1,0 +1,62 @@
+#!/usr/bin/python
+
+import getopt
+import os
+import sys
+import time
+
+from oasispackage.oasis import oasisCLI
+
+def main(args):
+    '''
+    args are just the user payload and inputs options
+    Its format is like this:
+            ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
+    '''
+
+    oasis = oasisCLI()
+
+    rc = oasis.preinstall()
+    if rc != 0:
+        return rc
+
+    rc = oasis.runpayload(args)
+    if rc != 0:
+        return rc
+
+    rc = oasis.postinstall()
+    if rc != 0:
+        return rc
+
+    # --- loop waiting for the daemon to finish  ---
+    flagfile = oasis.flagfile #???
+    # flag file looks like  /var/log/oasis/<vo>/job.XYZ.running
+    # flag file looks like  /var/log/oasis/<vo>/job.XYZ.done
+
+    while not os.path.isfile( flagfile ):
+    # is a while loop the best way to implement it???
+        time.sleep(1)
+        ##
+        ## NOTE:
+        ##      NEED A TIMEOUT !!
+        ##
+
+    # --- loop is done ---
+    # read the content of flag file
+    f = open(flagfile)
+    lines = f.readlines()  
+    for line in lines[:-1]:
+        line = line[:-1]
+        print line
+    # read the RC from the flag file 
+    line = lines[-1]
+    line = line[:-1]
+    rc = line
+
+    return rc
+    
+
+
+if __name__ == '__main__':
+    rc = main(sys.argv[1:])
+    sys.exit(rc)

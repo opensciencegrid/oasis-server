@@ -1,0 +1,42 @@
+#!/usr/bin/python
+#
+# Very simple wrapper to go in /usr/bin to be executed by the condor USER_JOB_WRAPPER 
+#
+
+import getopt
+import sys
+
+from oasispackage.oasis import oasisCLI
+
+def main(args):
+
+    # parse the input options
+    oasiscmd = None
+    payload = None
+
+    opts, args = getopt.getopt(sys.argv[1:], '', ['oasiscmd='])
+
+    for o, a in opts:
+        if o == '--oasiscmd':
+            oasiscmd = a
+    #payload = ' '.join(args)
+    payload = args
+
+
+    oasis = oasisCLI()
+
+    if oasiscmd == 'runpayload':
+        rc = oasis.runpayload(payload)
+        sys.exit(rc)
+
+    elif oasiscmd == 'runprobes':
+        rc = oasis.runprobes()
+        sys.exit(rc)
+
+    elif oasiscmd == 'publish':
+        oasis.publish()
+
+
+if __name__ == '__main__':
+
+    main(sys.argv[1:])

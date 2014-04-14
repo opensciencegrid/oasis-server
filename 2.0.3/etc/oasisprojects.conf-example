@@ -1,0 +1,24 @@
+[DEFAULT]
+
+VO = ${VO_FROM_X509}
+OSG_APP = ${OSG_APP_FROM_ENV}
+#OSG_APP = /home/oasis/
+OASIS_VO_SRC_DIRECTORY = ${OSG_APP}/${VO}
+OASIS_VO_DEST_DIRECTORY = /cvmfs/${VO}.opensciencegrid.org 
+distributiontool = cvmfs21
+
+enabled = True
+
+[ATLAS]
+VO = ATLAS
+user = usatlas1
+
+[PROJECT1]
+
+VO = OSG
+user = osgproject1
+OASIS_VO_SRC_DIRECTORY = ${OSG_APP}/${VO}/project1/
+OASIS_VO_DEST_DIRECTORY = /cvmfs/project1.opensciencegrid.org 
+
+
+

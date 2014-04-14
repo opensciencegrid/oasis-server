@@ -1,0 +1,15 @@
+#
+# tasks.conf  Configuration file for the Tasks threads in OASIS
+#
+
+# Each task has only three mandatory options:
+#       - enabled: True/False
+#       - the sleep time between cycles
+#       - the name of the plugin with the actual task code
+
+
+[PublishCVMFS]
+enabled = True 
+sleep = 10
+plugin = PublishcvmfsFile
+#plugin = PublishcvmfsDB

@@ -1,0 +1,26 @@
+#!/bin/env python
+
+        # TO BE IMPLEMENTED #
+
+# ??? maybe should be just bash instead of python ???
+
+
+"""
+OASIS admin tool to add a new VO to the server
+Steps:
+
+    -- create an UNIX ID
+
+    -- add the UNIX ID to the gridmapfile
+
+    -- Maybe, create an empty user scratch are for that UNIX ID.
+
+    -- Maybe, create VO directories like 
+
+             /var/log/oasis/<vo>.
+
+    -- The OASIS users/vo config files need to be modified.
+
+    -- create a CVMFS repo
+
+"""

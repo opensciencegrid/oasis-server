@@ -1,0 +1,16 @@
+[USERS]
+
+usersconf = /etc/oasis/oasisusers.conf
+
+
+[DISTRIBUTION]
+
+tool = cvmfs20
+
+OASIS_VO_SRC_DIRECTORY=${OSG_APP}/${VO}
+OASIS_VO_DEST_DIRECTORY=/cvmfs/${VO}.opensciencegrid.org
+
+[PROBES]
+
+oasisconf = /etc/oasis/oasisprobes.conf
+vodirectoryconf = /etc/oasis/oasisprobes.d

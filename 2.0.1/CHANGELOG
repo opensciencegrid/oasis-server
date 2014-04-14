@@ -1,0 +1,41 @@
+Branch 2.0.1
+
+* added a second logging Handler, so message to stdout are INFO level and message to /var/log/oasis/oasis.log are DEBUG level.
+
+* scratch area looks like  
+
+       /<path>/ouser.<vo>/src/ 
+       /<path>/ouser.<vo>/oasis/
+
+  where src/ is the directory pointed by OSG_APP, and oasis is where to place the lock files.
+
+* created binary, plugins, and config files for running probes after new installation
+
+* reverse rsync when probes are not passed OK
+
+--------------------------------------------------------------------------
+
+Branch 2.0.0 created on August 21st 2013.
+It is intended, in principle, to host just the condor USER_JOB_WRAPPER, 
+as first step to move from OASIS 1 to OASIS 2.x is 
+just to add a gatekeeper and a WN with a condor startd.
+It is based on 1.0.1, which is a variation of tarball content provided by Scott.
+
+* USER_JOB_WRAPPER makes use of OASIS_USER_WORKING_DIRECTORY, and gets the VO from the X509 proxy
+
+* cron files handled by setup.py 
+
+* add a check in condor_oasis_wrapper to see if osg-oasis-update is in the PATH
+
+* adding the misc/ scripts rpm-pre, rpm-post, and rpm-preun
+
+* adding distutils files (setup.py, setup.cfg, and MANIFEST) and LICENSE
+
+* adding timing report to libexec/condor_oasis_wrapper
+
+* adding function pre_run to condor_oasis_wrapper to setup $OSG_APP
+
+* etc/condor_oasis.conf added
+
+* libexec/condor_oasis_wrapper.sh added
+

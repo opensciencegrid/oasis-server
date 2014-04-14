@@ -1,0 +1,58 @@
+#!/bin/bash  
+
+#
+# first draft for an administrative OASIS command 
+# to add a new user and a new repo
+#
+
+#
+# input is username
+#
+
+
+# ???
+# should this script be in python
+# ???
+
+
+
+f_create_new_repo(){
+    #
+    # create new CVMFS repo
+    #
+
+    cvmfs_server mkfs -o oasis ${USERNAME}.opensciencegrid.org
+}
+
+# ???
+# there should be a function to add the new user to 
+# oasisusers.conf 
+# ???
+
+# ???
+# there should be a function to create the UNIX account
+# ???
+
+# ???
+# what to do with GUMS
+# ???
+
+
+# -------------------------------------------------------
+#               main
+# -------------------------------------------------------
+
+USER=`id -u`
+if [ $USER != 0 ]; then 
+    echo "only root can run this program"
+    exit(1)
+fi
+
+NEWUSER=$1
+if [ "$NEWUSER" == ""] ; then
+    echo "new user is missing"
+    exit(1)
+fi
+
+f_create_new_repo
+
