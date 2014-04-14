@@ -1,0 +1,3 @@
+* * * * * root /usr/local/oasis/bin/do_oasis_update
+#*/15 * * * * root /usr/local/oasis/bin/oasis_status.sh
+#*/15 * * * * root /opt/service-monitor/oasis/test.sh

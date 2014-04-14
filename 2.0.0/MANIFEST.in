@@ -1,0 +1,4 @@
+include CHANGELOG LICENSE
+include etc/*
+include libexec/*
+include bin/*
