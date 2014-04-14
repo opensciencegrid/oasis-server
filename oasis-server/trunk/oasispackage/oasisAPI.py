@@ -157,7 +157,10 @@ class FlagFile(object):
         self.log.debug('Starting.')
 
         RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s?$" %(self.projectname, status))
-        # remember, the filename format is  yyyy-mm-dd:hh-mm-ss.<project>.<status>
+        # remember, the filename format is  <project>.yyyy-mm-dd:hh-mm-ss.<status>
+
+        # FIXME: use this RE
+        #       RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" )
 
         files = os.listdir(self.basedir)
         for candidate in files:
