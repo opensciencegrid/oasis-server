@@ -1,0 +1,24 @@
+#
+# oasis.conf Configuration file for main OASIS component.
+#
+
+# ===========================================================================
+#               VARIABLES
+# ===========================================================================
+
+# sleep 
+# tasksconf
+
+# ---------------------------------------------------------------------------
+# Description:
+# ---------------------------------------------------------------------------
+
+# sleep = time to sleep between waiting cycles in class OASIS.
+#
+# tasksconf = local path to the Tasks configuration file.
+
+
+[OASIS]
+
+sleep = 10
+tasksconf = /etc/oasis/tasks.conf
