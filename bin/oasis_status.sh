@@ -1,4 +1,3 @@
-#!/bin/bash
 
 ## maximum time since a publish (25 days)
 threshold=2160000
@@ -27,12 +26,22 @@ fi
 ## check that various processes exist
 condor=`ps -e | grep condor_master | awk '{print $4}'`
 
-if [ $condor ]; then
-   cstat="yes"
+#if [ $condor ]; then
+#   cstat="yes"
+#else
+#   cstat="no"
+#   overall_status=2
+#fi
+
+rsstat=`ps -e | grep rsync | awk '{print $4}' | tail -1` 
+
+if [ $rsstat ]; then
+   systat="yes"
+   overall_status=1
 else
-   cstat="no"
-   overall_status=2
+   systat="no"
 fi
+
 
 /sbin/service cvmfsd status 1>/dev/null 2>/dev/null
 status=$?
@@ -61,6 +70,7 @@ s=`echo $signdate | colrm 1 12 | colrm 3 100`
 
 signed=`date -d "$y-$m-$d $h:$mi:$s" +%s`
 now=`date +%s`
+
 age=`expr $now - $signed`
 
 if [ $age -ge $max_sig_age ] ; then
@@ -74,12 +84,36 @@ fi
 
 age=`expr $age / 86400`
 
+# test for the existance of any lock file
+lock_exists="no"
+if [ -f /net/nas01/Public/vo_update_requested ]; then
+   lock_exists="yes"
+fi
+if [ -f /net/nas01/Public/oasis_update_in_progress ]; then
+   lock_exists="yes"
+fi
+if [ -f /net/nas01/Public/oasis_update_lock ]; then
+   lock_exists="yes"
+fi
+
+if [ $systat = "no" ]; then
+#   no rsync in progress
+    if [ $ostat = "yes" ]; then
+#       cvmfsd is running
+	if [ $lock_exists = "yes" ]; then
+#           but a lock file exists, go critical
+	    overall_status=2
+	fi
+    fi
+fi
+
 if [ $overall_status -eq 0 ]; then
    echo "OK" > /var/www/html/stamp
 fi
 if [ $overall_status -eq 1 ]; then
    echo "WARNING" > /var/www/html/stamp
 fi
+
 if [ $overall_status -eq 2 ]; then
    echo "CRITICAL" > /var/www/html/stamp
 fi
@@ -87,8 +121,11 @@ fi
 echo "last_published:$update_time" >>/var/www/html/stamp
 echo "publish_age:$page" >> /var/www/html/stamp
 echo "signature_age_days:$age" >> /var/www/html/stamp
-echo "condor_running:$cstat" >> /var/www/html/stamp
+#echo "condor_running:$cstat" >> /var/www/html/stamp
+echo "condor_running:yes" >> /var/www/html/stamp
 echo "cvmfsd_running:$ostat" >> /var/www/html/stamp
+echo "rsync_running :$systat" >> /var/www/html/stamp
+echo "lock(s)_exist :$lock_exists" >> /var/www/html/stamp
 
 ## cat /var/www/html/stamp
 
