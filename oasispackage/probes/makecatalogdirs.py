@@ -2,29 +2,32 @@
 
 '''
 create .catalogdirs in root of cmvfs scratch area
-
 maximum files per catalog =  100000
-
 CVMFS is supposed to deal with new *and removed* .cvmfscatalog files during a publishing attempt. 
-
 Catalogs should contain between 1000 and 200,000 files. 
 
 Need to do depth-first, *postorder* traversal of tree. 
 
+for node in root:
+    process all children
+    process root
+    
+
+
 '''
 import getopt
 import os
+import stat
 import sys
 
-from posix import *
-try:
-    from posix import _exit
-except ImportError:
-    pass
-import posixpath as path
+#from posix import *
+#try:
+#    from posix import _exit
+#except ImportError:
+#    pass
+#import posixpath as path
 
 
-# Since script is in package "certify" we can know what to add to path
 (libpath,tail) = os.path.split(sys.path[0])
 #print(libpath)
 nlibpath = os.path.split(libpath)[0]
@@ -34,47 +37,44 @@ sys.path.append(nlibpath)
 
 #from oasispackage.interfaces import BaseProbe
 
-
-def mywalk(top, topdown=True, onerror=None, followlinks=False):
+def mywalk(top):
     '''
-     Customized version of os.walk which does a deterministic listing by sorting dirnames
-     after retrieval rather than depending on inode order. 
-    '''
+    postorder, depth-first processing (alphabetical)
+    recursively determine how many files in subtree
     
-    islink, join, isdir = path.islink, path.join, path.isdir
-
-    # We may not have read permission for top, in which case we can't
-    # get a list of the files the directory contains.  os.path.walk
-    # always suppressed the exception then, rather than blow up for a
-    # minor reason when (say) a thousand readable directories are still
-    # left to visit.  That logic is copied here.
+    takes current catalog 
+    
+    '''
+    numfiles = 0
+    dirs = []
+    files = []
     try:
-        # Note that listdir and error are globals in this module due
-        # to earlier import-*.
-        names = listdir(top)
-    except error, err:
-        if onerror is not None:
-            onerror(err)
-        return
-
-    dirs, nondirs = [], []
-    for name in names:
-        if isdir(join(top, name)):
-            dirs.append(name)
-        else:
-            nondirs.append(name)
-    dirs.sort()
-
-    if topdown:
-        yield top, dirs, nondirs
-    for name in dirs:
-        new_path = join(top, name)
-        if followlinks or not islink(new_path):
-            for x in mywalk(new_path, topdown, onerror, followlinks):
-                yield x
-    if not topdown:
-        yield top, dirs, nondirs
-
+        names = os.listdir(top)
+        names.sort()
+        for name in names:
+            fullname = os.path.join(top, name)
+            try:
+                mode = os.lstat(fullname).st_mode
+            except os.error:
+                mode = 0
+            if stat.S_ISDIR(mode):
+                dirs.append(fullname)
+            else:
+                files.append(fullname)
+        for dirpath in dirs:
+            numfiles += mywalk(dirpath)
+        numfiles = len(files) + numfiles
+        print("%s: %s dirs, %d files, totalfiles=%d" % (top, 
+                                                                len(dirs), 
+                                                                len(files), 
+                                                                numfiles))
+    except OSError, e:
+        print("OSError: %s" % e)
+    return numfiles
+    
+     
+            
+        
 
 #class makecatalogdirs(BaseProbe):
 class makecatalogdirs(object):
@@ -89,10 +89,12 @@ class makecatalogdirs(object):
         running_total = 0
         absolute_total = 0
         
-        for root, dirs, files in mywalk(self.rootdir, topdown=False, onerror=None, followlinks=False):
-            print(root)
-            print(" %s" % dirs)
-            print(" %d files" % len(files))
+        mywalk(self.rootdir)
+        
+        #for root, dirs, files in mywalk(self.rootdir, topdown=False, onerror=None, followlinks=False):
+        #    print(root)
+        #    print(" %s" % dirs)
+        #    print(" %d files" % len(files))
             
 
 
