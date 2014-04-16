@@ -1,5 +1,4 @@
 #!/usr/bin/env python 
-
 '''
 create .catalogdirs in root of cmvfs scratch area
 CVMFS is supposed to deal with new *and removed* .cvmfscatalog files during a publishing attempt. 
@@ -29,6 +28,8 @@ enabled = True
 probe = yes
 options = "--maxfiles 5000 "
 level = warning
+   
+Author: John Hover <jhover@bnl.gov>   
     
 '''
 import getopt
@@ -45,6 +46,7 @@ sys.path.append(nlibpath)
 
 #from oasispackage.interfaces import BaseProbe
 CATALOGDIRS=[]
+CATALOGDIRTOTALS=[]
 TABFILE_NAME=".cvmfsdirtab"
 
 def mywalk(top, maxfiles=250, dirtab=[]):
@@ -88,12 +90,14 @@ def mywalk(top, maxfiles=250, dirtab=[]):
     if top in dirtab:
         print("%s: dir already in dirtab. Re-adding." %  top )
         CATALOGDIRS.append(top)
+        CATALOGDIRTOTALS.append(numfiles)
         numfiles = 0
     elif numfiles > maxfiles:
         print("%s: %d files > %d, creating catalogdir." % (top,
                                                            numfiles,
                                                            maxfiles))
         CATALOGDIRS.append(top)
+        CATALOGDIRTOTALS.append(numfiles)
         numfiles = 0
        
     return numfiles
@@ -128,8 +132,9 @@ class makecatalogdirtab(object):
             mywalk(self.rootdir, self.maxfiles, dirtab=tablist  )
         else:
             mywalk(self.rootdir, self.maxfiles)
-        print("Creating .cvmfsdirtab with %d entries:" % len(CATALOGDIRS))       
-        print('\n'.join(CATALOGDIRS))
+        print("Creating .cvmfsdirtab with %d entries:" % len(CATALOGDIRS))
+        for i in range(len(CATALOGDIRS)):
+            print("%s  %10d" % (CATALOGDIRS[i], CATALOGDIRTOTALS[i]))
         
         try:
             dirtabfile = "%s/%s" % (self.destdir, TABFILE_NAME)
