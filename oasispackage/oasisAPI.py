@@ -366,7 +366,8 @@ class Project(object):
             # FIXME : maybe allow VO with no own probes, so "projectprobes" is undefined
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
             self.sleep = self.projectsconf.getint(self.projectsection, 'time.sleep')
-            self.timeout = self.projectsconf.getint(self.projectsection, 'time.timeout')
+            self.starttimeout = self.projectsconf.getint(self.projectsection, 'time.starttimeout')
+            self.finishtimeout = self.projectsconf.getint(self.projectsection, 'time.finishtimeout')
         except:
             self.log.critical('Configuration cannot be read. Aborting.')
             # FIXME !! do not exit, propagate an exception and oasisCLI or oasisd exit
@@ -1179,7 +1180,7 @@ class oasisCLI(object):
             # checking for timeout
             time.sleep(10)  # FIXME  why 10 ?? Should it be a config variable ??
             elapsed = time.time() - inittime
-            if elapsed > self.project.timeout:
+            if elapsed > self.project.finishtimeout:
                 self.log.critical('timeout. Breaking loop')
                 flagfile.search('request')
                 flagfile.clean() 
