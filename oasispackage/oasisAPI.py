@@ -352,22 +352,52 @@ class Project(object):
             # but then being needed for interpolation to srcdir, destdir, etc.
             # in that case, an exception should be raised, and abort
             self.enabled = self.projectsconf.get(self.projectsection, 'enabled')
+            self.log.debug('variable enabled has value %s' self.enabled)
+
             self.username = self.projectsconf.get(self.projectsection, 'user')
+            self.log.debug('variable username has value %s' self.username)
+
             self.projectname = self.projectsconf.get(self.projectsection, 'project')
+            self.log.debug('variable projectname has value %s' self.projectname)
+
             self.vo = self._getvo()
+            self.log.debug('variable vo has value %s' self.vo)
+
             self.osg_app = self._getosgapp()
             #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+            self.log.debug('variable osg_app has value %s' self.osg_app)
+
             self.distributiontool = self.projectsconf.get(self.projectsection, 'distributiontool')
+            self.log.debug('variable distributiontool has value %s' self.distributiontool)
+
             self.srcdir = self._getsrcdir()
+            self.log.debug('variable srcdir has value %s' self.srcdir)
+
             self.destdir = self._getdestdir()
+            self.log.debug('variable destdir has value %s' self.destdir)
+
             self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
+            self.log.debug('variable destdiruser has value %s' self.destdiruser)
+
             self.distributionplugin = self._getdistributionplugin()
+            self.log.debug('variable distributionplugin has value %s' self.distributionplugin)
+
             self.oasisprobesconf = self._getprobesconfig()
             # FIXME : maybe allow VO with no own probes, so "projectprobes" is undefined
+            self.log.debug('variable oasisprobesconf has value %s' self.oasisprobesconf)
+
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
+            self.log.debug('variable oasisprojectprobesconf has value %s' self.oasisprojectprobesconf)
+
             self.sleep = self.projectsconf.getint(self.projectsection, 'time.sleep')
+            self.log.debug('variable sleep has value %s' self.sleep)
+
             self.starttimeout = self.projectsconf.getint(self.projectsection, 'time.starttimeout')
+            self.log.debug('variable starttimetime has value %s' self.starttimeout)
+
             self.finishtimeout = self.projectsconf.getint(self.projectsection, 'time.finishtimeout')
+            self.log.debug('variable finishtimeout has value %s' self.finishtimeout)
+
         except:
             self.log.critical('Configuration cannot be read. Aborting.')
             # FIXME !! do not exit, propagate an exception and oasisCLI or oasisd exit
