@@ -30,7 +30,7 @@
 #        It is the place where the user payload will put new content.
 #        Typically it will be the same than 
 #
-#                   ${OSG_APP}/<vo>
+#                   %(OSG_APP)s/<vo>
 #
 #        MANDATORY
 #
@@ -79,8 +79,8 @@
 [DEFAULT]
 
 OSG_APP = /home/data/
-srcdir = ${OSG_APP}/${VO}
-destdir = /cvmfs/${VO}.opensciencegrid.org 
+srcdir = %(OSG_APP)s/%(VO)s
+destdir = /cvmfs/%(VO)s.opensciencegrid.org 
 distributiontool = cvmfs21
 time.sleep = 100
 time.starttimeout = 600
@@ -100,8 +100,8 @@ projectprobes = atlas.conf
 VO = MIS 
 project = MIS 
 user = ouser.mis
-srcdir = ${OSG_APP}/${VO}
-destdir = /cvmfs/${VO}.opensciencegrid.org 
+srcdir = %(OSG_APP)s/%(VO)s
+destdir = /cvmfs/%(VO)s.opensciencegrid.org 
 projectprobes = mis.conf
 
 
