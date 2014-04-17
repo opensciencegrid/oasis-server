@@ -1098,6 +1098,20 @@ class oasisCLI(object):
             self.console.critical('Aborting installation job. Apparently there is another job still running. If that is not true, please contact with OASIS administrators.')
             return rc
 
+        ##  inittime = time.time()
+        ##  while True:
+        ##     # checking for timeout
+        ##     time.sleep(10)  # FIXME  why 10 ?? Should it be a config variable ??
+        ##     elapsed = time.time() - inittime
+        ##     if elapsed > self.project.finishtimeout:
+        ##         self.log.critical('timeout. Breaking loop')
+        ##         flagfile.search('request')
+        ##         flagfile.clean() 
+        ##         return 1
+
+
+
+
         rc = self.preinstall()
         if rc != 0:
             self.log.critical('preinstall step failed. Aborting.')
