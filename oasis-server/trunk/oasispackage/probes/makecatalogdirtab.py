@@ -12,7 +12,8 @@ for node in root:
     process all children
     process root
 
-Interesting issue: when a large number of subdirs have total files just under the threshold, 
+CORNER CASES
+A: When a large number of subdirs have total files just under the threshold, 
 but all taken together add up to a large number. 
   Option 1: Lower global threshold by some fraction, and re-calculate from the bottom. Do
              this until constraints are met.   
@@ -21,6 +22,10 @@ but all taken together add up to a large number.
   Option 3: Keep track of subdirectory total files and then sort by size. Add catalogs, in 
             order, to these subdirectories until leftover is less than max. !!
 
+B: When a directory has a very large number of files in it. 
+     Should be rare, since problems arise with dirs with more than 32k files.
+     
+C: ?     
 
 
 [makecatalogdirtab]
@@ -36,6 +41,7 @@ import getopt
 import os
 import stat
 import sys
+from operator import itemgetter
 
 (libpath,tail) = os.path.split(sys.path[0])
 #print(libpath)
@@ -49,6 +55,20 @@ CATALOGDIRS=[]
 CATALOGDIRTOTALS=[]
 TABFILE_NAME=".cvmfsdirtab"
 
+# maxfiles is threshold, absmax = maxfiles * ABS_MAX_FACTOR
+# our goal is that no catalog can contain more than absmax files, 
+# unless they all reside in one directory (which we can't help).
+ABS_MAX_FACTOR=2
+
+def addtocatalog(dirpath, numfiles):
+    if dirpath not in CATALOGDIRS:
+        print("Adding %s to catalogdirs. %d  files." % (dirpath,numfiles))
+        CATALOGDIRS.append(dirpath)
+        CATALOGDIRTOTALS.append(numfiles)    
+    else:
+        print("WARNING: tried to re-add directory to catalogdirs. %s" % dirpath)
+
+
 def mywalk(top, maxfiles=250, dirtab=[]):
     '''
     postorder, depth-first processing (alphabetical)
@@ -57,9 +77,13 @@ def mywalk(top, maxfiles=250, dirtab=[]):
     takes current catalog table as input
     
     '''
-    numfiles = 0
+    totalfiles = 0
+    subdirfiles = 0
     dirs = []
     files = []
+    
+    # contains tuples of (dirpath, numfiles)
+    subdirinfo = []
     try:
         names = os.listdir(top)
         names.sort()
@@ -75,10 +99,13 @@ def mywalk(top, maxfiles=250, dirtab=[]):
                 files.append(fullname)
         for dirpath in dirs:
             dirtotal = mywalk(dirpath, maxfiles=maxfiles, dirtab=dirtab)
+            subdirinfo.append((dirpath, dirtotal))
             #print("subdir: %s total %d files." % (dirpath, dirtotal))
-            numfiles += dirtotal
-        
-        numfiles = len(files) + numfiles
+            totalfiles += dirtotal
+            subdirfiles += dirtotal
+        #print(subdirinfo)
+        numfiles = len(files)        
+        totalfiles = numfiles + totalfiles
         #print("%s: %s dirs, %d files, totalfiles=%d" % (top, 
         #                                                        len(dirs), 
         #                                                        len(files), 
@@ -87,20 +114,36 @@ def mywalk(top, maxfiles=250, dirtab=[]):
         #print("OSError: %s" % e)
         pass
     
+    # sort dirs by number of subfiles. already sorted by alphabetical, so should be
+    # stable. 
+    subdirinfo = sorted(subdirinfo, key=itemgetter(1), reverse=True)
+    print("subdirinfo: %s" % subdirinfo)
+        
     if top in dirtab:
         print("%s: dir already in dirtab. Re-adding." %  top )
-        CATALOGDIRS.append(top)
-        CATALOGDIRTOTALS.append(numfiles)
-        numfiles = 0
-    elif numfiles > maxfiles:
-        print("%s: %d files > %d, creating catalogdir." % (top,
-                                                           numfiles,
-                                                           maxfiles))
-        CATALOGDIRS.append(top)
-        CATALOGDIRTOTALS.append(numfiles)
-        numfiles = 0
+
+        totalfiles = 0
+    elif totalfiles > maxfiles:
+        # numfiles + subdirfiles > maxfiles
+        # where is the max coming from? local or subdir?
+        if subdirfiles > maxfiles:
+            # the files from subdirectories passed the threshold
+            i = 0
+            while subdirfiles > maxfiles:
+                (p,n) = subdirinfo[i]
+                print("Adding subdir %s to catalogs..." % p)
+                addtocatalog(p,n)
+                subdirfiles = subdirfiles - n
+                totalfiles = totalfiles - n
+                i += 1    
+        else:
+            pass 
+
+        if numfiles > maxfiles:
+            addtocatalog(top, totalfiles)
+            totalfiles = 0
        
-    return numfiles
+    return totalfiles
                
 
 #class makecatalogdirs(BaseProbe):
