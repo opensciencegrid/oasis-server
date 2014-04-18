@@ -83,7 +83,8 @@ class ProjectHandler(object):
 
     def _setuplogging(self):
         
-        self.log = logging.getLogger('admin-addproject')
+        #self.log = logging.getLogger('admin-addproject')
+        self.log = logging.getLogger('logfile')   #FIXME !! Fix the mess with logger hierarchy
  
         # set the messages format
         if major == 2 and minor == 4:
