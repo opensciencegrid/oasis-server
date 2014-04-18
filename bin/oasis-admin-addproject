@@ -46,6 +46,10 @@ So it must be written before calling this tool
 #       ???
 
 
+# FIXME write the logging 
+
+# FIXME --allproject does not work at this point, I think
+
 
 class ProjectHandler(object):
     # In the future, if makes sense, 
