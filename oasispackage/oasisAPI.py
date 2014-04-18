@@ -1133,7 +1133,7 @@ class oasisCLI(object):
             return rc
 
         # inittime = time.time()
-        # white True:
+        # while True:
         #   rc = self._checknoflagfile()
         #   if rc == 0:
         #       break 
