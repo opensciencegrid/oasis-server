@@ -1142,9 +1142,11 @@ class oasisCLI(object):
               time.sleep(10)  # FIXME why 10?? It should be a config variable?
               elapsed = time.time() - inittime
               if elapsed < self.project.starttimeout:
+                  # FIXME: notification should not be every N seconds. It should back off exponentially.
                   self.log.critical('There is already a flagfile, meaning a previous installation job is still running. Waiting...')
                   self.console.critical('Apparently there is another job still running. If that is not true, please contact with OASIS administrators. Waiting...')
               else:
+                  # FIXME: notification should not be every N seconds. It should back off exponentially.
                   self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
                   self.console.critical('Timeout reached and previous flagfile still there. Aborting. If there is no a previous installation job, please contact with OASIS administrators.')
                   return rc
