@@ -389,6 +389,7 @@ class Project(object):
             # FIXME: allow more than one oasisproject.conf, split by comma
             # FIXME: maybe the class should be able to be instantiated without the probes conf defined. 
             #        For example, oasis-admin-addproject will not work if that config file does not exist, which is annoying.
+            #        Maybe a solution could be a hierarchy of classes, 'a la java'
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
             self.log.debug('variable oasisprojectprobesconf has value %s', self.oasisprojectprobesconf)
 
