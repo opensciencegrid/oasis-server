@@ -386,6 +386,7 @@ class Project(object):
             # FIXME : maybe allow VO with no own probes, so "projectprobes" is undefined
             self.log.debug('variable oasisprobesconf has value %s', self.oasisprobesconf)
 
+            # FIXME: allow more than one oasisproject.conf, split by comma
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
             self.log.debug('variable oasisprojectprobesconf has value %s', self.oasisprojectprobesconf)
 
