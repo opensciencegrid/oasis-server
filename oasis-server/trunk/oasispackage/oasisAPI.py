@@ -333,7 +333,6 @@ class ProjectBasicConfig(object):
         because we need it to get some variables like directoryconf
         '''
 
-        # FIXME ???  must this base class have logging ???
         # FIXME  those names 'logfile.foo' and 'user.bar' are part of the message FORMAT. Use something less ugly
         self.log = logging.getLogger('logfile.%s' %projectsection)
         self.console = logging.getLogger('user.%s' %projectsection)
