@@ -383,6 +383,85 @@ class ProjectBasicConfig(object):
         self.log.debug('Object Project created.')
 
 
+    def _getvo(self):
+        '''
+        gets the VO from the oasisprojects.conf config file.
+        '''
+        
+        self.log.debug('Starting.')
+        
+        if self.projectsconf.has_option(self.projectsection, "VO"):
+            vo = self.projectsconf.get(self.projectsection, 'VO')
+        else:
+            self.log.warning('There is no variable VO defined in the config file')
+            vo = None
+
+        # try to get VO from x509, and interpolate just in case
+        #try:    
+        #    st, vo = commands.getstatusoutput('voms-proxy-info -vo')
+        #    if st == 0:
+        #        vo_temp = string.Template(self.vo)
+        #        vo = vo_temp.substitute(VO_FROM_X509, vo) 
+        #except:
+        #    pass
+
+        self.log.debug('Returning VO %s.' %vo)
+        return vo
+
+    def _getosgapp(self):
+        '''
+        gets the variable OSG_APP from the oasisprojects.conf config file.
+        '''
+
+        self.log.debug('Starting.')
+        
+        if self.projectsconf.has_option(self.projectsection, "OSG_APP"):
+            osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+        else:
+            self.log.warning('There is no variable OSG_APP defined in the config file')
+            osg_app = None
+
+
+        self.log.debug('Returning OSG_APP %s.' %osg_app)
+        return osg_app
+
+    def _getsrcdir(self):
+        '''
+        gets the source directory from the oasisprojects.conf config file.
+        It is the directory where the user payload writes.
+
+        Reason to have a dedicated method is to allow
+        the possibility that variable in the config file
+        is not the final value and requires later interpolation.
+        '''
+
+        self.log.debug('Starting.')
+        src = self.projectsconf.get(self.projectsection, "srcdir")
+        ## src = string.Template(src).substitute(OSG_APP=self.osg_app, VO=self.vo, project=self.projectname)
+        # normalize, just in case
+        src = os.path.normpath(src)
+        self.log.debug('Returning src dir %s.' %src)
+        return src
+
+    def _getdestdir(self):
+        '''
+        gets the destination directory from the oasisprojects.conf config file.
+        It is the directory where files are transferred for publication.
+
+        Reason to have a dedicated method is to allow
+        the possibility that variable in the config file
+        is not the final value and requires later interpolation.
+        '''
+
+        self.log.debug('Starting.')
+        dest = self.projectsconf.get(self.projectsection, "destdir")
+        ## dest = string.Template(dest).substitute(VO=self.vo, project=self.projectname)
+        # normalize, just in case
+        dest = os.path.normpath(dest)
+        self.log.debug('Returning dest dir %s.' %dest)
+        return dest
+
+
 
 
 
