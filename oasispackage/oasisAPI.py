@@ -394,6 +394,20 @@ class ProjectBasicConfig(object):
         self.log.debug('Object Project created.')
 
 
+    def _getprojectsconfig(self):
+        '''
+        gets the ConfigParser object for oasisprojects.conf
+        '''
+        # Maybe temporary solution
+    
+        self.log.debug('Starting.')
+        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconf = SafeConfigParser()
+        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+        self.log.debug('Leaving returning config object %s.' %oasisprojectsconf)
+        return oasisprojectsconf
+
+
     def _getvo(self):
         '''
         gets the VO from the oasisprojects.conf config file.
