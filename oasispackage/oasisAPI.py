@@ -250,6 +250,17 @@ class FlagFile(object):
         return content
 
 
+class FlagFileManager(object):
+    '''
+    class to handle FlagFile objects
+    '''
+    def __init__(self):
+        pass
+
+
+
+
+
 class ProjectFactory(object):
     '''
     class to create objects Project passing different types of inputs
