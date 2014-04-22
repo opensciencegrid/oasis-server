@@ -250,13 +250,47 @@ class FlagFile(object):
         return content
 
 
+
+
 class FlagFileManager(object):
     '''
     class to handle FlagFile objects
     '''
-    def __init__(self):
-        pass
 
+    def __init__(self):
+        '''
+        '''
+        self.basedir = '/var/log/oasis' 
+
+
+    def search(self, status=None):
+        '''
+        searches in the filesystem for any flagfile
+        if status is not None, it searches for flagfiles with that value
+        '''
+
+        self.log.debug('Starting.')
+
+        # remember, the flagfile filename format is  <project>.yyyy-mm-dd:hh-mm-ss.<status>
+        if not status: 
+            RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" )
+        else:
+            RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s$" status)
+
+        list_flagfiles = []
+
+        files = os.listdir(self.basedir)
+        for candidate in files:
+            self.log.debug('Analyzing candidate file %s' %candidate)
+            if RE.match(candidate) is not None:
+                self.log.debug('Candidate file %s matches pattern' %candidate)
+                flagfile = os.path.join(self.basedir, candidate) 
+                self.log.info('Found flag file %s' %flagfile)
+                list_flagfiles.append(flagfile)
+
+        # if no flagfile was found...
+        self.log.info('No flagfile found. Leaving.')
+        return list_flagfiles 
 
 
 
