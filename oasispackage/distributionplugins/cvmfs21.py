@@ -216,6 +216,7 @@ class cvmfs21(BaseDistribution):
         '''
         it should lock only if any of the flagfiles belongs to the same project
         '''
+        # FIXME: should I pay attention to the <status> field???
         for flagfile in listflagfiles;
             if flagfile.startswith(self.project.projectname):
                 return True
