@@ -210,4 +210,16 @@ class cvmfs21(BaseDistribution):
     def createrepository(self):
 
         commands.getoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
+
+
+    def shouldlock(self, listflagfiles):
+        '''
+        it should lock only if any of the flagfiles belongs to the same project
+        '''
+        for flagfile in listflagfiles;
+            if flagfile.startswith(self.project.projectname):
+                return True
+        return False
+
+
    
