@@ -486,6 +486,28 @@ class ProjectBasicConfig(object):
         self.log.debug('Returning dest dir %s.' %dest)
         return dest
 
+    # -------------------------------------------------------------------------
+    #                  Get the plugin for the distribution tool 
+    # -------------------------------------------------------------------------
+
+    def _getdistributionplugin(self):
+        '''
+        get the plugin for a given distribution tool, 
+        i.e. cvmfs21
+        '''
+
+        tool = self.projectsconf.get(self.projectsection, "distributiontool")
+        distribution_plugin = __import__('oasispackage.distributionplugins.%s' %tool,
+                                         globals(),
+                                         locals(),
+                                         ['%s' %tool])
+
+        # Always the name of the plugin and the name of the class are equal
+        distribution_cls_name = tool
+        distribution_cls = getattr(distribution_plugin, distribution_cls_name)
+        distribution_obj = distribution_cls(self)
+        return distribution_obj
+
 
 
 
