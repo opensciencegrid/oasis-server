@@ -266,24 +266,30 @@ class ProjectFactory(object):
     class to create objects Project passing different types of inputs
     '''
 
-    def __init__(self, oasisconf, username=None, projectname=None, projectsection=None):
+    def __init__(self, oasisconf, clstype="Project", username=None, projectname=None, projectsection=None):
+        self.clstype = clstype
         self.oasisconf = oasisconf
         self.username = username
         self.projectname = projectname
         self.projectsection = projectsection
     
     def getProject(self):
+        # FIXME: find out how to make 2nd step better instead of using strings.
     
-        if self.projectsection:
-            return Project(self.projectsection, self.oasisconf)
-    
+        # 1st, we get the right projectsection
         if self.username:
             projectsection = self._getprojectsectionfromusername(self.username)
-            return Project(projectsection, self.oasisconf)
     
         if self.projectname:
             projectsection = self._getprojectsectionfromprojectname(self.projectname)
+
+        # 2nd, we return one of the object Factory*() 
+        if self.clstype == "Project":
             return Project(projectsection, self.oasisconf)
+
+        if self.clstype == "Project":
+            return ProjectBasicConfig(projectsection, self.oasisconf)
+
     
     def _getprojectsectionfromusername(self, username):
     
