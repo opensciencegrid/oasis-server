@@ -70,7 +70,7 @@ def addtocatalog(dirpath, numfiles):
         print("WARNING: tried to re-add directory to catalogdirs. %s" % dirpath)
 
 
-def mywalk(top, maxfiles=250, dirtab=[]):
+def mywalk(top, maxfiles=50000, dirtab=[]):
     '''
     postorder, depth-first processing (alphabetical)
     recursively determine how many files in subtree
@@ -212,7 +212,7 @@ OPTIONS:
     # Handle command line options
     rootdir = "/var"
     destdir = "/var"
-
+    maxfiles = 50000
 
     try:
         opts, args = getopt.getopt(argv, 
