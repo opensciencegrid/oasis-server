@@ -515,7 +515,8 @@ class ProjectBasicConfig(object):
 
 
 
-class Project(object):
+#class Project(object):
+class Project(ProjectBasicConfig):
     '''
     class to keep together all actions related a Project.
     A project will typically be a VO, but not necessarily.
@@ -550,50 +551,9 @@ class Project(object):
         # just pass them as input to __init__() directly
         #
 
-
-        # FIXME  those names 'logfile.foo' and 'user.bar' are part of the message FORMAT. Use something less ugly
-        self.log = logging.getLogger('logfile.%s' %projectsection)
-        self.console = logging.getLogger('user.%s' %projectsection)
-
-        self.projectsection = projectsection
-        self.oasisconf = oasisconf
-        self.projectsconf = self._getprojectsconfig() 
-
         try:
-            # !! FIXME !!
-            # some variables, like VO or OSG_APP, may end up with value None
-            # but then being needed for interpolation to srcdir, destdir, etc.
-            # in that case, an exception should be raised, and abort
-            self.enabled = self.projectsconf.get(self.projectsection, 'enabled')
-            self.log.debug('variable enabled has value %s', self.enabled)
 
-            self.username = self.projectsconf.get(self.projectsection, 'user')
-            self.log.debug('variable username has value %s', self.username)
-
-            self.projectname = self.projectsconf.get(self.projectsection, 'project')
-            self.log.debug('variable projectname has value %s', self.projectname)
-
-            self.vo = self._getvo()
-            self.log.debug('variable vo has value %s', self.vo)
-
-            self.osg_app = self._getosgapp()
-            #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
-            self.log.debug('variable osg_app has value %s', self.osg_app)
-
-            self.distributiontool = self.projectsconf.get(self.projectsection, 'distributiontool')
-            self.log.debug('variable distributiontool has value %s', self.distributiontool)
-
-            self.srcdir = self._getsrcdir()
-            self.log.debug('variable srcdir has value %s', self.srcdir)
-
-            self.destdir = self._getdestdir()
-            self.log.debug('variable destdir has value %s', self.destdir)
-
-            self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
-            self.log.debug('variable destdiruser has value %s', self.destdiruser)
-
-            self.distributionplugin = self._getdistributionplugin()
-            self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
+            super(Project, self).__init__(projectsection, oasisconf)
 
             self.oasisprobesconf = self._getprobesconfig()
             # FIXME : maybe allow VO with no own probes, so "projectprobes" is undefined
@@ -606,21 +566,104 @@ class Project(object):
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
             self.log.debug('variable oasisprojectprobesconf has value %s', self.oasisprojectprobesconf)
 
-            self.sleep = self.projectsconf.getint(self.projectsection, 'time.sleep')
-            self.log.debug('variable sleep has value %s', self.sleep)
-
-            self.starttimeout = self.projectsconf.getint(self.projectsection, 'time.starttimeout')
-            self.log.debug('variable starttimetime has value %s', self.starttimeout)
-
-            self.finishtimeout = self.projectsconf.getint(self.projectsection, 'time.finishtimeout')
-            self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
-
         except:
             self.log.critical('Configuration cannot be read. Aborting.')
             # FIXME !! do not exit, propagate an exception and oasisCLI or oasisd exit
             sys.exit(1)
 
         self.log.debug('Object Project created.')
+
+
+###    def __init__(self, projectsection, oasisconf):
+###        '''
+###        projectsection is the section name in the oasisprojects.conf config file
+###        oasisconf is the ConfigParser object for oasis.conf
+###
+###        We pass oasis.conf and not oasisprojects.conf directly 
+###        because we need it to get some variables like directoryconf
+###        '''
+###        #
+###        # !!  FIXME !!
+###        # pass more reasonable inputs:
+###        # instead of <project section name> and oasisconf
+###        # maybe it should projectname and oasisconf
+###        # or even projectname and projectsconf
+###        #
+###        # also, if oasisconf is only needed for one or two things, 
+###        # just pass them as input to __init__() directly
+###        #
+###
+###
+###        # FIXME  those names 'logfile.foo' and 'user.bar' are part of the message FORMAT. Use something less ugly
+###        self.log = logging.getLogger('logfile.%s' %projectsection)
+###        self.console = logging.getLogger('user.%s' %projectsection)
+###
+###        self.projectsection = projectsection
+###        self.oasisconf = oasisconf
+###        self.projectsconf = self._getprojectsconfig() 
+###
+###        try:
+###            # !! FIXME !!
+###            # some variables, like VO or OSG_APP, may end up with value None
+###            # but then being needed for interpolation to srcdir, destdir, etc.
+###            # in that case, an exception should be raised, and abort
+###            self.enabled = self.projectsconf.get(self.projectsection, 'enabled')
+###            self.log.debug('variable enabled has value %s', self.enabled)
+###
+###            self.username = self.projectsconf.get(self.projectsection, 'user')
+###            self.log.debug('variable username has value %s', self.username)
+###
+###            self.projectname = self.projectsconf.get(self.projectsection, 'project')
+###            self.log.debug('variable projectname has value %s', self.projectname)
+###
+###            self.vo = self._getvo()
+###            self.log.debug('variable vo has value %s', self.vo)
+###
+###            self.osg_app = self._getosgapp()
+###            #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+###            self.log.debug('variable osg_app has value %s', self.osg_app)
+###
+###            self.distributiontool = self.projectsconf.get(self.projectsection, 'distributiontool')
+###            self.log.debug('variable distributiontool has value %s', self.distributiontool)
+###
+###            self.srcdir = self._getsrcdir()
+###            self.log.debug('variable srcdir has value %s', self.srcdir)
+###
+###            self.destdir = self._getdestdir()
+###            self.log.debug('variable destdir has value %s', self.destdir)
+###
+###            self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
+###            self.log.debug('variable destdiruser has value %s', self.destdiruser)
+###
+###            self.distributionplugin = self._getdistributionplugin()
+###            self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
+###
+###            self.oasisprobesconf = self._getprobesconfig()
+###            # FIXME : maybe allow VO with no own probes, so "projectprobes" is undefined
+###            self.log.debug('variable oasisprobesconf has value %s', self.oasisprobesconf)
+###
+###            # FIXME: allow more than one oasisproject.conf, split by comma
+###            # FIXME: maybe the class should be able to be instantiated without the probes conf defined. 
+###            #        For example, oasis-admin-addproject will not work if that config file does not exist, which is annoying.
+###            #        Maybe a solution could be a hierarchy of classes, 'a la java'
+###            self.oasisprojectprobesconf = self._getprojectprobesconfig()
+###            self.log.debug('variable oasisprojectprobesconf has value %s', self.oasisprojectprobesconf)
+###
+###            self.sleep = self.projectsconf.getint(self.projectsection, 'time.sleep')
+###            self.log.debug('variable sleep has value %s', self.sleep)
+###
+###            self.starttimeout = self.projectsconf.getint(self.projectsection, 'time.starttimeout')
+###            self.log.debug('variable starttimetime has value %s', self.starttimeout)
+###
+###            self.finishtimeout = self.projectsconf.getint(self.projectsection, 'time.finishtimeout')
+###            self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
+###
+###        except:
+###            self.log.critical('Configuration cannot be read. Aborting.')
+###            # FIXME !! do not exit, propagate an exception and oasisCLI or oasisd exit
+###            sys.exit(1)
+###
+###        self.log.debug('Object Project created.')
 
 
     # =========================================================================
