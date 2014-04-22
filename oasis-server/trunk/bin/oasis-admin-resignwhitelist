@@ -7,7 +7,7 @@
 import getopt 
 import sys
 
-from oasispackage.oasisAPI import Project, ProjectFactory
+from oasispackage.oasisAPI import Project, ProjectBasicConfig, ProjectFactory
 
 opts, args = getopt.getopt(sys.argv[1:], '', ['projectname='])
         for o, a in opts:
@@ -16,7 +16,7 @@ opts, args = getopt.getopt(sys.argv[1:], '', ['projectname='])
 
 oasisconf = '/etc/oasis/oasis.conf'
 
-projectfactory = ProjectFactory(oasisconf, projectname=projectname)
+projectfactory = ProjectFactory(oasisconf, clstype="ProjectBasicConfig",  projectname=projectname)
 project = projectfactory.getProject()
 project.distributionplugin.resign()
 
