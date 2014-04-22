@@ -62,3 +62,12 @@ class cvmfs20(BaseDistribution):
         # FIXME  ??? does this work also for CVMFS 2.0 ??? 
         commands.getoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
 
+    def shouldlock(self, listflagfiles):
+        '''
+        CVMFS 2.0 should lock if there is any flagfile
+        '''
+    
+        if listflagfiles != []:
+            return True
+        else:
+            return False
