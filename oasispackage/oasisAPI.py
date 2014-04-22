@@ -275,7 +275,7 @@ class FlagFileManager(object):
         if not status: 
             RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" )
         else:
-            RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s$" status)
+            RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s$", %status)
 
         list_flagfiles = []
 
