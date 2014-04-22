@@ -48,12 +48,14 @@
 #        MANDATORY
 #
 # time.sleep = time between cycles for each thread (one per project)
+#        Time is expressed in seconds
 #        MANDATORY
 #
 # time.starttimeout = maximum time to wait when process detects 
 #        there is a flagfile, so a previous installation and publishing task
 #        is still going on. 
 #        The current process can wait a little bit, but not forever.
+#        Time is expressed in seconds
 #        MANDATORY
 #
 # time.finishtimeout = maximum time the user process can stay waiting for the 
@@ -63,8 +65,8 @@
 #        The daemon process will see that flagfile, run probes on the new
 #        content, transfer files to final place, publish them, 
 #        and notify the user process (via the same flagfile) everything is
-#        done. 
-#        This waiting time needs a timeout.
+#        done. This waiting time needs a timeout.
+#        Time is expressed in seconds
 #        MANDATORY
 #
 # distributiontool = it is the name of the plugin with code
