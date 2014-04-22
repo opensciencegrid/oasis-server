@@ -107,6 +107,12 @@ class BaseDistribution(object):
         '''
         raise NotImplementedError
 
+    def shouldlock(self, listflagfiles):
+        '''
+        decides if the running process should lock and wait because
+        of the presence of flagfiles or not
+        '''
+        raise NotImplementedError
 
 
 
