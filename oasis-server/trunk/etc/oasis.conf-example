@@ -24,6 +24,7 @@
 # time.sleep = it is the time between cycles for the daemon,
 #              waiting to see if all threads, one per Project, 
 #              need to be shutdown
+#              Time is expressed in seconds.
 #
 
 # [PROJECTS]
