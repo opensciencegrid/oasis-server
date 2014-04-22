@@ -38,6 +38,7 @@ Author: John Hover <jhover@bnl.gov>
     
 '''
 import getopt
+import logging
 import os
 import stat
 import sys
