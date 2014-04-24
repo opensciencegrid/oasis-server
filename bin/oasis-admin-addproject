@@ -77,7 +77,7 @@ class ProjectHandler(object):
         self.oasisconf = SafeConfigParser()
         self.oasisconf.readfp(open(oasisconfpath))
         
-        projectfactory = ProjectFactory(self.oasisconf, clstype='ProjectBasicConfig', projectname=projectname)
+        projectfactory = ProjectFactory(self.oasisconf, clstype=ProjectBasicConfig, projectname=projectname)
         self.project = projectfactory.getProject()
 
 
