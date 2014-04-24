@@ -300,7 +300,7 @@ class ProjectFactory(object):
     class to create objects Project passing different types of inputs
     '''
 
-    def __init__(self, oasisconf, clstype="Project", username=None, projectname=None, projectsection=None):
+    def __init__(self, oasisconf, clstype=Project, username=None, projectname=None, projectsection=None):
         self.clstype = clstype
         self.oasisconf = oasisconf
         self.username = username
@@ -318,11 +318,7 @@ class ProjectFactory(object):
             projectsection = self._getprojectsectionfromprojectname(self.projectname)
 
         # 2nd, we return one of the object Factory*() 
-        if self.clstype == "Project":
-            return Project(projectsection, self.oasisconf)
-
-        if self.clstype == "Project":
-            return ProjectBasicConfig(projectsection, self.oasisconf)
+        return clstype(projectsection, self.oasisconf)
 
     
     def _getprojectsectionfromusername(self, username):
