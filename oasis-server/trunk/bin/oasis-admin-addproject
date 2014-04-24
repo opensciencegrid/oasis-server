@@ -10,6 +10,8 @@ import pwd
 
 from ConfigParser import SafeConfigParser
 
+from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory
+
 major, minor, release, st, num = sys.version_info
 
 """
@@ -71,7 +73,6 @@ class ProjectHandler(object):
         # create an object Project(), 
         # which includes an attribute self.distributionplugin
 
-        from oasispackage.oasisAPI import Project, ProjectBasicConfig, ProjectFactory
         
         oasisconfpath = '/etc/oasis/oasis.conf'
         self.oasisconf = SafeConfigParser()
