@@ -908,3 +908,214 @@ class Project(ProjectBasicConfig):
         self.log.debug('Leaving with rc %s' %rc)
         return rc
 
+
+
+# =============================================================================
+#
+#           P R O J E C T S      T H R E A D S 
+#
+# =============================================================================
+
+class ProjectThreadMgr(object):
+    '''
+    this class handles the creation and destruction of threads,
+    one thread per project.
+    '''
+
+    def __init__(self, oasisd):
+        """
+        oasisd is a reference to the class oasisd
+        instantiating an object of class ProjectThreadMgr
+
+        all threads created by this class are stored in a dictionary:
+            -- key   = a Project() object
+            -- value = the Thread object
+            
+        """
+
+        self.log = logging.getLogger('main.projectthreadmgr')
+        self.log.info('Creating object ProjectThreadMgr')
+
+        self.oasisd = oasisd
+
+        try:
+            self.mainsleep = self.oasisd.oasisconf.getint('OASIS', 'time.sleep')
+        except:
+            # FIXME
+            raise Exception 
+
+        self.threads = {}  # dicionary to host all threads
+
+        self.log.info("Object ProjectThreadMgr initialized.")
+
+
+    def mainLoop(self):
+        '''
+        Main functional loop. 
+          1. Creates all threads and starts them.
+          2. Wait for a termination signal, and
+             stops all threads when that happens.
+        '''
+        
+        self.log.debug("Starting.")
+        self.log.info("Starting all threads...")
+        
+        self.start()
+       
+        try:
+            while True:
+                time.sleep(self.mainsleep)
+                self.log.debug('Checking for interrupt.')
+        
+        except (KeyboardInterrupt):
+            logging.info("Shutdown via Ctrl-C or -INT signal.")
+            self.shutdown()
+            raise
+        
+        self.log.debug("Leaving.")
+
+    def start(self):
+        '''
+        method to start all threads.
+        Threads being created are stored in a dictionary.
+        '''
+        self.log.debug('Start')
+
+        listprojects = self.oasisd.projectsconf.sections()
+        for projectsection in listprojects:
+
+            # create an object Project() for each section in project config 
+            self.log.info('Candidate for a project in project section %s' %projectsection)
+            self.log.info('Creating object Project')
+            project = Project(projectsection, self.oasisd.oasisconf)
+            # FIXME: use ProjectFactory()
+
+            if project.enabled:
+                self.log.info('Project %s is enabled. Creating thread' %project.projectname)
+                try:
+
+                    thread = ProjectThread(project)
+                    self.threads[project] = thread
+                    thread.start()
+                    self.log.info('Thread for project %s started.' %project.projectname)
+                except Exception, ex:
+                    self.log.error('Exception captured when initializing thread for project %s.' %project.projectname)
+                    self.log.debug("Exception: %s" % traceback.format_exc())
+                    
+            else:
+                self.log.info('Project %s not enabled.' %project.projectname)
+
+        self.log.debug('Leaving')
+
+
+    def shutdown(self):
+        '''
+        Method to cleanly shut down all activity, joining threads, etc. 
+        '''
+        logging.debug(" Shutting down all threads...")
+        self.log.info("Joining all threads...")
+        for thread in self.threads.values():
+            thread.join()
+        self.log.info("All threads joined.")
+        
+
+
+
+class ProjectThread(threading.Thread):
+    '''
+    Each thread handles a Project() object
+    '''
+
+    def __init__(self, project):
+        '''
+        project is an object of class Project()
+        '''
+
+        threading.Thread.__init__(self) # init the thread
+
+        self.log = logging.getLogger('main.projectthread[%s]' %project.projectname)
+        self.log.info('Starting thread for project %s' %project.projectname)
+ 
+        self.stopevent = threading.Event()
+
+        self.project = project
+
+        self.log.info('Thread for project %s initialized' %self.project.projectname)
+
+
+    # -------------------------------------------------------------------------
+    #  threading methods
+    # -------------------------------------------------------------------------
+
+    def run(self):
+        '''
+        Method called by thread.start()
+        Main functional loop of this ProjectThread. 
+            1. look for its own flag file. 
+            2. run probes
+            3. publish
+        '''
+
+        while not self.stopevent.isSet():
+            self.log.debug("Beginning cycle in thread for Project %s" %self.project)
+            try:
+                # look for the flag file    
+                flagfile = self.project._checkflagfile()
+                if flagfile: 
+                    # if flagfile exists for this project, do stuffs 
+
+                    # ------------------------------------
+                    #   run probes
+                    # ------------------------------------
+                    rc = self.project.runprobes()
+                    if rc == 0:
+                        self.log.info('probes ran OK')
+                    else:
+                        self.log.critical('probes failed with rc=%s, aborting installation and stopping thread' %rc)
+                        self.project.flagfile.setfailed()
+                        self.stopevent.set()
+
+                    # ------------------------------------
+                    #   transfer files 
+                    # ------------------------------------
+                    rc = self.project.transferfiles()
+                    if rc == 0:
+                        self.log.info('files transferred OK')
+                    else:
+                        self.log.critical('transferring files failed with rc=%s, aborting installation and stopping thread' %rc)
+                        self.project.flagfile.setfailed()
+                        self.stopevent.set()
+
+                    # ------------------------------------
+                    #   publish 
+                    # ------------------------------------
+                    rc = self.project.publish()
+                    if rc == 0:
+                        self.log.info('publishing OK')
+                        self.project.flagfile.setdone()
+                    else:
+                        self.log.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
+                        self.project.flagfile.setfailed()
+                        self.stopevent.set()
+
+ 
+            except Exception, e:
+                ms = str(e)
+                self.log.error(ms)
+                self.log.debug(traceback.format_exc())
+            time.sleep(self.project.sleep) 
+        
+
+    def join(self,timeout=None):
+        '''
+        Stop the thread. 
+        Overriding this method required to handle Ctrl-C from console.
+        '''
+        self.log.debug('Start')    
+        self.stopevent.set()
+        self.log.info('Stopping thread for Project %s...' %self.project.projectname)
+        threading.Thread.join(self, timeout)
+        self.log.debug('All threads stop. Leaving')    
+
+
+
