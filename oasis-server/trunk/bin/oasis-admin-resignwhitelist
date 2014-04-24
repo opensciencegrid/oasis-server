@@ -7,7 +7,7 @@
 import getopt 
 import sys
 
-from oasispackage.oasisAPI import Project, ProjectBasicConfig, ProjectFactory
+from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory
 
 opts, args = getopt.getopt(sys.argv[1:], '', ['projectname='])
         for o, a in opts:
