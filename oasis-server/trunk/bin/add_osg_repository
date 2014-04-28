@@ -38,7 +38,7 @@ set -e
 
 MASTERKEY=/etc/cvmfs/keys/$STRATUM0.masterkey
 if [ -f $MASTERKEY ]; then
-    # on stratum 0
+    # on stratum 0 with masterkey installed
     case "$REPONAME" in
 	"") echo "$ME: no repository name found in $1/.cvmfswhitelist" >&2
 	    exit 1
@@ -52,7 +52,7 @@ if [ -f $MASTERKEY ]; then
     CATDIR="/srv/cvmfs/$REPONAME/pub/catalogs"
     su cvmfs -c "mkdir -p $CATDIR && cp $TMPFILE $CATDIR/.cvmfswhitelist"
     $MYDIR/resign_osg_whitelist "$REPONAME"
-else
+elif [ -f /etc/cvmfs/repositories.d/$STRATUM0/replica.conf ]; then
     # on stratum 1
     cvmfs_server add-replica -o root $1 /etc/cvmfs/keys/opensciencegrid.org.pub
     rm -f /etc/httpd/conf.d/cvmfs.$REPONAME.conf
@@ -61,5 +61,9 @@ else
     touch /srv/cvmfs/$REPONAME/.cvmfs_master_replica
     # pull initial snapshot
     cvmfs_server snapshot $REPONAME
+else
+    # on stratum 0 without masterkey installed
+    echo "$ME: this should only be run on the stratum 0 when the masterkey is installed" >&2
+    exit 1
 fi
 
