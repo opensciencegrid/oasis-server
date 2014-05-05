@@ -723,7 +723,7 @@ class Project(ProjectBasicConfig):
         run the probes.
         There are two sets of probes:
             - the generic OASIS probes, listed in oasisprobes.conf config file
-            - the project specific probes, listed in oasisprobes.d/<project>.conf 
+            - the project specific probes
 
         Probes are run in a subshell, with sudo to drop privileges to the user.
 
