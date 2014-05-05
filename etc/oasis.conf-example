@@ -53,4 +53,4 @@ projectsconf = /etc/oasis/oasisprojects.conf
 [PROBES]
 
 oasisconf = /etc/oasis/oasisprobes.conf
-directoryconf = /etc/oasis/oasisprobes.d
+directoryconf = /etc/oasis/
