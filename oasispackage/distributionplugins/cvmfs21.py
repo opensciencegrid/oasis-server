@@ -215,10 +215,11 @@ class cvmfs21(BaseDistribution):
     def shouldlock(self, listflagfiles):
         '''
         it should lock only if any of the flagfiles belongs to the same project
+        listflagfiles is a list of FlagFile objects
         '''
         # FIXME: should I pay attention to the <status> field???
         for flagfile in listflagfiles:
-            if flagfile.startswith(self.project.projectname):
+            if flagfile.flagfile.startswith(self.project.projectname):
                 return True
         return False
 
