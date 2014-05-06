@@ -51,7 +51,12 @@ class cvmfs20(BaseDistribution):
         self.log.info('publishing CVMFS')
         cmd = 'cvmfs_server publish'
         st, out = commands.getstatusoutput(cmd)
+        if st:
+            self.log.critical('publishing failed.')
+            self.log.critical('RC = %s' %st)
+            self.log.critical('output = %s' %out)
         return st
+
 
     def resign(self):
         # FIXME !!!
