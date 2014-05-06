@@ -272,48 +272,40 @@ class oasisCLI(object):
         # check if passing args as a python list (result of sys.argv[]) is the best way to do it.
         #
 
-        ### rc = self._checknoflagfile()
-        ### # For the time being, we abort right away is there is a flagfile.
-        ### # In the future, we may consider something different, 
-        ### # for example to wait in a loop (until a timeout)
-        ### # or not aborting if we allow multiple jobs from the same project.
-        ### if rc != 0:
-        ###     self.log.critical('There is already a flagfile for this project. Aborting.')
-        ###     self.console.critical('Aborting installation job. Apparently there is another job still running. If that is not true, please contact with OASIS administrators.')
-        ###     return rc
-
         inittime = time.time()
+
         while True:
-          rc = self._checknoflagfile()
-          if rc == 0:
-              break 
-          else:
 
+            ### rc = self._checknoflagfile()
+            ### if rc == 0:
+            ###     break 
 
+            listflagfiles = self._searchflagfiles()
+            if listflagfiles == []:
+                break
 
-              # the presence of a flagfile may be relevant or not, 
-              # depending on the underlying technology for file distribution.
-              lock = self.project.distributionplugin.shouldlock( listflagfiles )
+            else:
 
+                # the presence of a flagfile may be relevant or not, 
+                # depending on the underlying technology for file distribution.
+                lock = self.project.distributionplugin.shouldlock( listflagfiles )
 
-
-
-              # there is a flagfile, wait a little bit
-              time.sleep(10)  # FIXME why 10?? It should be a config variable?
-              elapsed = time.time() - inittime
-              if elapsed < self.project.starttimeout:
-                  # FIXME: notification should not be every N seconds. It should back off exponentially.
-                  self.log.critical('There is already a flagfile, meaning a previous installation job is still running. Waiting...')
-                  # FIXME: only in the case of CVMFS 2.1 makes sense asking the user if they know if there is another installation job in progress
-                  #self.console.critical('Apparently there is another job still running. If that is not true, please contact with OASIS administrators. Waiting...')
-                  self.console.critical('Apparently there is another job still running. Waiting...')
-              else:
-                  # FIXME: notification should not be every N seconds. It should back off exponentially.
-                  self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
-                  # FIXME: only in the case of CVMFS 2.1 makes sense asking the user if they know if there is another installation job in progress
-                  #self.console.critical('Timeout reached and previous flagfile still there. Aborting. If there is no a previous installation job, please contact with OASIS administrators.')
-                  self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
-                  return rc
+                # there is a flagfile, wait a little bit
+                time.sleep(10)  # FIXME why 10?? It should be a config variable?
+                elapsed = time.time() - inittime
+                if elapsed < self.project.starttimeout:
+                    # FIXME: notification should not be every N seconds. It should back off exponentially.
+                    self.log.critical('There is already a flagfile, meaning a previous installation job is still running. Waiting...')
+                    # FIXME: only in the case of CVMFS 2.1 makes sense asking the user if they know if there is another installation job in progress
+                    #self.console.critical('Apparently there is another job still running. If that is not true, please contact with OASIS administrators. Waiting...')
+                    self.console.critical('Apparently there is another job still running. Waiting...')
+                else:
+                    # FIXME: notification should not be every N seconds. It should back off exponentially.
+                    self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
+                    # FIXME: only in the case of CVMFS 2.1 makes sense asking the user if they know if there is another installation job in progress
+                    #self.console.critical('Timeout reached and previous flagfile still there. Aborting. If there is no a previous installation job, please contact with OASIS administrators.')
+                    self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
+                    return rc
 
 
         rc = self.preinstall()
@@ -360,6 +352,15 @@ class oasisCLI(object):
 
         # no flagfile
         return 0
+
+
+    def _searchflagfiles(self):
+        '''
+        searches for all flagfiles 
+        '''
+        mgnr = FlagFileManager() 
+        listflagfiles = mngr.search()
+        return listflagfiles
 
 
     def _loop(self):
