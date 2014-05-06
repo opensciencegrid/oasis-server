@@ -66,7 +66,8 @@ class FlagFile(object):
     def __init__(self, projectname):
         '''
         '''
-        # FIXME ?? should I pass a Project() object
+        # FIXME ?? should I pass a Project() object ??
+        # FIXME ?? should I make it without requiring any input related Projects at all ?? 
 
         self.log = logging.getLogger('logfile.flagfile')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
