@@ -298,6 +298,7 @@ class oasisCLI(object):
               else:
                   # FIXME: notification should not be every N seconds. It should back off exponentially.
                   self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
+                  # FIXME: only in the case of CVMFS 2.1 makes sense asking the user if they know if there is another installation job in progress
                   self.console.critical('Timeout reached and previous flagfile still there. Aborting. If there is no a previous installation job, please contact with OASIS administrators.')
                   return rc
 
