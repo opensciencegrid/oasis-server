@@ -18,20 +18,24 @@ class cvmfs20(BaseDistribution):
 
 
     def transfer(self):
-
-        self.log.info('transfering files from %s to %s' %(self.src, self.dest))
-
         #
         #  !! FIXME !!
         #  Temporary implementation
         #
 
-        cmd = 'rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
+        self.log.info('transfering files from %s to %s' %(self.src, self.dest))
+
+        cmd = 'rsync --stats -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
         # example:   rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+        self.log.info('command = %s' %cmd)
+
         st, out = commands.getstatusoutput(cmd)
         if st:
-            self.log.critical('interaction with cvmfs server failed.')
+            self.log.critical('transferring files failed.')
+            self.log.critical('RC = %s' %st)
+            self.log.critical('output = %s' %out)
         return st
+
 
     def publish(self):
 
