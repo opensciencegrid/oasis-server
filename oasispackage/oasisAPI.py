@@ -288,6 +288,11 @@ class oasisCLI(object):
           if rc == 0:
               break 
           else:
+
+              # the presence of a flagfile may be relevant or not, 
+              # depending on the underlying technology for file distribution.
+              lock = self.project.distributionplugin.shouldlock()
+
               # there is a flagfile, wait a little bit
               time.sleep(10)  # FIXME why 10?? It should be a config variable?
               elapsed = time.time() - inittime
