@@ -294,12 +294,15 @@ class oasisCLI(object):
               if elapsed < self.project.starttimeout:
                   # FIXME: notification should not be every N seconds. It should back off exponentially.
                   self.log.critical('There is already a flagfile, meaning a previous installation job is still running. Waiting...')
-                  self.console.critical('Apparently there is another job still running. If that is not true, please contact with OASIS administrators. Waiting...')
+                  # FIXME: only in the case of CVMFS 2.1 makes sense asking the user if they know if there is another installation job in progress
+                  #self.console.critical('Apparently there is another job still running. If that is not true, please contact with OASIS administrators. Waiting...')
+                  self.console.critical('Apparently there is another job still running. Waiting...')
               else:
                   # FIXME: notification should not be every N seconds. It should back off exponentially.
                   self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
                   # FIXME: only in the case of CVMFS 2.1 makes sense asking the user if they know if there is another installation job in progress
-                  self.console.critical('Timeout reached and previous flagfile still there. Aborting. If there is no a previous installation job, please contact with OASIS administrators.')
+                  #self.console.critical('Timeout reached and previous flagfile still there. Aborting. If there is no a previous installation job, please contact with OASIS administrators.')
+                  self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
                   return rc
 
 
