@@ -68,6 +68,8 @@ class FlagFile(object):
         '''
         # FIXME ?? should I pass a Project() object ??
         # FIXME ?? should I make it without requiring any input related Projects at all ?? 
+        #          For example, for FlagFileManager::search() to return a list of FlagFile objects
+        #          it should be enough to pass the path to the __init__()
 
         self.log = logging.getLogger('logfile.flagfile')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
