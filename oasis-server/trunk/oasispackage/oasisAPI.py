@@ -360,7 +360,7 @@ class oasisCLI(object):
         searches for all flagfiles 
         '''
         mgnr = FlagFileManager() 
-        listflagfiles = mngr.search()
+        listflagfiles = mgnr.search()
         return listflagfiles
 
 
