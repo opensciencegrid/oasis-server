@@ -32,59 +32,6 @@ from oasispackage.flagfiles import FlagFile, FlagFileManager
 major, minor, release, st, num = sys.version_info
 
 
-class ProjectFactory(object):
-    '''
-    class to create objects Project passing different types of inputs
-    '''
-
-    def __init__(self, oasisconf, clstype=Project, username=None, projectname=None, projectsection=None):
-        self.clstype = clstype
-        self.oasisconf = oasisconf
-        self.username = username
-        self.projectname = projectname
-        self.projectsection = projectsection
-    
-    def getProject(self):
-        # FIXME: find out how to make 2nd step better instead of using strings.
-    
-        # 1st, we get the right projectsection
-        if self.username:
-            projectsection = self._getprojectsectionfromusername(self.username)
-    
-        if self.projectname:
-            projectsection = self._getprojectsectionfromprojectname(self.projectname)
-
-        # 2nd, we return one of the object Factory*() 
-        return clstype(projectsection, self.oasisconf)
-
-    
-    def _getprojectsectionfromusername(self, username):
-    
-        # first get the OASIS projects ConfigFile
-        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
-        oasisprojectsconf = SafeConfigParser()
-        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
-
-        # second get the section name  
-        for section in oasisprojectsconf.sections():
-            if oasisprojectsconf.get(section, 'user') == username:
-                return section
-        return None
-    
-    def _getprojectsectionfromprojectname(self, projectname):
-    
-        # first get the OASIS projects ConfigFile
-        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
-        oasisprojectsconf = SafeConfigParser()
-        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
-
-        # second get the section name  
-        for section in oasisprojectsconf.sections():
-            if oasisprojectsconf.get(section, 'project') == projectname:
-                return section
-        return None
-    
-
 
 
 
@@ -909,6 +856,64 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Leaving with rc %s' %rc)
         return rc
+
+
+
+class ProjectFactory(object):
+    # VERY IMPORTANT
+    # This class must be placed in the code after the classes Project, ProjectBasicConfig...
+    # because otherwise the clstype is unknown when used.
+    '''
+    class to create objects Project passing different types of inputs
+    '''
+
+    def __init__(self, oasisconf, clstype=Project, username=None, projectname=None, projectsection=None):
+        self.clstype = clstype
+        self.oasisconf = oasisconf
+        self.username = username
+        self.projectname = projectname
+        self.projectsection = projectsection
+    
+    def getProject(self):
+        # FIXME: find out how to make 2nd step better instead of using strings.
+    
+        # 1st, we get the right projectsection
+        if self.username:
+            projectsection = self._getprojectsectionfromusername(self.username)
+    
+        if self.projectname:
+            projectsection = self._getprojectsectionfromprojectname(self.projectname)
+
+        # 2nd, we return one of the object Factory*() 
+        return self.clstype(projectsection, self.oasisconf)
+
+    
+    def _getprojectsectionfromusername(self, username):
+    
+        # first get the OASIS projects ConfigFile
+        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconf = SafeConfigParser()
+        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+
+        # second get the section name  
+        for section in oasisprojectsconf.sections():
+            if oasisprojectsconf.get(section, 'user') == username:
+                return section
+        return None
+    
+    def _getprojectsectionfromprojectname(self, projectname):
+    
+        # first get the OASIS projects ConfigFile
+        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconf = SafeConfigParser()
+        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+
+        # second get the section name  
+        for section in oasisprojectsconf.sections():
+            if oasisprojectsconf.get(section, 'project') == projectname:
+                return section
+        return None
+    
 
 
 
