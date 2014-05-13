@@ -264,6 +264,7 @@ class FlagFileManager(object):
         '''
         '''
         self.basedir = '/var/log/oasis' 
+        self.log = logging.getLogger('logfile.flagfilemanager')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
 
     def search(self, status=None):
