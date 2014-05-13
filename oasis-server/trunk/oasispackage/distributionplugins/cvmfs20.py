@@ -23,9 +23,9 @@ class cvmfs20(BaseDistribution):
         #  Temporary implementation
         #
 
-        self.log.info('transfering files from %s to %s' %(self.src, self.dest))
+        self.log.info('transfering files from %s to %s' %(self.project.srcdir, self.project.destdir))
 
-        cmd = 'rsync --stats -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
+        cmd = 'sudo -u cvmfs rsync --stats -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
         # example:   rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
         self.log.info('command = %s' %cmd)
 
