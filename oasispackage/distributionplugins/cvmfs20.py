@@ -69,7 +69,7 @@ class cvmfs20(BaseDistribution):
     def createrepository(self):
        
         #commands.getoutput('cvmfs_server mkfs -o cvmfs oasis.opensciencegrid.org')
-        commands.getoutput('sudo -u cvmfs /cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
+        commands.getoutput('sudo -u cvmfs mkdir /cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
 
 
     def shouldlock(self, listflagfiles):
