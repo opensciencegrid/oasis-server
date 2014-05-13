@@ -27,7 +27,7 @@ import traceback
 
 from ConfigParser import SafeConfigParser
 
-from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory
+from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory, ProjectThreadMgr
 from oasispackage.flagfiles import FlagFile, FlagFileManager
 
 major, minor, release, st, num = sys.version_info
