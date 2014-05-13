@@ -151,6 +151,11 @@ class ProjectHandler(object):
         uid = pwd.getpwnam(user).pw_uid
         
         srcdir = self.project.srcdir
+
+        # checks if OSG_APP is defined, and make sure everyone can write
+        osg_app = self.project.osg_app
+        if osg_app:
+            commands.getoutput('chmod w+go %s' %osg_app)
         
         if not os.path.isdir(srcdir):
             os.makedirs(srcdir)
