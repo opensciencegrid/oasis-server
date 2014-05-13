@@ -68,11 +68,8 @@ class cvmfs20(BaseDistribution):
         
     def createrepository(self):
        
-        # FIXME  ??? does this work also for CVMFS 2.0 ??? 
-        ###commands.getoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
-        commands.getoutput('cvmfs_server mkfs -o cvmfs oasis.opensciencegrid.org')
-        # FIXME ? maybe now it should create the subdirectory for the project
-        #os.mkdir('/cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
+        #commands.getoutput('cvmfs_server mkfs -o cvmfs oasis.opensciencegrid.org')
+        os.mkdir('sudo -u cvmfs /cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
 
 
     def shouldlock(self, listflagfiles):
