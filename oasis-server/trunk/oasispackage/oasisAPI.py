@@ -298,10 +298,11 @@ class oasisCLI(object):
                     elapsed = time.time() - inittime
                     if elapsed < self.project.starttimeout:
                         if elapsed >= nextmessagein: 
-                            nextmessagein = 60*(2**cycle)
+                            waitingtime = 60*(2**cycle)
                             cycle += 1
-                            self.log.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(nextmessagein/60))
-                            self.console.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(nextmessagein/60))
+                            nextmessagein = elapsed + waitingtime
+                            self.log.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(waitingtime/60))
+                            self.console.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(waitingtime/60))
                     else:
                         self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
                         self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
