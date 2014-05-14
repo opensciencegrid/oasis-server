@@ -276,16 +276,10 @@ class oasisCLI(object):
 
         while True:
 
-            ### rc = self._checknoflagfile()
-            ### if rc == 0:
-            ###     break 
-
             listflagfiles = self._searchflagfiles()
             if listflagfiles == []:
                 break
-
             else:
-
                 # the presence of a flagfile may be relevant or not, 
                 # depending on the underlying technology for file distribution.
                 lock = self.project.distributionplugin.shouldlock( listflagfiles )
@@ -312,7 +306,7 @@ class oasisCLI(object):
                         # FIXME: only in the case of CVMFS 2.1 makes sense asking the user if they know if there is another installation job in progress
                         #self.console.critical('Timeout reached and previous flagfile still there. Aborting. If there is no a previous installation job, please contact with OASIS administrators.')
                         self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
-                    return rc
+                        return 1
 
 
         rc = self.preinstall()
