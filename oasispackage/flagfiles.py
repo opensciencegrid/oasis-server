@@ -292,7 +292,8 @@ class FlagFileManager(object):
                 self.log.info('Found flag file %s' %flagfile)
                 list_flagfiles.append(flagfile)
 
-        # if no flagfile was found...
-        self.log.info('No flagfile found. Leaving.')
+        if list_flagfiles == []:
+            self.log.info('No flagfile found. Leaving.')
+
         return list_flagfiles 
 
