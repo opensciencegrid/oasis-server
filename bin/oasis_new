@@ -16,7 +16,8 @@ import os
 import sys
 import time
 
-from oasispackage.oasisAPI import oasisCLI, FlagFile
+from oasispackage.oasisAPI import oasisCLI
+from oasispackage.flagfiles import FlagFile
 
 
 """
