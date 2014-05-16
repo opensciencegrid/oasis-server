@@ -604,6 +604,7 @@ class Project(ProjectBasicConfig):
         cmd = ' '.join(self.payload)
 
         self.log.info('Running installation job')
+        self.console.info('Running installation job')
         self.log.debug('Installation job path is %s' %cmd)
 
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -615,8 +616,10 @@ class Project(ProjectBasicConfig):
 
         if rc == 0:
             self.log.info('Installation job finished OK')
+            self.console.info('Installation job finished OK')
         else:
             self.log.error('Installation job failed with RC=%s' %rc)
+            self.console.error('Installation job failed with RC=%s' %rc)
 
         return rc 
 
