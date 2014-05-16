@@ -1079,8 +1079,10 @@ class ProjectThread(threading.Thread):
                     rc = self.project.runprobes()
                     if rc == 0:
                         self.log.info('probes ran OK')
+                        self.console.info('probes ran OK')
                     else:
                         self.log.critical('probes failed with rc=%s, aborting installation and stopping thread' %rc)
+                        self.console.critical('probes failed with rc=%s, aborting installation and stopping thread' %rc)
                         self.project.flagfile.setfailed()
                         self.stopevent.set()
 
@@ -1092,8 +1094,10 @@ class ProjectThread(threading.Thread):
                     rc = self.project.transferfiles()
                     if rc == 0:
                         self.log.info('files transferred OK')
+                        self.console.info('files transferred OK')
                     else:
                         self.log.critical('transferring files failed with rc=%s, aborting installation and stopping thread' %rc)
+                        self.console.critical('transferring files failed with rc=%s, aborting installation and stopping thread' %rc)
                         self.project.flagfile.setfailed()
                         self.stopevent.set()
 
@@ -1105,9 +1109,11 @@ class ProjectThread(threading.Thread):
                     rc = self.project.publish()
                     if rc == 0:
                         self.log.info('publishing done OK')
+                        self.console.info('publishing done OK')
                         self.project.flagfile.setdone()
                     else:
                         self.log.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
+                        self.console.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
                         self.project.flagfile.setfailed()
                         self.stopevent.set()
 
