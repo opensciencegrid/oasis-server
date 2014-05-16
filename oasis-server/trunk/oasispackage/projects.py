@@ -1075,6 +1075,7 @@ class ProjectThread(threading.Thread):
                     #   run probes
                     # ------------------------------------
                     self.log.info('Starting to run probes')
+                    self.console.info('Starting to run probes')
                     rc = self.project.runprobes()
                     if rc == 0:
                         self.log.info('probes ran OK')
@@ -1087,6 +1088,7 @@ class ProjectThread(threading.Thread):
                     #   transfer files 
                     # ------------------------------------
                     self.log.info('Starting to transfer files')
+                    self.console.info('Starting to transfer files')
                     rc = self.project.transferfiles()
                     if rc == 0:
                         self.log.info('files transferred OK')
@@ -1099,6 +1101,7 @@ class ProjectThread(threading.Thread):
                     #   publish 
                     # ------------------------------------
                     self.log.info('Starting to publish files')
+                    self.console.info('Starting to publish files')
                     rc = self.project.publish()
                     if rc == 0:
                         self.log.info('publishing done OK')
