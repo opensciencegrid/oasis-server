@@ -207,7 +207,7 @@ OPTIONS:
     rootdir = "/var"
     destdir = "/var"
     maxfiles = 50000
-    loglevel = logging.DEBUG
+    loglevel = logging.WARN
     logfile = None
 
     try:
