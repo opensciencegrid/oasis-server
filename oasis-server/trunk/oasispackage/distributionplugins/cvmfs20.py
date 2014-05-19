@@ -68,7 +68,6 @@ class cvmfs20(BaseDistribution):
         
     def createrepository(self):
        
-        # FIXME  ??? do we need to run cvmfs-sync before ????
 
         #commands.getoutput('cvmfs_server mkfs -o cvmfs oasis.opensciencegrid.org')
         commands.getoutput('sudo -u cvmfs mkdir /cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
