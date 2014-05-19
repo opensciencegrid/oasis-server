@@ -517,7 +517,7 @@ class oasisd(object):
         # maybe they both should inherit from a base class
         #
 
-        self.probes_rc = 0
+        self.probes_rc = 0  # ?? do we need it ??
 
         # FIXME
         # maybe parsing the input options should have be done already
