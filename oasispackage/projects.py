@@ -695,22 +695,8 @@ class Project(ProjectBasicConfig):
         self.flagfile.write('<probes>')
        
         # ---------------------------------------------------------------------
-        # 1st run the default OASIS probes
+        # 1st run the specific VO probes
         # ---------------------------------------------------------------------
-
-        self.log.debug('running probes from oasis probes config file')
-        rc = self._runprobesfromconfig(self.oasisprobesconf)
-        if rc != 0:
-            self.log.critical('running probes from oasis probes config file failed')
-            #self.probes_rc = rc 
-            self.flagfile.write('</probes>')
-            return rc
-        self.log.info('all probes from oasis probes config file passed OK')
-
-        # ---------------------------------------------------------------------
-        # 2nd run the specific VO probes
-        # ---------------------------------------------------------------------
-
         self.log.debug('running probes from project %s probes config file' %self.projectsection)
         rc = self._runprobesfromconfig(self.oasisprojectprobesconf)
         if rc != 0:
@@ -719,6 +705,20 @@ class Project(ProjectBasicConfig):
             self.flagfile.write('</probes>')
             return rc
         self.log.info('all probes from project %s probes config file passed OK' %self.projectsection)
+
+        # ---------------------------------------------------------------------
+        # 2nd run the default OASIS probes
+        #   we run OASIS probes after in case some VO probe creates 
+        #   a file too large or something like that
+        # ---------------------------------------------------------------------
+        self.log.debug('running probes from oasis probes config file')
+        rc = self._runprobesfromconfig(self.oasisprobesconf)
+        if rc != 0:
+            self.log.critical('running probes from oasis probes config file failed')
+            #self.probes_rc = rc 
+            self.flagfile.write('</probes>')
+            return rc
+        self.log.info('all probes from oasis probes config file passed OK')
 
         delta = datetime.datetime.now() - inittime
 
