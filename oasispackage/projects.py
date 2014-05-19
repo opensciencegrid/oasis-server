@@ -718,10 +718,10 @@ class Project(ProjectBasicConfig):
             #self.probes_rc = rc
             self.flagfile.write('</probes>')
             return rc
+        self.log.info('all probes from project %s probes config file passed OK' %self.projectsection)
 
         delta = datetime.datetime.now() - inittime
 
-        self.log.info('all probes from project %s probes config file passed OK' %self.projectsection)
         self.log.debug('time to run probes: %s seconds' %(delta.days*24*3600 + delta.seconds))
 
         # if everything went OK...
