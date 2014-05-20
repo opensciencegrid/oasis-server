@@ -235,7 +235,7 @@ OPTIONS:
         elif opt in ("-r", "--rootdir"):
             rootdir = arg
         elif opt in ("-t", "--destdir"):
-            dstdir = arg
+            destdir = arg
         elif opt in ("-x", "--maxfiles"):
             maxfiles = int(arg)
 
