@@ -96,7 +96,7 @@ class makecatalogs(object):
                 except os.error:
                     mode = 0
                 # Do nothing if leaf is a symlink. We don't care about symlink targets at all. 
-                if not stat.S_ISLINK(mode):
+                if not stat.S_ISLNK(mode):
                     if stat.S_ISDIR(mode):
                         dirs.append(fullname)
                     else:
