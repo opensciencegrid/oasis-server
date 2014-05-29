@@ -26,8 +26,7 @@ B: When a directory has a very large number of files in it.
      
 C: ?     
 
-
-[makecatalogdirtab]
+[makecatalogs]
 enabled = True
 probe = yes
 options = "--maxfiles 5000 "
@@ -43,19 +42,15 @@ import stat
 import sys
 from operator import itemgetter
 
+# Handle being run directly...
 (libpath,tail) = os.path.split(sys.path[0])
-#self.log.debug(libpath)
 nlibpath = os.path.split(libpath)[0]
-#print(nlibpath)
-#print(tail)
 sys.path.append(nlibpath)
 
 #from oasispackage.interfaces import BaseProbe
 #class makecatalogdirs(BaseProbe):
 
-
-
-class makecatalogdirtab(object):
+class makecatalogs(object):
 
     def __init__(self, oasisproberootdir="/var", oasisprobedestdir="/var", maxfiles=5000):
         self.rootdir = oasisproberootdir
@@ -80,7 +75,7 @@ class makecatalogdirtab(object):
         '''
         postorder, depth-first processing (alphabetical)
         recursively determine how many files in subtree
-        only counts files, not directories
+        only counts files, not directories, and ignores symlinks
         takes current catalog table as input
         
         '''
@@ -100,10 +95,15 @@ class makecatalogdirtab(object):
                     mode = os.lstat(fullname).st_mode
                 except os.error:
                     mode = 0
-                if stat.S_ISDIR(mode):
-                    dirs.append(fullname)
+                # Do nothing if leaf is a symlink. We don't care about symlink targets at all. 
+                if not stat.S_ISLINK(mode):
+                    if stat.S_ISDIR(mode):
+                        dirs.append(fullname)
+                    else:
+                        files.append(fullname)
                 else:
-                    files.append(fullname)
+                    self.log.debug("dir/file %s is a symlink. ignoring." % fullname)
+                    
             for dirpath in dirs:
                 dirtotal = self.mywalk(dirpath, maxfiles=maxfiles, dirtab=dirtab)
                 subdirinfo.append((dirpath, dirtotal))
@@ -127,7 +127,7 @@ class makecatalogdirtab(object):
             
         if top in dirtab:
             self.log.debug("%s: dir already in dirtab. Re-adding." %  top )
-    
+            self.addtocatalog(dirpath, totalfiles)
             totalfiles = 0
         elif totalfiles > maxfiles:
             if subdirfiles > maxfiles:
@@ -191,7 +191,7 @@ if __name__ == '__main__':
     usage = """
     usage: $0 [options]
 
-Run probe against given  
+Run probe against given file destination.   
 
 OPTIONS:
     -h --help         Print help.
@@ -275,7 +275,7 @@ OPTIONS:
 
     log.setLevel(loglevel)
                     
-    probe = makecatalogdirtab( oasisproberootdir=rootdir, oasisprobedestdir=destdir, maxfiles=maxfiles )
+    probe = makecatalogs( oasisproberootdir=rootdir, oasisprobedestdir=destdir, maxfiles=maxfiles )
     rc = probe.run() 
     sys.exit(rc)
 
