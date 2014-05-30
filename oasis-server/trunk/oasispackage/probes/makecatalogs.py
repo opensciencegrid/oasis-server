@@ -127,7 +127,7 @@ class makecatalogs(object):
             
         if top in dirtab:
             self.log.debug("%s: dir already in dirtab. Re-adding." %  top )
-            self.addtocatalog(dirpath, totalfiles)
+            self.addtocatalog(top, totalfiles)
             totalfiles = 0
         elif totalfiles > maxfiles:
             if subdirfiles > maxfiles:
@@ -144,7 +144,7 @@ class makecatalogs(object):
                 pass 
     
             if numfiles > maxfiles:
-                addtocatalog(top, totalfiles)
+                self.addtocatalog(top, totalfiles)
                 totalfiles = 0
         return totalfiles
       
@@ -189,7 +189,7 @@ class makecatalogs(object):
 if __name__ == '__main__':
     argv = sys.argv[1:]
     usage = """
-    usage: $0 [options]
+    usage: makecatalogs.py [options]
 
 Run probe against given file destination.   
 
