@@ -28,14 +28,22 @@
 #          
 # srcdir = path to the project scratch area. 
 #        It is the place where the user payload will put new content.
-#        Typically it will be the same than 
+#
+#        Unless very unique conditions, it should be the same than 
 #
 #                   %(OSG_APP)s/<vo>
 #
+#        if that is not the case, then the installation jobs will
+#        write new content under  $OSG_APP/<vo> 
+#        but the transfer tool will copy from a different place. 
+#
 #        MANDATORY
 #
-# destdir = path to the final place for the files to be
-#        distributed. E.g.  /cvmfs/<vo>.opensciencegrid.org/
+# destdir = path to the final place for the files to be distributed. 
+#        Examples:
+#           -- for cvmfs 2.0:  /cvmfs/oasis.opensciencegrid.org/<vo>
+#           -- for cvmfs 2.1:  /cvmfs/<vo>.opensciencegrid.org/
+#
 #        MANDATORY
 #
 # destdiruser = the owner of the destination tree filesystem.
