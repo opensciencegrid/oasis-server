@@ -89,8 +89,8 @@
 [DEFAULT]
 
 OSG_APP = /home/data/
-srcdir = %(OSG_APP)s/%(VO)s
-destdir = /cvmfs/%(VO)s.opensciencegrid.org 
+srcdir = %(OSG_APP)s/%(project)s
+destdir = /cvmfs/%(project)s.opensciencegrid.org 
 distributiontool = cvmfs21
 time.sleep = 100
 time.starttimeout = 600
@@ -110,8 +110,8 @@ projectprobes = atlas.conf
 VO = MIS 
 project = MIS 
 user = ouser.mis
-srcdir = %(OSG_APP)s/%(VO)s
-destdir = /cvmfs/%(VO)s.opensciencegrid.org 
+srcdir = %(OSG_APP)s/%(project)s
+destdir = /cvmfs/%(project)s.opensciencegrid.org 
 projectprobes = mis.conf
 
 
