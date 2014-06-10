@@ -1,0 +1,1940 @@
+Following instructions from document at https://www.racf.bnl.gov/docs/services/cvmfs/cvmfs-server-test
+
+        [root@itb-oasis ~]# hostname 
+        grid39.racf.bnl.gov
+        
+        [root@itb-oasis ~]# cat /etc/redhat-release 
+        Red Hat Enterprise Linux Client release 5.10 (Tikanga)
+
+
+
+#####################################################################################################
+#                                                                                                   #
+#                I N S T A L L           I N S T R U C T I O N S                                    #
+#                                                                                                   #
+#####################################################################################################
+
+
+#####################################################################################################
+#                                                                                                   #
+#                I N S T A L L           C V M F S   S E R V E R                                    #
+#                                                                                                   #
+#####################################################################################################
+
+
+-- If needed, setup iptables to allow the replica to be able to read from server
+
+        /etc/sysconfig/iptables
+
+   with a line like this
+
+        [0:0] -A INPUT  -p tcp -m tcp  -s 666.666.666.666 --dport 80 -j ACCEPT
+
+   where 666.666.666.666 is the IP of the stratum-1, and then restart the service
+
+        service iptables restart
+
+
+-- Install the .repo from CERN, at http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/5/x86_64/
+
+        [root@itb-oasis ~]# rpm -Uhv http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/5/x86_64/cvmfs-release-2-4.el5.noarch.rpm
+
+        Retrieving http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/5/x86_64/cvmfs-release-2-4.el5.noarch.rpm
+        warning: /var/tmp/rpm-xfer.B08tc9: Header V4 DSA signature: NOKEY, key ID 8ae45ce7
+        Preparing...                ########################################### [100%]
+           1:cvmfs-release          ########################################### [100%]
+        
+
+-- Ensure adequate space in two directories:
+
+        /cvmfs
+        /srv
+
+   if not done, /cvmfs will be created during the installation process
+
+
+
+-- Edit the repo file /etc/yum.repos.d/cernvm.repo 
+   Sometimes is not capable of resolving the nomenclature property. 
+   So to avoid problem edit it and replace line with the baseurl
+
+            baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/$releasever/$basearch/
+
+   by line 
+
+            baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/5/x86_64/
+
+
+-- Install the CVMFS packages
+
+        NOTE: if the OSG repo is also enabled, the following yum command must disable it:
+
+                            yum install --disablerepo=osg cvmfs-server cvmfs-keys httpd redirfs kmod-redirfs cvmfsflt kmod-cvmfsflt
+
+        [root@itb-oasis ~]# yum install cvmfs-server cvmfs-keys httpd redirfs kmod-redirfs cvmfsflt kmod-cvmfsflt
+
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        cernvm                                                                                                                                            | 2.3 kB     00:00     
+        cernvm/primary_db                                                                                                                                 |  77 kB     00:00     
+        1024 packages excluded due to repository priority protections
+        Setting up Install Process
+        Resolving Dependencies
+        --> Running transaction check
+        ---> Package cvmfs-keys.noarch 0:1.4-1 set to be updated
+        ---> Package cvmfs-server.x86_64 0:2.0.8-1 set to be updated
+        ---> Package cvmfsflt.x86_64 0:2.0.7-1 set to be updated
+        ---> Package httpd.x86_64 0:2.2.3-85.el5_10 set to be updated
+        base/filelists                                                                                                                                    | 577 kB     00:00     
+        cernvm/filelists_db                                                                                                                               |  20 kB     00:00     
+        epel/filelists                                                                                                                                    | 9.1 MB     00:00     
+        ordo/filelists                                                                                                                                    | 2.5 kB     00:00     
+        osg-ca-certs-x86_64/filelists                                                                                                                     |  74 kB     00:00     
+        rhel-x86_64-client-5/filelists                                                                                                                    |  39 MB     00:01     
+        rhel-x86_64-client-supplementary-5/filelists                                                                                                      | 4.5 MB     00:00     
+        rhel-x86_64-client-workstation-5/filelists                                                                                                        |  13 MB     00:00     
+        rhel-x86_64-rhev-agent-5-client/filelists                                                                                                         |  536 B     00:00     
+        --> Processing Dependency: libaprutil-1.so.0()(64bit) for package: httpd
+        ---> Package kmod-cvmfsflt.x86_64 0:2.0.7-1 set to be installed
+        ---> Package kmod-redirfs.x86_64 0:0.10-0.1.20101209svn671p1 set to be installed
+        ---> Package redirfs.x86_64 0:0.10-0.1.20101209svn671p1 set to be updated
+        --> Running transaction check
+        ---> Package apr-util.x86_64 0:1.2.7-11.el5_5.2 set to be updated
+        --> Processing Dependency: libpq.so.4()(64bit) for package: apr-util
+        --> Running transaction check
+        ---> Package postgresql-libs.x86_64 0:8.1.23-10.el5_10 set to be updated
+        --> Finished Dependency Resolution
+        
+        Dependencies Resolved
+        
+        =========================================================================================================================================================================
+         Package                                Arch                          Version                                          Repository                                   Size
+        =========================================================================================================================================================================
+        Installing:
+         cvmfs-keys                             noarch                        1.4-1                                            cernvm                                      4.0 k
+         cvmfs-server                           x86_64                        2.0.8-1                                          cernvm                                      4.0 M
+         cvmfsflt                               x86_64                        2.0.7-1                                          cernvm                                      2.4 k
+         httpd                                  x86_64                        2.2.3-85.el5_10                                  rhel-x86_64-client-5                        1.3 M
+         kmod-cvmfsflt                          x86_64                        2.0.7-1                                          cernvm                                      122 k
+         kmod-redirfs                           x86_64                        0.10-0.1.20101209svn671p1                        cernvm                                      384 k
+         redirfs                                x86_64                        0.10-0.1.20101209svn671p1                        cernvm                                      3.6 k
+        Installing for dependencies:
+         apr-util                               x86_64                        1.2.7-11.el5_5.2                                 rhel-x86_64-client-5                         79 k
+         postgresql-libs                        x86_64                        8.1.23-10.el5_10                                 rhel-x86_64-client-5                        197 k
+        
+        Transaction Summary
+        =========================================================================================================================================================================
+        Install       9 Package(s)
+        Upgrade       0 Package(s)
+        
+        Total download size: 6.1 M
+        Is this ok [y/N]: y
+        Downloading Packages:
+        (1/9): cvmfsflt-2.0.7-1.x86_64.rpm                                                                                                                | 2.4 kB     00:00     
+        (2/9): redirfs-0.10-0.1.20101209svn671p1.x86_64.rpm                                                                                               | 3.6 kB     00:00     
+        (3/9): cvmfs-keys-1.4-1.noarch.rpm                                                                                                                | 4.0 kB     00:00     
+        (4/9): apr-util-1.2.7-11.el5_5.2.x86_64.rpm                                                                                                       |  79 kB     00:00     
+        (5/9): kmod-cvmfsflt-2.0.7-1.x86_64.rpm                                                                                                           | 122 kB     00:00     
+        (6/9): postgresql-libs-8.1.23-10.el5_10.x86_64.rpm                                                                                                | 197 kB     00:00     
+        (7/9): kmod-redirfs-0.10-0.1.20101209svn671p1.x86_64.rpm                                                                                          | 384 kB     00:01     
+        (8/9): httpd-2.2.3-85.el5_10.x86_64.rpm                                                                                                           | 1.3 MB     00:00     
+        (9/9): cvmfs-server-2.0.8-1.x86_64.rpm                                                                                                            | 4.0 MB     00:04     
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        Total                                                                                                                                    701 kB/s | 6.1 MB     00:08     
+        warning: rpmts_HdrFromFdno: Header V3 DSA signature: NOKEY, key ID 8ae45ce7
+        cernvm/gpgkey                                                                                                                                     | 1.7 kB     00:00     
+        Importing GPG key 0x8AE45CE7 "CernVM Administrator (cvmadmin) <cernvm.administrator@cern.ch>" from /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
+        Is this ok [y/N]: y
+        Running rpm_check_debug
+        Running Transaction Test
+        Finished Transaction Test
+        Transaction Test Succeeded
+        Running Transaction
+          Installing     : postgresql-libs                                                                                                                                   1/9 
+          Installing     : apr-util                                                                                                                                          2/9 
+          Installing     : httpd                                                                                                                                             3/9 
+          Installing     : cvmfs-keys                                                                                                                                        4/9 
+          Installing     : cvmfs-server                                                                                                                                      5/9 
+          Installing     : kmod-redirfs                                                                                                                                      6/9 
+          Installing     : redirfs                                                                                                                                           7/9 
+          Installing     : kmod-cvmfsflt                                                                                                                                     8/9 
+          Installing     : cvmfsflt                                                                                                                                          9/9 
+        
+        Installed:
+          cvmfs-keys.noarch 0:1.4-1         cvmfs-server.x86_64 0:2.0.8-1                      cvmfsflt.x86_64 0:2.0.7-1                     httpd.x86_64 0:2.2.3-85.el5_10   
+          kmod-cvmfsflt.x86_64 0:2.0.7-1    kmod-redirfs.x86_64 0:0.10-0.1.20101209svn671p1    redirfs.x86_64 0:0.10-0.1.20101209svn671p1   
+        
+        Dependency Installed:
+          apr-util.x86_64 0:1.2.7-11.el5_5.2                                              postgresql-libs.x86_64 0:8.1.23-10.el5_10                                             
+        
+        Complete!
+        
+
+-- test it. No output means a successful test:
+
+        [root@itb-oasis ~]# modprobe redirfs && modprobe cvmfsflt
+        [root@itb-oasis ~]# 
+
+
+-- delete artifact file  /etc/cvmfs/replica.conf
+
+        [root@itb-oasis ~]# rm -f /etc/cvmfs/replica.conf
+
+
+-- next step is supposed to be to configure /etc/cvmfs/server.conf
+
+   One is supposed to copy it first to  /etc/cvmfs/server.local if the setup is different than the default.
+   If nothing done to /etc/cvmfs/server.conf, then the default values will be applied. 
+
+   Do nothing. server.local will be created automagically. 
+
+
+-- create the oasis repo
+
+        [root@itb-oasis ~]# cvmfs_server mkfs oasis.opensciencegrid.org
+
+        Checking for cvmfs user... done
+        Creating configuration files... done
+        Creating CernVM-FS master key for oasis.opensciencegrid.org in /etc/cvmfs/keys/oasis.opensciencegrid.org.pub... done
+        Creating self-signed certificate for oasis.opensciencegrid.org in /etc/cvmfs/keys/oasis.opensciencegrid.org.crt... done
+        Create CernVM-FS Storage... done
+        Signing 30 day whitelist with master key... done
+        Starting services... done
+        Reloading Apache... done
+        
+        Install your software in /cvmfs/oasis.opensciencegrid.org as user cvmfs.
+        Once you're happy, publish using 'cvmfs_server publish'
+        For client configuration, have a look at 'cvmfs_server info'
+        
+        If you go for production, backup you software signing keys in /etc/cvmfs/keys/!
+    
+
+
+  Now files and directories should have been created
+
+        [root@itb-oasis ~]# ll /cvmfs/
+        total 4
+        drwxr-xr-x 2 cvmfs cvmfs 4096 May  8 16:12 oasis.opensciencegrid.org
+
+        [root@itb-oasis ~]# ll /cvmfs/oasis.opensciencegrid.org/
+        total 4
+        -rw-r--r-- 1 root root 55 May  8 16:12 empty
+
+        [root@itb-oasis ~]# ll /etc/cvmfs/keys/
+
+        total 32
+        -r--r--r-- 1 root root  451 Jun  4  2012 cern.ch.pub
+        -r--r--r-- 1 root root  451 Jun  4  2012 cern-it1.cern.ch.pub
+        -r--r--r-- 1 root root  451 Jun  4  2012 cern-it2.cern.ch.pub
+        -r--r--r-- 1 root root  451 Jun  4  2012 cern-it3.cern.ch.pub
+        -r--r--r-- 1 root root 1094 May  8 16:12 oasis.opensciencegrid.org.crt
+        -r--r--r-- 1 root root 1675 May  8 16:12 oasis.opensciencegrid.org.key
+        -r--r--r-- 1 root root 1675 May  8 16:12 oasis.opensciencegrid.org.masterkey
+        -r--r--r-- 1 root root  451 May  8 16:12 oasis.opensciencegrid.org.pub
+        
+
+        [root@itb-oasis ~]# cat /etc/cvmfs/server.local
+
+        # Created by cvmfs_server.  Don't touch.
+        CVMFS_REPOSITORY_NAME=oasis.opensciencegrid.org
+        SHADOW_DIR=/cvmfs/oasis.opensciencegrid.org
+        PUB_DIR=/srv/cvmfs/oasis.opensciencegrid.org/pub
+        LOG_FILE=/srv/cvmfs/oasis.opensciencegrid.org/ctrl/fschanges
+        CVMFS_SYNC_THREADS=16
+        SIGN_CATALOG=yes
+        CVMFS_LAZYATTACH=yes
+        CVMFS_BOOKKEEPING=/srv/cvmfs/oasis.opensciencegrid.org/ctrl/dirty_catalogs
+        CVMFS_SYSTEM_UMASK=yes
+        
+-- create the master_replica file
+
+        [root@itb-oasis ~]# touch /srv/cvmfs/oasis.opensciencegrid.org/pub/catalogs/.cvmfs_master_replica
+
+-- the keys are supposed to be copied to the replica and client
+
+        /etc/cvmfs/keys/oasis.opensciencegrid.org.pub    
+
+-- first testing publishing
+
+        [root@itb-oasis ~]# rm -f /cvmfs/oasis.opensciencegrid.org/empty 
+
+        [root@itb-oasis ~]# sudo -u cvmfs touch /cvmfs/oasis.opensciencegrid.org/test
+
+        [root@itb-oasis ~]# ll /cvmfs/oasis.opensciencegrid.org/
+        total 0
+        -rw-r--r-- 1 cvmfs cvmfs 0 May  8 16:30 test
+
+        [root@itb-oasis ~]# cvmfs_server publish
+        Locking down /cvmfs/oasis.opensciencegrid.org              [  OK  ]
+        
+        Waiting for pending operations on /cvmfs/oasis.openscienceg[  OK  ]
+        
+        Waiting for pending messages in call buffer                [  OK  ]
+        
+        Stopping journal writer                                    [  OK  ]
+        
+        Attaching /srv/cvmfs/oasis.opensciencegrid.org/pub/catalogs/.cvmfscatalog.working
+        Parsing file system change log... 6 lines
+        Loading required file catalogs...
+        Post-processing file system change log...
+        Step 1 - Deleting obsolete file and directory entries (1 entries): .
+        Step 2 - Inserting new directories and symlinks (0 entries): 
+        Step 3 - Updating touched directories (0 entries): 
+        Step 4 - Building file list (1 entries): .
+        Step 5 - Compressing and calculating content hashes using 16 threads (1 files): .
+        Step 6 - Updating file catalogs (1 files): .
+        Commit changes to catalogs...
+        Creating catalog snapshot at /cvmfs/oasis.opensciencegrid.org
+        Flushing file system change log                            [  OK  ]
+        
+        Resuming journal writer                                    [  OK  ]
+        
+        Open up /cvmfs/oasis.opensciencegrid.org                   [  OK  ]
+        
+        Signing /srv/cvmfs/oasis.opensciencegrid.org/pub/catalogs/.cvmfscatalog
+
+
+-- by that point the service should be running. If not, start it
+
+        [root@itb-oasis ~]# service cvmfsd start
+        CernVM-FS daemon is running
+
+        [root@itb-oasis ~]# service httpd start
+        Starting httpd:                                            [  OK  ]
+
+
+#####################################################################################################
+#                                                                                                   #
+#                I N S T A L L           O A S I S                                                  #
+#                                                                                                   #
+#####################################################################################################
+
+For the time being, for this test, OASIS is deployed from source at SVN.
+
+
+-- check out code from SVN.
+
+
+        [root@itb-oasis ~]# pwd
+        /root
+
+        [root@itb-oasis ~]# mkdir src
+
+        [root@itb-oasis ~]# cd src/
+
+        [root@itb-oasis src]# svn co  http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/trunk/ .
+        A    LICENSE
+        A    attic
+        A    attic/confsync-dyndns
+        A    attic/install.sh
+        A    attic/puppetd
+        A    attic/osg-oasis-runprobes
+        A    attic/vm-build.instructions
+        A    attic/generate_condormap.py
+        A    attic/security-test
+        A    attic/osg-oasis-update
+        A    attic/generate_gridmap.py
+        A    attic/request_oasis_update
+        A    attic/generate_adduser.py
+        A    attic/oasis_daemon.py
+        A    attic/old-oasisusers.conf-example
+        A    attic/oasis_status.sh
+        A    attic/README
+        A    attic/setup_munin_cert_age
+        A    attic/do_oasis_update
+        A    attic/oasis.py
+        A    attic/backup
+        A    attic/oasisAPI.py.oldcode
+        A    attic/cvmfs20.py
+        A    attic/old-oasis.conf-example
+        A    attic/default.conf
+        A    attic/cvmfs21.py
+        A    attic/sysstat
+        A    attic/osg-oasis-update-new
+        A    attic/oasis
+        A    attic/config.sh
+        A    attic/oasisdistributions.conf-example
+        A    CHANGELOG
+        A    setup.py
+        A    bin
+        A    bin/runprobes
+        A    bin/install.sh
+        A    bin/oasis-admin-addproject
+        A    bin/oasis-runprobe-no
+        A    bin/osg-oasis-update
+        A    bin/oasis-runprobe-forbiddenfiles
+        A    bin/oasis_new
+        A    bin/oasis_status.sh
+        A    bin/oasis-admin-rollback
+        A    bin/blank_osg_repository
+        A    bin/set_repository_property
+        A    bin/add_osg_repository
+        A    bin/unblank_osg_repository
+        A    bin/do_oasis_update
+        A    bin/oasis-runprobe-makecatalogdirtab
+        A    bin/oasis-runprobe-readable
+        A    bin/oasis-runprobe-yes
+        A    bin/oasis
+        A    bin/oasis-runprobe-filesize
+        A    bin/oasis-runprobe-numberfiles
+        A    bin/oasisd
+        A    bin/generate_condormap.py
+        A    bin/oasis-runprobe-relocatable
+        A    bin/oasis-admin-resignwhitelist
+        A    bin/generate_adduser.py
+        A    bin/request_oasis_update
+        A    bin/resign_osg_whitelist
+        A    bin/oasis-admin-delproject
+        A    bin/oasis-runprobe-quota
+        A    bin/expand_oasis_dirtab
+        A    bin/oasis-runprobe-nodelete
+        A    bin/publish
+        A    bin/oasis-runprobe-nosvn
+        A    bin/oasis-admin-list
+        A    docs
+        A    docs/chep2013
+        A    docs/chep2013/chep2013_proceeding.bbl
+        A    docs/chep2013/chep2013_proceeding.tex
+        A    docs/chep2013/OASIS v2 Deployment.svg
+        A    docs/chep2013/OASIS v.2 Functional Flow.svg
+        A    docs/doc_chander
+        A    docs/proposal.tex
+        A    oasispackage
+        A    oasispackage/oasisAPI.py
+        A    oasispackage/projects.py
+        A    oasispackage/distributionplugins
+        A    oasispackage/distributionplugins/__init__.py
+        A    oasispackage/distributionplugins/cvmfs20.py
+        A    oasispackage/distributionplugins/cvmfs21.py
+        A    oasispackage/flagfiles.py
+        A    oasispackage/__init__.py
+        A    oasispackage/interfaces.py
+        A    oasispackage/probes
+        A    oasispackage/probes/quota.py
+        A    oasispackage/probes/filesize.py
+        A    oasispackage/probes/numberfiles.py
+        A    oasispackage/probes/no.py
+        A    oasispackage/probes/relocatable.py
+        A    oasispackage/probes/makecatalogdirtab.py
+        A    oasispackage/probes/notarball.py
+        A    oasispackage/probes/forbiddenfiles.py
+        A    oasispackage/probes/nodelete.py
+        A    oasispackage/probes/readable.py
+        A    oasispackage/probes/project1
+        A    oasispackage/probes/project1/yes.py
+        A    oasispackage/probes/yes.py
+        A    oasispackage/probes/project2
+        A    oasispackage/probes/nosvn.py
+        A    MANIFEST.in
+        A    etc
+        A    etc/condor_oasis.conf-example
+        A    etc/oasisd
+        A    etc/oasisprojects.conf-example
+        A    etc/oasisprobes.conf-example
+        A    etc/oasis.conf-example
+        A    etc/oasisd.sysconfig-example
+        A    libexec
+        A    libexec/oasis_job_wrapper.sh
+        A    misc
+        A    misc/cron_oasis
+        A    misc/generate_adduser
+        A    misc/cron_oasis-login
+        A    misc/rpm-post.sh
+        A    misc/rpm-pre.sh
+        A    misc/generate_condormap
+        A    misc/generate_gridmap
+        A    misc/rpm-preun.sh
+        A    README
+        A    setup.cfg
+        Checked out revision 409.
+            
+           
+-- create the RPM with distutils
+
+        [root@itb-oasis src]# python setup.py bdist_rpm
+        running bdist_rpm
+        writing 'build/bdist.linux-x86_64/rpm/SPECS/oasis-server.spec'
+        running sdist
+        reading manifest file 'MANIFEST'
+        creating oasis-server-2.0.0
+        creating oasis-server-2.0.0/bin
+        creating oasis-server-2.0.0/etc
+        creating oasis-server-2.0.0/libexec
+        creating oasis-server-2.0.0/misc
+        creating oasis-server-2.0.0/oasispackage
+        creating oasis-server-2.0.0/oasispackage/distributionplugins
+        creating oasis-server-2.0.0/oasispackage/probes
+        making hard links in oasis-server-2.0.0...
+        hard linking CHANGELOG -> oasis-server-2.0.0
+        hard linking LICENSE -> oasis-server-2.0.0
+        hard linking README -> oasis-server-2.0.0
+        hard linking setup.cfg -> oasis-server-2.0.0
+        hard linking setup.py -> oasis-server-2.0.0
+        hard linking bin/add_osg_repository -> oasis-server-2.0.0/bin
+        hard linking bin/blank_osg_repository -> oasis-server-2.0.0/bin
+        hard linking bin/do_oasis_update -> oasis-server-2.0.0/bin
+        hard linking bin/expand_oasis_dirtab -> oasis-server-2.0.0/bin
+        hard linking bin/generate_adduser.py -> oasis-server-2.0.0/bin
+        hard linking bin/generate_condormap.py -> oasis-server-2.0.0/bin
+        hard linking bin/install.sh -> oasis-server-2.0.0/bin
+        hard linking bin/oasis -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-admin-addproject -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-admin-delproject -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-admin-list -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-admin-resignwhitelist -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-admin-rollback -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-filesize -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-forbiddenfiles -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-makecatalogdirtab -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-no -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-nodelete -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-nosvn -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-numberfiles -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-quota -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-readable -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-relocatable -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-runprobe-yes -> oasis-server-2.0.0/bin
+        hard linking bin/oasis_new -> oasis-server-2.0.0/bin
+        hard linking bin/oasis_status.sh -> oasis-server-2.0.0/bin
+        hard linking bin/oasisd -> oasis-server-2.0.0/bin
+        hard linking bin/osg-oasis-update -> oasis-server-2.0.0/bin
+        hard linking bin/publish -> oasis-server-2.0.0/bin
+        hard linking bin/request_oasis_update -> oasis-server-2.0.0/bin
+        hard linking bin/resign_osg_whitelist -> oasis-server-2.0.0/bin
+        hard linking bin/runprobes -> oasis-server-2.0.0/bin
+        hard linking bin/set_repository_property -> oasis-server-2.0.0/bin
+        hard linking bin/unblank_osg_repository -> oasis-server-2.0.0/bin
+        hard linking etc/condor_oasis.conf-example -> oasis-server-2.0.0/etc
+        hard linking etc/oasis.conf-example -> oasis-server-2.0.0/etc
+        hard linking etc/oasisd -> oasis-server-2.0.0/etc
+        hard linking etc/oasisd.sysconfig-example -> oasis-server-2.0.0/etc
+        hard linking etc/oasisprobes.conf-example -> oasis-server-2.0.0/etc
+        hard linking etc/oasisprojects.conf-example -> oasis-server-2.0.0/etc
+        hard linking libexec/oasis_job_wrapper.sh -> oasis-server-2.0.0/libexec
+        hard linking misc/cron_oasis -> oasis-server-2.0.0/misc
+        hard linking misc/cron_oasis-login -> oasis-server-2.0.0/misc
+        hard linking misc/generate_adduser -> oasis-server-2.0.0/misc
+        hard linking misc/generate_condormap -> oasis-server-2.0.0/misc
+        hard linking misc/generate_gridmap -> oasis-server-2.0.0/misc
+        hard linking misc/rpm-post.sh -> oasis-server-2.0.0/misc
+        hard linking misc/rpm-pre.sh -> oasis-server-2.0.0/misc
+        hard linking misc/rpm-preun.sh -> oasis-server-2.0.0/misc
+        hard linking oasispackage/__init__.py -> oasis-server-2.0.0/oasispackage
+        hard linking oasispackage/flagfiles.py -> oasis-server-2.0.0/oasispackage
+        hard linking oasispackage/interfaces.py -> oasis-server-2.0.0/oasispackage
+        hard linking oasispackage/oasisAPI.py -> oasis-server-2.0.0/oasispackage
+        hard linking oasispackage/projects.py -> oasis-server-2.0.0/oasispackage
+        hard linking oasispackage/distributionplugins/__init__.py -> oasis-server-2.0.0/oasispackage/distributionplugins
+        hard linking oasispackage/distributionplugins/cvmfs20.py -> oasis-server-2.0.0/oasispackage/distributionplugins
+        hard linking oasispackage/distributionplugins/cvmfs21.py -> oasis-server-2.0.0/oasispackage/distributionplugins
+        hard linking oasispackage/probes/filesize.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/forbiddenfiles.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/makecatalogdirtab.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/no.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/nodelete.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/nosvn.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/notarball.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/numberfiles.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/quota.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/readable.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/relocatable.py -> oasis-server-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/yes.py -> oasis-server-2.0.0/oasispackage/probes
+        tar -cf dist/oasis-server-2.0.0.tar oasis-server-2.0.0
+        gzip -f9 dist/oasis-server-2.0.0.tar
+        removing 'oasis-server-2.0.0' (and everything under it)
+        copying dist/oasis-server-2.0.0.tar.gz -> build/bdist.linux-x86_64/rpm/SOURCES
+        building RPMs
+        rpmbuild -ba --define _topdir /root/src/build/bdist.linux-x86_64/rpm --clean build/bdist.linux-x86_64/rpm/SPECS/oasis-server.spec
+        Executing(%prep): /bin/sh -e /var/tmp/rpm-tmp.84934
+        + umask 022
+        + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
+        + LANG=C
+        + export LANG
+        + unset DISPLAY
+        + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
+        + rm -rf oasis-server-2.0.0
+        + /usr/bin/gzip -dc /root/src/build/bdist.linux-x86_64/rpm/SOURCES/oasis-server-2.0.0.tar.gz
+        + tar -xvvf -
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/
+        -rw-r--r-- root/root     35147 2014-05-12 12:07:29 oasis-server-2.0.0/LICENSE
+        -rw-r--r-- root/root      3432 2014-05-12 12:07:29 oasis-server-2.0.0/setup.py
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/etc/
+        -rw-r--r-- root/root       659 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasisd.sysconfig-example
+        -rw-r--r-- root/root      1558 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasis.conf-example
+        -rw-r--r-- root/root      3638 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasisprojects.conf-example
+        -rw-r--r-- root/root      1910 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasisprobes.conf-example
+        -rwxr-xr-x root/root      4363 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasisd
+        -rw-r--r-- root/root       833 2014-05-12 12:07:29 oasis-server-2.0.0/etc/condor_oasis.conf-example
+        -rw-r--r-- root/root      1892 2014-05-12 12:07:29 oasis-server-2.0.0/README
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/oasispackage/
+        -rw-r--r-- root/root      9447 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/flagfiles.py
+        -rw-r--r-- root/root     42227 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/projects.py
+        -rw-r--r-- root/root         0 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/__init__.py
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/oasispackage/probes/
+        -rw-r--r-- root/root       537 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/numberfiles.py
+        -rw-r--r-- root/root       531 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/relocatable.py
+        -rw-r--r-- root/root       468 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/no.py
+        -rw-r--r-- root/root       468 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/yes.py
+        -rwxr-xr-x root/root      8336 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/makecatalogdirtab.py
+        -rw-r--r-- root/root       463 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/readable.py
+        -rw-r--r-- root/root       410 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/nosvn.py
+        -rw-r--r-- root/root      2094 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/nodelete.py
+        -rw-r--r-- root/root       877 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/filesize.py
+        -rw-r--r-- root/root      1115 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/quota.py
+        -rw-r--r-- root/root       472 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/forbiddenfiles.py
+        -rw-r--r-- root/root       448 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/notarball.py
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/oasispackage/distributionplugins/
+        -rw-r--r-- root/root      7809 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/distributionplugins/cvmfs21.py
+        -rw-r--r-- root/root      2299 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/distributionplugins/cvmfs20.py
+        -rw-r--r-- root/root         0 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/distributionplugins/__init__.py
+        -rw-r--r-- root/root      5186 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/interfaces.py
+        -rw-r--r-- root/root     21855 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/oasisAPI.py
+        -rw-r--r-- root/root       390 2014-05-12 12:07:29 oasis-server-2.0.0/setup.cfg
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/misc/
+        -rwxr-xr-x root/root       796 2014-05-12 12:07:29 oasis-server-2.0.0/misc/generate_adduser
+        -rwxr-xr-x root/root        15 2014-05-12 12:07:29 oasis-server-2.0.0/misc/rpm-pre.sh
+        -rw-r--r-- root/root       328 2014-05-12 12:07:29 oasis-server-2.0.0/misc/cron_oasis-login
+        -rwxr-xr-x root/root       706 2014-05-12 12:07:29 oasis-server-2.0.0/misc/rpm-post.sh
+        -rw-r--r-- root/root        92 2014-05-12 12:07:29 oasis-server-2.0.0/misc/cron_oasis
+        -rwxr-xr-x root/root        15 2014-05-12 12:07:29 oasis-server-2.0.0/misc/rpm-preun.sh
+        -rwxr-xr-x root/root      1443 2014-05-12 12:07:29 oasis-server-2.0.0/misc/generate_gridmap
+        -rwxr-xr-x root/root      1177 2014-05-12 12:07:29 oasis-server-2.0.0/misc/generate_condormap
+        -rw-r--r-- root/root       743 2014-05-12 12:07:29 oasis-server-2.0.0/CHANGELOG
+        -rw-r--r-- root/root       249 2014-05-12 13:08:52 oasis-server-2.0.0/PKG-INFO
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/libexec/
+        -rwxr-xr-x root/root      6527 2014-05-12 12:07:29 oasis-server-2.0.0/libexec/oasis_job_wrapper.sh
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/bin/
+        -rw-r--r-- root/root       423 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-nosvn
+        -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-nodelete
+        -rwxr-xr-x root/root       281 2014-05-12 12:07:29 oasis-server-2.0.0/bin/request_oasis_update
+        -rw-r--r-- root/root       420 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-no
+        -rw-r--r-- root/root       429 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-numberfiles
+        -rw-r--r-- root/root      2706 2014-05-12 12:07:29 oasis-server-2.0.0/bin/runprobes
+        -rwxr-xr-x root/root      2371 2014-05-12 12:07:29 oasis-server-2.0.0/bin/do_oasis_update
+        -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-filesize
+        -rw-r--r-- root/root      5923 2014-05-12 12:07:29 oasis-server-2.0.0/bin/install.sh
+        -rwxr-xr-x root/root      1773 2014-05-12 12:07:29 oasis-server-2.0.0/bin/blank_osg_repository
+        -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-readable
+        -rwxr-xr-x root/root      1998 2014-05-12 12:07:29 oasis-server-2.0.0/bin/set_repository_property
+        -rw-r--r-- root/root      6230 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-addproject
+        -rwxr-xr-x root/root      2704 2014-05-12 12:07:29 oasis-server-2.0.0/bin/unblank_osg_repository
+        -rw-r--r-- root/root      1208 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis
+        -rw-r--r-- root/root       118 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-list
+        -rw-r--r-- root/root       435 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-makecatalogdirtab
+        -rwxr-xr-x root/root      1424 2014-05-12 12:07:29 oasis-server-2.0.0/bin/expand_oasis_dirtab
+        -rwxr-xr-x root/root      1660 2014-05-12 12:07:29 oasis-server-2.0.0/bin/resign_osg_whitelist
+        -rwxr-xr-x root/root      1825 2014-05-12 12:07:29 oasis-server-2.0.0/bin/add_osg_repository
+        -rw-r--r-- root/root      1375 2014-05-12 12:07:29 oasis-server-2.0.0/bin/publish
+        -rwxr-xr-x root/root      3175 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis_status.sh
+        -rw-r--r-- root/root        18 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-delproject
+        -rw-r--r-- root/root       423 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-quota
+        -rw-r--r-- root/root      5097 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis_new
+        -rw-r--r-- root/root       421 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-yes
+        -rwxr-xr-x root/root       796 2014-05-12 12:07:29 oasis-server-2.0.0/bin/generate_adduser.py
+        -rw-r--r-- root/root        49 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-rollback
+        -rwxr-xr-x root/root      1970 2014-05-12 12:07:29 oasis-server-2.0.0/bin/osg-oasis-update
+        -rw-r--r-- root/root       350 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasisd
+        -rw-r--r-- root/root       696 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-resignwhitelist
+        -rw-r--r-- root/root       429 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-relocatable
+        -rw-r--r-- root/root       432 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-forbiddenfiles
+        -rwxr-xr-x root/root      1177 2014-05-12 12:07:29 oasis-server-2.0.0/bin/generate_condormap.py
+        + STATUS=0
+        + '[' 0 -ne 0 ']'
+        + cd oasis-server-2.0.0
+        ++ /usr/bin/id -u
+        + '[' 0 = 0 ']'
+        + /bin/chown -Rhf root .
+        ++ /usr/bin/id -u
+        + '[' 0 = 0 ']'
+        + /bin/chgrp -Rhf root .
+        + /bin/chmod -Rf a+rX,u+w,g-w,o-w .
+        + exit 0
+        Executing(%build): /bin/sh -e /var/tmp/rpm-tmp.84934
+        + umask 022
+        + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
+        + cd oasis-server-2.0.0
+        + LANG=C
+        + export LANG
+        + unset DISPLAY
+        + python setup.py build
+        running build
+        running build_py
+        creating build
+        creating build/lib
+        creating build/lib/oasispackage
+        copying oasispackage/flagfiles.py -> build/lib/oasispackage
+        copying oasispackage/projects.py -> build/lib/oasispackage
+        copying oasispackage/__init__.py -> build/lib/oasispackage
+        copying oasispackage/interfaces.py -> build/lib/oasispackage
+        copying oasispackage/oasisAPI.py -> build/lib/oasispackage
+        creating build/lib/oasispackage/distributionplugins
+        copying oasispackage/distributionplugins/cvmfs21.py -> build/lib/oasispackage/distributionplugins
+        copying oasispackage/distributionplugins/cvmfs20.py -> build/lib/oasispackage/distributionplugins
+        copying oasispackage/distributionplugins/__init__.py -> build/lib/oasispackage/distributionplugins
+        package init file 'oasispackage/probes/__init__.py' not found (or not a regular file)
+        creating build/lib/oasispackage/probes
+        copying oasispackage/probes/numberfiles.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/relocatable.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/no.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/yes.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/makecatalogdirtab.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/readable.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/nosvn.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/nodelete.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/filesize.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/quota.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/forbiddenfiles.py -> build/lib/oasispackage/probes
+        copying oasispackage/probes/notarball.py -> build/lib/oasispackage/probes
+        package init file 'oasispackage/probes/__init__.py' not found (or not a regular file)
+        running build_scripts
+        creating build/scripts-2.4
+        copying and adjusting bin/oasis -> build/scripts-2.4
+        copying and adjusting bin/oasis_new -> build/scripts-2.4
+        copying and adjusting bin/oasisd -> build/scripts-2.4
+        copying and adjusting bin/oasis-admin-addproject -> build/scripts-2.4
+        copying bin/oasis-runprobe-filesize -> build/scripts-2.4
+        copying bin/oasis-runprobe-forbiddenfiles -> build/scripts-2.4
+        copying bin/oasis-runprobe-no -> build/scripts-2.4
+        copying bin/oasis-runprobe-nodelete -> build/scripts-2.4
+        copying bin/oasis-runprobe-numberfiles -> build/scripts-2.4
+        copying bin/oasis-runprobe-quota -> build/scripts-2.4
+        copying bin/oasis-runprobe-relocatable -> build/scripts-2.4
+        copying bin/oasis-runprobe-yes -> build/scripts-2.4
+        copying bin/oasis-runprobe-readable -> build/scripts-2.4
+        changing mode of build/scripts-2.4/oasis from 644 to 755
+        changing mode of build/scripts-2.4/oasis_new from 644 to 755
+        changing mode of build/scripts-2.4/oasisd from 644 to 755
+        changing mode of build/scripts-2.4/oasis-admin-addproject from 644 to 755
+        changing mode of build/scripts-2.4/oasis-runprobe-filesize from 644 to 755
+        changing mode of build/scripts-2.4/oasis-runprobe-forbiddenfiles from 644 to 755
+        changing mode of build/scripts-2.4/oasis-runprobe-no from 644 to 755
+        changing mode of build/scripts-2.4/oasis-runprobe-nodelete from 644 to 755
+        changing mode of build/scripts-2.4/oasis-runprobe-numberfiles from 644 to 755
+        changing mode of build/scripts-2.4/oasis-runprobe-quota from 644 to 755
+        changing mode of build/scripts-2.4/oasis-runprobe-relocatable from 644 to 755
+        changing mode of build/scripts-2.4/oasis-runprobe-yes from 644 to 755
+        changing mode of build/scripts-2.4/oasis-runprobe-readable from 644 to 755
+        + exit 0
+        Executing(%install): /bin/sh -e /var/tmp/rpm-tmp.84934
+        + umask 022
+        + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
+        + cd oasis-server-2.0.0
+        + LANG=C
+        + export LANG
+        + unset DISPLAY
+        + python setup.py install --root=/var/tmp/oasis-server-2.0.0-1-buildroot --record=INSTALLED_FILES
+        running install
+        running build
+        running build_py
+        package init file 'oasispackage/probes/__init__.py' not found (or not a regular file)
+        package init file 'oasispackage/probes/__init__.py' not found (or not a regular file)
+        running build_scripts
+        running install_lib
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        copying build/lib/oasispackage/flagfiles.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        copying build/lib/oasispackage/projects.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        copying build/lib/oasispackage/__init__.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/numberfiles.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/relocatable.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/no.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/yes.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/makecatalogdirtab.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/readable.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/nosvn.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/nodelete.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/filesize.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/quota.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/forbiddenfiles.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/notarball.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
+        copying build/lib/oasispackage/distributionplugins/cvmfs21.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
+        copying build/lib/oasispackage/distributionplugins/cvmfs20.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
+        copying build/lib/oasispackage/distributionplugins/__init__.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
+        copying build/lib/oasispackage/interfaces.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        copying build/lib/oasispackage/oasisAPI.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/flagfiles.py to flagfiles.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/projects.py to projects.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/__init__.py to __init__.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/numberfiles.py to numberfiles.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/relocatable.py to relocatable.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/no.py to no.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/yes.py to yes.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/makecatalogdirtab.py to makecatalogdirtab.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/readable.py to readable.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/nosvn.py to nosvn.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/nodelete.py to nodelete.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/filesize.py to filesize.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/quota.py to quota.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/forbiddenfiles.py to forbiddenfiles.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/notarball.py to notarball.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins/cvmfs21.py to cvmfs21.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins/cvmfs20.py to cvmfs20.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins/__init__.py to __init__.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/interfaces.py to interfaces.pyc
+        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/oasisAPI.py to oasisAPI.pyc
+        writing byte-compilation script '/tmp/tmpYB7qKO.py'
+        /usr/bin/python -O /tmp/tmpYB7qKO.py
+        removing /tmp/tmpYB7qKO.py
+        running install_scripts
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-nodelete -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-no -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-numberfiles -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-filesize -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-readable -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-admin-addproject -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-quota -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis_new -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-yes -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasisd -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-relocatable -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-forbiddenfiles -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-nodelete to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-no to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-numberfiles to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-filesize to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-readable to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-admin-addproject to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-quota to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis_new to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-yes to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasisd to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-relocatable to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-forbiddenfiles to 755
+        running install_data
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/libexec
+        copying libexec/oasis_job_wrapper.sh -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/libexec
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/etc
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
+        copying etc/oasis.conf-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
+        copying etc/condor_oasis.conf-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
+        copying etc/oasisd.sysconfig-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/oasis
+        copying misc/generate_adduser -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/oasis
+        copying misc/generate_condormap -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/oasis
+        copying misc/generate_gridmap -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/oasis
+        copying etc/oasisprobes.conf-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
+        copying etc/oasisprojects.conf-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
+        creating /var/tmp/oasis-server-2.0.0-1-buildroot/etc/init.d
+        copying etc/oasisd -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/init.d
+        package init file 'oasispackage/probes/__init__.py' not found (or not a regular file)
+        writing list of installed files to 'INSTALLED_FILES'
+        + /usr/lib/rpm/find-debuginfo.sh /root/src/build/bdist.linux-x86_64/rpm/BUILD/oasis-server-2.0.0
+        find: debug: No such file or directory
+        + /usr/lib/rpm/redhat/brp-compress
+        + /usr/lib/rpm/redhat/brp-strip-static-archive /usr/bin/strip
+        + /usr/lib/rpm/redhat/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
+        + /usr/lib/rpm/brp-python-bytecompile
+        + /usr/lib/rpm/redhat/brp-java-repack-jars
+        Processing files: oasis-server-2.0.0-1
+        Executing(%doc): /bin/sh -e /var/tmp/rpm-tmp.47967
+        + umask 022
+        + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
+        + cd oasis-server-2.0.0
+        + DOCDIR=/var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/doc/oasis-server-2.0.0
+        + export DOCDIR
+        + rm -rf /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/doc/oasis-server-2.0.0
+        + /bin/mkdir -p /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/doc/oasis-server-2.0.0
+        + cp -pr CHANGELOG LICENSE README /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/doc/oasis-server-2.0.0
+        + exit 0
+        Provides: oasis
+        Requires(interp): /bin/sh /bin/sh /bin/sh
+        Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+        Requires(pre): /bin/sh
+        Requires(post): /bin/sh
+        Requires(preun): /bin/sh
+        Requires: /bin/#!/bin/bash  /usr/bin/python cvmfs-server >= 2.1.13 python(abi) = 2.4
+        Checking for unpackaged file(s): /usr/lib/rpm/check-files /var/tmp/oasis-server-2.0.0-1-buildroot
+        Wrote: /root/src/build/bdist.linux-x86_64/rpm/SRPMS/oasis-server-2.0.0-1.src.rpm
+        Wrote: /root/src/build/bdist.linux-x86_64/rpm/RPMS/noarch/oasis-server-2.0.0-1.noarch.rpm
+        Executing(%clean): /bin/sh -e /var/tmp/rpm-tmp.5221
+        + umask 022
+        + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
+        + cd oasis-server-2.0.0
+        + rm -rf /var/tmp/oasis-server-2.0.0-1-buildroot
+        + exit 0
+        Executing(--clean): /bin/sh -e /var/tmp/rpm-tmp.5221
+        + umask 022
+        + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
+        + rm -rf oasis-server-2.0.0
+        + exit 0
+        moving build/bdist.linux-x86_64/rpm/SRPMS/oasis-server-2.0.0-1.src.rpm -> dist
+        moving build/bdist.linux-x86_64/rpm/RPMS/noarch/oasis-server-2.0.0-1.noarch.rpm -> dist            
+         
+           
+If that failed with an error messages similar to this 
+
+       building RPMs
+       rpm -ba --define _topdir /root/src/build/bdist.linux-x86_64/rpm --clean build/bdist.linux-x86_64/rpm/SPECS/oasis-server.spec
+       -ba: unknown option
+       error: command 'rpm' failed with exit status 1
+
+then install rpm-build  and try again
+
+        [root@itb-oasis ~]# yum install rpm-build
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-
+                      : manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        1024 packages excluded due to repository priority protections
+        Setting up Install Process
+        Resolving Dependencies
+        --> Running transaction check
+        ---> Package rpm-build.x86_64 0:4.4.2.3-34.el5 set to be updated
+        --> Processing Dependency: xz for package: rpm-build
+        --> Processing Dependency: elfutils for package: rpm-build
+        --> Running transaction check
+        ---> Package elfutils.x86_64 0:0.137-3.el5 set to be updated
+        --> Processing Dependency: elfutils-libs-x86_64 = 0.137-3.el5 for package: elfutils
+        --> Processing Dependency: libdw.so.1(ELFUTILS_0.126)(64bit) for package: elfutils
+        --> Processing Dependency: libdw.so.1(ELFUTILS_0.127)(64bit) for package: elfutils
+        --> Processing Dependency: libdw.so.1(ELFUTILS_0.130)(64bit) for package: elfutils
+        --> Processing Dependency: libasm.so.1(ELFUTILS_1.0)(64bit) for package: elfutils
+        --> Processing Dependency: libdw.so.1(ELFUTILS_0.122)(64bit) for package: elfutils
+        --> Processing Dependency: libasm.so.1()(64bit) for package: elfutils
+        --> Processing Dependency: libdw.so.1()(64bit) for package: elfutils
+        ---> Package xz.x86_64 0:4.999.9-0.3.beta.20091007git.el5 set to be updated
+        --> Processing Dependency: xz-libs = 4.999.9-0.3.beta.20091007git.el5 for package: xz
+        --> Processing Dependency: liblzma.so.0()(64bit) for package: xz
+        --> Running transaction check
+        ---> Package elfutils-libs.x86_64 0:0.137-3.el5 set to be updated
+        ---> Package xz-libs.x86_64 0:4.999.9-0.3.beta.20091007git.el5 set to be updated
+        --> Finished Dependency Resolution
+        
+        Dependencies Resolved
+        
+        ================================================================================
+         Package        Arch    Version         Repository                         Size
+        ================================================================================
+        Installing:
+         rpm-build      x86_64  4.4.2.3-34.el5  rhel-x86_64-client-workstation-5  304 k
+        Installing for dependencies:
+         elfutils       x86_64  0.137-3.el5     rhel-x86_64-client-workstation-5  216 k
+         elfutils-libs  x86_64  0.137-3.el5     rhel-x86_64-client-5              183 k
+         xz             x86_64  4.999.9-0.3.beta.20091007git.el5
+                                                rhel-x86_64-client-5              146 k
+         xz-libs        x86_64  4.999.9-0.3.beta.20091007git.el5
+                                                rhel-x86_64-client-5               95 k
+        
+        Transaction Summary
+        ================================================================================
+        Install       5 Package(s)
+        Upgrade       0 Package(s)
+        
+        Total download size: 943 k
+        Is this ok [y/N]: y
+        Downloading Packages:
+        (1/5): xz-libs-4.999.9-0.3.beta.20091007git.el5.x86_64.r |  95 kB     00:00     
+        (2/5): xz-4.999.9-0.3.beta.20091007git.el5.x86_64.rpm    | 146 kB     00:00     
+        (3/5): elfutils-libs-0.137-3.el5.x86_64.rpm              | 183 kB     00:00     
+        (4/5): elfutils-0.137-3.el5.x86_64.rpm                   | 216 kB     00:00     
+        (5/5): rpm-build-4.4.2.3-34.el5.x86_64.rpm               | 304 kB     00:00     
+        --------------------------------------------------------------------------------
+        Total                                           2.7 MB/s | 943 kB     00:00     
+        Running rpm_check_debug
+        Running Transaction Test
+        Finished Transaction Test
+        Transaction Test Succeeded
+        Running Transaction
+          Installing     : xz-libs                                                  1/5 
+          Installing     : xz                                                       2/5 
+          Installing     : elfutils-libs                                            3/5 
+          Installing     : elfutils                                                 4/5 
+          Installing     : rpm-build                                                5/5 
+        
+        Installed:
+          rpm-build.x86_64 0:4.4.2.3-34.el5                                             
+        
+        Dependency Installed:
+          elfutils.x86_64 0:0.137-3.el5                                                 
+          elfutils-libs.x86_64 0:0.137-3.el5                                            
+          xz.x86_64 0:4.999.9-0.3.beta.20091007git.el5                                  
+          xz-libs.x86_64 0:4.999.9-0.3.beta.20091007git.el5                             
+        
+        Complete!
+        
+               
+        [root@itb-oasis src]# python setup.py bdist_rpm 
+
+-- deploy the created RPM:
+
+        [root@itb-oasis src]# rpm -Uhv dist/oasis-server-2.0.0-1.noarch.rpm 
+        Preparing...                ########################################### [100%]
+           1:oasis-server           ########################################### [100%]
+
+
+-- After deploying the RPM, the UNIX account "oasis" and some related directories should have been created:
+
+        [root@itb-oasis src]# id oasis
+        uid=103(oasis) gid=103(oasis) groups=103(oasis)
+
+        [root@itb-oasis src]# ll /home/ | grep oasis
+        drwx------ 3 oasis oasis 4096 May 13 10:42 oasis
+ 
+        [root@itb-oasis src]# ll /var/log/ | grep oasis
+        drwxrwxrwx 2 root   root     4096 May 13 10:42 oasis
+
+        [root@itb-oasis src]# ll /var/log/oasis/
+        total 0
+        -rw-rw-rw- 1 root root 0 May 13 10:42 oasis.log
+        
+
+#####################################################################################################
+#                                                                                                   #
+#                C O N F I G U R E            O A S I S:        B A S I C S                         #
+#                                                                                                   #
+#####################################################################################################
+
+
+-- sysconfig
+
+   copy /etc/oasis/oasisd.sysconfig-example  to  /etc/sysconfig/oasisd
+
+        [root@itb-oasis src]# cp /etc/oasis/oasisd.sysconfig-example /etc/sysconfig/oasisd
+
+   and edit it to change the default configuration, if desired. 
+
+-- configuration files
+
+   make a copy of every configuration file to remove the -example from the filename 
+
+        [root@itb-oasis src]# cd /etc/oasis/
+        [root@itb-oasis oasis]# cp oasis.conf-example oasis.conf
+        [root@itb-oasis oasis]# cp oasisprojects.conf-example oasisprojects.conf
+        [root@itb-oasis oasis]# cp oasisprobes.conf-example oasisprobes.conf
+
+   and edit then to set up the proper configuration.
+            
+ 
+-- condor config file
+
+   if HTCondor is not going to be used, then ignore this.
+   In case HTCondor is going to be used as a valid mechanism for job submission, 
+   this file needs to be placed as part of the HTCondor configuration:
+
+        [root@itb-oasis oasis]# cp condor_oasis.conf-example /etc/condor/config.d/condor_oasis.conf     
+
+   It assumes HTCondor has already been deployed, so the directory /etc/condor/config.d/ actually exists.
+
+
+
+#####################################################################################################
+#                                                                                                   #
+#                C O N F I G U R E            O A S I S:         V O    B Y    V O                  #
+#                                                                                                   #
+#####################################################################################################
+
+
+Now configure the specific VO-by_VO setup. For example, to configure the VO called "MIS". 
+
+-- Add a section into oasisprojects.conf for MIS. For example:
+
+        [root@itb-oasis oasis]# cat oasisprojects.conf
+
+        [DEFAULT]
+        
+        OSG_APP = /home/oasis/
+        srcdir = %(OSG_APP)s/%(VO)s
+        destdir = /cvmfs/oasis.opensciencegrid.org/%(VO)s
+        distributiontool = cvmfs20
+        time.sleep = 100
+        time.starttimeout = 600
+        time.finishtimeout = 600
+        destdiruser = cvmfs
+        enabled = True
+        
+        [MIS]
+        
+        VO = MIS
+        project = MIS
+        user = ouser.mis
+        projectprobes = mis.conf
+
+
+
+-- create the corresponding probes config file for MIS: 
+
+        [root@itb-oasis oasis]# cat mis.conf 
+
+        [yes]
+        enabled = True
+        probe = yes
+        options = ""
+        level = warning
+
+-- create the infrastructure for project MIS (UNIX ID, source and destination directories...):
+
+        [root@itb-oasis ~]# /usr/bin/oasis-admin-addproject --project MIS
+
+   if everything went OK:
+
+        [root@itb-oasis ~]# id ouser.mis
+        uid=500(ouser.mis) gid=500(ouser.mis) groups=500(ouser.mis)
+
+        [root@itb-oasis ~]# ll /home/ | grep mis
+        drwx------ 3 ouser.mis ouser.mis 4096 May 13 11:34 ouser.mis
+ 
+        [root@itb-oasis ~]# ll /home/oasis/
+        total 4
+        drwxr-xr-x 2 ouser.mis ouser.mis 4096 May 13 11:34 MIS
+
+        [root@itb-oasis ~]# ll /cvmfs/oasis.opensciencegrid.org/
+        total 4
+        drwxr-xr-x 2 cvmfs cvmfs 4096 May 13 11:41 MIS
+
+    WARNING: permissions for directory  /home/oasis changed, as it is setup in the config file to be OSG_APP
+        This may need to be fixed.
+
+        [root@itb-oasis ~]# ll /home/ | grep oasis
+        drwxrwxrwx 4 oasis     oasis     4096 May 13 11:34 oasis
+
+
+
+
+
+#####################################################################################################
+#                                                                                                   #
+#                R U N                                                                              #
+#                                                                                                   #
+#####################################################################################################
+
+-- start the daemon
+
+if everything went OK with the deployment and configuration, now it should be possible to start the daemon
+
+    [root@itb-oasis ~]# /etc/init.d/oasisd start
+    Starting OASIS daemon:                                     [  OK  ]
+
+and no ERROR message should appear in the daemon log file
+
+    [root@itb-oasis ~]# grep ERROR /var/log/oasis/oasisd.log 
+    [root@itb-oasis ~]# 
+
+
+-- testing the OASIS client. We can run a fake test (as user ouser.mis)
+
+    [root@itb-oasis ~]# su ouser.mis
+
+    [ouser.mis@itb-oasis root]$ cd /home/oasis/MIS/
+
+    [ouser.mis@itb-oasis MIS]$ /usr/bin/oasis /bin/ls /tmp/
+    2014-05-13 18:24:02,080 (UTC) - OASIS [ INFO ] <ouser.mis:MIS> user.MIS : Output from installation job: 
+    ks-script-wadgwo
+    ks-script-wadgwo.log
+    lost+found
+    ssh-Mrjne15626
+    ssh-RKPEX10714
+    
+ 
+    CTRL+C
+
+IMPORTANT:
+
+    The process does not return the prompt to the user. 
+    Now it waits for the daemon to do its part:
+
+        -- detects the presence of the flagfile,
+        -- pass probes on the content, 
+        -- transfer files from user scratch area to CVMFS directory,
+        -- publish,
+
+    Meanwhile, it looks like the process is hunging, but that is not really the case. 
+    
+
+
+At that point, a flagfile should have been created as if the user was running an installation job, aswell the project MIS log file
+
+    [ouser.mis@itb-oasis MIS]$ ll /var/log/oasis/
+    total 20
+    -rw-rw-r-- 1 ouser.mis ouser.mis     0 May 13 14:24 MIS.2014-05-13:18:24:02.request
+    -rw-r--r-- 1 root      root       1332 May 13 11:54 oasisd.log
+    -rw-rw-r-- 1 ouser.mis ouser.mis 14421 May 13 14:30 oasis.MIS.log
+
+
+-- a more realistic test. Let's perform a more realistic test, step by step. 
+   Let's start with the daemon stop. There is already a file in /cvmfs/ called test1, but the user scratch area is empty
+
+
+        [ouser.mis@itb-oasis MIS]$ pwd
+        /home/oasis/MIS
+
+        [ouser.mis@itb-oasis MIS]$ ll
+        total 0
+
+        [ouser.mis@itb-oasis MIS]$ ll /cvmfs/oasis.opensciencegrid.org/MIS/
+        total 0
+        -rw-rw-r-- 1 cvmfs cvmfs 0 May 13 14:38 test1
+
+    Let's create a new file in the scratch area using the oasis client (as it were an installation job):
+
+        [ouser.mis@itb-oasis MIS]$ /usr/bin/oasis /bin/touch test2
+        2014-05-13 18:54:12,533 (UTC) - OASIS [ INFO ] <ouser.mis:MIS> user.MIS : Output from installation job: 
+
+
+    Prompt is retiened, as expected.
+    flagfile was created, as expected. 
+
+        [root@itb-oasis oasis]# ll
+        total 16
+        -rw-rw-r-- 1 ouser.mis ouser.mis    0 May 13 14:54 MIS.2014-05-13:18:54:12.request
+        -rw-r--r-- 1 root      root      4065 May 13 14:48 oasisd.log
+        -rw-rw-r-- 1 ouser.mis ouser.mis 9081 May 13 14:54 oasis.MIS.log
+        
+
+    Let's start now the daemon. As soon as the daemon starts, it does everything and the flagfile is gone.
+
+
+        [root@itb-oasis oasis]# /etc/init.d/oasisd start
+        Starting OASIS daemon:                                     [  OK  ]
+        
+        [root@itb-oasis oasis]# ll
+        total 24
+        -rw-r--r-- 1 root      root       8130 May 13 14:54 oasisd.log
+        -rw-rw-r-- 1 ouser.mis ouser.mis 12619 May 13 14:54 oasis.MIS.log
+        
+    New file has been transferred:
+
+        [root@itb-oasis oasis]# ll /cvmfs/oasis.opensciencegrid.org/MIS/
+        total 0
+        -rw-rw-r-- 1 cvmfs cvmfs 0 May 13 14:38 test1
+        -rw-rw-r-- 1 cvmfs cvmfs 0 May 13 14:54 test2
+
+    And the user process has finished, and the prompt is returned.
+
+        [ here the process was waiting ]
+
+        2014-05-13 18:54:32,542 (UTC) - OASIS [ DEBUG ] <ouser.mis:MIS> user : output from the OASIS daemon 
+        <probes>
+           <probe>
+               <a n="probe"><s>yes</s></a>
+               <a n="out"><s></s></a>
+               <a n="rc"><i>0</i></a>
+               <a n="time"><i>0</i></a>
+           </probe>
+           <probe>
+               <a n="probe"><s>yes</s></a>
+               <a n="out"><s></s></a>
+               <a n="rc"><i>0</i></a>
+               <a n="time"><i>0</i></a>
+           </probe>
+        </probes>
+        
+        [ouser.mis@itb-oasis MIS]$ 
+       
+    And everything went OK as no ERROR messages has been printed into the log files 
+
+        [ouser.mis@itb-oasis MIS]$ grep ERROR /var/log/oasis/oasis.MIS.log 
+        [ouser.mis@itb-oasis MIS]$ 
+        [ouser.mis@itb-oasis MIS]$ grep ERROR /var/log/oasis/oasisd.log 
+        [ouser.mis@itb-oasis MIS]$ 
+
+
+
+#####################################################################################################
+#                                                                                                   #
+#                I N S T A L L           H T C O N D O R - C E                                      #
+#                                                                                                   #
+#####################################################################################################
+
+Following instructions from here:
+
+        https://twiki.grid.iu.edu/bin/view/Documentation/Release3/InstallHTCondorCE
+
+        
+NOTE: host certificates are already in place:
+
+        [root@grid39 ~]# ll /etc/grid-security/
+        total 64
+        drwxr-xr-x 2 root root 45056 May  7 16:59 certificates
+        -rw-r--r-- 1 root root  2039 May  9 16:13 containercert.pem
+        -rw------- 1 root root  1675 May  9 16:13 containerkey.pem
+        -rw-r--r-- 1 root root  2039 May  9 16:15 hostcert.pem
+        -rw------- 1 root root  1679 May  9 16:15 hostkey.pem
+        drwxr-xr-x 2 root root  4096 May  9 16:14 http
+        
+   
+Port 9619 and 9620 added to iptables (at BNL, via puppet) 
+
+        [root@grid39 ~]# cat /etc/sysconfig/iptables
+
+        ...
+        [0:0] -A ALLOW-SERVICES -p tcp -m tcp  --dport 9619 -j ACCEPT
+        [0:0] -A ALLOW-SERVICES -p tcp -m tcp  --dport 9620 -j ACCEPT
+        ...
+
+
+-- Install the RPM
+ 
+        [root@grid39 ~]# rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+        Retrieving http://dl.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+        warning: /var/tmp/rpm-xfer.ky10e4: Header V3 DSA signature: NOKEY, key ID 217521f6
+        Preparing...                
+        ########################################### [100%]
+           1:epel-release           warning: /etc/yum.repos.d/epel.repo created as /etc/yum.repos.d/epel.repo.rpmnew
+        ########################################### [100%]
+
+
+    NOTE: this step was actually not needed, since the epel.repo was already installed when CVMFS was installed. 
+          So the command should have been skipped. 
+          Anyway, as the original  epel.repo is still there, and the new one is called .rpmnew, we can keep going as it was not done.
+
+
+        [root@grid39 ~]# yum install yum-priorities
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        1024 packages excluded due to repository priority protections
+        Setting up Install Process
+        Package yum-priorities-1.1.16-21.el5.noarch already installed and latest version
+        Nothing to do
+        
+
+        [root@grid39 ~]# rpm -Uhv http://repo.grid.iu.edu/osg/3.2/osg-3.2-el5-release-latest.rpm
+        Retrieving http://repo.grid.iu.edu/osg/3.2/osg-3.2-el5-release-latest.rpm
+        Preparing...                ########################################### [100%]
+           1:osg-release            ########################################### [100%]
+
+        [root@grid39 ~]# ll /etc/yum.repos.d/
+        total 84
+        -rw-r--r-- 1 root root  151 May  7 16:50 base.repo
+        -rw-r--r-- 1 root root  820 May  8 15:42 cernvm.repo
+        -rw-r--r-- 1 root root  209 May  7 16:50 epel.repo
+        -rw-r--r-- 1 root root  954 Aug 11  2010 epel.repo.rpmnew
+        -rw-r--r-- 1 root root 1054 Aug 11  2010 epel-testing.repo
+        -rw-r--r-- 1 root root  167 May  7 16:58 ordo.repo
+        -rw-r--r-- 1 root root  243 May  7 16:50 osg-ca-certs-x86_64.repo
+        -rw-r--r-- 1 root root  814 Dec 12 14:18 osg-contrib.repo
+        -rw-r--r-- 1 root root  905 Dec 12 14:18 osg-development.repo
+        -rw-r--r-- 1 root root  278 Dec 12 14:18 osg-empty.repo
+        -rw-r--r-- 1 root root  305 Dec 12 14:18 osg-minefield.repo
+        -rw-r--r-- 1 root root  327 Dec 12 14:18 osg-prerelease.repo
+        -rw-r--r-- 1 root root  810 Dec 12 14:18 osg.repo
+        -rw-r--r-- 1 root root  865 Dec 12 14:18 osg-testing.repo
+        -rw-r--r-- 1 root root  979 Dec 12 14:18 osg-upcoming-development.repo
+        -rw-r--r-- 1 root root  328 Dec 12 14:18 osg-upcoming-minefield.repo
+        -rw-r--r-- 1 root root  350 Dec 12 14:18 osg-upcoming-prerelease.repo
+        -rw-r--r-- 1 root root  890 Dec 12 14:18 osg-upcoming.repo
+        -rw-r--r-- 1 root root  939 Dec 12 14:18 osg-upcoming-testing.repo
+        -rw-r--r-- 1 root root  254 Aug 29  2013 rhel-debuginfo.repo
+      
+
+        [root@grid39 ~]# yum install fetch-crl lcmaps lcas-lcmaps-gt4-interface
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        1685 packages excluded due to repository priority protections
+        Setting up Install Process
+        Package fetch-crl-3.0.8-1.el5.noarch already installed and latest version
+        Resolving Dependencies
+        --> Running transaction check
+        ---> Package lcas-lcmaps-gt4-interface.i386 0:0.2.6-1.1.osg.el5 set to be updated
+        --> Processing Dependency: libglobus_gssapi_gsi.so.4 for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gssapi_error.so.2 for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gss_assist.so.3 for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gsi_credential.so.1 for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_common.so.0(GLOBUS_COMMON_14) for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gridmap_callout_error.so.0 for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_common.so.0 for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gssapi_gsi.so.4(globus_gssapi_gsi) for package: lcas-lcmaps-gt4-interface
+        ---> Package lcas-lcmaps-gt4-interface.x86_64 0:0.2.6-1.1.osg.el5 set to be updated
+        --> Processing Dependency: libglobus_common.so.0(GLOBUS_COMMON_14)(64bit) for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gssapi_gsi.so.4(globus_gssapi_gsi)(64bit) for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gsi_credential.so.1()(64bit) for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gssapi_error.so.2()(64bit) for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gssapi_gsi.so.4()(64bit) for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_common.so.0()(64bit) for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gridmap_callout_error.so.0()(64bit) for package: lcas-lcmaps-gt4-interface
+        --> Processing Dependency: libglobus_gss_assist.so.3()(64bit) for package: lcas-lcmaps-gt4-interface
+        ---> Package lcmaps.i386 0:1.5.7-1.4.osg.el5 set to be updated
+        --> Processing Dependency: libvomsapi.so.1 for package: lcmaps
+        --> Processing Dependency: lcmaps-plugins-basic for package: lcmaps
+        --> Processing Dependency: lcmaps-plugins-saz-client for package: lcmaps
+        --> Processing Dependency: lcmaps-plugins-verify-proxy for package: lcmaps
+        --> Processing Dependency: lcmaps-plugins-gums-client for package: lcmaps
+        ---> Package lcmaps.x86_64 0:1.5.7-1.4.osg.el5 set to be updated
+        --> Processing Dependency: libvomsapi.so.1()(64bit) for package: lcmaps
+        --> Running transaction check
+        ---> Package globus-common.i386 0:14.10-1.osg32.el5 set to be updated
+        --> Processing Dependency: libltdl.so.3 for package: globus-common
+        ---> Package globus-common.x86_64 0:14.10-1.osg32.el5 set to be updated
+        --> Processing Dependency: libltdl.so.3()(64bit) for package: globus-common
+        ---> Package globus-gridmap-callout-error.i386 0:1.2-9.osg32.el5 set to be updated
+        ---> Package globus-gridmap-callout-error.x86_64 0:1.2-9.osg32.el5 set to be updated
+        ---> Package globus-gsi-credential.i386 0:6.0-1.osg32.el5 set to be updated
+        --> Processing Dependency: globus-gsi-cert-utils >= 8 for package: globus-gsi-credential
+        --> Processing Dependency: globus-gsi-openssl-error >= 2 for package: globus-gsi-credential
+        --> Processing Dependency: globus-gsi-proxy-ssl >= 4 for package: globus-gsi-credential
+        --> Processing Dependency: globus-gsi-sysconfig >= 5 for package: globus-gsi-credential
+        --> Processing Dependency: globus-gsi-callback >= 4 for package: globus-gsi-credential
+        --> Processing Dependency: libglobus_gsi_cert_utils.so.0 for package: globus-gsi-credential
+        --> Processing Dependency: libglobus_gsi_callback.so.0 for package: globus-gsi-credential
+        --> Processing Dependency: libglobus_openssl_error.so.0 for package: globus-gsi-credential
+        --> Processing Dependency: libglobus_gsi_sysconfig.so.1 for package: globus-gsi-credential
+        --> Processing Dependency: libglobus_proxy_ssl.so.1 for package: globus-gsi-credential
+        ---> Package globus-gsi-credential.x86_64 0:6.0-1.osg32.el5 set to be updated
+        ---> Package globus-gss-assist.i386 0:9.0-1.osg32.el5 set to be updated
+        --> Processing Dependency: globus-callout >= 2 for package: globus-gss-assist
+        --> Processing Dependency: libglobus_callout.so.0 for package: globus-gss-assist
+        ---> Package globus-gss-assist.x86_64 0:9.0-1.osg32.el5 set to be updated
+        ---> Package globus-gssapi-error.i386 0:4.1-9.osg32.el5 set to be updated
+        ---> Package globus-gssapi-error.x86_64 0:4.1-9.osg32.el5 set to be updated
+        ---> Package globus-gssapi-gsi.i386 0:10.10-1.1.osg32.el5 set to be updated
+        --> Processing Dependency: globus-openssl-module >= 3 for package: globus-gssapi-gsi
+        --> Processing Dependency: globus-gsi-proxy-core >= 6 for package: globus-gssapi-gsi
+        --> Processing Dependency: libglobus_openssl.so.0 for package: globus-gssapi-gsi
+        --> Processing Dependency: libglobus_gsi_proxy_core.so.0 for package: globus-gssapi-gsi
+        ---> Package globus-gssapi-gsi.x86_64 0:10.10-1.1.osg32.el5 set to be updated
+        ---> Package lcmaps-plugins-basic.x86_64 0:1.5.1-2.1.osg.el5 set to be updated
+        ---> Package lcmaps-plugins-gums-client.x86_64 0:0.0.2-4.osg.el5 set to be updated
+        --> Processing Dependency: lcmaps-plugins-scas-client for package: lcmaps-plugins-gums-client
+        ---> Package lcmaps-plugins-saz-client.x86_64 0:0.4.0-1.2.osg32.el5 set to be updated
+        --> Processing Dependency: libxacml.so.0()(64bit) for package: lcmaps-plugins-saz-client
+        ---> Package lcmaps-plugins-verify-proxy.x86_64 0:1.5.4-1.1.osg.el5 set to be updated
+        ---> Package voms.i386 0:2.0.8-1.9.osg.el5 set to be updated
+        ---> Package voms.x86_64 0:2.0.8-1.9.osg.el5 set to be updated
+        --> Running transaction check
+        ---> Package globus-callout.i386 0:2.4-1.osg32.el5 set to be updated
+        ---> Package globus-callout.x86_64 0:2.4-1.osg32.el5 set to be updated
+        ---> Package globus-gsi-callback.i386 0:4.6-1.osg32.el5 set to be updated
+        ---> Package globus-gsi-callback.x86_64 0:4.6-1.osg32.el5 set to be updated
+        ---> Package globus-gsi-cert-utils.i386 0:8.6-1.1.osg32.el5 set to be updated
+        ---> Package globus-gsi-cert-utils.x86_64 0:8.6-1.1.osg32.el5 set to be updated
+        ---> Package globus-gsi-openssl-error.i386 0:2.1-9.osg32.el5 set to be updated
+        ---> Package globus-gsi-openssl-error.x86_64 0:2.1-9.osg32.el5 set to be updated
+        ---> Package globus-gsi-proxy-core.i386 0:6.2-8.1.osg32.el5 set to be updated
+        ---> Package globus-gsi-proxy-core.x86_64 0:6.2-8.1.osg32.el5 set to be updated
+        ---> Package globus-gsi-proxy-ssl.i386 0:4.1-9.osg32.el5 set to be updated
+        ---> Package globus-gsi-proxy-ssl.x86_64 0:4.1-9.osg32.el5 set to be updated
+        ---> Package globus-gsi-sysconfig.i386 0:5.3-7.osg32.el5 set to be updated
+        ---> Package globus-gsi-sysconfig.x86_64 0:5.3-7.osg32.el5 set to be updated
+        ---> Package globus-openssl-module.i386 0:3.3-1.osg32.el5 set to be updated
+        ---> Package globus-openssl-module.x86_64 0:3.3-1.osg32.el5 set to be updated
+        ---> Package lcmaps-plugins-scas-client.x86_64 0:0.4.0-1.2.osg32.el5 set to be updated
+        ---> Package libtool-ltdl.i386 0:1.5.22-7.el5_4 set to be updated
+        ---> Package libtool-ltdl.x86_64 0:1.5.22-7.el5_4 set to be updated
+        ---> Package xacml.x86_64 0:1.3.0-1.2.osg32.el5 set to be updated
+        --> Processing Dependency: libgsoap++.so.0()(64bit) for package: xacml
+        --> Running transaction check
+        ---> Package gsoap.x86_64 0:2.7.13-5.el5 set to be updated
+        --> Finished Dependency Resolution
+        
+        Dependencies Resolved
+        
+        =======================================================================================================================================================================================================
+         Package                                                  Arch                               Version                                            Repository                                        Size
+        =======================================================================================================================================================================================================
+        Installing:
+         lcas-lcmaps-gt4-interface                                i386                               0.2.6-1.1.osg.el5                                  osg                                               25 k
+         lcas-lcmaps-gt4-interface                                x86_64                             0.2.6-1.1.osg.el5                                  osg                                               25 k
+         lcmaps                                                   i386                               1.5.7-1.4.osg.el5                                  osg                                               87 k
+         lcmaps                                                   x86_64                             1.5.7-1.4.osg.el5                                  osg                                               90 k
+        Installing for dependencies:
+         globus-callout                                           i386                               2.4-1.osg32.el5                                    osg                                               19 k
+         globus-callout                                           x86_64                             2.4-1.osg32.el5                                    osg                                               20 k
+         globus-common                                            i386                               14.10-1.osg32.el5                                  osg                                              129 k
+         globus-common                                            x86_64                             14.10-1.osg32.el5                                  osg                                              132 k
+         globus-gridmap-callout-error                             i386                               1.2-9.osg32.el5                                    osg                                               11 k
+         globus-gridmap-callout-error                             x86_64                             1.2-9.osg32.el5                                    osg                                               11 k
+         globus-gsi-callback                                      i386                               4.6-1.osg32.el5                                    osg                                               41 k
+         globus-gsi-callback                                      x86_64                             4.6-1.osg32.el5                                    osg                                               43 k
+         globus-gsi-cert-utils                                    i386                               8.6-1.1.osg32.el5                                  osg                                               20 k
+         globus-gsi-cert-utils                                    x86_64                             8.6-1.1.osg32.el5                                  osg                                               21 k
+         globus-gsi-credential                                    i386                               6.0-1.osg32.el5                                    osg                                               35 k
+         globus-gsi-credential                                    x86_64                             6.0-1.osg32.el5                                    osg                                               38 k
+         globus-gsi-openssl-error                                 i386                               2.1-9.osg32.el5                                    osg                                               16 k
+         globus-gsi-openssl-error                                 x86_64                             2.1-9.osg32.el5                                    osg                                               17 k
+         globus-gsi-proxy-core                                    i386                               6.2-8.1.osg32.el5                                  osg                                               34 k
+         globus-gsi-proxy-core                                    x86_64                             6.2-8.1.osg32.el5                                  osg                                               38 k
+         globus-gsi-proxy-ssl                                     i386                               4.1-9.osg32.el5                                    osg                                               18 k
+         globus-gsi-proxy-ssl                                     x86_64                             4.1-9.osg32.el5                                    osg                                               18 k
+         globus-gsi-sysconfig                                     i386                               5.3-7.osg32.el5                                    osg                                               28 k
+         globus-gsi-sysconfig                                     x86_64                             5.3-7.osg32.el5                                    osg                                               31 k
+         globus-gss-assist                                        i386                               9.0-1.osg32.el5                                    osg                                               34 k
+         globus-gss-assist                                        x86_64                             9.0-1.osg32.el5                                    osg                                               36 k
+         globus-gssapi-error                                      i386                               4.1-9.osg32.el5                                    osg                                               14 k
+         globus-gssapi-error                                      x86_64                             4.1-9.osg32.el5                                    osg                                               14 k
+         globus-gssapi-gsi                                        i386                               10.10-1.1.osg32.el5                                osg                                               58 k
+         globus-gssapi-gsi                                        x86_64                             10.10-1.1.osg32.el5                                osg                                               63 k
+         globus-openssl-module                                    i386                               3.3-1.osg32.el5                                    osg                                               14 k
+         globus-openssl-module                                    x86_64                             3.3-1.osg32.el5                                    osg                                               14 k
+         gsoap                                                    x86_64                             2.7.13-5.el5                                       epel                                             444 k
+         lcmaps-plugins-basic                                     x86_64                             1.5.1-2.1.osg.el5                                  osg                                               49 k
+         lcmaps-plugins-gums-client                               x86_64                             0.0.2-4.osg.el5                                    osg                                              3.2 k
+         lcmaps-plugins-saz-client                                x86_64                             0.4.0-1.2.osg32.el5                                osg                                               40 k
+         lcmaps-plugins-scas-client                               x86_64                             0.4.0-1.2.osg32.el5                                osg                                               44 k
+         lcmaps-plugins-verify-proxy                              x86_64                             1.5.4-1.1.osg.el5                                  osg                                               35 k
+         libtool-ltdl                                             i386                               1.5.22-7.el5_4                                     rhel-x86_64-client-5                              37 k
+         libtool-ltdl                                             x86_64                             1.5.22-7.el5_4                                     rhel-x86_64-client-5                              38 k
+         voms                                                     i386                               2.0.8-1.9.osg.el5                                  osg                                              171 k
+         voms                                                     x86_64                             2.0.8-1.9.osg.el5                                  osg                                              173 k
+         xacml                                                    x86_64                             1.3.0-1.2.osg32.el5                                osg                                              500 k
+        
+        Transaction Summary
+        =======================================================================================================================================================================================================
+        Install      43 Package(s)
+        Upgrade       0 Package(s)
+        
+        Total download size: 2.7 M
+        Is this ok [y/N]: y
+        Downloading Packages:
+        (1/43): lcmaps-plugins-gums-client-0.0.2-4.osg.el5.x86_64.rpm                                                                                                                   | 3.2 kB     00:00     
+        (2/43): globus-gridmap-callout-error-1.2-9.osg32.el5.i386.rpm                                                                                                                   |  11 kB     00:00     
+        (3/43): globus-gridmap-callout-error-1.2-9.osg32.el5.x86_64.rpm                                                                                                                 |  11 kB     00:00     
+        (4/43): globus-gssapi-error-4.1-9.osg32.el5.i386.rpm                                                                                                                            |  14 kB     00:00     
+        (5/43): globus-openssl-module-3.3-1.osg32.el5.i386.rpm                                                                                                                          |  14 kB     00:00     
+        (6/43): globus-openssl-module-3.3-1.osg32.el5.x86_64.rpm                                                                                                                        |  14 kB     00:00     
+        (7/43): globus-gssapi-error-4.1-9.osg32.el5.x86_64.rpm                                                                                                                          |  14 kB     00:00     
+        (8/43): globus-gsi-openssl-error-2.1-9.osg32.el5.i386.rpm                                                                                                                       |  16 kB     00:00     
+        (9/43): globus-gsi-openssl-error-2.1-9.osg32.el5.x86_64.rpm                                                                                                                     |  17 kB     00:00     
+        (10/43): globus-gsi-proxy-ssl-4.1-9.osg32.el5.i386.rpm                                                                                                                          |  18 kB     00:00     
+        (11/43): globus-gsi-proxy-ssl-4.1-9.osg32.el5.x86_64.rpm                                                                                                                        |  18 kB     00:00     
+        (12/43): globus-callout-2.4-1.osg32.el5.i386.rpm                                                                                                                                |  19 kB     00:00     
+        (13/43): globus-callout-2.4-1.osg32.el5.x86_64.rpm                                                                                                                              |  20 kB     00:00     
+        (14/43): globus-gsi-cert-utils-8.6-1.1.osg32.el5.i386.rpm                                                                                                                       |  20 kB     00:00     
+        (15/43): globus-gsi-cert-utils-8.6-1.1.osg32.el5.x86_64.rpm                                                                                                                     |  21 kB     00:00     
+        (16/43): lcas-lcmaps-gt4-interface-0.2.6-1.1.osg.el5.i386.rpm                                                                                                                   |  25 kB     00:00     
+        (17/43): lcas-lcmaps-gt4-interface-0.2.6-1.1.osg.el5.x86_64.rpm                                                                                                                 |  25 kB     00:00     
+        (18/43): globus-gsi-sysconfig-5.3-7.osg32.el5.i386.rpm                                                                                                                          |  28 kB     00:00     
+        (19/43): globus-gsi-sysconfig-5.3-7.osg32.el5.x86_64.rpm                                                                                                                        |  31 kB     00:00     
+        (20/43): globus-gss-assist-9.0-1.osg32.el5.i386.rpm                                                                                                                             |  34 kB     00:00     
+        (21/43): globus-gsi-proxy-core-6.2-8.1.osg32.el5.i386.rpm                                                                                                                       |  34 kB     00:00     
+        (22/43): lcmaps-plugins-verify-proxy-1.5.4-1.1.osg.el5.x86_64.rpm                                                                                                               |  35 kB     00:00     
+        (23/43): globus-gsi-credential-6.0-1.osg32.el5.i386.rpm                                                                                                                         |  35 kB     00:00     
+        (24/43): globus-gss-assist-9.0-1.osg32.el5.x86_64.rpm                                                                                                                           |  36 kB     00:00     
+        (25/43): libtool-ltdl-1.5.22-7.el5_4.i386.rpm                                                                                                                                   |  37 kB     00:00     
+        (26/43): globus-gsi-credential-6.0-1.osg32.el5.x86_64.rpm                                                                                                                       |  38 kB     00:00     
+        (27/43): globus-gsi-proxy-core-6.2-8.1.osg32.el5.x86_64.rpm                                                                                                                     |  38 kB     00:00     
+        (28/43): libtool-ltdl-1.5.22-7.el5_4.x86_64.rpm                                                                                                                                 |  38 kB     00:00     
+        (29/43): lcmaps-plugins-saz-client-0.4.0-1.2.osg32.el5.x86_64.rpm                                                                                                               |  40 kB     00:00     
+        (30/43): globus-gsi-callback-4.6-1.osg32.el5.i386.rpm                                                                                                                           |  41 kB     00:00     
+        (31/43): globus-gsi-callback-4.6-1.osg32.el5.x86_64.rpm                                                                                                                         |  43 kB     00:00     
+        (32/43): lcmaps-plugins-scas-client-0.4.0-1.2.osg32.el5.x86_64.rpm                                                                                                              |  44 kB     00:00     
+        (33/43): lcmaps-plugins-basic-1.5.1-2.1.osg.el5.x86_64.rpm                                                                                                                      |  49 kB     00:00     
+        (34/43): globus-gssapi-gsi-10.10-1.1.osg32.el5.i386.rpm                                                                                                                         |  58 kB     00:00     
+        (35/43): globus-gssapi-gsi-10.10-1.1.osg32.el5.x86_64.rpm                                                                                                                       |  63 kB     00:00     
+        (36/43): lcmaps-1.5.7-1.4.osg.el5.i386.rpm                                                                                                                                      |  87 kB     00:00     
+        (37/43): lcmaps-1.5.7-1.4.osg.el5.x86_64.rpm                                                                                                                                    |  90 kB     00:00     
+        (38/43): globus-common-14.10-1.osg32.el5.i386.rpm                                                                                                                               | 129 kB     00:00     
+        (39/43): globus-common-14.10-1.osg32.el5.x86_64.rpm                                                                                                                             | 132 kB     00:00     
+        (40/43): voms-2.0.8-1.9.osg.el5.i386.rpm                                                                                                                                        | 171 kB     00:00     
+        (41/43): voms-2.0.8-1.9.osg.el5.x86_64.rpm                                                                                                                                      | 173 kB     00:00     
+        (42/43): gsoap-2.7.13-5.el5.x86_64.rpm                                                                                                                                          | 444 kB     00:00     
+        (43/43): xacml-1.3.0-1.2.osg32.el5.x86_64.rpm                                                                                                                                   | 500 kB     00:00     
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        Total                                                                                                                                                                  315 kB/s | 2.7 MB     00:08     
+        warning: rpmts_HdrFromFdno: Header V4 DSA signature: NOKEY, key ID 217521f6
+        epel/gpgkey                                                                                                                                                                     | 1.7 kB     00:00     
+        Importing GPG key 0x217521F6 "Fedora EPEL <epel@fedoraproject.org>" from /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-5
+        Is this ok [y/N]: y
+        Running rpm_check_debug
+        Running Transaction Test
+        Finished Transaction Test
+        Transaction Test Succeeded
+        Running Transaction
+          Installing     : libtool-ltdl                                                                                                                                                                   1/43 
+          Installing     : globus-common                                                                                                                                                                  2/43 
+          Installing     : globus-gsi-openssl-error                                                                                                                                                       3/43 
+          Installing     : globus-gsi-proxy-ssl                                                                                                                                                           4/43 
+          Installing     : globus-gsi-sysconfig                                                                                                                                                           5/43 
+          Installing     : globus-openssl-module                                                                                                                                                          6/43 
+          Installing     : globus-gsi-cert-utils                                                                                                                                                          7/43 
+          Installing     : globus-gsi-callback                                                                                                                                                            8/43 
+          Installing     : globus-gsi-credential                                                                                                                                                          9/43 
+          Installing     : globus-gsi-proxy-core                                                                                                                                                         10/43 
+          Installing     : globus-gssapi-gsi                                                                                                                                                             11/43 
+          Installing     : globus-callout                                                                                                                                                                12/43 
+          Installing     : globus-gss-assist                                                                                                                                                             13/43 
+          Installing     : globus-gssapi-error                                                                                                                                                           14/43 
+          Installing     : globus-gridmap-callout-error                                                                                                                                                  15/43 
+          Installing     : gsoap                                                                                                                                                                         16/43 
+          Installing     : xacml                                                                                                                                                                         17/43 
+          Installing     : voms                                                                                                                                                                          18/43 
+          Installing     : globus-gsi-proxy-ssl                                                                                                                                                          19/43 
+          Installing     : libtool-ltdl                                                                                                                                                                  20/43 
+          Installing     : globus-common                                                                                                                                                                 21/43 
+          Installing     : globus-gsi-openssl-error                                                                                                                                                      22/43 
+          Installing     : globus-gsi-sysconfig                                                                                                                                                          23/43 
+          Installing     : globus-openssl-module                                                                                                                                                         24/43 
+          Installing     : globus-gsi-cert-utils                                                                                                                                                         25/43 
+          Installing     : globus-gsi-callback                                                                                                                                                           26/43 
+          Installing     : globus-gsi-credential                                                                                                                                                         27/43 
+          Installing     : globus-gsi-proxy-core                                                                                                                                                         28/43 
+          Installing     : globus-gssapi-gsi                                                                                                                                                             29/43 
+          Installing     : globus-gridmap-callout-error                                                                                                                                                  30/43 
+          Installing     : globus-callout                                                                                                                                                                31/43 
+          Installing     : globus-gss-assist                                                                                                                                                             32/43 
+          Installing     : globus-gssapi-error                                                                                                                                                           33/43 
+          Installing     : voms                                                                                                                                                                          34/43 
+          Installing     : lcmaps-plugins-scas-client                                                                                                                                                    35/43 
+          Installing     : lcmaps-plugins-saz-client                                                                                                                                                     36/43 
+          Installing     : lcmaps-plugins-gums-client                                                                                                                                                    37/43 
+          Installing     : lcmaps-plugins-basic                                                                                                                                                          38/43 
+          Installing     : lcmaps                                                                                                                                                                        39/43 
+          Installing     : lcmaps-plugins-verify-proxy                                                                                                                                                   40/43 
+          Installing     : lcas-lcmaps-gt4-interface                                                                                                                                                     41/43 
+          Installing     : lcmaps                                                                                                                                                                        42/43 
+          Installing     : lcas-lcmaps-gt4-interface                                                                                                                                                     43/43 
+        
+        Installed:
+          lcas-lcmaps-gt4-interface.i386 0:0.2.6-1.1.osg.el5        lcas-lcmaps-gt4-interface.x86_64 0:0.2.6-1.1.osg.el5        lcmaps.i386 0:1.5.7-1.4.osg.el5        lcmaps.x86_64 0:1.5.7-1.4.osg.el5       
+        
+        Dependency Installed:
+          globus-callout.i386 0:2.4-1.osg32.el5                            globus-callout.x86_64 0:2.4-1.osg32.el5                          globus-common.i386 0:14.10-1.osg32.el5                           
+          globus-common.x86_64 0:14.10-1.osg32.el5                         globus-gridmap-callout-error.i386 0:1.2-9.osg32.el5              globus-gridmap-callout-error.x86_64 0:1.2-9.osg32.el5            
+          globus-gsi-callback.i386 0:4.6-1.osg32.el5                       globus-gsi-callback.x86_64 0:4.6-1.osg32.el5                     globus-gsi-cert-utils.i386 0:8.6-1.1.osg32.el5                   
+          globus-gsi-cert-utils.x86_64 0:8.6-1.1.osg32.el5                 globus-gsi-credential.i386 0:6.0-1.osg32.el5                     globus-gsi-credential.x86_64 0:6.0-1.osg32.el5                   
+          globus-gsi-openssl-error.i386 0:2.1-9.osg32.el5                  globus-gsi-openssl-error.x86_64 0:2.1-9.osg32.el5                globus-gsi-proxy-core.i386 0:6.2-8.1.osg32.el5                   
+          globus-gsi-proxy-core.x86_64 0:6.2-8.1.osg32.el5                 globus-gsi-proxy-ssl.i386 0:4.1-9.osg32.el5                      globus-gsi-proxy-ssl.x86_64 0:4.1-9.osg32.el5                    
+          globus-gsi-sysconfig.i386 0:5.3-7.osg32.el5                      globus-gsi-sysconfig.x86_64 0:5.3-7.osg32.el5                    globus-gss-assist.i386 0:9.0-1.osg32.el5                         
+          globus-gss-assist.x86_64 0:9.0-1.osg32.el5                       globus-gssapi-error.i386 0:4.1-9.osg32.el5                       globus-gssapi-error.x86_64 0:4.1-9.osg32.el5                     
+          globus-gssapi-gsi.i386 0:10.10-1.1.osg32.el5                     globus-gssapi-gsi.x86_64 0:10.10-1.1.osg32.el5                   globus-openssl-module.i386 0:3.3-1.osg32.el5                     
+          globus-openssl-module.x86_64 0:3.3-1.osg32.el5                   gsoap.x86_64 0:2.7.13-5.el5                                      lcmaps-plugins-basic.x86_64 0:1.5.1-2.1.osg.el5                  
+          lcmaps-plugins-gums-client.x86_64 0:0.0.2-4.osg.el5              lcmaps-plugins-saz-client.x86_64 0:0.4.0-1.2.osg32.el5           lcmaps-plugins-scas-client.x86_64 0:0.4.0-1.2.osg32.el5          
+          lcmaps-plugins-verify-proxy.x86_64 0:1.5.4-1.1.osg.el5           libtool-ltdl.i386 0:1.5.22-7.el5_4                               libtool-ltdl.x86_64 0:1.5.22-7.el5_4                             
+          voms.i386 0:2.0.8-1.9.osg.el5                                    voms.x86_64 0:2.0.8-1.9.osg.el5                                  xacml.x86_64 0:1.3.0-1.2.osg32.el5                               
+        
+        Complete!
+         
+
+        [root@grid39 ~]# yum install condor
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        1685 packages excluded due to repository priority protections
+        Setting up Install Process
+        Resolving Dependencies
+        --> Running transaction check
+        ---> Package condor.i386 0:8.0.6-3.osg32.el5 set to be updated
+        --> Processing Dependency: condor-procd = 8.0.6-3.osg32.el5 for package: condor
+        --> Processing Dependency: condor-classads = 8.0.6-3.osg32.el5 for package: condor
+        --> Processing Dependency: blahp >= 1.16.1 for package: condor
+        --> Processing Dependency: libglobus_gram_protocol.so.3 for package: condor
+        --> Processing Dependency: libclassad.so.5 for package: condor
+        --> Processing Dependency: libglobus_io.so.3 for package: condor
+        --> Processing Dependency: perl(Date::Manip) for package: condor
+        --> Processing Dependency: libcurl.so.3 for package: condor
+        --> Processing Dependency: libglobus_ftp_control.so.1 for package: condor
+        --> Processing Dependency: libglobus_rsl.so.2 for package: condor
+        --> Processing Dependency: libglobus_xio.so.0 for package: condor
+        --> Processing Dependency: libgsoapssl++.so.0 for package: condor
+        --> Processing Dependency: libglobus_gram_client.so.3 for package: condor
+        --> Processing Dependency: libglobus_gass_transfer.so.2 for package: condor
+        ---> Package condor.x86_64 0:8.0.6-3.osg32.el5 set to be updated
+        --> Processing Dependency: libglobus_ftp_control.so.1()(64bit) for package: condor
+        --> Processing Dependency: libglobus_xio.so.0()(64bit) for package: condor
+        --> Processing Dependency: libglobus_gram_protocol.so.3()(64bit) for package: condor
+        --> Processing Dependency: libglobus_io.so.3()(64bit) for package: condor
+        --> Processing Dependency: libglobus_gass_transfer.so.2()(64bit) for package: condor
+        --> Processing Dependency: libglobus_gram_client.so.3()(64bit) for package: condor
+        --> Processing Dependency: libglobus_rsl.so.2()(64bit) for package: condor
+        --> Running transaction check
+        ---> Package blahp.x86_64 0:1.18.9.bosco-1.osg32.el5 set to be updated
+        --> Processing Dependency: perl(XML::Simple) for package: blahp
+        ---> Package condor-classads.i386 0:8.0.6-3.osg32.el5 set to be updated
+        ---> Package condor-classads.x86_64 0:8.0.6-3.osg32.el5 set to be updated
+        ---> Package condor-procd.x86_64 0:8.0.6-3.osg32.el5 set to be updated
+        ---> Package curl.i386 0:7.15.5-17.el5_9 set to be updated
+        --> Processing Dependency: libidn.so.11 for package: curl
+        ---> Package globus-ftp-control.i386 0:4.7-1.1.osg32.el5 set to be updated
+        ---> Package globus-ftp-control.x86_64 0:4.7-1.1.osg32.el5 set to be updated
+        ---> Package globus-gass-transfer.i386 0:7.2-8.osg32.el5 set to be updated
+        ---> Package globus-gass-transfer.x86_64 0:7.2-8.osg32.el5 set to be updated
+        ---> Package globus-gram-client.i386 0:12.4-8.osg32.el5 set to be updated
+        ---> Package globus-gram-client.x86_64 0:12.4-8.osg32.el5 set to be updated
+        ---> Package globus-gram-protocol.i386 0:11.3-11.1.osg32.el5 set to be updated
+        ---> Package globus-gram-protocol.x86_64 0:11.3-11.1.osg32.el5 set to be updated
+        ---> Package globus-io.i386 0:9.5-1.osg32.el5 set to be updated
+        --> Processing Dependency: globus-xio-gsi-driver >= 2 for package: globus-io
+        ---> Package globus-io.x86_64 0:9.5-1.osg32.el5 set to be updated
+        ---> Package globus-rsl.i386 0:9.1-9.osg32.el5 set to be updated
+        ---> Package globus-rsl.x86_64 0:9.1-9.osg32.el5 set to be updated
+        ---> Package globus-xio.i386 0:3.6-1.1.osg32.el5 set to be updated
+        ---> Package globus-xio.x86_64 0:3.6-1.1.osg32.el5 set to be updated
+        ---> Package gsoap.i386 0:2.7.13-5.el5 set to be updated
+        ---> Package perl-DateManip.noarch 0:5.44-1.2.1 set to be updated
+        --> Running transaction check
+        ---> Package globus-xio-gsi-driver.x86_64 0:2.4-1.osg32.el5 set to be updated
+        ---> Package libidn.i386 0:0.6.5-1.1 set to be updated
+        ---> Package perl-XML-Simple.noarch 0:2.18-4.rhel5 set to be updated
+        --> Processing Dependency: perl(XML::Parser) for package: perl-XML-Simple
+        --> Running transaction check
+        ---> Package perl-XML-Parser.x86_64 0:2.36-1 set to be updated
+        --> Finished Dependency Resolution
+        
+        Dependencies Resolved
+        
+        =======================================================================================================================================================================================================
+         Package                                            Arch                                Version                                                Repository                                         Size
+        =======================================================================================================================================================================================================
+        Installing:
+         condor                                             i386                                8.0.6-3.osg32.el5                                      osg                                               5.4 M
+         condor                                             x86_64                              8.0.6-3.osg32.el5                                      osg                                               5.5 M
+        Installing for dependencies:
+         blahp                                              x86_64                              1.18.9.bosco-1.osg32.el5                               osg                                               511 k
+         condor-classads                                    i386                                8.0.6-3.osg32.el5                                      osg                                               267 k
+         condor-classads                                    x86_64                              8.0.6-3.osg32.el5                                      osg                                               270 k
+         condor-procd                                       x86_64                              8.0.6-3.osg32.el5                                      osg                                               108 k
+         curl                                               i386                                7.15.5-17.el5_9                                        rhel-x86_64-client-5                              235 k
+         globus-ftp-control                                 i386                                4.7-1.1.osg32.el5                                      osg                                                74 k
+         globus-ftp-control                                 x86_64                              4.7-1.1.osg32.el5                                      osg                                                76 k
+         globus-gass-transfer                               i386                                7.2-8.osg32.el5                                        osg                                                43 k
+         globus-gass-transfer                               x86_64                              7.2-8.osg32.el5                                        osg                                                44 k
+         globus-gram-client                                 i386                                12.4-8.osg32.el5                                       osg                                                22 k
+         globus-gram-client                                 x86_64                              12.4-8.osg32.el5                                       osg                                                23 k
+         globus-gram-protocol                               i386                                11.3-11.1.osg32.el5                                    osg                                                39 k
+         globus-gram-protocol                               x86_64                              11.3-11.1.osg32.el5                                    osg                                                41 k
+         globus-io                                          i386                                9.5-1.osg32.el5                                        osg                                                43 k
+         globus-io                                          x86_64                              9.5-1.osg32.el5                                        osg                                                45 k
+         globus-rsl                                         i386                                9.1-9.osg32.el5                                        osg                                                29 k
+         globus-rsl                                         x86_64                              9.1-9.osg32.el5                                        osg                                                30 k
+         globus-xio                                         i386                                3.6-1.1.osg32.el5                                      osg                                               155 k
+         globus-xio                                         x86_64                              3.6-1.1.osg32.el5                                      osg                                               180 k
+         globus-xio-gsi-driver                              x86_64                              2.4-1.osg32.el5                                        osg                                                38 k
+         gsoap                                              i386                                2.7.13-5.el5                                           epel                                              451 k
+         libidn                                             i386                                0.6.5-1.1                                              rhel-x86_64-client-5                              195 k
+         perl-DateManip                                     noarch                              5.44-1.2.1                                             rhel-x86_64-client-5                              143 k
+         perl-XML-Parser                                    x86_64                              2.36-1                                                 base                                              254 k
+         perl-XML-Simple                                    noarch                              2.18-4.rhel5                                           base                                               73 k
+        
+        Transaction Summary
+        =======================================================================================================================================================================================================
+        Install      27 Package(s)
+        Upgrade       0 Package(s)
+        
+        Total download size: 14 M
+        Is this ok [y/N]: y
+        Downloading Packages:
+        (1/27): globus-gram-client-12.4-8.osg32.el5.i386.rpm                                                                                                                            |  22 kB     00:00     
+        (2/27): globus-gram-client-12.4-8.osg32.el5.x86_64.rpm                                                                                                                          |  23 kB     00:00     
+        (3/27): globus-rsl-9.1-9.osg32.el5.i386.rpm                                                                                                                                     |  29 kB     00:00     
+        (4/27): globus-rsl-9.1-9.osg32.el5.x86_64.rpm                                                                                                                                   |  30 kB     00:00     
+        (5/27): globus-xio-gsi-driver-2.4-1.osg32.el5.x86_64.rpm                                                                                                                        |  38 kB     00:00     
+        (6/27): globus-gram-protocol-11.3-11.1.osg32.el5.i386.rpm                                                                                                                       |  39 kB     00:00     
+        (7/27): globus-gram-protocol-11.3-11.1.osg32.el5.x86_64.rpm                                                                                                                     |  41 kB     00:00     
+        (8/27): globus-io-9.5-1.osg32.el5.i386.rpm                                                                                                                                      |  43 kB     00:00     
+        (9/27): globus-gass-transfer-7.2-8.osg32.el5.i386.rpm                                                                                                                           |  43 kB     00:00     
+        (10/27): globus-gass-transfer-7.2-8.osg32.el5.x86_64.rpm                                                                                                                        |  44 kB     00:00     
+        (11/27): globus-io-9.5-1.osg32.el5.x86_64.rpm                                                                                                                                   |  45 kB     00:00     
+        (12/27): perl-XML-Simple-2.18-4.rhel5.noarch.rpm                                                                                                                                |  73 kB     00:00     
+        (13/27): globus-ftp-control-4.7-1.1.osg32.el5.i386.rpm                                                                                                                          |  74 kB     00:00     
+        (14/27): globus-ftp-control-4.7-1.1.osg32.el5.x86_64.rpm                                                                                                                        |  76 kB     00:00     
+        (15/27): condor-procd-8.0.6-3.osg32.el5.x86_64.rpm                                                                                                                              | 108 kB     00:00     
+        (16/27): perl-DateManip-5.44-1.2.1.noarch.rpm                                                                                                                                   | 143 kB     00:00     
+        (17/27): globus-xio-3.6-1.1.osg32.el5.i386.rpm                                                                                                                                  | 155 kB     00:00     
+        (18/27): globus-xio-3.6-1.1.osg32.el5.x86_64.rpm                                                                                                                                | 180 kB     00:00     
+        (19/27): libidn-0.6.5-1.1.i386.rpm                                                                                                                                              | 195 kB     00:00     
+        (20/27): curl-7.15.5-17.el5_9.i386.rpm                                                                                                                                          | 235 kB     00:00     
+        (21/27): perl-XML-Parser-2.36-1.x86_64.rpm                                                                                                                                      | 254 kB     00:00     
+        (22/27): condor-classads-8.0.6-3.osg32.el5.i386.rpm                                                                                                                             | 267 kB     00:00     
+        (23/27): condor-classads-8.0.6-3.osg32.el5.x86_64.rpm                                                                                                                           | 270 kB     00:00     
+        (24/27): gsoap-2.7.13-5.el5.i386.rpm                                                                                                                                            | 451 kB     00:00     
+        (25/27): blahp-1.18.9.bosco-1.osg32.el5.x86_64.rpm                                                                                                                              | 511 kB     00:00     
+        (26/27): condor-8.0.6-3.osg32.el5.i386.rpm                                                                                                                                      | 5.4 MB     00:01     
+        (27/27): condor-8.0.6-3.osg32.el5.x86_64.rpm                                                                                                                                    | 5.5 MB     00:01     
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        Total                                                                                                                                                                  1.6 MB/s |  14 MB     00:08     
+        Running rpm_check_debug
+        Running Transaction Test
+        Finished Transaction Test
+        Transaction Test Succeeded
+        Running Transaction
+          Installing     : globus-xio                                                                                                                                                                     1/27 
+          Installing     : globus-rsl                                                                                                                                                                     2/27 
+          Installing     : condor-classads                                                                                                                                                                3/27 
+          Installing     : globus-xio                                                                                                                                                                     4/27 
+          Installing     : globus-xio-gsi-driver                                                                                                                                                          5/27 
+          Installing     : globus-io                                                                                                                                                                      6/27 
+          Installing     : globus-gram-protocol                                                                                                                                                           7/27 
+          Installing     : condor-procd                                                                                                                                                                   8/27 
+          Installing     : globus-io                                                                                                                                                                      9/27 
+          Installing     : globus-gram-protocol                                                                                                                                                          10/27 
+          Installing     : gsoap                                                                                                                                                                         11/27 
+          Installing     : globus-rsl                                                                                                                                                                    12/27 
+          Installing     : globus-gram-client                                                                                                                                                            13/27 
+          Installing     : globus-gass-transfer                                                                                                                                                          14/27 
+          Installing     : globus-ftp-control                                                                                                                                                            15/27 
+          Installing     : globus-gram-client                                                                                                                                                            16/27 
+          Installing     : globus-gass-transfer                                                                                                                                                          17/27 
+          Installing     : globus-ftp-control                                                                                                                                                            18/27 
+          Installing     : condor-classads                                                                                                                                                               19/27 
+          Installing     : libidn                                                                                                                                                                        20/27 
+          Installing     : perl-DateManip                                                                                                                                                                21/27 
+          Installing     : perl-XML-Parser                                                                                                                                                               22/27 
+          Installing     : curl                                                                                                                                                                          23/27 
+          Installing     : perl-XML-Simple                                                                                                                                                               24/27 
+          Installing     : blahp                                                                                                                                                                         25/27 
+          Installing     : condor                                                                                                                                                                        26/27 
+          Installing     : condor                                                                                                                                                                        27/27 
+        
+        Installed:
+          condor.i386 0:8.0.6-3.osg32.el5                                                                   condor.x86_64 0:8.0.6-3.osg32.el5                                                                  
+        
+        Dependency Installed:
+          blahp.x86_64 0:1.18.9.bosco-1.osg32.el5             condor-classads.i386 0:8.0.6-3.osg32.el5      condor-classads.x86_64 0:8.0.6-3.osg32.el5      condor-procd.x86_64 0:8.0.6-3.osg32.el5          
+          curl.i386 0:7.15.5-17.el5_9                         globus-ftp-control.i386 0:4.7-1.1.osg32.el5   globus-ftp-control.x86_64 0:4.7-1.1.osg32.el5   globus-gass-transfer.i386 0:7.2-8.osg32.el5      
+          globus-gass-transfer.x86_64 0:7.2-8.osg32.el5       globus-gram-client.i386 0:12.4-8.osg32.el5    globus-gram-client.x86_64 0:12.4-8.osg32.el5    globus-gram-protocol.i386 0:11.3-11.1.osg32.el5  
+          globus-gram-protocol.x86_64 0:11.3-11.1.osg32.el5   globus-io.i386 0:9.5-1.osg32.el5              globus-io.x86_64 0:9.5-1.osg32.el5              globus-rsl.i386 0:9.1-9.osg32.el5                
+          globus-rsl.x86_64 0:9.1-9.osg32.el5                 globus-xio.i386 0:3.6-1.1.osg32.el5           globus-xio.x86_64 0:3.6-1.1.osg32.el5           globus-xio-gsi-driver.x86_64 0:2.4-1.osg32.el5   
+          gsoap.i386 0:2.7.13-5.el5                           libidn.i386 0:0.6.5-1.1                       perl-DateManip.noarch 0:5.44-1.2.1              perl-XML-Parser.x86_64 0:2.36-1                  
+          perl-XML-Simple.noarch 0:2.18-4.rhel5              
+        
+        Complete!
+                                    
+                                    
+        [root@grid39 ~]# yum install htcondor-ce-condor gratia-probe-condor
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        1685 packages excluded due to repository priority protections
+        Setting up Install Process
+        Resolving Dependencies
+        --> Running transaction check
+        ---> Package gratia-probe-condor.noarch 0:1.13.27-1.osg32.el5 set to be updated
+        --> Processing Dependency: gratia-probe-common >= 1.13.27-1.osg32.el5 for package: gratia-probe-condor
+        ---> Package htcondor-ce-condor.x86_64 0:1.0-2.osg32.el5 set to be updated
+        --> Processing Dependency: htcondor-ce = 1.0-2.osg32.el5 for package: htcondor-ce-condor
+        --> Running transaction check
+        ---> Package gratia-probe-common.noarch 0:1.13.27-1.osg32.el5 set to be updated
+        ---> Package htcondor-ce.x86_64 0:1.0-2.osg32.el5 set to be updated
+        --> Processing Dependency: htcondor-ce-client = 1.0-2.osg32.el5 for package: htcondor-ce
+        --> Running transaction check
+        ---> Package htcondor-ce-client.x86_64 0:1.0-2.osg32.el5 set to be updated
+        --> Processing Dependency: /usr/bin/voms-proxy-init for package: htcondor-ce-client
+        --> Processing Dependency: /usr/bin/grid-proxy-init for package: htcondor-ce-client
+        --> Processing Dependency: htcondor.so()(64bit) for package: htcondor-ce-client
+        --> Running transaction check
+        ---> Package condor-python.x86_64 0:8.0.6-3.osg32.el5 set to be updated
+        --> Processing Dependency: libboost_python.so.2()(64bit) for package: condor-python
+        ---> Package globus-proxy-utils.x86_64 0:5.2-1.1.osg32.el5 set to be updated
+        ---> Package voms-clients.x86_64 0:2.0.8-1.9.osg.el5 set to be updated
+        --> Running transaction check
+        ---> Package boost.x86_64 0:1.33.1-16.el5_9 set to be updated
+        --> Processing Dependency: libicuuc.so.36()(64bit) for package: boost
+        --> Processing Dependency: libicui18n.so.36()(64bit) for package: boost
+        --> Running transaction check
+        ---> Package libicu.x86_64 0:3.6-5.16.1 set to be updated
+        --> Finished Dependency Resolution
+        
+        Dependencies Resolved
+        
+        =======================================================================================================================================================================================================
+         Package                                            Arch                                  Version                                            Repository                                           Size
+        =======================================================================================================================================================================================================
+        Installing:
+         gratia-probe-condor                                noarch                                1.13.27-1.osg32.el5                                osg                                                  21 k
+         htcondor-ce-condor                                 x86_64                                1.0-2.osg32.el5                                    osg                                                 6.4 k
+        Installing for dependencies:
+         boost                                              x86_64                                1.33.1-16.el5_9                                    rhel-x86_64-client-5                                864 k
+         condor-python                                      x86_64                                8.0.6-3.osg32.el5                                  osg                                                 199 k
+         globus-proxy-utils                                 x86_64                                5.2-1.1.osg32.el5                                  osg                                                  46 k
+         gratia-probe-common                                noarch                                1.13.27-1.osg32.el5                                osg                                                 132 k
+         htcondor-ce                                        x86_64                                1.0-2.osg32.el5                                    osg                                                  35 k
+         htcondor-ce-client                                 x86_64                                1.0-2.osg32.el5                                    osg                                                  15 k
+         libicu                                             x86_64                                3.6-5.16.1                                         rhel-x86_64-client-5                                5.2 M
+         voms-clients                                       x86_64                                2.0.8-1.9.osg.el5                                  osg                                                 181 k
+        
+        Transaction Summary
+        =======================================================================================================================================================================================================
+        Install      10 Package(s)
+        Upgrade       0 Package(s)
+        
+        Total download size: 6.7 M
+        Is this ok [y/N]: y
+        Downloading Packages:
+        (1/10): htcondor-ce-condor-1.0-2.osg32.el5.x86_64.rpm                                                                                                                           | 6.4 kB     00:00     
+        (2/10): htcondor-ce-client-1.0-2.osg32.el5.x86_64.rpm                                                                                                                           |  15 kB     00:00     
+        (3/10): gratia-probe-condor-1.13.27-1.osg32.el5.noarch.rpm                                                                                                                      |  21 kB     00:00     
+        (4/10): htcondor-ce-1.0-2.osg32.el5.x86_64.rpm                                                                                                                                  |  35 kB     00:00     
+        (5/10): globus-proxy-utils-5.2-1.1.osg32.el5.x86_64.rpm                                                                                                                         |  46 kB     00:00     
+        (6/10): gratia-probe-common-1.13.27-1.osg32.el5.noarch.rpm                                                                                                                      | 132 kB     00:00     
+        (7/10): voms-clients-2.0.8-1.9.osg.el5.x86_64.rpm                                                                                                                               | 181 kB     00:00     
+        (8/10): condor-python-8.0.6-3.osg32.el5.x86_64.rpm                                                                                                                              | 199 kB     00:00     
+        (9/10): boost-1.33.1-16.el5_9.x86_64.rpm                                                                                                                                        | 864 kB     00:00     
+        (10/10): libicu-3.6-5.16.1.x86_64.rpm                                                                                                                                           | 5.2 MB     00:00     
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        Total                                                                                                                                                                  2.8 MB/s | 6.7 MB     00:02     
+        Running rpm_check_debug
+        Running Transaction Test
+        Finished Transaction Test
+        Transaction Test Succeeded
+        Running Transaction
+          Installing     : libicu                                                                                                                                                                         1/10 
+          Installing     : boost                                                                                                                                                                          2/10 
+          Installing     : condor-python                                                                                                                                                                  3/10 
+          Installing     : voms-clients                                                                                                                                                                   4/10 
+          Installing     : globus-proxy-utils                                                                                                                                                             5/10 
+          Installing     : htcondor-ce-client                                                                                                                                                             6/10 
+          Installing     : htcondor-ce                                                                                                                                                                    7/10 
+          Installing     : gratia-probe-common                                                                                                                                                            8/10 
+          Installing     : gratia-probe-condor                                                                                                                                                            9/10 
+          Installing     : htcondor-ce-condor                                                                                                                                                            10/10 
+        
+        Installed:
+          gratia-probe-condor.noarch 0:1.13.27-1.osg32.el5                                                     htcondor-ce-condor.x86_64 0:1.0-2.osg32.el5                                                    
+        
+        Dependency Installed:
+          boost.x86_64 0:1.33.1-16.el5_9            condor-python.x86_64 0:8.0.6-3.osg32.el5         globus-proxy-utils.x86_64 0:5.2-1.1.osg32.el5      gratia-probe-common.noarch 0:1.13.27-1.osg32.el5     
+          htcondor-ce.x86_64 0:1.0-2.osg32.el5      htcondor-ce-client.x86_64 0:1.0-2.osg32.el5      libicu.x86_64 0:3.6-5.16.1                         voms-clients.x86_64 0:2.0.8-1.9.osg.el5              
+        
+        Complete!
+                
+-- configuration
+
+        -- to use gums, setup /etc/lcmaps.db
+
+
+        [root@grid39 ~]# cat /etc/lcmaps.db
+        ...
+        # Change this URL to your GUMS server
+             "--endpoint https://gumsdev.racf.bnl.gov:8443/gums/services/GUMSXACMLAuthorizationServicePort"
+        ...
+            
+
+        # [root@grid39 condor]# cat /etc/grid-security/gsi-authz.conf 
+        globus_mapping liblcas_lcmaps_gt4_mapping.so lcmaps_callout
+
+
+*************************
+because it does not work, some things were done while troubleshooting:
+
+        -- files owned by root, instead of condor, deleted from  /var/lib/condor-ce/spool/
+
+        -- run command fetch-crl
+
+        -- changes in config file /etc/blah.config (and then back)
+
+        -- because it is RHEL5, it should be (note the version of fetch-crl):
+
+                $ yum install fetch-crl3 lcmaps lcas-lcmaps-gt4-interface
+
+        [root@grid39 ~]# service fetch-crl-boot stop
+
+        [root@grid39 ~]# service fetch-crl-cron stop
+
+        [root@grid39 ~]# /usr/sbin/fetch-crl3 
+
+        [root@grid39 ~]# /sbin/service fetch-crl3-boot start
+        Running fetch-crl3 on boot:                                [  OK  ]
+
+        [root@grid39 ~]# /sbin/service fetch-crl3-cron start
+        Enabling periodic fetch-crl3:                              [  OK  ]
+
+        [root@grid39 ~]# /sbin/chkconfig fetch-crl3-boot on
+
+        [root@grid39 ~]# /sbin/chkconfig fetch-crl3-cron on
+
+
+                
+
+        
+
