@@ -24,6 +24,10 @@
 #        MANDATORY
 #
 # project = the name of the project, typically the same than the VO.
+#        WARNING: unless having a strong reason against it, use the value 
+#                 than VO. Several parts in the code are still mixing
+#                 VO and project to calculate paths. 
+#
 #        MANDATORY
 #          
 # srcdir = path to the project scratch area. 
