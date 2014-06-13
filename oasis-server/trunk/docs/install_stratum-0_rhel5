@@ -69,9 +69,9 @@ Following instructions from document at https://www.racf.bnl.gov/docs/services/c
 
         NOTE: if the OSG repo is also enabled, the following yum command must disable it:
 
-                            yum install --disablerepo=osg cvmfs-server cvmfs-keys httpd redirfs kmod-redirfs cvmfsflt kmod-cvmfsflt
+                            yum install --disablerepo=osg cvmfs-server-2.0.8-1.x86_64.rpm cvmfs-keys httpd redirfs kmod-redirfs cvmfsflt kmod-cvmfsflt
 
-        [root@itb-oasis ~]# yum install cvmfs-server cvmfs-keys httpd redirfs kmod-redirfs cvmfsflt kmod-cvmfsflt
+        [root@itb-oasis ~]# yum install cvmfs-server-2.0.8-1.x86_64.rpm cvmfs-keys httpd redirfs kmod-redirfs cvmfsflt kmod-cvmfsflt
 
         Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
         This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
