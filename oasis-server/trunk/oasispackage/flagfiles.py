@@ -157,7 +157,7 @@ class FlagFile(object):
         # There could be more than one, from previous unfinished processes.
         # We need to figure out how to deal with that situation
 
-        self.log.debug('Starting.')
+        self.log.debug('Starting with status=%s' %status)
 
         RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s?$" %(self.projectname, status))
         # remember, the filename format is  <project>.yyyy-mm-dd:hh-mm-ss.<status>
