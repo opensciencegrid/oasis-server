@@ -133,6 +133,12 @@ class Action(object):
         
         return rc
 
+    def clean(self):
+        '''
+        just runs the synchronize_back() part in class Project
+        '''
+        self.oasis.project.clean() 
+
 
 # =============================================================================
     
@@ -151,6 +157,8 @@ if __name__ == '__main__':
             mode = 'runprobes' 
         if o == '--publish':
             mode = 'publish' 
+        if o == '--clean':
+            mode = 'clean' 
         if o == '--version':
             mode = 'version' 
 
@@ -162,6 +170,8 @@ if __name__ == '__main__':
         rc = action.runprobes()
     if mode == 'publish':
         rc = action.publish()
+    if mode == 'clean':
+        rc = action.clean()
     if mode == 'version':
         rc = version()
 
