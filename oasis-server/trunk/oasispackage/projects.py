@@ -552,6 +552,15 @@ class Project(ProjectBasicConfig):
         self.log.debug('Leaving with RC=%s' %rc)
         return rc
 
+    def clean(self):
+        """
+        just the reverse sync part
+        """
+        self.log.debug('Starting.')
+        rc = self._synchronize_back()
+        self.log.debug('Leaving with RC=%s' %rc)
+        return rc
+
     def _set_env_osg_app(self):
         '''
         method to add to the environment the variable OSG_APP.
