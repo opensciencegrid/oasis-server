@@ -76,9 +76,24 @@ setup(
                #'bin/runprobes', #temporary script, to be merge with oasis
 
                # =============================
+               # OASIS 1 tools
+               # =============================
+               'bin/set_repository_property',
+               'bin/blank_osg_repository',
+               'bin/unblank_osg_repository',
+               'bin/osg-oasis-update',
+               'bin/resign_osg_whitelist',
+               'bin/add_osg_repository',
+               'bin/do_oasis_update',
+               'bin/expand_oasis_dirtab',
+               'bin/generate_adduser.py',
+               'bin/generate_condormap.py',
+               'bin/oasis_status.sh',
+               'bin/request_oasis_update',
+
+               # =============================
                #    admin tools 
                # =============================
-               #'bin/osg-oasis-update',
                'bin/oasis-admin-addproject',
                #'bin/oasis-admin-delproject',
                #'bin/oasis-admin-list',
