@@ -133,9 +133,9 @@ class Action(object):
         
         return rc
 
-    def clean(self):
+    def preinstall(self):
         '''
-        just runs the synchronize_back() part in class Project
+        just runs the preinstall part in class Project
         '''
         self.oasis.project.preinstall() 
 
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     # parsing the input options
     opts, args = getopt.getopt(sys.argv[1:],
                                '',
-                               ['version', 'runprobes', 'publish'])
+                               ['version', 'runprobes', 'publish', 'preinstall'])
                                # FIXME: add input options for log level (INFO, DEBUG...), for confffile, ...
 
     mode = 'deploy' # default
@@ -157,8 +157,8 @@ if __name__ == '__main__':
             mode = 'runprobes' 
         if o == '--publish':
             mode = 'publish' 
-        if o == '--clean':
-            mode = 'clean' 
+        if o == '--preinstall':
+            mode = 'preinstall' 
         if o == '--version':
             mode = 'version' 
 
@@ -170,8 +170,8 @@ if __name__ == '__main__':
         rc = action.runprobes()
     if mode == 'publish':
         rc = action.publish()
-    if mode == 'clean':
-        rc = action.clean()
+    if mode == 'preinstall':
+        rc = action.preinstall()
     if mode == 'version':
         rc = version()
 
