@@ -360,7 +360,7 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         A    bin
         A    bin/runprobes
         A    bin/install.sh
-        A    bin/oasis-admin-addproject
+        A    bin/oasis-admin-projectadd
         A    bin/oasis-runprobe-no
         A    bin/osg-oasis-update
         A    bin/oasis-runprobe-forbiddenfiles
@@ -385,7 +385,7 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         A    bin/generate_adduser.py
         A    bin/request_oasis_update
         A    bin/resign_osg_whitelist
-        A    bin/oasis-admin-delproject
+        A    bin/oasis-admin-projectdel
         A    bin/oasis-runprobe-quota
         A    bin/expand_oasis_dirtab
         A    bin/oasis-runprobe-nodelete
@@ -479,8 +479,8 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         hard linking bin/generate_condormap.py -> oasis-server-2.0.0/bin
         hard linking bin/install.sh -> oasis-server-2.0.0/bin
         hard linking bin/oasis -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-admin-addproject -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-admin-delproject -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-admin-projectadd -> oasis-server-2.0.0/bin
+        hard linking bin/oasis-admin-projectdel -> oasis-server-2.0.0/bin
         hard linking bin/oasis-admin-list -> oasis-server-2.0.0/bin
         hard linking bin/oasis-admin-resignwhitelist -> oasis-server-2.0.0/bin
         hard linking bin/oasis-admin-rollback -> oasis-server-2.0.0/bin
@@ -617,7 +617,7 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         -rwxr-xr-x root/root      1773 2014-05-12 12:07:29 oasis-server-2.0.0/bin/blank_osg_repository
         -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-readable
         -rwxr-xr-x root/root      1998 2014-05-12 12:07:29 oasis-server-2.0.0/bin/set_repository_property
-        -rw-r--r-- root/root      6230 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-addproject
+        -rw-r--r-- root/root      6230 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-projectadd
         -rwxr-xr-x root/root      2704 2014-05-12 12:07:29 oasis-server-2.0.0/bin/unblank_osg_repository
         -rw-r--r-- root/root      1208 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis
         -rw-r--r-- root/root       118 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-list
@@ -627,7 +627,7 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         -rwxr-xr-x root/root      1825 2014-05-12 12:07:29 oasis-server-2.0.0/bin/add_osg_repository
         -rw-r--r-- root/root      1375 2014-05-12 12:07:29 oasis-server-2.0.0/bin/publish
         -rwxr-xr-x root/root      3175 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis_status.sh
-        -rw-r--r-- root/root        18 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-delproject
+        -rw-r--r-- root/root        18 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-projectdel
         -rw-r--r-- root/root       423 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-quota
         -rw-r--r-- root/root      5097 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis_new
         -rw-r--r-- root/root       421 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-yes
@@ -692,7 +692,7 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         copying and adjusting bin/oasis -> build/scripts-2.4
         copying and adjusting bin/oasis_new -> build/scripts-2.4
         copying and adjusting bin/oasisd -> build/scripts-2.4
-        copying and adjusting bin/oasis-admin-addproject -> build/scripts-2.4
+        copying and adjusting bin/oasis-admin-projectadd -> build/scripts-2.4
         copying bin/oasis-runprobe-filesize -> build/scripts-2.4
         copying bin/oasis-runprobe-forbiddenfiles -> build/scripts-2.4
         copying bin/oasis-runprobe-no -> build/scripts-2.4
@@ -705,7 +705,7 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         changing mode of build/scripts-2.4/oasis from 644 to 755
         changing mode of build/scripts-2.4/oasis_new from 644 to 755
         changing mode of build/scripts-2.4/oasisd from 644 to 755
-        changing mode of build/scripts-2.4/oasis-admin-addproject from 644 to 755
+        changing mode of build/scripts-2.4/oasis-admin-projectadd from 644 to 755
         changing mode of build/scripts-2.4/oasis-runprobe-filesize from 644 to 755
         changing mode of build/scripts-2.4/oasis-runprobe-forbiddenfiles from 644 to 755
         changing mode of build/scripts-2.4/oasis-runprobe-no from 644 to 755
@@ -789,7 +789,7 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         copying build/scripts-2.4/oasis-runprobe-numberfiles -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
         copying build/scripts-2.4/oasis-runprobe-filesize -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
         copying build/scripts-2.4/oasis-runprobe-readable -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-admin-addproject -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-admin-projectadd -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
         copying build/scripts-2.4/oasis -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
         copying build/scripts-2.4/oasis-runprobe-quota -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
         copying build/scripts-2.4/oasis_new -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
@@ -802,7 +802,7 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-numberfiles to 755
         changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-filesize to 755
         changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-readable to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-admin-addproject to 755
+        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-admin-projectadd to 755
         changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis to 755
         changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-quota to 755
         changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis_new to 755
@@ -1074,7 +1074,7 @@ Now configure the specific VO-by_VO setup. For example, to configure the VO call
 
 -- create the infrastructure for project MIS (UNIX ID, source and destination directories...):
 
-        [root@itb-oasis ~]# /usr/bin/oasis-admin-addproject --project MIS
+        [root@itb-oasis ~]# /usr/bin/oasis-admin-projectadd --project MIS
 
    if everything went OK:
 
