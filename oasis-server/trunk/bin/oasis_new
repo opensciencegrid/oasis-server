@@ -137,7 +137,7 @@ class Action(object):
         '''
         just runs the synchronize_back() part in class Project
         '''
-        self.oasis.project.clean() 
+        self.oasis.project.preinstall() 
 
 
 # =============================================================================
