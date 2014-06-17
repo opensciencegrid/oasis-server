@@ -1,0 +1,106 @@
+##  What machine is your central manager?
+
+CONDOR_HOST = $(FULL_HOSTNAME)
+
+## Pool's short description
+
+COLLECTOR_NAME = OASIS ITB Condor Central Manager at $(FULL_HOSTNAME)
+
+##  When is this machine willing to start a job? 
+
+START = TRUE
+
+
+##  When to suspend a job?
+
+SUSPEND = FALSE
+
+
+##  When to nicely stop a job?
+##  (as opposed to killing it instantaneously)
+
+PREEMPT = FALSE
+
+
+##  When to instantaneously kill a preempting job
+##  (e.g. if a job is in the pre-empting stage for too long)
+
+KILL = FALSE
+
+##  This macro determines what daemons the condor_master will start and keep its watchful eyes on.
+##  The list is a comma or space separated list of subsystem names
+
+DAEMON_LIST = COLLECTOR, MASTER, NEGOTIATOR, SCHEDD, STARTD
+#DAEMON_LIST = COLLECTOR, MASTER, NEGOTIATOR, SCHEDD, SHARED_PORT
+
+
+
+# ----------------------------------------------------------------------------------------------------------------
+# Next is coming from http://svn.usatlas.bnl.gov/svn/griddev/provisioning-templates/condor/50cloudcollector.config
+# ----------------------------------------------------------------------------------------------------------------
+
+#ALL_DEBUG = D_FULLDEBUG, D_COMMAND, D_SECURITY, D_NETWORK
+
+
+PREEMPTION_REQUIREMENTS = False
+RANK = 0
+NEGOTIATOR_CONSIDER_PREEMPTION = False
+CLAIM_WORKLIFE = 3600
+
+UID_DOMAIN=bnl.gov
+
+# Security
+ALLOW_WRITE = condor_pool@*/*
+SEC_DEFAULT_AUTHENTICATION = REQUIRED
+SEC_DEFAULT_AUTHENTICATION_METHODS = PASSWORD, FS
+SEC_PASSWORD_FILE = /etc/condor/password_file
+#  command to create password is  condor_store_cred
+QUEUE_SUPER_USERS = condor, condor_pool
+SEC_DEFAULT_ENCRYPTION = REQUIRED
+SEC_DEFAULT_INTEGRITY = REQUIRED
+SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION  = True
+
+# Networking
+HIGHPORT = 30000
+LOWPORT = 20000
+CREDD_PORT = 29620
+STORK_PORT = 29621
+COLLECTOR_HOST=$(CONDOR_HOST):29650
+USE_SHARED_PORT = TRUE
+COLLECTOR.USE_SHARED_PORT = FALSE
+
+# Increase for UPD buffer size
+COLLECTOR_SOCKET_BUFSIZE = 20480000
+
+
+COLLECTOR_ADDRESS_FILE = 
+UPDATE_COLLECTOR_WITH_TCP = TRUE
+
+# Scaling aids
+SUBMIT_EXPRS = $(SUBMIT_EXPRS) JobLeaseDuration
+JobLeaseDuration = 1800
+NEGOTIATOR_INTERVAL = 900
+TOOL_TIMEOUT_MULTILIER=2
+
+
+# Added by Jaime Frey for debugging
+MAX_SCHEDD_LOG = 100000000
+MAX_SHADOW_LOG = 100000000
+MAX_COLLECTOR_LOG = 100000000
+MAX_NEGOTIATOR_LOG = 100000000
+
+COLLECTOR.STATISTICS_TO_PUBLISH=DC:2d
+
+NEGOTIATOR_INFORM_STARTD = False
+
+# Added by Jaime to prefer machines that haven't been idle for a long time
+NEGOTIATOR_PRE_JOB_RANK = (RemoteOwner =?= UNDEFINED) && (time() - EnteredCurrentState < 50000)
+
+# Added by Jaime to forward more ad types to central collector
+# Before Condor 7.9.4, the collector will only accept one Collector ad
+# per host. Thus, we don't want to forward collector ads in older versions
+# of Condor.
+#CONDOR_VIEW_CLASSAD_TYPES = Machine,Submitter,DaemonMaster,Collector
+CONDOR_VIEW_CLASSAD_TYPES = Machine,Submitter,DaemonMaster
+
+
