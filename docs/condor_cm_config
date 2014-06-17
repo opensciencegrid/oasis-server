@@ -29,6 +29,11 @@ LOWPORT = 20000
 CREDD_PORT = 29620
 STORK_PORT = 29621
 COLLECTOR_HOST=$(CONDOR_HOST):29618
+# VERY IMPORTANT
+#       this forces the condor-ce config file /etc/condor-ce/config.d/02-ce-condor.conf
+#       to change too, add the same port number, as
+#           JOB_ROUTER_SCHEDD2_POOL=$(FULL_HOSTNAME):29618
+#
 USE_SHARED_PORT = FALSE
 
 # Increase for UPD buffer size
