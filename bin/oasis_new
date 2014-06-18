@@ -165,7 +165,8 @@ if __name__ == '__main__':
     action = Action()
 
     if mode == 'deploy':
-        rc = action.run(args)
+        cmd = ' '.join(args)
+        rc = action.run(cmd)
     if mode == 'runprobes':
         rc = action.runprobes()
     if mode == 'publish':
