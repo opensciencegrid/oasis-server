@@ -30,7 +30,7 @@ def main(args):
     args are the user payload and input options, as a string
     For example, when invoked by condor, it looks like this:
             
-            '/var/lib/condor/execute/dir_15018/condor_exec.exe a b c 1 2 3'] 
+            '/var/lib/condor/execute/dir_15018/condor_exec.exe a b c 1 2 3'
     '''
 
     # FIXME !! figure out how to pass the path to oasis.conf as a variable instead of hardcoded
