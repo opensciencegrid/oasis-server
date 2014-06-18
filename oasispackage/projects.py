@@ -603,14 +603,19 @@ class Project(ProjectBasicConfig):
 
     def runpayload(self, payload):
         '''
-        payload is the result of sys.argv[1:]
+        #payload is the result of sys.argv[1:]
+        #For example:
+        #   ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
+
+        payload is the result of join sys.argv[1:]
         For example:
-           ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
+           '/var/lib/condor/execute/dir_15018/condor_exec.exe a b c 1 2 3' 
         '''
         self.log.debug('Starting.')
        
         self.payload = payload
-        cmd = ' '.join(self.payload)
+        #cmd = ' '.join(self.payload)
+        cmd = self.payload
 
         self.log.info('Running installation job')
         self.console.info('Running installation job')
