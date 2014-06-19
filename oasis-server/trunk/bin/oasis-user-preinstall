@@ -1,0 +1,72 @@
+#!/usr/bin/python
+
+# =========================================================================== #
+#                                                                             #
+#   temporary file for development                                            #
+#   when finished, it will become the new oasis CLI                           #
+#                                                                             #
+# =========================================================================== #
+
+__version__ = "2.0.0"
+__versionname__ = "Dakhla"
+
+import getopt
+import logging
+import os
+import sys
+import time
+
+from oasispackage.oasisAPI import oasisCLI
+from oasispackage.flagfiles import FlagFile
+
+
+"""
+This is the CLI interface to OASIS package. 
+It can be used to run the user part of OASIS, 
+either directly from command line
+or from another client, e.g. HTCondor.
+"""
+
+#
+# FIXME
+# write an usage() function
+#
+
+#
+# FIXME
+# this script is very similar to bin/oasisd
+# should they be merged?
+#
+
+
+class Action(object):
+    # FIXME: search for a less ugly name
+    
+    # FIXME: make a single Action class in a separate file
+    #        and make all these little clients oasis-user-* 
+    #        to import it and use it. 
+
+    def __init__(self):
+
+        # FIXME !! figure out how to pass the path to oasis.conf as a variable instead of hardcoded
+        # set the path to config file oasis.conf
+        self.conffile = '/etc/oasis/oasis.conf'
+
+        self.oasis = oasisCLI(self.conffile)
+        self.projectname = self.oasis.project.projectname
+
+    def preinstall(self):
+        '''
+        just runs the preinstall part in class Project
+        '''
+        self.oasis.project.preinstall() 
+
+
+# =============================================================================
+    
+
+if __name__ == '__main__':
+
+    action = Action()
+    rc = action.preinstall()
+    sys.exit(rc)
