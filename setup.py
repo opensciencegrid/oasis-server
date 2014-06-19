@@ -96,8 +96,8 @@ setup(
                # =============================
                #    admin tools 
                # =============================
-               'bin/oasis-admin-addproject',
-               #'bin/oasis-admin-delproject',
+               'bin/oasis-admin-projectadd',
+               #'bin/oasis-admin-projectdel',
                #'bin/oasis-admin-list',
                #'bin/oasis-admin-rollback',
                                
