@@ -71,7 +71,9 @@ setup(
                #    main scripts   
                # =============================
                'bin/oasis',
-               'bin/oasis_new',  # temporary script. It will replace oasis
+               'bin/oasis_new',  # temporary script.
+               'bin/oasis-user-preinstall',
+               'bin/oasis-user-publish',
                'bin/oasisd',
                #'bin/runprobes', #temporary script, to be merge with oasis
 
