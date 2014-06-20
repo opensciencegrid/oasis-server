@@ -1,3 +1,4 @@
 # Local overrides for the default settings for the osg domain:
 CVMFS_SERVER_URL="http://grid40.racf.bnl.gov:80/cvmfs/@fqrn@"
+# we use @fqrn@ instead of @org@ to map the entire repo "oasis.opensciencegrid.org" instead of just "oasis"
 CVMFS_PUBLIC_KEY=/etc/cvmfs/keys/oasis.opensciencegrid.org.pub
