@@ -79,9 +79,15 @@ if __name__ == '__main__':
         if k == '--args':
             args = v
         if k == '--block':
-            block = v
+            if v.lower() in ['false', 'no', 'off']:
+                block = False
+            elif v.lower() in ['true', 'yes', 'on']:
+                block = True
+            else:
+                print "variable %s has unknown value" %k
+                # FIXME add here a usage() function
+                sys.exit(1)
            
     rc = main(args, block)
     sys.exit(rc) 
-
 
