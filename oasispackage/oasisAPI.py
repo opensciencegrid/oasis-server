@@ -63,6 +63,13 @@ class oasisCLI(object):
 
         self.conffile = conffile  # path to oasis.conf
 
+        self.block = False
+        #   block == True means process does retain prompt and waits in a loop
+        #   block == False means abort and message asking user to try again later 
+        # FIXME: this variable is set directly by client bin/oasis to True.
+        #       therefore, if we change the name from block to something better,
+        #       the client bin/oasis needs to be fixed too.
+
         self.probes_rc = 0  # ?? do we need it ??
 
         try:
