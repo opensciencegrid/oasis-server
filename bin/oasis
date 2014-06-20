@@ -69,6 +69,7 @@ if __name__ == '__main__':
 
     # defaults
     # FIXME: find better name instead of 'block'
+    #        and fix its name in oasisCLI::__init__()
     block = True 
     #   block == True means process does retain prompt and waits in a loop
     #   block == False means abort and message asking user to try again later 
