@@ -67,12 +67,14 @@ class Action(object):
 
         self.oasis.block = block
 
-        flag = FlagFile(self.projectname)
-        flag.create()
-        # this will create a flagfile in the regular place
-        # then the daemon will see it and finish
-        self.oasis._loop() # we wait until the daemon is done
-        
+#        flag = FlagFile(self.projectname)
+#        flag.create()
+#        # this will create a flagfile in the regular place
+#        # then the daemon will see it and finish
+#        self.oasis._loop() # we wait until the daemon is done
+
+        rc = self.oasis.postinstall()
+
         return rc
 
 
