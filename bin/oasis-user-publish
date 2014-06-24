@@ -56,10 +56,16 @@ class Action(object):
         self.oasis = oasisCLI(self.conffile)
         self.projectname = self.oasis.project.projectname
 
-    def publish(self):
+    def publish(self, block):
         '''
         runs the publishing, which will force internally running the probes
+
+        block == True means process does retain prompt and waits in a loop 
+        block == False means abort and message asking user to try again later 
+        default is oasisCLI::block = False
         '''
+
+        self.oasis.block = block
 
         flag = FlagFile(self.projectname)
         flag.create()
@@ -75,6 +81,32 @@ class Action(object):
 
 if __name__ == '__main__':
 
+###    action = Action()
+###    rc = action.publish()
+###    sys.exit(rc)
+
+
     action = Action()
-    rc = action.publish()
+
+    # defaults
+    # FIXME: find better name instead of 'block'
+    #        and fix its name in oasisCLI::__init__()
+    block = False 
+    #   block == True means process does retain prompt and waits in a loop
+    #   block == False means abort and message asking user to try again later 
+    
+    opts, args = getopt.getopt(sys.argv[1:], '', ['block='])
+    
+    for k,v in opts:
+        if k == '--block':
+            if v.lower() in ['false', 'no', 'off']:
+                block = False
+            elif v.lower() in ['true', 'yes', 'on']:
+                block = True
+            else:
+                print "variable %s has unknown value" %k
+                # FIXME add here a usage() function
+                sys.exit(1)
+    
+    rc = action.publish(block)
     sys.exit(rc)
