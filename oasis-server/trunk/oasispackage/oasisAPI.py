@@ -332,15 +332,14 @@ class oasisCLI(object):
             self.console.critical('installation step failed. Aborting.')
             return rc
 
-        rc = self.postinstall()
+        rc = self.publish()
         if rc != 0:
-            self.log.critical('postintall step failed. Aborting.')
-            self.console.critical('postintall step failed. Aborting.')
-            return rc
+            self.log.critical('installation step failed. Aborting.')
+            self.console.critical('installation step failed. Aborting.')
 
-        rc = self._loop()
         self.log.debug('Leaving with rc=%s' %rc)
         return rc
+
 
 
     ###def _checknoflagfile(self):
@@ -367,6 +366,20 @@ class oasisCLI(object):
     ###    return 0
 
 
+    def publish(self):
+        '''
+        runs both, postinstall() and _loop() methods
+        '''
+
+        rc = self.postinstall()
+        if rc != 0:
+            self.log.critical('postintall step failed. Aborting.')
+            self.console.critical('postintall step failed. Aborting.')
+            return rc
+
+        rc = self._loop()
+        self.log.debug('Leaving with rc=%s' %rc)
+        return rc
 
 
 
