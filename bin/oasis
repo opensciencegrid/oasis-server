@@ -20,75 +20,28 @@ or from another client, e.g. HTCondor.
 # should they be merged?
 #
 
-###def main(args):
-###    '''
-###    #args are the user payload and inputs options, as a python list.
-###    #For example, when invoked by condor, it looks like this:
-###    #
-###    #        ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
-###    '''
-###
-###    # FIXME !! figure out how to pass the path to oasis.conf as a variable instead of hardcoded
-###    # set the path to config file oasis.conf
-###    conffile = '/etc/oasis/oasis.conf'
-###    oasis = oasisCLI(conffile)
-###
-###    # run
-###    rc = oasis.run(args)
-###    return rc
-
-def main(args, block):
+def main(args):
     '''
     args are the user payload and input options, as a string
     For example, when invoked by condor, it looks like this:
             
             '/var/lib/condor/execute/dir_15018/condor_exec.exe a b c 1 2 3'
-
-    block is True/False
     '''
 
     # FIXME !! figure out how to pass the path to oasis.conf as a variable instead of hardcoded
     # set the path to config file oasis.conf
     conffile = '/etc/oasis/oasis.conf'
     oasis = oasisCLI(conffile)
-    oasis.block = block
 
     # run
     rc = oasis.run(args)
     return rc
 
 
-
 if __name__ == '__main__':
 
-###    args = argv[1:]
-###    cmd = ' '.join(args)
-###    rc = main(cmd)
-###    sys.exit(rc)
-
-
-    # defaults
-    # FIXME: find better name instead of 'block'
-    #        and fix its name in oasisCLI::__init__()
-    block = True 
-    #   block == True means process does retain prompt and waits in a loop
-    #   block == False means abort and message asking user to try again later 
-
-    opts, args = getopt.getopt(argv[1:], '', ['args=', 'block='])
-
-    for k,v in opts:
-        if k == '--args':
-            args = v
-        if k == '--block':
-            if v.lower() in ['false', 'no', 'off']:
-                block = False
-            elif v.lower() in ['true', 'yes', 'on']:
-                block = True
-            else:
-                print "variable %s has unknown value" %k
-                # FIXME add here a usage() function
-                sys.exit(1)
-           
-    rc = main(args, block)
-    sys.exit(rc) 
+    args = argv[1:]
+    cmd = ' '.join(args)
+    rc = main(cmd)
+    sys.exit(rc)
 
