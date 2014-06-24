@@ -66,9 +66,10 @@ class oasisCLI(object):
         self.block = False
         #   block == True means process does retain prompt and waits in a loop
         #   block == False means abort and message asking user to try again later 
-        # FIXME: this variable is set directly by client bin/oasis to True.
-        #       therefore, if we change the name from block to something better,
-        #       the client bin/oasis needs to be fixed too.
+        # This variable, if so, is set directly by client bin/oasis-user-publish, just by doing
+        #       self.oasis.block = block
+        # therefore, if we change the name from block to something better,
+        # the client bin/oasis-user-publish needs to be fixed too.
 
         self.probes_rc = 0  # ?? do we need it ??
 
