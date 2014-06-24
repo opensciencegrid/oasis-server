@@ -1,5 +1,5 @@
 #!/bin/bash
-# Add a repository to the OSG cvmfs distribution.
+# Add a repository to the OASIS cvmfs distribution.
 # Run this on the stratum 0 (oasis) first, then after the repository has
 #  started reading the signed .cvmfswhitelist from the stratum 0, run
 #  this also on the stratum 1 (oasis-replica).
@@ -39,22 +39,21 @@ set -e
 MASTERKEY=/etc/cvmfs/keys/$STRATUM0.masterkey
 if [ -f $MASTERKEY ]; then
     # on stratum 0 with masterkey installed
-    case "$REPONAME" in
-	"") echo "$ME: no repository name found in $1/.cvmfswhitelist" >&2
-	    exit 1
-	    ;;
-	*.opensciencegrid.org)
-	    ;;
-	*)  echo "$ME: repository $REPONAME not in opensciencegrid.org" >&2
-	    exit 1
-	    ;;
-    esac
+    if [ -z "$REPONAME" ]; then
+	echo "$ME: no repository name found in $1/.cvmfswhitelist" >&2
+	exit 1
+    fi
     CATDIR="/srv/cvmfs/$REPONAME/pub/catalogs"
     su cvmfs -c "mkdir -p $CATDIR && cp $TMPFILE $CATDIR/.cvmfswhitelist"
     $MYDIR/resign_osg_whitelist "$REPONAME"
 elif [ -f /etc/cvmfs/repositories.d/$STRATUM0/replica.conf ]; then
+    PUBKEY="/etc/cvmfs/keys/${REPONAME#*.}.pub"
+    if [ ! -f "$PUBKEY" ]; then
+	echo "$ME: $PUBKEY not found" >&2
+	exit 1
+    fi
     # on stratum 1
-    cvmfs_server add-replica -o root $1 /etc/cvmfs/keys/opensciencegrid.org.pub
+    cvmfs_server add-replica -o root $1 $PUBKEY
     rm -f /etc/httpd/conf.d/cvmfs.$REPONAME.conf
     # make this also look like a master because other stratum 1s
     #   may read from it
