@@ -73,10 +73,7 @@ class Action(object):
 #        # then the daemon will see it and finish
 #        self.oasis._loop() # we wait until the daemon is done
 
-        rc = self.oasis.postinstall()
-        if rc == 0:
-            rc = self.oasis._loop()
-
+        rc = self.oasis.publish()
         return rc
 
 
