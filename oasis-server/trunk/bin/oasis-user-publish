@@ -74,6 +74,8 @@ class Action(object):
 #        self.oasis._loop() # we wait until the daemon is done
 
         rc = self.oasis.postinstall()
+        if rc != 0:
+            rc = self.oasis._loop()
 
         return rc
 
