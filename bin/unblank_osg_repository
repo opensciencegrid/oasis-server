@@ -84,15 +84,24 @@ else
     echo "$REPOURL revision $REPOREVISION is OK"
 fi
 
-echo "Attempting to restore $REPO on $STRATUM0"
-OASISCMD="$MYDIR/add_osg_repository $REPOURL"
-if ! ssh $STRATUM0 $OASISCMD; then
-    echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
-    echo "  $OASISCMD" 2>&1
-    echo "and then notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
+if [ "${REPO#*.}" = "opensciencegrid.org" ]; then
+    echo "Attempting to restore $REPO on $STRATUM0"
+    OASISCMD="$MYDIR/add_osg_repository $REPOURL"
+    if ! ssh $STRATUM0 $OASISCMD; then
+	echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
+	echo "  $OASISCMD" 2>&1
+	echo "and then notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
+    else
+	echo "Succeeded"
+	echo "Notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
+    fi
 else
-    echo "Succeeded"
-    echo "Notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
+    echo "Attempting to clean up $REPO on $STRATUM0"
+    OASISCMD="rm -rf /srv/cvmfs/$REPO"
+    if ! ssh $STRATUM0 $OASISCMD; then
+	echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
+	echo "  $OASISCMD" 2>&1
+    else
+	echo "Succeeded"
+    fi
 fi
-
-
