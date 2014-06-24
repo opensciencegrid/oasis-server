@@ -285,38 +285,39 @@ class oasisCLI(object):
         cycle = 0
         nextmessagein = 0
 
-        while True:
-
-            listflagfiles = self._searchflagfiles()
-            if listflagfiles == []:
-                break
-            else:
-                # the presence of a flagfile may be relevant or not, 
-                # depending on the underlying technology for file distribution.
-                lock = self.project.distributionplugin.shouldlock( listflagfiles )
-                # FIXME we are checking if we should lock or not on every cycle
-                #       maybe it is better to search for flagfiles and check if lock
-                #       before the loop. 
-                #       However, I am not sure if that is risky 
-                #       (like a new flagfile appears before next cycle and we miss it
-                #       because we did not check it again)
-
-                if lock:
-                    # there is a flagfile, wait a little bit
-                    elapsed = time.time() - inittime
-                    if elapsed < self.project.starttimeout:
-                        if elapsed >= nextmessagein: 
-                            waitingtime = 60*(2**cycle)
-                            cycle += 1
-                            nextmessagein = elapsed + waitingtime
-                            self.log.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(waitingtime/60))
-                            self.console.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(waitingtime/60))
-                    else:
-                        self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
-                        self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
-                        return 1
-
-            time.sleep(10)  # FIXME why 10?? should be a config variable?
+        #while True:
+        #
+        #    listflagfiles = self._searchflagfiles()
+        #    if listflagfiles == []:
+        #        # no flagfile, jump out of the loop
+        #        break
+        #    else:
+        #        # the presence of a flagfile may be relevant or not, 
+        #        # depending on the underlying technology for file distribution.
+        #        lock = self.project.distributionplugin.shouldlock( listflagfiles )
+        #        # FIXME we are checking if we should lock or not on every cycle
+        #        #       maybe it is better to search for flagfiles and check if lock
+        #        #       before the loop. 
+        #        #       However, I am not sure if that is risky 
+        #        #       (like a new flagfile appears before next cycle and we miss it
+        #        #       because we did not check it again)
+        #
+        #        if lock:
+        #            # there is a flagfile, wait a little bit
+        #            elapsed = time.time() - inittime
+        #            if elapsed < self.project.starttimeout:
+        #                if elapsed >= nextmessagein: 
+        #                    waitingtime = 60*(2**cycle)
+        #                    cycle += 1
+        #                    nextmessagein = elapsed + waitingtime
+        #                    self.log.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(waitingtime/60))
+        #                    self.console.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(waitingtime/60))
+        #            else:
+        #                self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
+        #                self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
+        #                return 1
+        #
+        #    time.sleep(10)  # FIXME why 10?? should be a config variable?
 
 
         rc = self.preinstall()
@@ -364,6 +365,67 @@ class oasisCLI(object):
     ###
     ###    # no flagfile
     ###    return 0
+
+
+
+
+
+
+    def _wait(self):
+
+        inittime = time.time()
+
+        cycle = 0
+        nextmessagein = 0
+
+        while True:
+
+            listflagfiles = self._searchflagfiles()
+            if listflagfiles == []:
+                # no flagfile, jump out of the loop
+                break
+            else:
+                if self.block == False:
+                # block == False means abort and message asking user to try again later 
+                    self.log.critical('There is currently a publishing process going on. Aborting.')
+                    self.console.critical('There is currently a publishing process going on. Aborting. Try it again in a while.')
+                    return 1
+                else:
+                    # block == True means process does retain prompt and waits in a loop
+
+                    # the presence of a flagfile may be relevant or not, 
+                    # depending on the underlying technology for file distribution.
+                    lock = self.project.distributionplugin.shouldlock( listflagfiles )
+                    # FIXME we are checking if we should lock or not on every cycle
+                    #       maybe it is better to search for flagfiles and check if lock
+                    #       before the loop. 
+                    #       However, I am not sure if that is risky 
+                    #       (like a new flagfile appears before next cycle and we miss it
+                    #       because we did not check it again)
+
+                    if lock:
+                        # there is a flagfile, wait a little bit
+                        elapsed = time.time() - inittime
+                        if elapsed < self.project.starttimeout:
+                            if elapsed >= nextmessagein: 
+                                waitingtime = 60*(2**cycle)
+                                cycle += 1
+                                nextmessagein = elapsed + waitingtime
+                                self.log.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(waitingtime/60))
+                                self.console.warning('There is already a flagfile, meaning a previous installation job is still running. Waiting %s minutes' %(waitingtime/60))
+                        else:
+                            self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
+                            self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
+                            return 1
+
+            time.sleep(10)  # FIXME why 10?? should be a config variable?
+
+        return 0
+
+
+
+
+
 
 
     def _searchflagfiles(self):
@@ -502,6 +564,9 @@ class oasisCLI(object):
         return rc
 
     def postinstall(self):
+        rc = self._wait()
+        if rc != 0:
+            return rc
         rc = self.project.postinstall()
         return rc
 
