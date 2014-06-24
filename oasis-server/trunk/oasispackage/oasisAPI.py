@@ -418,7 +418,7 @@ class oasisCLI(object):
                             self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
                             return 1
 
-            time.sleep(30)  # FIXME why 10?? should be a config variable?
+            time.sleep(30)  # FIXME why 30?? should be a config variable?
 
         return 0
 
