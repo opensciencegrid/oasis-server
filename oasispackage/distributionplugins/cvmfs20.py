@@ -39,11 +39,11 @@ class cvmfs20(BaseDistribution):
 
     def publish(self):
 
-        rc = self._publish()
+        rc, out = self._publish()
         if rc:
             self.log.critical('publishing failed.')
 
-        return rc
+        return rc, out
 
     def _publish(self):
 
@@ -59,7 +59,7 @@ class cvmfs20(BaseDistribution):
             self.log.critical('publishing failed.')
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
-        return st
+        return st, out
 
 
     def resign(self):
