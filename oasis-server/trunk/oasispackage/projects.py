@@ -849,14 +849,30 @@ class Project(ProjectBasicConfig):
         self.log.debug('Starting')
 
         inittime = datetime.datetime.now()
+        # FIXME 
+        # maybe it should return RC and some err message when failed
         rc = self.distributionplugin.transfer() 
         delta = inittime - datetime.datetime.now()
+        deltaseconds = delta.days*24*3600 + delta.seconds
 
         if rc == 0:
             self.log.info('transferring files done OK')
-            self.log.debug('time to transfer files: %s seconds' %(delta.days*24*3600 + delta.seconds))
+            self.log.debug('time to transfer files: %s seconds' %deltaseconds)
         else:
             self.log.critical('transferring files failed')
+
+
+        #
+        # FIXME !!
+        # maybe this method should not add content to XML flagfile
+        # maybe it should return a python object with all info
+        # at let the ProjectThread::run method to fill the flagfile
+        #
+        self.flagfile.write('<transfer>')
+        self.flagfile.write('<a n="rc"><i>%d</i></a>' %rc)
+        self.flagfile.write('<a n="time"><i>%d</i></a>' %deltaseconds)
+        self.flagfile.write('</transfer>')
+
 
         self.log.debug('Leaving with rc %s' %rc)
         return rc
