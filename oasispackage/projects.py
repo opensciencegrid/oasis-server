@@ -820,11 +820,16 @@ class Project(ProjectBasicConfig):
         self.log.info('command to run probe is "%s"' %cmd)
 
         inittime = datetime.datetime.now()
+        self.log.info('running probe start at %s' %inittime)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out = None
         (out, err) = p.communicate()
         rc = p.returncode
-        delta = datetime.datetime.now() - inittime
+
+        endtime = datetime.datetime.now()
+        self.log.info('running probe end at %s' %endtime)
+        delta = endtime - inittime
+        deltaseconds = delta.days*24*3600 + delta.seconds
 
         self.log.info('output of probe %s: %s' %(probe, out))
 
@@ -833,7 +838,9 @@ class Project(ProjectBasicConfig):
         self.flagfile.write('       <a n="probe"><s>%s</s></a>' %probe)
         self.flagfile.write('       <a n="out"><s>%s</s></a>' %out)
         self.flagfile.write('       <a n="rc"><i>%d</i></a>' %rc)
-        self.flagfile.write('       <a n="time"><i>%d</i></a>' %(delta.days*24*3600 + delta.seconds))
+        self.flagfile.write('       <a n="inittime"><s>%d</s></a>' %inittime)
+        self.flagfile.write('       <a n="endtime"><s>%d</s></a>' %endtime)
+        self.flagfile.write('       <a n="elapsedtime"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('   </probe>')
 
 
@@ -849,11 +856,16 @@ class Project(ProjectBasicConfig):
         self.log.debug('Starting')
 
         inittime = datetime.datetime.now()
+        self.log.info('transferfiles start at %s' %inittime)
         # FIXME 
         # maybe it should return RC and some err message when failed
         rc, out = self.distributionplugin.transfer() 
-        delta = inittime - datetime.datetime.now()
+
+        endtime = datetime.datetime.now()
+        self.log.info('transferfiles end at %s' %endtime)
+        delta = endtime - inittime
         deltaseconds = delta.days*24*3600 + delta.seconds
+
 
         if rc == 0:
             self.log.info('transferring files done OK')
@@ -871,7 +883,9 @@ class Project(ProjectBasicConfig):
         self.flagfile.write('<transfer>')
         self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
         self.flagfile.write('   <a n="out"><s>%s</s></a>' %out)
-        self.flagfile.write('   <a n="time"><i>%d</i></a>' %deltaseconds)
+        self.flagfile.write('   <a n="inittime"><s>%d</s></a>' %inittime)
+        self.flagfile.write('   <a n="endtime"><s>%d</s></a>' %endtime)
+        self.flagfile.write('   <a n="elapsedtime"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('</transfer>')
 
 
@@ -885,11 +899,16 @@ class Project(ProjectBasicConfig):
         self.log.debug('Starting')
 
         inittime = datetime.datetime.now()
+        self.log.info('publish start at %s' %inittime)
         # FIXME 
         # maybe it should return RC and some err message when failed
         rc, out = self.distributionplugin.publish() 
-        delta = inittime - datetime.datetime.now()
+
+        endtime = datetime.datetime.now()
+        self.log.info('publish end at %s' %endtime)
+        delta = endtime - inittime
         deltaseconds = delta.days*24*3600 + delta.seconds
+
 
         if rc == 0:
             self.log.info('publishing done OK')
@@ -907,7 +926,9 @@ class Project(ProjectBasicConfig):
         self.flagfile.write('<publish>')
         self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
         self.flagfile.write('   <a n="out"><s>%s</s></a>' %out)
-        self.flagfile.write('   <a n="time"><i>%d</i></a>' %deltaseconds)
+        self.flagfile.write('   <a n="inittime"><s>%d</s></a>' %inittime)
+        self.flagfile.write('   <a n="endtime"><s>%d</s></a>' %endtime)
+        self.flagfile.write('   <a n="elapsedtime"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('</publish>')
 
         self.log.debug('Leaving with rc %s' %rc)
