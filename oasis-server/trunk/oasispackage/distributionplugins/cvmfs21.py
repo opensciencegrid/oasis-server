@@ -218,6 +218,7 @@ class cvmfs21(BaseDistribution):
         '''
         # FIXME: should I pay attention to the <status> field???
         for flagfile in listflagfiles:
+            flagfile = os.path.basename(flagfile)
             if flagfile.startswith(self.project.projectname):
                 return True
         return False
