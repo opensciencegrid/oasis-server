@@ -712,6 +712,7 @@ class Project(ProjectBasicConfig):
         # maybe it should return a python object with all info
         # at let the ProjectThread::run method to fill the flagfile
         #
+        self.flagfile.write('<data>')
         self.flagfile.write('<probes>')
        
         # ---------------------------------------------------------------------
@@ -723,6 +724,7 @@ class Project(ProjectBasicConfig):
             self.log.critical('running probes from project %s probes config file failed' %self.projectsection)
             #self.probes_rc = rc
             self.flagfile.write('</probes>')
+            self.flagfile.write('</data>')
             return rc
         self.log.info('all probes from project %s probes config file passed OK' %self.projectsection)
 
@@ -737,6 +739,7 @@ class Project(ProjectBasicConfig):
             self.log.critical('running probes from oasis probes config file failed')
             #self.probes_rc = rc 
             self.flagfile.write('</probes>')
+            self.flagfile.write('</data>')
             return rc
         self.log.info('all probes from oasis probes config file passed OK')
 
@@ -746,6 +749,7 @@ class Project(ProjectBasicConfig):
 
         # if everything went OK...
         self.flagfile.write('</probes>')
+        self.flagfile.write('</data>')
         return 0
 
 
@@ -880,6 +884,7 @@ class Project(ProjectBasicConfig):
         # maybe it should return a python object with all info
         # at let the ProjectThread::run method to fill the flagfile
         #
+        self.flagfile.write('<data>')
         self.flagfile.write('<transfer>')
         self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
         self.flagfile.write('   <a n="out"><s>%s</s></a>' %out)
@@ -887,6 +892,7 @@ class Project(ProjectBasicConfig):
         self.flagfile.write('   <a n="endtime"><s>%s</s></a>' %endtime)
         self.flagfile.write('   <a n="elapsedtime"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('</transfer>')
+        self.flagfile.write('</data>')
 
 
         self.log.debug('Leaving with rc %s' %rc)
@@ -923,6 +929,7 @@ class Project(ProjectBasicConfig):
         # maybe it should return a python object with all info
         # at let the ProjectThread::run method to fill the flagfile
         #
+        self.flagfile.write('<data>')
         self.flagfile.write('<publish>')
         self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
         self.flagfile.write('   <a n="out"><s>%s</s></a>' %out)
@@ -930,6 +937,7 @@ class Project(ProjectBasicConfig):
         self.flagfile.write('   <a n="endtime"><s>%s</s></a>' %endtime)
         self.flagfile.write('   <a n="elapsedtime"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('</publish>')
+        self.flagfile.write('</data>')
 
         self.log.debug('Leaving with rc %s' %rc)
         return rc
