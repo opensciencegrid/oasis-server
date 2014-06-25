@@ -24,7 +24,7 @@ import sys
 import time
 import threading
 import traceback
-import xml
+import xml.dom.minidom
 
 from ConfigParser import SafeConfigParser
 
@@ -539,8 +539,8 @@ class oasisCLI(object):
         
         xmldoc = xml.dom.minidom.parseString(output).documentElement
         nodelist = []
-        for probe in listnodesfromxml(xmldoc, 'probe') :
-            node_dict = node2dict(probe)
+        for probe in self._listnodesfromxml(xmldoc, 'probe') :
+            node_dict = self._node2dict(probe)
             nodelist.append(node_dict)            
         return nodelist
     
