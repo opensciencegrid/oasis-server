@@ -838,8 +838,8 @@ class Project(ProjectBasicConfig):
         self.flagfile.write('       <a n="probe"><s>%s</s></a>' %probe)
         self.flagfile.write('       <a n="out"><s>%s</s></a>' %out)
         self.flagfile.write('       <a n="rc"><i>%d</i></a>' %rc)
-        self.flagfile.write('       <a n="inittime"><s>%d</s></a>' %inittime)
-        self.flagfile.write('       <a n="endtime"><s>%d</s></a>' %endtime)
+        self.flagfile.write('       <a n="inittime"><s>%s</s></a>' %inittime)
+        self.flagfile.write('       <a n="endtime"><s>%s</s></a>' %endtime)
         self.flagfile.write('       <a n="elapsedtime"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('   </probe>')
 
@@ -883,8 +883,8 @@ class Project(ProjectBasicConfig):
         self.flagfile.write('<transfer>')
         self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
         self.flagfile.write('   <a n="out"><s>%s</s></a>' %out)
-        self.flagfile.write('   <a n="inittime"><s>%d</s></a>' %inittime)
-        self.flagfile.write('   <a n="endtime"><s>%d</s></a>' %endtime)
+        self.flagfile.write('   <a n="inittime"><s>%s</s></a>' %inittime)
+        self.flagfile.write('   <a n="endtime"><s>%s</s></a>' %endtime)
         self.flagfile.write('   <a n="elapsedtime"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('</transfer>')
 
@@ -926,8 +926,8 @@ class Project(ProjectBasicConfig):
         self.flagfile.write('<publish>')
         self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
         self.flagfile.write('   <a n="out"><s>%s</s></a>' %out)
-        self.flagfile.write('   <a n="inittime"><s>%d</s></a>' %inittime)
-        self.flagfile.write('   <a n="endtime"><s>%d</s></a>' %endtime)
+        self.flagfile.write('   <a n="inittime"><s>%s</s></a>' %inittime)
+        self.flagfile.write('   <a n="endtime"><s>%s</s></a>' %endtime)
         self.flagfile.write('   <a n="elapsedtime"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('</publish>')
 
