@@ -34,7 +34,7 @@ class cvmfs20(BaseDistribution):
             self.log.critical('transferring files failed.')
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
-        return st
+        return st, out
 
 
     def publish(self):

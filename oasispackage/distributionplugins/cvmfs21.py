@@ -54,7 +54,7 @@ class cvmfs21(BaseDistribution):
             self.log.critical('interaction with cvmfs server failed.')
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
-            return st
+            return st, out
 
         ## cmd = 'rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
         # example:   rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
@@ -88,9 +88,9 @@ class cvmfs21(BaseDistribution):
             self.log.critical('transferring files failed.')
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
-            return st
+            return st, out
 
-        return st
+        return st, out
 
     def publish(self):
         
