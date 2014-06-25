@@ -484,7 +484,7 @@ class oasisCLI(object):
                 return 1
 
             # checking for timeout
-            time.sleep(10)  # FIXME  why 10 ?? Should it be a config variable ??
+            time.sleep(30)  # FIXME  why 30 ?? Should it be a config variable ??
             elapsed = time.time() - inittime
             if elapsed > self.project.finishtimeout:
                 self.log.critical('timeout. Breaking loop')
