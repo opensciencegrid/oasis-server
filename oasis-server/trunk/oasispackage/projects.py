@@ -851,7 +851,7 @@ class Project(ProjectBasicConfig):
         inittime = datetime.datetime.now()
         # FIXME 
         # maybe it should return RC and some err message when failed
-        rc = self.distributionplugin.transfer() 
+        rc, out = self.distributionplugin.transfer() 
         delta = inittime - datetime.datetime.now()
         deltaseconds = delta.days*24*3600 + delta.seconds
 
@@ -870,6 +870,7 @@ class Project(ProjectBasicConfig):
         #
         self.flagfile.write('<transfer>')
         self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
+        self.flagfile.write('   <a n="out"><s>%s</s></a>' %out)
         self.flagfile.write('   <a n="time"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('</transfer>')
 
