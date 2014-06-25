@@ -706,6 +706,12 @@ class Project(ProjectBasicConfig):
          
         inittime = datetime.datetime.now()
 
+        #
+        # FIXME !!
+        # maybe this method should not add content to XML flagfile
+        # maybe it should return a python object with all info
+        # at let the ProjectThread::run method to fill the flagfile
+        #
         self.flagfile.write('<probes>')
        
         # ---------------------------------------------------------------------
