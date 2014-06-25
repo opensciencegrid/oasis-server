@@ -869,8 +869,8 @@ class Project(ProjectBasicConfig):
         # at let the ProjectThread::run method to fill the flagfile
         #
         self.flagfile.write('<transfer>')
-        self.flagfile.write('<a n="rc"><i>%d</i></a>' %rc)
-        self.flagfile.write('<a n="time"><i>%d</i></a>' %deltaseconds)
+        self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
+        self.flagfile.write('   <a n="time"><i>%d</i></a>' %deltaseconds)
         self.flagfile.write('</transfer>')
 
 
@@ -884,14 +884,29 @@ class Project(ProjectBasicConfig):
         self.log.debug('Starting')
 
         inittime = datetime.datetime.now()
+        # FIXME 
+        # maybe it should return RC and some err message when failed
         rc = self.distributionplugin.publish() 
         delta = inittime - datetime.datetime.now()
+        deltaseconds = delta.days*24*3600 + delta.seconds
 
         if rc == 0:
             self.log.info('publishing done OK')
-            self.log.debug('time to publish: %s seconds' %(delta.days*24*3600 + delta.seconds))
+            self.log.debug('time to publish: %s seconds' %deltaseconds)
         else:
             self.log.critical('publishing failed')
+
+
+        #
+        # FIXME !!
+        # maybe this method should not add content to XML flagfile
+        # maybe it should return a python object with all info
+        # at let the ProjectThread::run method to fill the flagfile
+        #
+        self.flagfile.write('<publish>')
+        self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
+        self.flagfile.write('   <a n="time"><i>%d</i></a>' %deltaseconds)
+        self.flagfile.write('</publish>')
 
         self.log.debug('Leaving with rc %s' %rc)
         return rc
