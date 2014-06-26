@@ -28,7 +28,7 @@ import traceback
 from ConfigParser import SafeConfigParser
 
 from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory, ProjectThreadMgr
-from oasispackage.flagfiles import FlagFile, FlagFileManager
+from oasispackage.flagfiles import FlagFile, FlagFileManager, FlagFileParser
 
 major, minor, release, st, num = sys.version_info
 
@@ -472,14 +472,27 @@ class oasisCLI(object):
             flagfilepath = flagfile.search('done')
             if flagfilepath:
                 self.log.debug('content of flagfile \n%s' %flagfile.read())
-                self.console.debug('output from the OASIS daemon \n%s' %flagfile.read())
+
+                #self.console.debug('output from the OASIS daemon \n%s' %flagfile.read())
+                self.console.debug('output from the OASIS daemon \n')
+                out = self._parse_flagfile(flagfile)
+                for line in out:
+                    self.console.debug(line)
+
                 flagfile.clean()
                 return 0
 
             flagfilepath = flagfile.search('failed')
             if flagfilepath:
                 self.log.error('content of flagfile \n%s' %flagfile.read())
-                self.console.error('output from the OASIS daemon \n%s' %flagfile.read())
+
+                #self.console.error('output from the OASIS daemon \n%s' %flagfile.read())
+                self.console.error('output from the OASIS daemon \n')
+                out = self._parse_flagfile(flagfile)
+                for line in out:
+                    self.console.error(line)
+                    
+
                 flagfile.clean()
                 return 1
 
@@ -495,6 +508,48 @@ class oasisCLI(object):
         # loop is done 
         self.log.debug('Leaving')
         return 0
+
+
+    def _parse_flagfile(self, flagfile):
+        '''
+        the FlagFileParser::_parseoutput() methods
+        digests the XML from the flagfile and returns things like this:
+
+            [{u'elapsedtime': '0', u'inittime': '2014-06-26 14:19:53.635266', u'probe': 'yes', u'endtime': '2014-06-26 14:19:53.671395', u'rc': '0'},
+             {u'elapsedtime': '0', u'inittime': '2014-06-26 14:19:53.674400', u'probe': 'yes', u'endtime': '2014-06-26 14:19:53.706200', u'rc': '0'}, 
+             {u'inittime': '2014-06-26 14:19:53.708806', u'probe': 'filesize', u'elapsedtime': '0', u'rc': '0', u'endtime': '2014-06-26 14:19:53.743948', u'out': 'Probe passed OK. Output of cmd "find /home/oasis/mis -size +1G -type f -exec ls -lh {} \\;" was\n \n'}
+            ]
+
+            [{u'elapsedtime': '0', u'inittime': '2014-06-25 17:01:41.808788', u'out': 'Repository whitelist is expired!', u'endtime': '2014-06-25 17:01:41.864304', u'rc': '256'}]
+
+            [{u'elapsedtime': '0', u'inittime': '2014-06-25 17:01:41.866973', u'out': 'Repository whitelist is expired!', u'endtime': '2014-06-25 17:01:41.916937', u'rc': '256'}]
+        '''
+
+        parser = FlagFileParser()
+
+        content = flagfile.read()
+      
+        out = [] 
+
+        # parsing XML related probes
+        dicts = parser._parseoutput(content, 'probe')
+        for i in dicts:
+            line = 'probe %s started at %s and run for %s seconds with RC=%s' %(i['probe'], i['inittime'], i['elapsedtime'], i['rc'])
+            out.append(line)
+
+        # parsing the XML related transfer files
+        dicts = parser._parseoutput(content, 'transfer')
+        for i in dicts:
+            line = 'file trasfers started at %s and run for %s seconds with RC=%s' %(i['inittime'], i['elapsedtime'], i['rc'])
+            out.append(line)
+
+        # parsing the XML related publishing 
+        dicts = parser._parseoutput(content, 'publish')
+        for i in dicts:
+            line = 'publishing started at %s and run for %s seconds with RC=%s' %(i['inittime'], i['elapsedtime'], i['rc'])
+            out.append(line)
+
+        return out
 
 
     # -------------------------------------------------------------------------
