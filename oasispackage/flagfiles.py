@@ -310,51 +310,47 @@ class ParseXML(object):
     It looks like this
 
     <data>
-    <probes>
-       <probe>
-           <a n="probe"><s>yes</s></a>
-           <a n="out"><s></s></a>
-           <a n="rc"><i>0</i></a>
-           <a n="inittime"><s>2014-06-25 17:01:41.692029</s></a>
-           <a n="endtime"><s>2014-06-25 17:01:41.729241</s></a>
-           <a n="elapsedtime"><i>0</i></a>
-       </probe>
-       <probe>
-           <a n="probe"><s>yes</s></a>
-           <a n="out"><s></s></a>
-           <a n="rc"><i>0</i></a>
-           <a n="inittime"><s>2014-06-25 17:01:41.732555</s></a>
-           <a n="endtime"><s>2014-06-25 17:01:41.766115</s></a>
-           <a n="elapsedtime"><i>0</i></a>
-       </probe>
-       <probe>
-           <a n="probe"><s>filesize</s></a>
-           <a n="out"><s>Probe passed OK. Output of cmd "find /home/oasis/mis -size +1G -type f -exec ls -lh {} \;" was
-    </s></a>
-           <a n="rc"><i>0</i></a>
-           <a n="inittime"><s>2014-06-25 17:01:41.768658</s></a>
-           <a n="endtime"><s>2014-06-25 17:01:41.805555</s></a>
-           <a n="elapsedtime"><i>0</i></a>
-       </probe>
-    </probes>
-    </data>
-    <data>
-    <transfer>
-       <a n="rc"><i>256</i></a>
-       <a n="out"><s>Repository whitelist is expired!</s></a>
-       <a n="inittime"><s>2014-06-25 17:01:41.808788</s></a>
-       <a n="endtime"><s>2014-06-25 17:01:41.864304</s></a>
-       <a n="elapsedtime"><i>0</i></a>
-    </transfer>
-    </data>
-    <data>
-    <publish>
-       <a n="rc"><i>256</i></a>
-       <a n="out"><s>Repository whitelist is expired!</s></a>
-       <a n="inittime"><s>2014-06-25 17:01:41.866973</s></a>
-       <a n="endtime"><s>2014-06-25 17:01:41.916937</s></a>
-       <a n="elapsedtime"><i>0</i></a>
-    </publish>
+       <probes>
+          <probe>
+              <a n="probe"><s>yes</s></a>
+              <a n="out"><s></s></a>
+              <a n="rc"><i>0</i></a>
+              <a n="inittime"><s>2014-06-25 17:01:41.692029</s></a>
+              <a n="endtime"><s>2014-06-25 17:01:41.729241</s></a>
+              <a n="elapsedtime"><i>0</i></a>
+          </probe>
+          <probe>
+              <a n="probe"><s>yes</s></a>
+              <a n="out"><s></s></a>
+              <a n="rc"><i>0</i></a>
+              <a n="inittime"><s>2014-06-25 17:01:41.732555</s></a>
+              <a n="endtime"><s>2014-06-25 17:01:41.766115</s></a>
+              <a n="elapsedtime"><i>0</i></a>
+          </probe>
+          <probe>
+              <a n="probe"><s>filesize</s></a>
+              <a n="out"><s>Probe passed OK. Output of cmd "find /home/oasis/mis -size +1G -type f -exec ls -lh {} \;" was
+       </s></a>
+              <a n="rc"><i>0</i></a>
+              <a n="inittime"><s>2014-06-25 17:01:41.768658</s></a>
+              <a n="endtime"><s>2014-06-25 17:01:41.805555</s></a>
+              <a n="elapsedtime"><i>0</i></a>
+          </probe>
+       </probes>
+       <transfer>
+          <a n="rc"><i>256</i></a>
+          <a n="out"><s>Repository whitelist is expired!</s></a>
+          <a n="inittime"><s>2014-06-25 17:01:41.808788</s></a>
+          <a n="endtime"><s>2014-06-25 17:01:41.864304</s></a>
+          <a n="elapsedtime"><i>0</i></a>
+       </transfer>
+       <publish>
+          <a n="rc"><i>256</i></a>
+          <a n="out"><s>Repository whitelist is expired!</s></a>
+          <a n="inittime"><s>2014-06-25 17:01:41.866973</s></a>
+          <a n="endtime"><s>2014-06-25 17:01:41.916937</s></a>
+          <a n="elapsedtime"><i>0</i></a>
+       </publish>
     </data>
     """
 
