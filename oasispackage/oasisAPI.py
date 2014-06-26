@@ -474,7 +474,7 @@ class oasisCLI(object):
                 self.log.debug('content of flagfile \n%s' %flagfile.read())
 
                 #self.console.debug('output from the OASIS daemon \n%s' %flagfile.read())
-                self.console.debug('output from the OASIS daemon \n')
+                self.console.debug('output from the OASIS daemon:')
                 out = self._parse_flagfile(flagfile)
                 for line in out:
                     self.console.debug(line)
@@ -487,7 +487,7 @@ class oasisCLI(object):
                 self.log.error('content of flagfile \n%s' %flagfile.read())
 
                 #self.console.error('output from the OASIS daemon \n%s' %flagfile.read())
-                self.console.error('output from the OASIS daemon \n')
+                self.console.error('output from the OASIS daemon:')
                 out = self._parse_flagfile(flagfile)
                 for line in out:
                     self.console.error(line)
