@@ -723,6 +723,15 @@ class Project(ProjectBasicConfig):
         if rc != 0:
             self.log.critical('running probes from project %s probes config file failed' %self.projectsection)
             #self.probes_rc = rc
+
+            #
+            # FIXME !!
+            # maybe this method should not add content to XML flagfile
+            # maybe it should return a python object with all info
+            # at let the ProjectThread::run method to fill the flagfile
+            #
+
+            self.flagfile.write('</probes>')
             return rc
         self.log.info('all probes from project %s probes config file passed OK' %self.projectsection)
 
@@ -736,6 +745,15 @@ class Project(ProjectBasicConfig):
         if rc != 0:
             self.log.critical('running probes from oasis probes config file failed')
             #self.probes_rc = rc 
+
+            #
+            # FIXME !!
+            # maybe this method should not add content to XML flagfile
+            # maybe it should return a python object with all info
+            # at let the ProjectThread::run method to fill the flagfile
+            #
+            self.flagfile.write('</probes>')
+
             return rc
         self.log.info('all probes from oasis probes config file passed OK')
 
