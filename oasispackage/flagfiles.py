@@ -304,7 +304,7 @@ class FlagFileManager(object):
 #  methods to parse the XML content of the flag file
 # -------------------------------------------------------------------------
 
-class ParseXML(object):
+class FlagFileParser(object):
     """
     class with methods to parse the XML content of the flagfiles.
     It looks like this
