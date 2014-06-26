@@ -1156,51 +1156,55 @@ class ProjectThread(threading.Thread):
                 if flagfile: 
                     # if flagfile exists for this project, do stuffs 
 
+                    #
+                    # !!! FIXME  !!!
+                    # 
+                    # write the algorithm in a cleaner way,
+                    # instead of 3 leves of if-else blocks
+                    #
+
                     # ------------------------------------
                     #   run probes
                     # ------------------------------------
                     self.log.info('Starting to run probes')
                     #self.console.info('Starting to run probes')
                     rc = self.project.runprobes()
-                    if rc == 0:
-                        self.log.info('probes ran OK')
-                        #self.console.info('probes ran OK')
-                    else:
-                        self.log.critical('probes failed with rc=%s, aborting installation and stopping thread' %rc)
+                    if rc != 0:
+                        self.log.critical('probes failed with rc=%s, aborting installation ' %rc)
                         #self.console.critical('probes failed with rc=%s, aborting installation and stopping thread' %rc)
                         self.project.flagfile.setfailed()
-                        self.stopevent.set()
-
-                    # ------------------------------------
-                    #   transfer files 
-                    # ------------------------------------
-                    self.log.info('Starting to transfer files')
-                    #self.console.info('Starting to transfer files')
-                    rc = self.project.transferfiles()
-                    if rc == 0:
-                        self.log.info('files transferred OK')
-                        #self.console.info('files transferred OK')
                     else:
-                        self.log.critical('transferring files failed with rc=%s, aborting installation and stopping thread' %rc)
-                        #self.console.critical('transferring files failed with rc=%s, aborting installation and stopping thread' %rc)
-                        self.project.flagfile.setfailed()
-                        self.stopevent.set()
+                        self.log.info('probes ran OK')
+                        #self.console.info('probes ran OK')
 
-                    # ------------------------------------
-                    #   publish 
-                    # ------------------------------------
-                    self.log.info('Starting to publish files')
-                    #self.console.info('Starting to publish files')
-                    rc = self.project.publish()
-                    if rc == 0:
-                        self.log.info('publishing done OK')
-                        #self.console.info('publishing done OK')
-                        self.project.flagfile.setdone()
-                    else:
-                        self.log.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
-                        #self.console.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
-                        self.project.flagfile.setfailed()
-                        self.stopevent.set()
+                        # ------------------------------------
+                        #   transfer files 
+                        # ------------------------------------
+                        self.log.info('Starting to transfer files')
+                        #self.console.info('Starting to transfer files')
+                        rc = self.project.transferfiles()
+                        if rc != 0:
+                            self.log.critical('transferring files failed with rc=%s, aborting installation' %rc)
+                            #self.console.critical('transferring files failed with rc=%s, aborting installation and stopping thread' %rc)
+                            self.project.flagfile.setfailed()
+                        else:
+                            self.log.info('files transferred OK')
+                            #self.console.info('files transferred OK')
+
+                            # ------------------------------------
+                            #   publish 
+                            # ------------------------------------
+                            self.log.info('Starting to publish files')
+                            #self.console.info('Starting to publish files')
+                            rc = self.project.publish()
+                            if rc == 0:
+                                self.log.info('publishing done OK')
+                                #self.console.info('publishing done OK')
+                                self.project.flagfile.setdone()
+                            else:
+                                self.log.critical('publishing failed with rc=%s, aborting installation' %rc)
+                                #self.console.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
+                                self.project.flagfile.setfailed()
 
  
             except Exception, e:
