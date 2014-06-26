@@ -723,7 +723,6 @@ class Project(ProjectBasicConfig):
         if rc != 0:
             self.log.critical('running probes from project %s probes config file failed' %self.projectsection)
             #self.probes_rc = rc
-            self.flagfile.write('</probes>')
             return rc
         self.log.info('all probes from project %s probes config file passed OK' %self.projectsection)
 
@@ -737,7 +736,6 @@ class Project(ProjectBasicConfig):
         if rc != 0:
             self.log.critical('running probes from oasis probes config file failed')
             #self.probes_rc = rc 
-            self.flagfile.write('</probes>')
             return rc
         self.log.info('all probes from oasis probes config file passed OK')
 
@@ -746,6 +744,13 @@ class Project(ProjectBasicConfig):
         self.log.debug('time to run probes: %s seconds' %(delta.days*24*3600 + delta.seconds))
 
         # if everything went OK...
+
+        #
+        # FIXME !!
+        # maybe this method should not add content to XML flagfile
+        # maybe it should return a python object with all info
+        # at let the ProjectThread::run method to fill the flagfile
+        #
         self.flagfile.write('</probes>')
         return 0
 
@@ -1165,6 +1170,14 @@ class ProjectThread(threading.Thread):
                     if rc != 0:
                         self.log.critical('probes failed with rc=%s, aborting installation ' %rc)
                         #self.console.critical('probes failed with rc=%s, aborting installation and stopping thread' %rc)
+
+                        #
+                        # FIXME !!
+                        # maybe this method should not add content to XML flagfile
+                        # maybe it should return a python object with all info
+                        # at let the ProjectThread::run method to fill the flagfile
+                        #
+                        self.project.flagfile.write('</data>')
                         self.project.flagfile.setfailed()
                     else:
                         self.log.info('probes ran OK')
@@ -1179,6 +1192,14 @@ class ProjectThread(threading.Thread):
                         if rc != 0:
                             self.log.critical('transferring files failed with rc=%s, aborting installation' %rc)
                             #self.console.critical('transferring files failed with rc=%s, aborting installation and stopping thread' %rc)
+
+                            #
+                            # FIXME !!
+                            # maybe this method should not add content to XML flagfile
+                            # maybe it should return a python object with all info
+                            # at let the ProjectThread::run method to fill the flagfile
+                            #
+                            self.project.flagfile.write('</data>')
                             self.project.flagfile.setfailed()
                         else:
                             self.log.info('files transferred OK')
@@ -1193,10 +1214,26 @@ class ProjectThread(threading.Thread):
                             if rc == 0:
                                 self.log.info('publishing done OK')
                                 #self.console.info('publishing done OK')
+
+                                #
+                                # FIXME !!
+                                # maybe this method should not add content to XML flagfile
+                                # maybe it should return a python object with all info
+                                # at let the ProjectThread::run method to fill the flagfile
+                                #
+                                self.project.flagfile.write('</data>')
                                 self.project.flagfile.setdone()
                             else:
                                 self.log.critical('publishing failed with rc=%s, aborting installation' %rc)
                                 #self.console.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
+
+                                #
+                                # FIXME !!
+                                # maybe this method should not add content to XML flagfile
+                                # maybe it should return a python object with all info
+                                # at let the ProjectThread::run method to fill the flagfile
+                                #
+                                self.project.flagfile.write('</data>')
                                 self.project.flagfile.setfailed()
 
  
