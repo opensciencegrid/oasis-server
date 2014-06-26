@@ -357,15 +357,17 @@ class ParseXML(object):
     def __init__(self):
         pass
 
-    def _parseoutput(self, output):
+    def _parseoutput(self, output, tag):
         '''
         parses XML from flagfile content
         and creates a Python List of Dictionaries. 
+
+        tag is something like "probes", "transfer", "publish"
         '''
         
         xmldoc = xml.dom.minidom.parseString(output).documentElement
         nodelist = []
-        for probe in self._listnodesfromxml(xmldoc, 'probe') :
+        for probe in self._listnodesfromxml(xmldoc, tag) :
             node_dict = self._node2dict(probe)
             nodelist.append(node_dict)            
         return nodelist
