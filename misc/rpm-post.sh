@@ -30,5 +30,9 @@ id oasis &> /dev/null
 rc=$?
 if [ $rc -ne 0 ]; then
     useradd -r -m oasis
+    # adding the sticky bit to /home/oasis
+    # so everyone can write, but only each user
+    # can delete her own content
+    chmod 1777 /home/oasis
 fi
 
