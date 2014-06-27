@@ -155,7 +155,7 @@ class ProjectHandler(object):
         # checks if OSG_APP is defined, and make sure everyone can write
         osg_app = self.project.osg_app
         if osg_app:
-            commands.getoutput('chmod go+wrx %s' %osg_app)  ### FIXME !! Is that safe???
+            commands.getoutput('chmod 1777 %s' %osg_app) 
         
         if not os.path.isdir(srcdir):
             os.makedirs(srcdir)
