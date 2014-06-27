@@ -88,8 +88,8 @@ setup(
                'bin/add_osg_repository',
                'bin/do_oasis_update',
                'bin/expand_oasis_dirtab',
-               'bin/generate_adduser.py',
-               'bin/generate_condormap.py',
+               'bin/generate_adduser',
+               'bin/generate_condormap',
                'bin/oasis_status.sh',
                'bin/request_oasis_update',
 
