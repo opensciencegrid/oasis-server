@@ -247,7 +247,7 @@ f_main(){
     f_platform_info
     f_print_line
 
-    f_print_info_msg 'sending job "'$@'" to OASIS service'
+    ##f_print_info_msg 'sending job "'$@'" to OASIS service'
     /usr/bin/oasis $@ 
     rc=$?
     f_print_line
