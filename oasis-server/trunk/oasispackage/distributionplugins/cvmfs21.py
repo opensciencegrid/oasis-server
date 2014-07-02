@@ -208,7 +208,8 @@ class cvmfs21(BaseDistribution):
 
     def createrepository(self):
 
-        commands.getoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
+        rc, out = commands.getstatusoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
+        return rc, out
 
 
     def shouldlock(self, listflagfiles):
