@@ -86,20 +86,33 @@ class ProjectHandler(object):
         
         #self.log = logging.getLogger('admin-addproject')
         self.log = logging.getLogger('logfile')   #FIXME !! Fix the mess with logger hierarchy
+        self.console = logging.getLogger('console')   #FIXME !! Fix the mess with logger hierarchy
  
         # set the messages format
         if major == 2 and minor == 4:
             LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d : %(message)s'
+            STDOUT_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s : %(message)s'
         else:
             LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d %(funcName)s(): %(message)s'
+            STDOUT_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s : %(message)s'
+
         logfile_formatter = logging.Formatter(LOGFILE_FORMAT)
+        stdout_formatter = logging.Formatter(STDOUT_FORMAT)
+
         logfile_formatter.converter = time.gmtime  # to convert timestamps to UTC
- 
+        stdout_formatter.converter = time.gmtime  # to convert timestamps to UTC
+
         logStream = logging.FileHandler('/var/log/oasis/oasis.log')
         logStream.setFormatter(logfile_formatter)
         self.log.addHandler(logStream)
         #self.log.setLevel(self.loglevel)   #FIXME
         self.log.setLevel(logging.DEBUG)
+
+        logStdout = logging.StreamHandler(sys.stdout)
+        logStdout.setFormatter(stdout_formatter)
+        self.console.addHandler(logStdout)
+        #self.console.setLevel(self.loglevel)   #FIXME
+        self.console.setLevel(logging.DEBUG)
 
 
     def run(self):
