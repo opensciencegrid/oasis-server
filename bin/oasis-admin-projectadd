@@ -139,8 +139,9 @@ class ProjectHandler(object):
 
         uid = self._checkuser()
         if uid:
-            self.log.warning('user %s already exists' %user)
-            self.console.warning('user %s already exists' %user)
+            self.log.warning('user %s already exists' %self.project.username)
+            self.console.warning('user %s already exists' %self.project.username)
+            return 0
         else:
             user = self.project.username
             group = self.project.username  # maybe in the future is a generic group name like 'oasis'?
