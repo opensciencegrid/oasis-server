@@ -195,13 +195,16 @@ class ProjectHandler(object):
             try:
                 os.makedirs(srcdir)
                 os.chown(srcdir, uid , uid)
+                self.log.debug('directory %s created' %srcdir)
+                self.console.debug('directory %s created' %srcdir)
             except Exception, ex:
                 self.log.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
                 self.console.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
                 return 1
-                
-        self.log.debug('directory %s created' %srcdir)
-        self.console.debug('directory %s created' %srcdir)
+        else:
+            self.log.debug('directory %s already existed' %srcdir)
+            self.console.debug('directory %s already existed' %srcdir)
+
         return 0
 
 
