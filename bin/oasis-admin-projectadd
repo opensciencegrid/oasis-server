@@ -202,8 +202,8 @@ class ProjectHandler(object):
                 self.console.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
                 return 1
         else:
-            self.log.debug('directory %s already existed' %srcdir)
-            self.console.debug('directory %s already existed' %srcdir)
+            self.log.warning('directory %s already existed' %srcdir)
+            self.console.warning('directory %s already existed' %srcdir)
 
         return 0
 
