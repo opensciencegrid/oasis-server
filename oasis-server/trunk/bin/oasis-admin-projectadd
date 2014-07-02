@@ -63,9 +63,11 @@ class ProjectHandler(object):
     # QUESTION: ?? where the base class would be placed ?? underneath site-packages/ ??
 
 
-    def __init__(self, projectname):
+    def __init__(self, projectname, loglevel):
         # FIXME!! if projectname is None, it should abort !!
 
+        self.projectname = projectname
+        self.loglevel = loglevel
 
         self._setuplogging()
         # do we still need to setup logging if I get a Project class?
@@ -111,8 +113,8 @@ class ProjectHandler(object):
         logStdout = logging.StreamHandler(sys.stdout)
         logStdout.setFormatter(stdout_formatter)
         self.console.addHandler(logStdout)
-        #self.console.setLevel(self.loglevel)   #FIXME
-        self.console.setLevel(logging.DEBUG)
+        self.console.setLevel(self.loglevel)   #FIXME
+        #self.console.setLevel(logging.DEBUG)
 
 
     def run(self):
@@ -217,10 +219,13 @@ def main(options):
     # if the section in projects.conf is not defined, it should abort. 
     # and print out an error message in console and log file
 
+    # defaults
+    level = logging.WARNING
+
     # parse input options
     opts, args = getopt.getopt(options, 
-                               '', 
-                               ['project=', 'allprojects'])
+                               'v', 
+                               ['verbose', 'project=', 'allprojects'])
 
     project = None
     for o,a in opts:
@@ -228,9 +233,11 @@ def main(options):
             project = a
         if o == '--allprojects':
             project = None  #FIXME
+        if o == '-v' or o == '--verbose':
+            level = logging.DEBUG
 
     # run the processes
-    obj = ProjectHandler(project)
+    obj = ProjectHandler(project, level)
     obj.run()
 
 
