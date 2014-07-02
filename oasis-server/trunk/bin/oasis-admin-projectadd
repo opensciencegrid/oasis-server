@@ -138,7 +138,10 @@ class ProjectHandler(object):
         '''
 
         uid = self._checkuser()
-        if not uid:
+        if uid:
+            self.log.warning('user %s already exists' %user)
+            self.console.warning('user %s already exists' %user)
+        else:
             user = self.project.username
             group = self.project.username  # maybe in the future is a generic group name like 'oasis'?
   
@@ -188,10 +191,16 @@ class ProjectHandler(object):
             commands.getoutput('chmod 1777 %s' %osg_app) 
         
         if not os.path.isdir(srcdir):
-            os.makedirs(srcdir)
-            os.chown(srcdir, uid , uid)
-
-        # FIXME: temporary 
+            try:
+                os.makedirs(srcdir)
+                os.chown(srcdir, uid , uid)
+            except Exception, ex:
+                self.log.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                self.console.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                return 1
+                
+        self.log.debug('directory %s created' %srcdir)
+        self.console.debug('directory %s created' %srcdir)
         return 0
 
 
@@ -205,10 +214,16 @@ class ProjectHandler(object):
         # at this step, if it is the first repo being created, 
         # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
     
-        self.project.distributionplugin.createrepository()
+        rc,out = self.project.distributionplugin.createrepository()
 
-        # FIXME: temporary 
-        return 0
+        if rc:
+            self.log.critical('destination repository could not be created.')
+            self.console.critical('destination repository could not be created.')
+        else:
+            self.log.debug('destination repository created.')
+            self.console.debug('destination repository created.')
+
+        return rc
 
 
 
@@ -260,11 +275,13 @@ def main(options):
 
     # run the processes
     obj = ProjectHandler(project, level)
-    obj.run()
+    rc = obj.run()
+    return rc
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    rc = main(sys.argv[1:])
+    sys.exit(rc)
 
 
 # ================================================================
