@@ -122,9 +122,14 @@ class ProjectHandler(object):
         main method performing all checks, running commands, etc.
         '''
 
-        self.adduser()
-        self.createsrcdir()
-        self.createrepository()
+        rc = self.adduser()
+        if rc:
+            return rc 
+        rc = self.createsrcdir()
+        if rc:
+            return rc 
+        rc = self.createrepository()
+        return rc
 
 
     def adduser(self):
@@ -142,6 +147,16 @@ class ProjectHandler(object):
             # or we put all users in the same group... 
             cmd = '/usr/sbin/adduser -m %s' %user
             rc, out = commands.getstatusoutput(cmd)
+
+            if rc == 0:
+                self.log.debug('user %s created' %user)
+                self.console.debug('user %s created' %user)
+            else:
+                self.log.critical('user %s creation failed' %user)
+                self.console.critical('user %s creation failed' %user)
+
+            return rc
+        
 
     def _checkuser(self):
         '''
@@ -176,6 +191,9 @@ class ProjectHandler(object):
             os.makedirs(srcdir)
             os.chown(srcdir, uid , uid)
 
+        # FIXME: temporary 
+        return 0
+
 
     def createrepository(self):
         '''
@@ -188,6 +206,10 @@ class ProjectHandler(object):
         # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
     
         self.project.distributionplugin.createrepository()
+
+        # FIXME: temporary 
+        return 0
+
 
 
 class ProjectHandlerManager(object):
