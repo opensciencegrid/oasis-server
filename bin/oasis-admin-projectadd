@@ -84,6 +84,7 @@ class ProjectHandler(object):
             projectfactory = ProjectFactory(self.oasisconf, clstype=ProjectBasicConfig, projectname=projectname)
             self.project = projectfactory.getProject()
         except Exception, ex:
+            # FIXME: in order to make this to work, an exception must be raised in origin
             self.log.critical('object Project cannot be created. Aborting.')
             self.console.critical('object Project cannot be created. Aborting.')
             raise ex
