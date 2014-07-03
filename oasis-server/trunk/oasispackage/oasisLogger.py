@@ -18,7 +18,7 @@ class oasisLogger(object):
     
     def __init__(self):
 
-        self.log = logging.getLogger()    # root logger
+        self.log = logging.getLogger('logfile') 
         self.console = logging.getLogger('console')
 
         # set the messages format
