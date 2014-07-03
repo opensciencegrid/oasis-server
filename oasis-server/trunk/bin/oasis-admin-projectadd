@@ -79,9 +79,14 @@ class ProjectHandler(object):
         oasisconfpath = '/etc/oasis/oasis.conf'
         self.oasisconf = SafeConfigParser()
         self.oasisconf.readfp(open(oasisconfpath))
-        
-        projectfactory = ProjectFactory(self.oasisconf, clstype=ProjectBasicConfig, projectname=projectname)
-        self.project = projectfactory.getProject()
+
+        try:        
+            projectfactory = ProjectFactory(self.oasisconf, clstype=ProjectBasicConfig, projectname=projectname)
+            self.project = projectfactory.getProject()
+        except Exception, ex:
+            self.log.critical('object Project cannot be created. Aborting.')
+            self.console.critical('object Project cannot be created. Aborting.')
+            raise ex
 
 
     def _setuplogging(self):
