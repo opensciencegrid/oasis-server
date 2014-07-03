@@ -8,7 +8,6 @@ import time
 major, minor, release, st, num = sys.version_info
 
 
-
 class oasisLogger(object):
     """
     class just to create the base Loggers:
@@ -45,3 +44,13 @@ class oasisLogger(object):
 
         self.log.setLevel(logging.DEBUG)  
         self.console.setLevel(logging.DEBUG)  
+
+
+"""
+Later on, logger attributes can be changed on real time.
+For example:
+
+    new_format = '%(asctime)s (UTC) - OASIS [ %(levelname)s ] <new ad-hoc stuff here>  %(name)s : %(message)s'
+    new_formatter = logging.Formatter(new_format)
+    log.handlers[0].setFormatter(new_formatter)
+"""
