@@ -90,10 +90,10 @@ class oasisCLI(object):
         try:
             self.project = Project(self.projectsection, self.oasisconf)
             # FIXME: use ProjectFactory()
-        except:
-            self.log.critical('object Project can not be created. Aborting')
-            self.console.critical('Internal OASIS malfunction. Aborting')
-            sys.exit(1)
+        except Exception, ex:
+            self.log.critical('object Project can not be created. Error message = "%s". Aborting' %ex)
+            self.console.critical('Internal OASIS malfunction. Error message = "%s". Aborting' %ex)
+            raise ex
 
         self.log.debug('Object oasisCLI created.')
 
