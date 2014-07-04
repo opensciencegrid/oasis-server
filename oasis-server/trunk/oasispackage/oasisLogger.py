@@ -50,9 +50,10 @@ class oasisLogger(object):
 Later on, logger attributes can be changed on real time.
 For example:
 
+    log.parent = None  # to remove any reference to the parent Logger
     new_format = '%(asctime)s (UTC) - OASIS [ %(levelname)s ] <new ad-hoc stuff here>  %(name)s : %(message)s'
     new_formatter = logging.Formatter(new_format)
-    log.handlers[0].setFormatter(new_formatter)
-
-NOTE: Maybe not, since the new loggers do not have handlers, only the parent
+    new_logStream = logging.FileHandler('/var/log/oasis/new.log') 
+    new_logStream.setFormatter(new_formatter)
+    log.addHandler(new_logStream)
 """
