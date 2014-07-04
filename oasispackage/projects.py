@@ -984,7 +984,11 @@ class ProjectFactory(object):
             projectsection = self._getprojectsectionfromprojectname(self.projectname)
 
         # 2nd, we return one of the object Factory*() 
-        return self.clstype(projectsection, self.oasisconf)
+        try:
+            projectobj = self.clstype(projectsection, self.oasisconf)
+            return projectobj
+        except Exception, ex:
+            raise ex
 
     
     def _getprojectsectionfromusername(self, username):
