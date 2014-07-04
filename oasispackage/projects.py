@@ -1097,23 +1097,26 @@ class ProjectThreadMgr(object):
             # create an object Project() for each section in project config 
             self.log.info('Candidate for a project in project section %s' %projectsection)
             self.log.info('Creating object Project')
-            project = Project(projectsection, self.oasisd.oasisconf)
-            # FIXME: use ProjectFactory()
 
-            if project.enabled:
-                self.log.info('Project %s is enabled. Creating thread' %project.projectname)
-                try:
+            try:
+                project = Project(projectsection, self.oasisd.oasisconf)
+                # FIXME: use ProjectFactory()
 
-                    thread = ProjectThread(project)
-                    self.threads[project] = thread
-                    thread.start()
-                    self.log.info('Thread for project %s started.' %project.projectname)
-                except Exception, ex:
-                    self.log.error('Exception captured when initializing thread for project %s.' %project.projectname)
-                    self.log.debug("Exception: %s" % traceback.format_exc())
-                    
-            else:
-                self.log.info('Project %s not enabled.' %project.projectname)
+                if project.enabled:
+                    self.log.info('Project %s is enabled. Creating thread' %project.projectname)
+                    try:
+                        thread = ProjectThread(project)
+                        self.threads[project] = thread
+                        thread.start()
+                        self.log.info('Thread for project %s started.' %project.projectname)
+                    except Exception, ex:
+                        self.log.error('Exception captured when initializing thread for project %s.' %project.projectname)
+                        self.log.debug("Exception: %s" % traceback.format_exc())
+                else:
+                    self.log.info('Project %s not enabled.' %project.projectname)
+            except Exception, ex:
+                self.log.error('project object cannot be created. Error message = "%s"' %ex)
+
 
         self.log.debug('Leaving')
 
