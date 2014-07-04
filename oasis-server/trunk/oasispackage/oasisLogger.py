@@ -53,4 +53,6 @@ For example:
     new_format = '%(asctime)s (UTC) - OASIS [ %(levelname)s ] <new ad-hoc stuff here>  %(name)s : %(message)s'
     new_formatter = logging.Formatter(new_format)
     log.handlers[0].setFormatter(new_formatter)
+
+NOTE: Maybe not, since the new loggers do not have handlers, only the parent
 """
