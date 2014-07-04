@@ -106,10 +106,9 @@ class ProjectBasicConfig(object):
             self.finishtimeout = self.projectsconf.getint(self.projectsection, 'time.finishtimeout')
             self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
 
-        except:
-            self.log.critical('Configuration cannot be read. Aborting.')
-            # FIXME !! do not exit, propagate an exception and oasisCLI or oasisd exit
-            sys.exit(1)
+        except Exception, ex:
+            self.log.critical('Configuration cannot be read. Error message = "%s". Aborting.' %ex)
+            raise ex
 
         self.log.debug('Object Project created.')
 
@@ -286,10 +285,9 @@ class Project(ProjectBasicConfig):
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
             self.log.debug('variable oasisprojectprobesconf has value %s', self.oasisprojectprobesconf)
 
-        except:
-            self.log.critical('Configuration cannot be read. Aborting.')
-            # FIXME !! do not exit, propagate an exception and oasisCLI or oasisd exit
-            sys.exit(1)
+        except Exception, ex:
+            self.log.critical('Configuration cannot be read. Error message = "%s". Aborting.' %ex)
+            raise ex
 
         self.log.debug('Object Project created.')
 
