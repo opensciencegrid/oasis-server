@@ -84,7 +84,6 @@ class ProjectHandler(object):
             projectfactory = ProjectFactory(self.oasisconf, clstype=ProjectBasicConfig, projectname=projectname)
             self.project = projectfactory.getProject()
         except Exception, ex:
-            # FIXME: in order to make this to work, an exception must be raised in origin
             self.log.critical('object Project cannot be created. Aborting.')
             self.console.critical('object Project cannot be created. Aborting.')
             raise ex
@@ -284,9 +283,12 @@ def main(options):
             level = logging.DEBUG
 
     # run the processes
-    obj = ProjectHandler(project, level)
-    rc = obj.run()
-    return rc
+    try:
+        obj = ProjectHandler(project, level)
+        rc = obj.run()
+        return rc
+    except Exception, ex:
+        return 1
 
 
 if __name__ == '__main__':
