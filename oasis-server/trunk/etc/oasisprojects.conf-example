@@ -54,7 +54,7 @@
 #
 # destdiruser = the owner of the destination tree filesystem.
 #       Typically, the owner of the CVMFS repository.
-#        MANDATORY
+#        MANDATORY only when distribution tool is cvmfs21
 #
 # projectprobes = name of the configuration files for probes 
 #        underneath the directory pointed by varible 'directoryconf'
