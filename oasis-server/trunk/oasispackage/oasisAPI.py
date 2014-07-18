@@ -513,13 +513,16 @@ class oasisCLI(object):
             # checking for timeout
             time.sleep(30)  # FIXME  why 30 ?? Should it be a config variable ??
             elapsed = time.time() - inittime
-            if elapsed > self.project.finishtimeout:
+            if elapsed < self.project.finishtimeout:
 
                 if elapsed >= nextmessagein: 
                     waitingtime = 60*(2**cycle)
                     cycle += 1
                     nextmessagein = elapsed + waitingtime
+                    self.log.info('Waiting for OASIS to transfer and publish new content. Waiting %s minute(s)' %(waitingtime/60))
+                    self.console.info('Waiting for OASIS to transfer and publish new content. Waiting %s minute(s)' %(waitingtime/60))
 
+            else:
                 self.log.critical('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
                 self.console.critical('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
                 flagfile.search('request')
