@@ -371,6 +371,9 @@ class oasisCLI(object):
         runs both, postinstall() and _loop() methods
         '''
 
+        self.log.info('Starting publishing.')
+        self.console.info('Starting publishing.')
+
         rc = self.postinstall()
         if rc != 0:
             self.log.critical('postintall step failed. Aborting.')
@@ -378,7 +381,8 @@ class oasisCLI(object):
             return rc
 
         rc = self._loop()
-        self.log.debug('Leaving with rc=%s' %rc)
+        self.log.info('Publishing finished with rc=%s' %rc)
+        self.console.info('Publishing finished with rc=%s' %rc)
         return rc
 
 
