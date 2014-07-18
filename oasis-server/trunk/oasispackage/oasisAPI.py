@@ -385,10 +385,11 @@ class oasisCLI(object):
 
         rc = self._loop()
         if rc == 0:
-            self.log.debug('Publishing finished with rc=%s' %rc)
+            self.log.info('Publishing finished with rc=%s' %rc)
+            self.console.info('Publishing finished with rc=%s' %rc)
         else:
             self.log.error('Publishing finished with rc=%s' %rc)
-        self.console.info('Publishing finished with rc=%s' %rc)
+            self.console.error('Publishing finished with rc=%s' %rc)
         return rc
 
 
