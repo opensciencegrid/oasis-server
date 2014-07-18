@@ -397,6 +397,8 @@ class oasisCLI(object):
 
     def _wait(self):
 
+        self.log.debug('Start.')
+
         inittime = time.time()
 
         cycle = 0
@@ -444,6 +446,7 @@ class oasisCLI(object):
 
             time.sleep(30)  # FIXME why 30?? should be a config variable?
 
+        self.log.debug('Leaving with RC=0.')
         return 0
 
 
