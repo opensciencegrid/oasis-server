@@ -4,7 +4,7 @@
 #
 # Starts the OASIS daemon
 #
-# chkconfig: 345 26 74
+# chkconfig: 345 90 60 
 # description: run probes and publishing files for OASIS
 # processname: oasis 
 # config: /etc/oasis/oasis.conf 
