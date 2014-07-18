@@ -195,12 +195,19 @@ class ProjectHandler(object):
         # checks if OSG_APP is defined, and make sure everyone can write
         osg_app = self.project.osg_app
         if osg_app:
+            # FIXME
+            # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
             commands.getoutput('chmod 1777 %s' %osg_app) 
         
         if not os.path.isdir(srcdir):
             try:
                 os.makedirs(srcdir)
                 os.chown(srcdir, uid , gid)
+
+                # FIXME
+                # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
+                commands.getoutput('chmod o=g,o-w %s' %srcdir)
+
                 self.log.debug('directory %s created' %srcdir)
                 self.console.debug('directory %s created' %srcdir)
             except Exception, ex:
