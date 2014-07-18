@@ -471,6 +471,7 @@ class oasisCLI(object):
 
         projectname = self.project.projectname
 
+        cycle = 0
         nextmessagein = 0
 
         inittime = time.time()
