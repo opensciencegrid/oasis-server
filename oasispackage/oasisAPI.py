@@ -111,7 +111,7 @@ class oasisCLI(object):
         #
         # Maybe it should log to some system standard location
         # like  /var/log/messages  or similar        
-        # for the time being we log into /var/log/oasis/oasis.log
+        # for the time being we log into /var/log/oasis/oasis.${username}.log
         # which we assume is world wide writeable 
         #
         
