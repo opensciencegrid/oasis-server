@@ -37,3 +37,7 @@ if [ $rc -ne 0 ]; then
     chmod 1777 /home/oasis
 fi
 
+
+# add oasis daemon to checkconfig
+chkconfig --add oasisd
+chkconfig oasisd off
