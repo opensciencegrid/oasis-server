@@ -63,6 +63,32 @@ class ProjectHandler(object):
     # QUESTION: ?? where the base class would be placed ?? underneath site-packages/ ??
 
 
+###    def __init__(self, projectname, loglevel):
+###        # FIXME!! if projectname is None, it should abort !!
+###
+###        self.projectname = projectname
+###        self.loglevel = loglevel
+###
+###        self._setuplogging()
+###        # do we still need to setup logging if I get a Project class?
+###
+###        # create an object Project(), 
+###        # which includes an attribute self.distributionplugin
+###
+###        
+###        oasisconfpath = '/etc/oasis/oasis.conf'
+###        self.oasisconf = SafeConfigParser()
+###        self.oasisconf.readfp(open(oasisconfpath))
+###
+###        try:        
+###            projectfactory = ProjectFactory(self.oasisconf, clstype=ProjectBasicConfig, projectname=projectname)
+###            self.project = projectfactory.getProject()
+###        except Exception, ex:
+###            self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
+###            self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
+###            raise ex
+
+    
     def __init__(self, projectname, loglevel):
         # FIXME!! if projectname is None, it should abort !!
 
@@ -74,19 +100,17 @@ class ProjectHandler(object):
 
         # create an object Project(), 
         # which includes an attribute self.distributionplugin
-
         
         oasisconfpath = '/etc/oasis/oasis.conf'
-        self.oasisconf = SafeConfigParser()
-        self.oasisconf.readfp(open(oasisconfpath))
 
         try:        
-            projectfactory = ProjectFactory(self.oasisconf, clstype=ProjectBasicConfig, projectname=projectname)
-            self.project = projectfactory.getProject()
+            oasis = oasisCLI(oasisconfpath, self.projectnam
+            self.project = oasis.project 
         except Exception, ex:
             self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
             self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
             raise ex
+
 
 
     def _setuplogging(self):
