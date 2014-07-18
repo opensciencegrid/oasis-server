@@ -380,8 +380,8 @@ class oasisCLI(object):
             self.console.critical('postintall step failed. Aborting.')
             return rc
 
-        self.log.debug('Waiting for OASIS to transfer and publish new content')
-        self.console.info('Waiting for OASIS to transfer and publish new content')
+        self.log.debug('Waiting for OASIS to transfer and publish new content (Maximum = %s minutes)' %(self.project.finishtimeout/60))
+        self.console.info('Waiting for OASIS to transfer and publish new content (Maximum = %s minutes)' %(self.project.finishtimeout/60))
 
         rc = self._loop()
         if rc == 0:
@@ -522,8 +522,8 @@ class oasisCLI(object):
                     waitingtime = 60*(2**cycle)
                     cycle += 1
                     nextmessagein = elapsed + waitingtime
-                    self.log.info('Waiting for OASIS to transfer and publish new content. Waiting %s minute(s)' %(waitingtime/60))
-                    self.console.info('Waiting for OASIS to transfer and publish new content. Waiting %s minute(s)' %(waitingtime/60))
+                    self.log.info('Waiting for OASIS to transfer and publish new content. Waiting %s minute(s). Maximum waiting time = %s minute(s) ' %(waitingtime/60, self.project.finishtimeout/60))
+                    self.console.info('Waiting for OASIS to transfer and publish new content. Waiting %s minute(s). Maximum waiting time = %s minute(s) ' %(waitingtime/60, self.project.finishtimeout/60))
 
             else:
                 self.log.critical('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
