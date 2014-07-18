@@ -124,7 +124,8 @@ class oasisCLI(object):
 
         logfile_formatter = logging.Formatter(LOGFILE_FORMAT)
         logfile_formatter.converter = time.gmtime  # to convert timestamps to UTC
-        logStream = logging.FileHandler('/var/log/oasis/oasis.log')
+        username = pwd.getpwuid(os.getuid()).pw_name  
+        logStream = logging.FileHandler('/var/log/oasis/oasis.%s.log' %username)
         logStream.setFormatter(logfile_formatter)
         error.addHandler(logStream)
         error.setLevel(logging.DEBUG)
