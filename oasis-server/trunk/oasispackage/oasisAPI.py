@@ -52,7 +52,7 @@ class oasisCLI(object):
     invoked only by root. 
     '''
 
-    def __init__(self, conffile=None):
+    def __init__(self, conffile=None, projectname=None):
 
         # 
         #  !!! FIXME !!!
@@ -76,7 +76,7 @@ class oasisCLI(object):
         try:
             self.oasisconf = self._getbasicconfig()
             self.username = self._getusername()
-            self.projectsection = self._getprojectsection()
+            self.projectsection = self._getprojectsection(projectname)
             # FIXME
             # there is no yet a self.log. 
             # use __logerror() within _getbasicconfig(), _getusername() and _getprojectsection()
@@ -217,7 +217,7 @@ class oasisCLI(object):
         return username
 
 
-    def _getprojectsection(self):
+    def _getprojectsection(self, projectname=None):
         '''
         finds out the section in oasisprojects.conf corresponds 
         with the UNIX ID, a.k.a. self.username, running this process.
@@ -231,7 +231,11 @@ class oasisCLI(object):
         oasisprojectsconf.readfp(open(oasisprojectsconffilename))
 
         # second get the section name  
-        project = self.__getprojectsectionfromuser(oasisprojectsconf, self.username)
+        if projectname:
+            project = self.__getprojectsectionfromprojectname(oasisprojectsconf, projectname)
+        else:
+            project = self.__getprojectsectionfromuser(oasisprojectsconf, self.username)
+    
         if project:
             return project
         else:
@@ -260,6 +264,33 @@ class oasisCLI(object):
 
         for section in conf.sections():
             if conf.get(section, 'user') == username:
+                if conf.getboolean(section, 'enabled'):
+                    return section
+        return None
+
+    def __getprojectsectionfromprojectname(self, conf, projectname):
+        '''
+        the private method just search for which section in a config object
+        contains the spcified username, and returns the project variable.
+        oasisprojects.conf looks like this
+
+                [PROJ1]
+                foo = bar
+                user = blah
+                project = PROJ1
+
+                [PROJ2]
+                foo2 = barz
+                user = bloh
+                project = proj2
+
+        We need to find out the <section> given the project.
+        Only reason the section name is not the username itself is just aesthetic,
+        so we need to do this reverse lookup, at least for the time being.
+        '''
+
+        for section in conf.sections():
+            if conf.get(section, 'project') == projectname:
                 if conf.getboolean(section, 'enabled'):
                     return section
         return None
