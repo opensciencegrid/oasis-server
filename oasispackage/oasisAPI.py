@@ -80,8 +80,8 @@ class oasisCLI(object):
             # FIXME
             # there is no yet a self.log. 
             # use __logerror() within _getbasicconfig(), _getusername() and _getprojectsection()
-        except:
-            self.__logerror()
+        except Exception, ex:
+            self.__logerror(ex)
             sys.exit(1)
 
         self._setuplogging()
@@ -102,7 +102,7 @@ class oasisCLI(object):
     #      P R E L I M I N A R I E S
     # --------------------------------------------------------------
 
-    def __logerror(self):
+    def __logerror(self, msg):
         '''
         this method is just to log somehow that
         the most basic configuration could not be read, 
@@ -137,8 +137,9 @@ class oasisCLI(object):
         console.addHandler(logStdout)
         console.setLevel(logging.DEBUG)
         
-        error.critical('Configuration cannot be read. Aborting.')
-        console.critical('Configuration cannot be read. Aborting.')
+        error.critical('Basic onfiguration cannot be read: %s. Aborting.' %msg)
+        console.critical('Basic configuration cannot be read: %s.. Aborting.' %msg)
+
 
 
     def _setuplogging(self):
@@ -195,9 +196,12 @@ class oasisCLI(object):
         the variable self.conffile is setup by the client /usr/bin/oasis
         '''
 
-        oasisconf = SafeConfigParser()
-        #oasisconf.readfp(open("/etc/oasis/oasis.conf"))
-        oasisconf.readfp(open(self.conffile))
+        try:
+            oasisconf = SafeConfigParser()
+            #oasisconf.readfp(open("/etc/oasis/oasis.conf"))
+            oasisconf.readfp(open(self.conffile))
+        except Exception, ex:
+            raise Exception('config file %s cannot be read' %self.conffile)
 
         return oasisconf
 
@@ -231,7 +235,7 @@ class oasisCLI(object):
         if project:
             return project
         else:
-            raise Exception
+            raise Exception('project name cannot be retrieved from config file')
 
     def __getprojectsectionfromuser(self, conf, username):
         '''
