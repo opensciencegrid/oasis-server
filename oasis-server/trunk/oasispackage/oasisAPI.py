@@ -471,6 +471,8 @@ class oasisCLI(object):
 
         projectname = self.project.projectname
 
+        nextmessagein = 0
+
         inittime = time.time()
         while True:
 
@@ -511,6 +513,12 @@ class oasisCLI(object):
             time.sleep(30)  # FIXME  why 30 ?? Should it be a config variable ??
             elapsed = time.time() - inittime
             if elapsed > self.project.finishtimeout:
+
+                if elapsed >= nextmessagein: 
+                    waitingtime = 60*(2**cycle)
+                    cycle += 1
+                    nextmessagein = elapsed + waitingtime
+
                 self.log.critical('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
                 self.console.critical('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
                 flagfile.search('request')
