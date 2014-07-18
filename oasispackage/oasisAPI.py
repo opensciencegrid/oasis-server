@@ -504,7 +504,8 @@ class oasisCLI(object):
             time.sleep(30)  # FIXME  why 30 ?? Should it be a config variable ??
             elapsed = time.time() - inittime
             if elapsed > self.project.finishtimeout:
-                self.log.critical('timeout. Breaking loop')
+                self.log.critical('timeout while waiting for the daemon to transfer and publish new content. Aborting.')
+                self.console.critical('timeout while waiting for the daemon to transfer and publish new content. Aborting.')
                 flagfile.search('request')
                 flagfile.clean() 
                 return 1
