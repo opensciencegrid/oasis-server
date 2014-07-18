@@ -105,7 +105,7 @@ class oasisCLI(object):
     def __logerror(self):
         '''
         this method is just to log somehow that
-        the configuration could not be read, 
+        the most basic configuration could not be read, 
         '''
 
         #
@@ -116,6 +116,7 @@ class oasisCLI(object):
         #
         
         error = logging.getLogger()
+        console = logging.getLogger('console')
 
         if major == 2 and minor == 4:
             LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d : %(message)s'
@@ -127,10 +128,17 @@ class oasisCLI(object):
         username = pwd.getpwuid(os.getuid()).pw_name  
         logStream = logging.FileHandler('/var/log/oasis/oasis.%s.log' %username)
         logStream.setFormatter(logfile_formatter)
+
         error.addHandler(logStream)
         error.setLevel(logging.DEBUG)
+
+        logStdout = logging.StreamHandler(sys.stdout)
+        logStdout.setFormatter(logfile_formatter)
+        console.addHandler(logStdout)
+        console.setLevel(logging.DEBUG)
         
         error.critical('Configuration cannot be read. Aborting.')
+        console.critical('Configuration cannot be read. Aborting.')
 
 
     def _setuplogging(self):
