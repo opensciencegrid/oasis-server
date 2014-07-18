@@ -188,6 +188,7 @@ class ProjectHandler(object):
 
         user = self.project.username
         uid = pwd.getpwnam(user).pw_uid
+        gid = pwd.getpwnam(user).pw_gid
         
         srcdir = self.project.srcdir
 
@@ -199,7 +200,7 @@ class ProjectHandler(object):
         if not os.path.isdir(srcdir):
             try:
                 os.makedirs(srcdir)
-                os.chown(srcdir, uid , uid)
+                os.chown(srcdir, uid , gid)
                 self.log.debug('directory %s created' %srcdir)
                 self.console.debug('directory %s created' %srcdir)
             except Exception, ex:
