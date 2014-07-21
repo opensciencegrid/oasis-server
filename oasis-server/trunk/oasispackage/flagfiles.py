@@ -66,23 +66,29 @@ class FlagFile(object):
     
     '''
 
-    def __init__(self, projectname):
+    def __init__(self, projectname, basedir=None):
         '''
         '''
         # FIXME ?? should I pass a Project() object ??
         # FIXME ?? should I make it without requiring any input related Projects at all ?? 
         #          For example, for FlagFileManager::search() to return a list of FlagFile objects
         #          it should be enough to pass the path to the __init__()
+        
+        # basedir is the path of the flagfile.
+        # if basedir is None, then use the default /var/log/oasis
 
         self.log = logging.getLogger('logfile.flagfile')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
         self.projectname = projectname
-        # 
         # !! FIXME !!
         # Maybe read basedir from oasis.conf
         # which requires passing parent object as reference 
         # 
-        self.basedir = '/var/log/oasis' 
+        if basedir:
+            self.basedir = basedir
+        else:
+            self.basedir = '/var/log/oasis' 
+
         self.timestamp = None
         self.flagfile = None
 
@@ -263,10 +269,12 @@ class FlagFileManager(object):
     class to handle FlagFile objects
     '''
 
-    def __init__(self):
-        '''
-        '''
-        self.basedir = '/var/log/oasis' 
+    def __init__(self, basedir=None):
+
+        if basedir:
+            self.basedir = basedir
+        else:
+            self.basedir = '/var/log/oasis' 
         self.log = logging.getLogger('logfile.flagfilemanager')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
 
