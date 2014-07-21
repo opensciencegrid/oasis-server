@@ -110,6 +110,7 @@ class ProjectBasicConfig(object):
                 self.flagfilebasedir = self.projectsconf.get(self.projectsection, 'flagfilebasedir')
             else:
                 self.flagfilebasedir = '/var/log/oasis/'
+            self.log.debug('variable flagfilebasedir has value %s', self.flagfilebasedir)
 
         except Exception, ex:
             self.log.critical('Configuration cannot be read. Error message = "%s". Aborting.' %ex)
