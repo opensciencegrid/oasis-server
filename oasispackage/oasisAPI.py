@@ -503,7 +503,7 @@ class oasisCLI(object):
         '''
         searches for all flagfiles 
         '''
-        mgnr = FlagFileManager() 
+        mgnr = FlagFileManager(self.project.flagfilebasedir) 
         listflagfiles = mgnr.search()
         return listflagfiles
 
