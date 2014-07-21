@@ -284,9 +284,7 @@ class Project(ProjectBasicConfig):
             #        Maybe a solution could be a hierarchy of classes, 'a la java'
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
 
-            #### BEGIN TEST ####
-            #self.flagfile = FlagFile(self.projectname)
-            #### END TEST ####
+            self.flagfile = FlagFile(self.projectname)
 
             self.log.debug('variable oasisprojectprobesconf has value %s', self.oasisprojectprobesconf)
 
@@ -661,7 +659,7 @@ class Project(ProjectBasicConfig):
         # FIXME 
         #  self.flagfile = FlagFile() is done twice in this class. 
         #  do it in the __init__()
-        self.flagfile = FlagFile(self.projectname)
+        ###self.flagfile = FlagFile(self.projectname)
         self.flagfile.create()
 
         self.log.debug('Leaving.')
@@ -680,7 +678,7 @@ class Project(ProjectBasicConfig):
         #  maybe it should be done in the __init__()
 
         self.log.debug('Starting.')
-        self.flagfile = FlagFile(self.projectname)
+        ###self.flagfile = FlagFile(self.projectname)
         flag = self.flagfile.search('request')
         self.log.debug('Found flagfile %s' %flag)
         return flag
