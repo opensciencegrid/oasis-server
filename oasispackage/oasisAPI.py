@@ -457,8 +457,8 @@ class oasisCLI(object):
             else:
                 if self.block == False:
                 # block == False means abort and message asking user to try again later 
-                    self.log.critical('There is currently a publishing process going on. Aborting.')
-                    self.console.critical('There is currently a publishing process going on. Aborting. Try it again in a while.')
+                    self.log.error('There is currently a publishing process going on. Aborting.')
+                    self.console.error('There is currently a publishing process going on. Aborting. Try it again in a while.')
                     return 1
                 else:
                     # block == True means process does retain prompt and waits in a loop
@@ -570,8 +570,8 @@ class oasisCLI(object):
                     self.console.info('Waiting for OASIS to transfer and publish new content. Waiting %s minute(s). Maximum waiting time = %s minute(s) ' %(waitingtime/60, self.project.finishtimeout/60))
 
             else:
-                self.log.critical('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
-                self.console.critical('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
+                self.log.error('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
+                self.console.error('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
                 flagfile.search('request')
                 flagfile.clean() 
                 return 1
