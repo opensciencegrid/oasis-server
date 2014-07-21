@@ -530,33 +530,56 @@ class oasisCLI(object):
             # or maybe self.project has a FlagFile object 
             # that can be reused
             #
-            flagfile = FlagFile(projectname)
+            ### BEGIN TEST ###
+            #flagfile = FlagFile(projectname)
+            ### END TEST ###
                
-            flagfilepath = flagfile.search('done')
+            ### BEGIN TEST ###
+            #flagfilepath = flagfile.search('done')
+            flagfilepath = self.project.flagfile.search('done')
+            ### END TEST ###
             if flagfilepath:
-                self.log.debug('content of flagfile \n%s' %flagfile.read())
+                ### BEGIN TEST ###
+                #self.log.debug('content of flagfile \n%s' %flagfile.read())
+                self.log.debug('content of flagfile \n%s' %self.project.flagfile.read())
+                ### END TEST ###
 
-                #self.console.debug('output from the OASIS daemon \n%s' %flagfile.read())
                 self.console.debug('output from the OASIS daemon:')
-                out = self._parse_flagfile(flagfile)
+                ### BEGIN TEST ###
+                #out = self._parse_flagfile(flagfile)
+                out = self._parse_flagfile(self.project.flagfile)
+                ### END TEST ###
                 for line in out:
                     self.console.debug(line)
 
-                flagfile.clean()
+                ### BEGIN TEST ###
+                #flagfile.clean()
+                self.project.flagfile.clean()
+                ### END TEST ###
                 return 0
 
-            flagfilepath = flagfile.search('failed')
+            ### BEGIN TEST ###
+            #flagfilepath = flagfile.search('failed')
+            flagfilepath = self.project.flagfile.search('failed')
+            ### END TEST ###
             if flagfilepath:
-                self.log.error('content of flagfile \n%s' %flagfile.read())
+                ### BEGIN TEST ###
+                #self.log.error('content of flagfile \n%s' %flagfile.read())
+                self.log.error('content of flagfile \n%s' %self.project.flagfile.read())
+                ### END TEST ###
 
-                #self.console.error('output from the OASIS daemon \n%s' %flagfile.read())
                 self.console.error('output from the OASIS daemon:')
-                out = self._parse_flagfile(flagfile)
+                ### BEGIN TEST ###
+                #out = self._parse_flagfile(flagfile)
+                out = self._parse_flagfile(self.project.flagfile)
+                ### END TEST ###
                 for line in out:
                     self.console.error(line)
                     
-
-                flagfile.clean()
+                ### BEGIN TEST ###
+                #flagfile.clean()
+                self.project.flagfile.clean()
+                ### END TEST ###
                 return 1
 
             # checking for timeout
@@ -574,8 +597,12 @@ class oasisCLI(object):
             else:
                 self.log.error('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
                 self.console.error('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
-                flagfile.search('request')
-                flagfile.clean() 
+                ### BEGIN TEST ###
+                #flagfile.search('request')  # FIXME I need to search for 'request' to change internal attribute path. 
+                #flagfile.clean() 
+                self.project.flagfile.search('request')  # FIXME I need to search for 'request' to change internal attribute path. 
+                self.project.flagfile.clean() 
+                ### END TEST ###
                 return 1
 
         # loop is done 
