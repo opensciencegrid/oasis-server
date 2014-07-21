@@ -1,13 +1,15 @@
 #!/usr/bin/env python   
 
 #
-#  FIXME : temporary name
+#  FIXME : 
+#  getting oasis config object and projects config object 
+#  is done more than once, in different __init__() methods
 #
 
 #
 #  FIXME : 
-#  getting oasis config object and projects config object 
-#  is done more than once, in different __init__() methods
+#  Study if I can use FlagFileManager as the only interface
+#  so no part in the entire code needs to call directory FlagFile()
 #
 
 import commands
