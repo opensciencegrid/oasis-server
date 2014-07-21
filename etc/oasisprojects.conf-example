@@ -89,6 +89,10 @@
 #        Current options are:
 #           cvmfs20 = code to interact with CVMFS server version 2.0.x
 #           cvmfs21 = code to interact with CVMFS server version 2.1.x
+#
+# flagfilebasedir = path to the flagfile
+#   OPTIONAL
+#   DEFAULT value, when not used, is /var/log/oasis/
 
 # =========================================================================== 
 
