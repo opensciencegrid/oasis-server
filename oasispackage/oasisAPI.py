@@ -527,6 +527,8 @@ class oasisCLI(object):
             # FIXME
             # check if this class already has a flagfile object
             # that can be reused
+            # or maybe self.project has a FlagFile object 
+            # that can be reused
             #
             flagfile = FlagFile(projectname)
                
