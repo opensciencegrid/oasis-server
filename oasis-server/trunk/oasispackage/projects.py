@@ -685,8 +685,8 @@ class Project(ProjectBasicConfig):
         ### BEGIN TEST ###
         self.flagfile = FlagFile(self.projectname)
         #flag = self.flagfile.search('request')
+        self.log.debug('Found flagfile %s' %self.flagfile)
         ### END TEST ###
-        self.log.debug('Found flagfile %s' %flag)
         return flag
 
     def runprobes(self):
