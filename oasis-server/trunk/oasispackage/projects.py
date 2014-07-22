@@ -109,7 +109,7 @@ class ProjectBasicConfig(object):
             if self.projectsconf.has_option(self.projectsection, 'flagfilebasedir'):
                 self.flagfilebasedir = self.projectsconf.get(self.projectsection, 'flagfilebasedir')
             else:
-                self.flagfilebasedir = '/var/log/oasis/'
+                self.flagfilebasedir = '/var/run/oasis/'
             self.log.debug('variable flagfilebasedir has value %s', self.flagfilebasedir)
 
         except Exception, ex:
