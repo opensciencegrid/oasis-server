@@ -3,9 +3,11 @@
 f_wrapper_permissions(){
     #
     # ensures the condor_oasis_wrapper has execution permissions
+    # NOTE: this actually maybe should be done separately, 
+    #       since it is a pure CE task, more than OASIS
     #
 
-    #chmod +x /usr/libexec/condor_oasis_wrapper.sh 
+    chmod +x /usr/libexec/condor_oasis_wrapper.sh 
 }
 
 f_user_client_permissions(){
@@ -13,9 +15,9 @@ f_user_client_permissions(){
     # ensures the osg-oasis-update script has execution permissions
     #
 
-    #chmod +x /usr/bin/osg-oasis-update 
+    chmod +x /usr/bin/osg-oasis-update 
 }
-    
+   
 f_create_log_directory(){
     #
     # creates directory /var/log/oasis/
@@ -74,8 +76,8 @@ f_chkconfig(){
 #                           M A I N                                         # 
 # ------------------------------------------------------------------------- #  
 
-f_wrapper_permissions
-f_user_client_permissions
+#f_wrapper_permissions
+#f_user_client_permissions
 f_create_log_directory
 f_create_oasis_account
 f_create_run_directory
