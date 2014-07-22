@@ -8,8 +8,9 @@
 
 #
 #  FIXME : 
-#  Study if I can use FlagFileManager as the only interface
+#  Study how I can use FlagFileManager as the only interface
 #  so no part in the entire code needs to call directory FlagFile()
+#  and to avoid duplicate lines between FlagFile() and FlagFileManager()
 #
 
 import commands
@@ -75,7 +76,7 @@ class FlagFile(object):
         #          it should be enough to pass the path to the __init__()
         
         # basedir is the path of the flagfile.
-        # if basedir is None, then use the default /var/log/oasis
+        # if basedir is None, then use the default /var/run/oasis
 
         self.log = logging.getLogger('logfile.flagfile')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
@@ -87,7 +88,7 @@ class FlagFile(object):
         if basedir:
             self.basedir = basedir
         else:
-            self.basedir = '/var/log/oasis' 
+            self.basedir = '/var/run/oasis' 
 
         self.timestamp = None
         self.flagfile = None
@@ -274,7 +275,7 @@ class FlagFileManager(object):
         if basedir:
             self.basedir = basedir
         else:
-            self.basedir = '/var/log/oasis' 
+            self.basedir = '/var/run/oasis' 
         self.log = logging.getLogger('logfile.flagfilemanager')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
 
