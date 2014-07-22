@@ -71,7 +71,6 @@ setup(
                #    main scripts   
                # =============================
                'bin/oasis',
-               'bin/oasis_new',  # temporary script.
                'bin/oasis-user-preinstall',
                'bin/oasis-user-publish',
                'bin/oasisd',
