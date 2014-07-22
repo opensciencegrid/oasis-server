@@ -219,7 +219,7 @@ class oasisCLI(object):
 
     def _getprojectsection(self, projectname=None):
         '''
-        finds out the section in oasisprojects.conf corresponds 
+        finds out the section in projects conf file that corresponds 
         with the UNIX ID, a.k.a. self.username, running this process.
         '''
         # FIXME !! this is also done in Project() class
@@ -245,7 +245,7 @@ class oasisCLI(object):
         '''
         the private method just search for which section in a config object
         contains the spcified username, and returns the project variable.
-        oasisprojects.conf looks like this
+        projects conf file looks like this
 
                 [PROJ1]
                 foo = bar
@@ -272,7 +272,7 @@ class oasisCLI(object):
         '''
         the private method just search for which section in a config object
         contains the spcified username, and returns the project variable.
-        oasisprojects.conf looks like this
+        projects conf file looks like this
 
                 [PROJ1]
                 foo = bar
