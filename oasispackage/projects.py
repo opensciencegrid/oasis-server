@@ -97,13 +97,13 @@ class ProjectBasicConfig(object):
             self.distributionplugin = self._getdistributionplugin()
             self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
 
-            self.sleep = self.projectsconf.getint(self.projectsection, 'time.sleep')
+            self.sleep = self.projectsconf.getint(self.projectsection, 'sleep')
             self.log.debug('variable sleep has value %s', self.sleep)
 
-            self.starttimeout = self.projectsconf.getint(self.projectsection, 'time.starttimeout')
+            self.starttimeout = self.projectsconf.getint(self.projectsection, 'starttimeout')
             self.log.debug('variable starttimetime has value %s', self.starttimeout)
 
-            self.finishtimeout = self.projectsconf.getint(self.projectsection, 'time.finishtimeout')
+            self.finishtimeout = self.projectsconf.getint(self.projectsection, 'finishtimeout')
             self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
 
             if self.projectsconf.has_option(self.projectsection, 'flagfilebasedir'):
@@ -376,13 +376,13 @@ class Project(ProjectBasicConfig):
 ###            self.oasisprojectprobesconf = self._getprojectprobesconfig()
 ###            self.log.debug('variable oasisprojectprobesconf has value %s', self.oasisprojectprobesconf)
 ###
-###            self.sleep = self.projectsconf.getint(self.projectsection, 'time.sleep')
+###            self.sleep = self.projectsconf.getint(self.projectsection, 'sleep')
 ###            self.log.debug('variable sleep has value %s', self.sleep)
 ###
-###            self.starttimeout = self.projectsconf.getint(self.projectsection, 'time.starttimeout')
+###            self.starttimeout = self.projectsconf.getint(self.projectsection, 'starttimeout')
 ###            self.log.debug('variable starttimetime has value %s', self.starttimeout)
 ###
-###            self.finishtimeout = self.projectsconf.getint(self.projectsection, 'time.finishtimeout')
+###            self.finishtimeout = self.projectsconf.getint(self.projectsection, 'finishtimeout')
 ###            self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
 ###
 ###        except:
@@ -1059,7 +1059,7 @@ class ProjectThreadMgr(object):
         self.oasisd = oasisd
 
         try:
-            self.mainsleep = self.oasisd.oasisconf.getint('OASIS', 'time.sleep')
+            self.mainsleep = self.oasisd.oasisconf.getint('OASIS', 'sleep')
         except:
             # FIXME
             raise Exception 
