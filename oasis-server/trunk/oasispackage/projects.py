@@ -46,10 +46,10 @@ class ProjectBasicConfig(object):
 
     def __init__(self, projectsection, oasisconf):
         '''
-        projectsection is the section name in the oasisprojects.conf config file
+        projectsection is the section name in the projects config file
         oasisconf is the ConfigParser object for oasis.conf
 
-        We pass oasis.conf and not oasisprojects.conf directly 
+        We pass oasis.conf and not the projects conf file directly 
         because we need it to get some variables like directoryconf
         '''
 
@@ -121,7 +121,7 @@ class ProjectBasicConfig(object):
 
     def _getprojectsconfig(self):
         '''
-        gets the ConfigParser object for oasisprojects.conf
+        gets the ConfigParser object for projects conf file
         '''
         # Maybe temporary solution
     
@@ -135,7 +135,7 @@ class ProjectBasicConfig(object):
 
     def _getvo(self):
         '''
-        gets the VO from the oasisprojects.conf config file.
+        gets the VO from the projects config file.
         '''
         
         self.log.debug('Starting.')
@@ -160,7 +160,7 @@ class ProjectBasicConfig(object):
 
     def _getosgapp(self):
         '''
-        gets the variable OSG_APP from the oasisprojects.conf config file.
+        gets the variable OSG_APP from the projects config file.
         '''
 
         self.log.debug('Starting.')
@@ -177,7 +177,7 @@ class ProjectBasicConfig(object):
 
     def _getsrcdir(self):
         '''
-        gets the source directory from the oasisprojects.conf config file.
+        gets the source directory from the projects config file.
         It is the directory where the user payload writes.
 
         Reason to have a dedicated method is to allow
@@ -195,7 +195,7 @@ class ProjectBasicConfig(object):
 
     def _getdestdir(self):
         '''
-        gets the destination directory from the oasisprojects.conf config file.
+        gets the destination directory from the projects config file.
         It is the directory where files are transferred for publication.
 
         Reason to have a dedicated method is to allow
@@ -250,7 +250,7 @@ class Project(ProjectBasicConfig):
     Also, therefore!!, it also maps to a single UNIX ID.
 
     The specifications defining a project are in each section of
-    the oasisprojects.conf configuration file.
+    the projects configuration file.
 
     Both the class invoked by the user process -oasisCLI- 
     and  each thread created by the class invoked by the daemon process -oasisd-
@@ -259,10 +259,10 @@ class Project(ProjectBasicConfig):
 
     def __init__(self, projectsection, oasisconf):
         '''
-        projectsection is the section name in the oasisprojects.conf config file
+        projectsection is the section name in the projects config file
         oasisconf is the ConfigParser object for oasis.conf
 
-        We pass oasis.conf and not oasisprojects.conf directly 
+        We pass oasis.conf and not projects config  directly 
         because we need it to get some variables like directoryconf
         '''
         #
@@ -303,10 +303,10 @@ class Project(ProjectBasicConfig):
 
 ###    def __init__(self, projectsection, oasisconf):
 ###        '''
-###        projectsection is the section name in the oasisprojects.conf config file
+###        projectsection is the section name in the projects config file
 ###        oasisconf is the ConfigParser object for oasis.conf
 ###
-###        We pass oasis.conf and not oasisprojects.conf directly 
+###        We pass oasis.conf and not projects conf directly 
 ###        because we need it to get some variables like directoryconf
 ###        '''
 ###        #
@@ -403,7 +403,7 @@ class Project(ProjectBasicConfig):
 
     def _getprojectsconfig(self):
         '''
-        gets the ConfigParser object for oasisprojects.conf
+        gets the ConfigParser object for projects conf file
         '''
         # Maybe temporary solution
     
@@ -446,7 +446,7 @@ class Project(ProjectBasicConfig):
 
     def _getvo(self):
         '''
-        gets the VO from the oasisprojects.conf config file.
+        gets the VO from the projects config file.
         '''
         
         self.log.debug('Starting.')
@@ -471,7 +471,7 @@ class Project(ProjectBasicConfig):
 
     def _getosgapp(self):
         '''
-        gets the variable OSG_APP from the oasisprojects.conf config file.
+        gets the variable OSG_APP from the projects config file.
         '''
 
         self.log.debug('Starting.')
@@ -488,7 +488,7 @@ class Project(ProjectBasicConfig):
 
     def _getsrcdir(self):
         '''
-        gets the source directory from the oasisprojects.conf config file.
+        gets the source directory from the projects config file.
         It is the directory where the user payload writes.
 
         Reason to have a dedicated method is to allow
@@ -506,7 +506,7 @@ class Project(ProjectBasicConfig):
 
     def _getdestdir(self):
         '''
-        gets the destination directory from the oasisprojects.conf config file.
+        gets the destination directory from the projects config file.
         It is the directory where files are transferred for publication.
 
         Reason to have a dedicated method is to allow
