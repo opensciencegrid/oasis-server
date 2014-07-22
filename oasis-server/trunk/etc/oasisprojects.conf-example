@@ -61,18 +61,18 @@
 #        in oasis.conf
 #        MANDATORY
 #
-# time.sleep = time between cycles for each thread (one per project)
+# sleep = time between cycles for each thread (one per project)
 #        Time is expressed in seconds
 #        MANDATORY
 #
-# time.starttimeout = maximum time to wait when process detects 
+# starttimeout = maximum time to wait when process detects 
 #        there is a flagfile, so a previous installation and publishing task
 #        is still going on. 
 #        The current process can wait a little bit, but not forever.
 #        Time is expressed in seconds
 #        MANDATORY
 #
-# time.finishtimeout = maximum time the user process can stay waiting for the 
+# finishtimeout = maximum time the user process can stay waiting for the 
 #        daemon process to finish.
 #        When the user process runs the installation payload it leaves
 #        a flagfile asking for publication.
@@ -103,9 +103,9 @@ project = %(VO)s
 srcdir = %(OSG_APP)s/%(project)s
 destdir = /cvmfs/%(project)s.opensciencegrid.org 
 distributiontool = cvmfs21
-time.sleep = 100
-time.starttimeout = 600
-time.finishtimeout = 600
+sleep = 100
+starttimeout = 600
+finishtimeout = 600
 destdiruser = oasis
 
 enabled = True
