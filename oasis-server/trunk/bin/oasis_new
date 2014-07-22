@@ -3,7 +3,7 @@
 # =========================================================================== #
 #                                                                             #
 #   temporary file for development                                            #
-#   when finished, it will become the new oasis CLI                           #
+#   Its content will be split between several oasis-* tools                   #
 #                                                                             #
 # =========================================================================== #
 
