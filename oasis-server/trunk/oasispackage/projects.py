@@ -918,8 +918,10 @@ class Project(ProjectBasicConfig):
             self.log.info('transferring files done OK')
             self.log.debug('time to transfer files: %s seconds' %deltaseconds)
         else:
-            self.emailalert('transfer files operation failed')   # FIXME: improve the msg
-            self.log.critical('transferring files failed')
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+            msg = '%s (UTC) : transfer files operation failed for project  %s' %(timestamp, self.project.projectname)
+            self.emailalert(msg)
+            self.log.critical('transferring files failed. RC=%s, out=%s' %(rc, out))
 
 
         #
@@ -962,8 +964,10 @@ class Project(ProjectBasicConfig):
             self.log.info('publishing done OK')
             self.log.debug('time to publish: %s seconds' %deltaseconds)
         else:
-            self.emailalert('publish operation failed')   # FIXME: improve the msg
-            self.log.critical('publishing failed')
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+            msg = '%s (UTC) : publish operation failed for project %s' %(timestamp, self.project.projectname)
+            self.emailalert(msg)
+            self.log.critical('publishing failed. RC=%s, out=%s' %(rc, out))
 
 
         #
