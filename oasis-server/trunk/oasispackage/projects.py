@@ -18,12 +18,19 @@ import logging.handlers
 import os
 import pwd
 import re
+import smtplib
+import socket
 import subprocess
 import string
 import sys
 import time
 import threading
 import traceback
+
+try:
+    from email.mime.text import MIMEText
+except:
+    from email.MIMEText import MIMEText
 
 from ConfigParser import SafeConfigParser
 
@@ -973,6 +980,36 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Leaving with rc %s' %rc)
         return rc
+
+
+    def emailalert(self, subject, msg):
+        '''
+        sent notifications by email
+        '''
+        # FIXME: should this be in oasisAPI.py ???
+
+        if self.email and self.smtpserver:
+
+            username = pwd.getpwuid(os.getuid()).pw_name
+            hostname = socket.gethostname()
+
+            msg = MIMEText(msg)
+            msg['Subject'] = subject
+            email_from = "%s@%s" % (username, hostname)
+            msg['From'] = email_from
+            msg['To'] = self.email
+            tolist = self.adminemail.split(",")
+
+            # Send the message via our own SMTP server, but don't include the
+            # envelope header.
+            s = smtplib.SMTP(self.smtpserver)
+            self.log.info("Sending email: %s" % msg.as_string())
+            s.sendmail(email_from , tolist , msg.as_string())
+            s.quit()
+
+    
+      
+
 
 
 
