@@ -99,6 +99,9 @@ setup(
                #'bin/oasis-admin-projectdel',
                #'bin/oasis-admin-list',
                #'bin/oasis-admin-rollback',
+               'bin/oasis-admin-start',
+               'bin/oasis-admin-stop',
+               'bin/oasis-admin-status',
                                
                # =============================
                #  wrappers to the probes

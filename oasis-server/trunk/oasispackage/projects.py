@@ -918,6 +918,7 @@ class Project(ProjectBasicConfig):
             self.log.info('transferring files done OK')
             self.log.debug('time to transfer files: %s seconds' %deltaseconds)
         else:
+            self.emailalert('transfer files operation failed')
             self.log.critical('transferring files failed')
 
 
@@ -961,6 +962,7 @@ class Project(ProjectBasicConfig):
             self.log.info('publishing done OK')
             self.log.debug('time to publish: %s seconds' %deltaseconds)
         else:
+            self.emailalert('publish operation failed')
             self.log.critical('publishing failed')
 
 
@@ -982,7 +984,7 @@ class Project(ProjectBasicConfig):
         return rc
 
 
-    def emailalert(self, subject, msg):
+    def emailalert(self, msg):
         '''
         sent notifications by email
         '''
@@ -994,7 +996,7 @@ class Project(ProjectBasicConfig):
             hostname = socket.gethostname()
 
             msg = MIMEText(msg)
-            msg['Subject'] = subject
+            msg['Subject'] = 'ALERT FROM OASIS: CRITICAL OPERATION FAILED'
             email_from = "%s@%s" % (username, hostname)
             msg['From'] = email_from
             msg['To'] = self.email
