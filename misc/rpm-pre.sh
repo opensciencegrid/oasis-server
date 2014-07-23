@@ -20,5 +20,8 @@ f_stop_daemon(){
 
 }
 
-
-f_stop_daemon
+if [ $1 -eq 2 ]; then 
+    #$1 == 2 => upgrade
+    #$1 == 1 => install 
+    f_stop_daemon
+fi
