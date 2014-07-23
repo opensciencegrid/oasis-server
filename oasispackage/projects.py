@@ -918,7 +918,7 @@ class Project(ProjectBasicConfig):
             self.log.info('transferring files done OK')
             self.log.debug('time to transfer files: %s seconds' %deltaseconds)
         else:
-            self.emailalert('transfer files operation failed')
+            self.emailalert('transfer files operation failed')   # FIXME: improve the msg
             self.log.critical('transferring files failed')
 
 
@@ -962,7 +962,7 @@ class Project(ProjectBasicConfig):
             self.log.info('publishing done OK')
             self.log.debug('time to publish: %s seconds' %deltaseconds)
         else:
-            self.emailalert('publish operation failed')
+            self.emailalert('publish operation failed')   # FIXME: improve the msg
             self.log.critical('publishing failed')
 
 
