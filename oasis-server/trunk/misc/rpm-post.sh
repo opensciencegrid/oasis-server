@@ -72,6 +72,14 @@ f_chkconfig(){
     chkconfig oasisd off
 }
 
+f_start_daemon(){
+    #
+    # starts the daemon
+    #
+    
+    service oasisd start 1>/dev/null
+}
+
 # ------------------------------------------------------------------------- #  
 #                           M A I N                                         # 
 # ------------------------------------------------------------------------- #  
@@ -82,3 +90,4 @@ f_create_log_directory
 f_create_oasis_account
 f_create_run_directory
 f_chkconfig
+f_start_daemon
