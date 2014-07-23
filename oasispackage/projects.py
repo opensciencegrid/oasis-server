@@ -106,11 +106,20 @@ class ProjectBasicConfig(object):
             self.finishtimeout = self.projectsconf.getint(self.projectsection, 'finishtimeout')
             self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
 
+            self.flagfilebasedir = '/var/run/oasis/'  #DEFAULT
             if self.projectsconf.has_option(self.projectsection, 'flagfilebasedir'):
                 self.flagfilebasedir = self.projectsconf.get(self.projectsection, 'flagfilebasedir')
-            else:
-                self.flagfilebasedir = '/var/run/oasis/'
             self.log.debug('variable flagfilebasedir has value %s', self.flagfilebasedir)
+
+            self.email = None  # DEFAULT
+            if self.oasisconf.has_option('OASIS', 'email'):
+                self.email = self.oasisconf.get('OASIS', 'email')
+            self.log.debug('variable email has value %s', self.email)
+
+            self.smtpserver = None  # DEFAULT
+            if self.oasisconf.has_option('OASIS', 'SMTPServer'):
+                self.smtpserver = self.oasisconf.get('OASIS', 'SMTPServer')
+            self.log.debug('variable smtpserver has value %s', self.smtpserver)
 
         except Exception, ex:
             self.log.critical('Configuration cannot be read. Error message = "%s". Aborting.' %ex)
