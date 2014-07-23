@@ -17,6 +17,16 @@ f_user_client_permissions(){
 
     chmod +x /usr/bin/osg-oasis-update 
 }
+
+f_permissions(){
+    #  
+    # enforces certain permissions set for some CLI programs
+    #
+
+    # oasis-admin-* executable only by root
+    chmod 744 /usr/bin/oasis-admin-*
+
+}
    
 f_create_log_directory(){
     #
@@ -86,6 +96,7 @@ f_start_daemon(){
 
 #f_wrapper_permissions
 #f_user_client_permissions
+f_permissions
 f_create_log_directory
 f_create_oasis_account
 f_create_run_directory
