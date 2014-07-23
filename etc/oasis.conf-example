@@ -26,6 +26,11 @@
 #         need to be shutdown
 #         Time is expressed in seconds.
 #
+# email = email address to notify CRITICAL events
+#   OPTIONAL
+#
+# SMTPServer = SMTP server to be used to send email notifications
+#   OPTIONAL
 
 # [PROJECTS]
 #
@@ -45,6 +50,8 @@
 [OASIS]
 
 sleep = 100
+email = neo@matrix.net
+SMTPServer = server
 
 [PROJECTS]
 
