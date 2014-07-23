@@ -76,10 +76,13 @@ f_chkconfig(){
     #
     # add oasis daemon to checkconfig
     # but set it off. It is up to the sys admin to turn it on.
+    # NOTE: only if operation is "install", not if it is "update"
     #
 
-    chkconfig --add oasisd
-    chkconfig oasisd off
+    if [ $1 -eq 1 ]; then 
+        chkconfig --add oasisd
+        chkconfig oasisd off
+    fi
 }
 
 f_start_daemon(){
@@ -100,5 +103,5 @@ f_permissions
 f_create_log_directory
 f_create_oasis_account
 f_create_run_directory
-f_chkconfig
+f_chkconfig $1
 f_start_daemon
