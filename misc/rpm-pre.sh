@@ -13,7 +13,7 @@ f_stop_daemon(){
 
     service oasisd status 1>/dev/null
     rc=$?
-    if [ $rc -ne 0 ]; then
+    if [ $rc -eq 0 ]; then
         # daemon is running...
         service oasisd stop 1>/dev/null
     fi
