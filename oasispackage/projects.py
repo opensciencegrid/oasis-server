@@ -438,7 +438,7 @@ class Project(ProjectBasicConfig):
         '''
 
         self.log.debug('Starting.')
-        oasisprobesconffilename = self.oasisconf.get('PROBES', 'oasisconf')
+        oasisprobesconffilename = self.oasisconf.get('OASIS', 'probesconf')
         oasisprobesconf = SafeConfigParser()
         oasisprobesconf.readfp(open(oasisprobesconffilename))
         self.log.debug('Leaving returning config object %s.' %oasisprobesconf)
@@ -450,7 +450,7 @@ class Project(ProjectBasicConfig):
         '''
 
         self.log.debug('Starting.')
-        oasisconfigdir = self.oasisconf.get('PROBES', 'directoryconf')
+        oasisconfigdir = self.oasisconf.get('OASIS', 'directoryconf')
         oasisprojectprobesconffilename = self.projectsconf.get(self.projectsection, 'projectprobes')
         oasisprojectprobesconf = SafeConfigParser()
         oasisprojectprobesconf.readfp(open('%s/%s' %(oasisconfigdir, oasisprojectprobesconffilename)))
