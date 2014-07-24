@@ -52,7 +52,7 @@ class oasisCLI(object):
     invoked only by root. 
     '''
 
-    def __init__(self, conffile='/tmp/oasis/oasis.conf', projectname=None):
+    def __init__(self, conffile='/etc/oasis/oasis.conf', projectname=None):
 
         # 
         #  !!! FIXME !!!
