@@ -76,12 +76,11 @@ class ProjectHandler(object):
 ###        # which includes an attribute self.distributionplugin
 ###
 ###        
-###        oasisconfpath = '/etc/oasis/oasis.conf'
 ###        self.oasisconf = SafeConfigParser()
 ###        self.oasisconf.readfp(open(oasisconfpath))
 ###
 ###        try:        
-###            projectfactory = ProjectFactory(self.oasisconf, clstype=ProjectBasicConfig, projectname=projectname)
+###            projectfactory = ProjectFactory(clstype=ProjectBasicConfig, projectname=projectname)
 ###            self.project = projectfactory.getProject()
 ###        except Exception, ex:
 ###            self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
@@ -101,10 +100,8 @@ class ProjectHandler(object):
         # create an object Project(), 
         # which includes an attribute self.distributionplugin
         
-        oasisconfpath = '/etc/oasis/oasis.conf'
-
         try:        
-            oasis = oasisCLI(oasisconfpath, self.projectnam
+            oasis = oasisCLI(projectname=self.projectname)
             self.project = oasis.project 
         except Exception, ex:
             self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)

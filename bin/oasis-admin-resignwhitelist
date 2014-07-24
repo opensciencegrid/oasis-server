@@ -14,9 +14,7 @@ opts, args = getopt.getopt(sys.argv[1:], '', ['projectname='])
             if o == '--projectname':
                 projectname = a
 
-oasisconf = '/etc/oasis/oasis.conf'
-
-projectfactory = ProjectFactory(oasisconf, clstype=ProjectBasicConfig,  projectname=projectname)
+projectfactory = ProjectFactory(clstype=ProjectBasicConfig,  projectname=projectname)
 project = projectfactory.getProject()
 project.distributionplugin.resign()
 
