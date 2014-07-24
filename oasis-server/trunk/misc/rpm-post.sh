@@ -90,6 +90,9 @@ f_start_daemon(){
     # starts the daemon
     #
     
+    # FIXME
+    # what about when the RPM is installed on the login host, which does not need daemon?
+    
     service oasisd start 1>/dev/null
 }
 
@@ -104,4 +107,4 @@ f_create_log_directory
 f_create_oasis_account
 f_create_run_directory
 f_chkconfig $1
-f_start_daemon
+#f_start_daemon
