@@ -1,5 +1,6 @@
 #!/bin/bash 
 
+
 ## maximum time since a snapshot was made (one day)
 max_snap_age=86400
 
