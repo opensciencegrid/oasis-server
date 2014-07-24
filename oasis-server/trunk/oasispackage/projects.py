@@ -7,7 +7,9 @@
 #
 #  FIXME : 
 #  getting oasis config object and projects config object 
-#  is done more than once, in different __init__() methods
+#  is done more than once, 
+#  for example in different __init__() methods, but not only
+#  Too much duplicate code. 
 #
 
 import commands
@@ -142,7 +144,7 @@ class ProjectBasicConfig(object):
         # Maybe temporary solution
     
         self.log.debug('Starting.')
-        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconffilename = self.oasisconf.get('OASIS', 'projectsconf')
         oasisprojectsconf = SafeConfigParser()
         oasisprojectsconf.readfp(open(oasisprojectsconffilename))
         self.log.debug('Leaving returning config object %s.' %oasisprojectsconf)
@@ -424,7 +426,7 @@ class Project(ProjectBasicConfig):
         # Maybe temporary solution
     
         self.log.debug('Starting.')
-        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconffilename = self.oasisconf.get('OASIS', 'projectsconf')
         oasisprojectsconf = SafeConfigParser()
         oasisprojectsconf.readfp(open(oasisprojectsconffilename))
         self.log.debug('Leaving returning config object %s.' %oasisprojectsconf)
@@ -1056,7 +1058,7 @@ class ProjectFactory(object):
     def _getprojectsectionfromusername(self, username):
     
         # first get the OASIS projects ConfigFile
-        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconffilename = self.oasisconf.get('OASIS', 'projectsconf')
         oasisprojectsconf = SafeConfigParser()
         oasisprojectsconf.readfp(open(oasisprojectsconffilename))
 
@@ -1069,7 +1071,7 @@ class ProjectFactory(object):
     def _getprojectsectionfromprojectname(self, projectname):
     
         # first get the OASIS projects ConfigFile
-        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconffilename = self.oasisconf.get('OASIS', 'projectsconf')
         oasisprojectsconf = SafeConfigParser()
         oasisprojectsconf.readfp(open(oasisprojectsconffilename))
 

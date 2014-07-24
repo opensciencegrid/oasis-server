@@ -226,7 +226,7 @@ class oasisCLI(object):
 
 
         # first get the OASIS projects ConfigFile
-        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconffilename = self.oasisconf.get('OASIS', 'projectsconf')
         oasisprojectsconf = SafeConfigParser()
         oasisprojectsconf.readfp(open(oasisprojectsconffilename))
 
@@ -774,7 +774,7 @@ class oasisd(object):
         returns a ConfigParser object for oasisproject.conf
         '''
         self.log.debug('Start')
-        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconffilename = self.oasisconf.get('OASIS', 'projectsconf')
         oasisprojectsconf = SafeConfigParser()
         oasisprojectsconf.readfp(open(oasisprojectsconffilename))
         self.log.debug('Leaving with config object %s' %oasisprojectsconf)
