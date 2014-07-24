@@ -18,6 +18,7 @@ f_clean_chkconfig(){
 
     if [ $1 -eq 0 ]; then
         chkconfig --del oasisd
+        # FIXME: should i do  chkconfig --del oasisd 2>/dev/null ???
     fi
 }
 
