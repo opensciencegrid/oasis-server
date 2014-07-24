@@ -23,9 +23,7 @@ from oasispackage.oasisAPI import oasisCLI, FlagFile
 
 def main():
 
-    conffile = '/etc/oasis/oasis.conf'
-
-    oasis = oasisCLI(conffile)
+    oasis = oasisCLI()
 
     projectname = oasis.project.projectname
 
