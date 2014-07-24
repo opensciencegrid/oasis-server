@@ -1030,7 +1030,7 @@ class ProjectFactory(object):
     '''
 
     # FIXME maybe projectname, projectsection should be passed to getProject() call instead of __init__()
-    def __init__(self, oasisconf, clstype=Project, username=None, projectname=None, projectsection=None):
+    def __init__(self, oasisconf='/etc/oasis/oasis.conf', clstype=Project, username=None, projectname=None, projectsection=None):
         self.clstype = clstype
         self.oasisconf = oasisconf
         self.username = username
