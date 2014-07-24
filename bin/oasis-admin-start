@@ -4,6 +4,7 @@
 # FIXME: needs improvements
 #   -- maybe commands is not the best choice
 #   -- print meaningful error message when RC != 0
+#   -- start the daemon only on a host that makes sense (for example, login host it does not)
 
 import commands
 
