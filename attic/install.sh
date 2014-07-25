@@ -6,6 +6,7 @@ echo "Please specify the instance that you'd like to install: "
 echo "-------------------------------------------------------------------------"
 echo "itb:                ITB Stratum 0 server"
 echo "prod:                    Production Stratum 0 server"
+echo "tmp:                     Duplicate Stratum 0 server"
 echo "-------------------------------------------------------------------------"
 echo -n "Please Select: "
 read -e type
@@ -16,6 +17,10 @@ case $type in
             ;;
     prod)
             export INSTALL_HOSTNAME=oasis.grid.iu.edu
+            export PUPPET_ENV=prod
+            ;;
+    tmp)
+            export INSTALL_HOSTNAME=oasis-tmp.grid.iu.edu
             export PUPPET_ENV=prod
             ;;
     *)
@@ -38,7 +43,7 @@ case $type in
 	reponame="oasis-itb.opensciencegrid.org"
 	mkdir /srv
 	;;
-    prod)
+    prod|tmp)
 	reponame="oasis.opensciencegrid.org"
 ## mount the previously made disk image
 	echo "This virtual machine must be built in a special way:"
@@ -197,4 +202,3 @@ cvmfs_server publish
 cvmfs_server resign
 
 echo "all done"
-
