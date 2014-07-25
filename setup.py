@@ -88,7 +88,7 @@ setup(
                'bin/do_oasis_update',
                'bin/expand_oasis_dirtab',
                'bin/generate_adduser',
-               'bin/generate_condormap',
+               'bin/generate_gridmap',
                'bin/oasis_status.sh',
                'bin/request_oasis_update',
 
