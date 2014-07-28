@@ -79,18 +79,20 @@ setup(
                # =============================
                # OASIS 1 tools
                # =============================
-               'bin/set_repository_property',
+               'bin/add_osg_repository',
                'bin/blank_osg_repository',
-               'bin/unblank_osg_repository',
+               'bin/oasis_replica_status.sh',
+               'bin/oasis_status.sh',
                'bin/osg-oasis-update',
                'bin/resign_osg_whitelist',
-               'bin/add_osg_repository',
-               'bin/do_oasis_update',
-               'bin/expand_oasis_dirtab',
-               'bin/generate_adduser',
-               'bin/generate_gridmap',
-               'bin/oasis_status.sh',
-               'bin/request_oasis_update',
+               'bin/set_repository_property',
+               'bin/stratumones.pl',
+               'bin/unblank_osg_repository',
+               #'bin/do_oasis_update',
+               #'bin/expand_oasis_dirtab',
+               #'bin/generate_adduser',
+               #'bin/generate_gridmap',
+               #'bin/request_oasis_update',
 
                # =============================
                #    admin tools 
