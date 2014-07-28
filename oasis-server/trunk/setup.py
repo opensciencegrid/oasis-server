@@ -53,7 +53,7 @@ rpm_data_files=[('/usr/libexec', libexec_files),
 
 # setup for distutils
 setup(
-    name="oasis-server",
+    name="oasis",
     version=release_version,
     description='OASIS package',
     long_description='''This package contains OASIS''',
