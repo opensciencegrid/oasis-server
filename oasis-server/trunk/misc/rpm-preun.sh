@@ -23,10 +23,11 @@ f_stop_daemon(){
 f_clean_chkconfig(){
     #
     # delete oasis daemon to checkconfig
-    # NOTE: only if operation is "uninstall"
     #
 
     if [ $1 -eq 0 ]; then
+        # $1 == 0 => uninstall
+        # $1 == 1 => upgrade 
         chkconfig --del oasisd 1>/dev/null
     fi
 }
