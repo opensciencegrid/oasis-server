@@ -7,8 +7,6 @@ f_restart_daemon(){
     # if so, re-start it
     #
 
-    # FIXME: should it be done using service oasisd  condrestart ???
-
     if [ $1 -eq 1 ]; then 
         #$1 == 1 => upgrade
         #$1 == 0 => uninstall 
@@ -18,6 +16,7 @@ f_restart_daemon(){
         if [ $rc -eq 0 ]; then
             # daemon is running...
             service oasisd restart 1>/dev/null
+            # FIXME: should it be done using service oasisd  condrestart ???
         fi
 }
 
