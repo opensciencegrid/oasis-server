@@ -1047,9 +1047,9 @@ Now configure the specific VO-by_VO setup. For example, to configure the VO call
         srcdir = %(OSG_APP)s/%(VO)s
         destdir = /cvmfs/oasis.opensciencegrid.org/%(VO)s
         distributiontool = cvmfs20
-        time.sleep = 100
-        time.starttimeout = 600
-        time.finishtimeout = 600
+        sleep = 100
+        starttimeout = 600
+        finishtimeout = 600
         destdiruser = cvmfs
         enabled = True
         
@@ -1181,7 +1181,7 @@ At that point, a flagfile should have been created as if the user was running an
         2014-05-13 18:54:12,533 (UTC) - OASIS [ INFO ] <ouser.mis:MIS> user.MIS : Output from installation job: 
 
 
-    Prompt is retiened, as expected.
+    Prompt is retained, as expected.
     flagfile was created, as expected. 
 
         [root@itb-oasis oasis]# ll
@@ -1238,4 +1238,24 @@ At that point, a flagfile should have been created as if the user was running an
         [ouser.mis@itb-oasis MIS]$ grep ERROR /var/log/oasis/oasisd.log 
         [ouser.mis@itb-oasis MIS]$ 
 
+
+-- A more realistic test
+
+    -- daemon is supposed to be always running 
+
+    -- prepare user scratch area, just in case there are old orphan files there from past
+
+       [ouser.mis@itb-oasis MIS]$ oasis-user-preinstall
+
+    -- add new files to the user scratch area. In the example: /home/oasis/MIS/
+
+    -- publish new content, either using the new program
+
+       [ouser.mis@itb-oasis MIS]$ oasis-user-publish
+
+       or the old one
+
+       [ouser.mis@itb-oasis MIS]$ osg-oasis-update
+
+        
 
