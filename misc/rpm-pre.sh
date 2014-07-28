@@ -19,6 +19,7 @@ f_stop_daemon(){
             # daemon is running...
             service oasisd stop 1>/dev/null
         fi
+    fi
 }
 
 # ------------------------------------------------------------------------- #  
