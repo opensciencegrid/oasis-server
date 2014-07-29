@@ -454,98 +454,98 @@ For the time being, for this test, OASIS is deployed from source at SVN.
 
         [root@itb-oasis src]# python setup.py bdist_rpm
         running bdist_rpm
-        writing 'build/bdist.linux-x86_64/rpm/SPECS/oasis-server.spec'
+        writing 'build/bdist.linux-x86_64/rpm/SPECS/oasis.spec'
         running sdist
         reading manifest file 'MANIFEST'
-        creating oasis-server-2.0.0
-        creating oasis-server-2.0.0/bin
-        creating oasis-server-2.0.0/etc
-        creating oasis-server-2.0.0/libexec
-        creating oasis-server-2.0.0/misc
-        creating oasis-server-2.0.0/oasispackage
-        creating oasis-server-2.0.0/oasispackage/distributionplugins
-        creating oasis-server-2.0.0/oasispackage/probes
-        making hard links in oasis-server-2.0.0...
-        hard linking CHANGELOG -> oasis-server-2.0.0
-        hard linking LICENSE -> oasis-server-2.0.0
-        hard linking README -> oasis-server-2.0.0
-        hard linking setup.cfg -> oasis-server-2.0.0
-        hard linking setup.py -> oasis-server-2.0.0
-        hard linking bin/add_osg_repository -> oasis-server-2.0.0/bin
-        hard linking bin/blank_osg_repository -> oasis-server-2.0.0/bin
-        hard linking bin/do_oasis_update -> oasis-server-2.0.0/bin
-        hard linking bin/expand_oasis_dirtab -> oasis-server-2.0.0/bin
-        hard linking bin/generate_adduser.py -> oasis-server-2.0.0/bin
-        hard linking bin/generate_condormap.py -> oasis-server-2.0.0/bin
-        hard linking bin/install.sh -> oasis-server-2.0.0/bin
-        hard linking bin/oasis -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-admin-projectadd -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-admin-projectdel -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-admin-list -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-admin-resignwhitelist -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-admin-rollback -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-filesize -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-forbiddenfiles -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-makecatalogdirtab -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-no -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-nodelete -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-nosvn -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-numberfiles -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-quota -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-readable -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-relocatable -> oasis-server-2.0.0/bin
-        hard linking bin/oasis-runprobe-yes -> oasis-server-2.0.0/bin
-        hard linking bin/oasis_new -> oasis-server-2.0.0/bin
-        hard linking bin/oasis_status.sh -> oasis-server-2.0.0/bin
-        hard linking bin/oasisd -> oasis-server-2.0.0/bin
-        hard linking bin/osg-oasis-update -> oasis-server-2.0.0/bin
-        hard linking bin/publish -> oasis-server-2.0.0/bin
-        hard linking bin/request_oasis_update -> oasis-server-2.0.0/bin
-        hard linking bin/resign_osg_whitelist -> oasis-server-2.0.0/bin
-        hard linking bin/runprobes -> oasis-server-2.0.0/bin
-        hard linking bin/set_repository_property -> oasis-server-2.0.0/bin
-        hard linking bin/unblank_osg_repository -> oasis-server-2.0.0/bin
-        hard linking etc/condor_oasis.conf-example -> oasis-server-2.0.0/etc
-        hard linking etc/oasis.conf-example -> oasis-server-2.0.0/etc
-        hard linking etc/oasisd -> oasis-server-2.0.0/etc
-        hard linking etc/oasisd.sysconfig-example -> oasis-server-2.0.0/etc
-        hard linking etc/oasisprobes.conf-example -> oasis-server-2.0.0/etc
-        hard linking etc/oasisprojects.conf-example -> oasis-server-2.0.0/etc
-        hard linking libexec/oasis_job_wrapper.sh -> oasis-server-2.0.0/libexec
-        hard linking misc/cron_oasis -> oasis-server-2.0.0/misc
-        hard linking misc/cron_oasis-login -> oasis-server-2.0.0/misc
-        hard linking misc/generate_adduser -> oasis-server-2.0.0/misc
-        hard linking misc/generate_condormap -> oasis-server-2.0.0/misc
-        hard linking misc/generate_gridmap -> oasis-server-2.0.0/misc
-        hard linking misc/rpm-post.sh -> oasis-server-2.0.0/misc
-        hard linking misc/rpm-pre.sh -> oasis-server-2.0.0/misc
-        hard linking misc/rpm-preun.sh -> oasis-server-2.0.0/misc
-        hard linking oasispackage/__init__.py -> oasis-server-2.0.0/oasispackage
-        hard linking oasispackage/flagfiles.py -> oasis-server-2.0.0/oasispackage
-        hard linking oasispackage/interfaces.py -> oasis-server-2.0.0/oasispackage
-        hard linking oasispackage/oasisAPI.py -> oasis-server-2.0.0/oasispackage
-        hard linking oasispackage/projects.py -> oasis-server-2.0.0/oasispackage
-        hard linking oasispackage/distributionplugins/__init__.py -> oasis-server-2.0.0/oasispackage/distributionplugins
-        hard linking oasispackage/distributionplugins/cvmfs20.py -> oasis-server-2.0.0/oasispackage/distributionplugins
-        hard linking oasispackage/distributionplugins/cvmfs21.py -> oasis-server-2.0.0/oasispackage/distributionplugins
-        hard linking oasispackage/probes/filesize.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/forbiddenfiles.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/makecatalogdirtab.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/no.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/nodelete.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/nosvn.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/notarball.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/numberfiles.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/quota.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/readable.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/relocatable.py -> oasis-server-2.0.0/oasispackage/probes
-        hard linking oasispackage/probes/yes.py -> oasis-server-2.0.0/oasispackage/probes
-        tar -cf dist/oasis-server-2.0.0.tar oasis-server-2.0.0
-        gzip -f9 dist/oasis-server-2.0.0.tar
-        removing 'oasis-server-2.0.0' (and everything under it)
-        copying dist/oasis-server-2.0.0.tar.gz -> build/bdist.linux-x86_64/rpm/SOURCES
+        creating oasis-2.0.0
+        creating oasis-2.0.0/bin
+        creating oasis-2.0.0/etc
+        creating oasis-2.0.0/libexec
+        creating oasis-2.0.0/misc
+        creating oasis-2.0.0/oasispackage
+        creating oasis-2.0.0/oasispackage/distributionplugins
+        creating oasis-2.0.0/oasispackage/probes
+        making hard links in oasis-2.0.0...
+        hard linking CHANGELOG -> oasis-2.0.0
+        hard linking LICENSE -> oasis-2.0.0
+        hard linking README -> oasis-2.0.0
+        hard linking setup.cfg -> oasis-2.0.0
+        hard linking setup.py -> oasis-2.0.0
+        hard linking bin/add_osg_repository -> oasis-2.0.0/bin
+        hard linking bin/blank_osg_repository -> oasis-2.0.0/bin
+        hard linking bin/do_oasis_update -> oasis-2.0.0/bin
+        hard linking bin/expand_oasis_dirtab -> oasis-2.0.0/bin
+        hard linking bin/generate_adduser.py -> oasis-2.0.0/bin
+        hard linking bin/generate_condormap.py -> oasis-2.0.0/bin
+        hard linking bin/install.sh -> oasis-2.0.0/bin
+        hard linking bin/oasis -> oasis-2.0.0/bin
+        hard linking bin/oasis-admin-projectadd -> oasis-2.0.0/bin
+        hard linking bin/oasis-admin-projectdel -> oasis-2.0.0/bin
+        hard linking bin/oasis-admin-list -> oasis-2.0.0/bin
+        hard linking bin/oasis-admin-resignwhitelist -> oasis-2.0.0/bin
+        hard linking bin/oasis-admin-rollback -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-filesize -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-forbiddenfiles -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-makecatalogdirtab -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-no -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-nodelete -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-nosvn -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-numberfiles -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-quota -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-readable -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-relocatable -> oasis-2.0.0/bin
+        hard linking bin/oasis-runprobe-yes -> oasis-2.0.0/bin
+        hard linking bin/oasis_new -> oasis-2.0.0/bin
+        hard linking bin/oasis_status.sh -> oasis-2.0.0/bin
+        hard linking bin/oasisd -> oasis-2.0.0/bin
+        hard linking bin/osg-oasis-update -> oasis-2.0.0/bin
+        hard linking bin/publish -> oasis-2.0.0/bin
+        hard linking bin/request_oasis_update -> oasis-2.0.0/bin
+        hard linking bin/resign_osg_whitelist -> oasis-2.0.0/bin
+        hard linking bin/runprobes -> oasis-2.0.0/bin
+        hard linking bin/set_repository_property -> oasis-2.0.0/bin
+        hard linking bin/unblank_osg_repository -> oasis-2.0.0/bin
+        hard linking etc/condor_oasis.conf-example -> oasis-2.0.0/etc
+        hard linking etc/oasis.conf-example -> oasis-2.0.0/etc
+        hard linking etc/oasisd -> oasis-2.0.0/etc
+        hard linking etc/oasisd.sysconfig-example -> oasis-2.0.0/etc
+        hard linking etc/oasisprobes.conf-example -> oasis-2.0.0/etc
+        hard linking etc/oasisprojects.conf-example -> oasis-2.0.0/etc
+        hard linking libexec/oasis_job_wrapper.sh -> oasis-2.0.0/libexec
+        hard linking misc/cron_oasis -> oasis-2.0.0/misc
+        hard linking misc/cron_oasis-login -> oasis-2.0.0/misc
+        hard linking misc/generate_adduser -> oasis-2.0.0/misc
+        hard linking misc/generate_condormap -> oasis-2.0.0/misc
+        hard linking misc/generate_gridmap -> oasis-2.0.0/misc
+        hard linking misc/rpm-post.sh -> oasis-2.0.0/misc
+        hard linking misc/rpm-pre.sh -> oasis-2.0.0/misc
+        hard linking misc/rpm-preun.sh -> oasis-2.0.0/misc
+        hard linking oasispackage/__init__.py -> oasis-2.0.0/oasispackage
+        hard linking oasispackage/flagfiles.py -> oasis-2.0.0/oasispackage
+        hard linking oasispackage/interfaces.py -> oasis-2.0.0/oasispackage
+        hard linking oasispackage/oasisAPI.py -> oasis-2.0.0/oasispackage
+        hard linking oasispackage/projects.py -> oasis-2.0.0/oasispackage
+        hard linking oasispackage/distributionplugins/__init__.py -> oasis-2.0.0/oasispackage/distributionplugins
+        hard linking oasispackage/distributionplugins/cvmfs20.py -> oasis-2.0.0/oasispackage/distributionplugins
+        hard linking oasispackage/distributionplugins/cvmfs21.py -> oasis-2.0.0/oasispackage/distributionplugins
+        hard linking oasispackage/probes/filesize.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/forbiddenfiles.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/makecatalogdirtab.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/no.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/nodelete.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/nosvn.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/notarball.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/numberfiles.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/quota.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/readable.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/relocatable.py -> oasis-2.0.0/oasispackage/probes
+        hard linking oasispackage/probes/yes.py -> oasis-2.0.0/oasispackage/probes
+        tar -cf dist/oasis-2.0.0.tar oasis-2.0.0
+        gzip -f9 dist/oasis-2.0.0.tar
+        removing 'oasis-2.0.0' (and everything under it)
+        copying dist/oasis-2.0.0.tar.gz -> build/bdist.linux-x86_64/rpm/SOURCES
         building RPMs
-        rpmbuild -ba --define _topdir /root/src/build/bdist.linux-x86_64/rpm --clean build/bdist.linux-x86_64/rpm/SPECS/oasis-server.spec
+        rpmbuild -ba --define _topdir /root/src/build/bdist.linux-x86_64/rpm --clean build/bdist.linux-x86_64/rpm/SPECS/oasis.spec
         Executing(%prep): /bin/sh -e /var/tmp/rpm-tmp.84934
         + umask 022
         + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
@@ -553,95 +553,95 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         + export LANG
         + unset DISPLAY
         + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
-        + rm -rf oasis-server-2.0.0
-        + /usr/bin/gzip -dc /root/src/build/bdist.linux-x86_64/rpm/SOURCES/oasis-server-2.0.0.tar.gz
+        + rm -rf oasis-2.0.0
+        + /usr/bin/gzip -dc /root/src/build/bdist.linux-x86_64/rpm/SOURCES/oasis-2.0.0.tar.gz
         + tar -xvvf -
-        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/
-        -rw-r--r-- root/root     35147 2014-05-12 12:07:29 oasis-server-2.0.0/LICENSE
-        -rw-r--r-- root/root      3432 2014-05-12 12:07:29 oasis-server-2.0.0/setup.py
-        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/etc/
-        -rw-r--r-- root/root       659 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasisd.sysconfig-example
-        -rw-r--r-- root/root      1558 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasis.conf-example
-        -rw-r--r-- root/root      3638 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasisprojects.conf-example
-        -rw-r--r-- root/root      1910 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasisprobes.conf-example
-        -rwxr-xr-x root/root      4363 2014-05-12 12:07:29 oasis-server-2.0.0/etc/oasisd
-        -rw-r--r-- root/root       833 2014-05-12 12:07:29 oasis-server-2.0.0/etc/condor_oasis.conf-example
-        -rw-r--r-- root/root      1892 2014-05-12 12:07:29 oasis-server-2.0.0/README
-        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/oasispackage/
-        -rw-r--r-- root/root      9447 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/flagfiles.py
-        -rw-r--r-- root/root     42227 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/projects.py
-        -rw-r--r-- root/root         0 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/__init__.py
-        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/oasispackage/probes/
-        -rw-r--r-- root/root       537 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/numberfiles.py
-        -rw-r--r-- root/root       531 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/relocatable.py
-        -rw-r--r-- root/root       468 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/no.py
-        -rw-r--r-- root/root       468 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/yes.py
-        -rwxr-xr-x root/root      8336 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/makecatalogdirtab.py
-        -rw-r--r-- root/root       463 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/readable.py
-        -rw-r--r-- root/root       410 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/nosvn.py
-        -rw-r--r-- root/root      2094 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/nodelete.py
-        -rw-r--r-- root/root       877 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/filesize.py
-        -rw-r--r-- root/root      1115 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/quota.py
-        -rw-r--r-- root/root       472 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/forbiddenfiles.py
-        -rw-r--r-- root/root       448 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/probes/notarball.py
-        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/oasispackage/distributionplugins/
-        -rw-r--r-- root/root      7809 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/distributionplugins/cvmfs21.py
-        -rw-r--r-- root/root      2299 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/distributionplugins/cvmfs20.py
-        -rw-r--r-- root/root         0 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/distributionplugins/__init__.py
-        -rw-r--r-- root/root      5186 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/interfaces.py
-        -rw-r--r-- root/root     21855 2014-05-12 12:07:29 oasis-server-2.0.0/oasispackage/oasisAPI.py
-        -rw-r--r-- root/root       390 2014-05-12 12:07:29 oasis-server-2.0.0/setup.cfg
-        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/misc/
-        -rwxr-xr-x root/root       796 2014-05-12 12:07:29 oasis-server-2.0.0/misc/generate_adduser
-        -rwxr-xr-x root/root        15 2014-05-12 12:07:29 oasis-server-2.0.0/misc/rpm-pre.sh
-        -rw-r--r-- root/root       328 2014-05-12 12:07:29 oasis-server-2.0.0/misc/cron_oasis-login
-        -rwxr-xr-x root/root       706 2014-05-12 12:07:29 oasis-server-2.0.0/misc/rpm-post.sh
-        -rw-r--r-- root/root        92 2014-05-12 12:07:29 oasis-server-2.0.0/misc/cron_oasis
-        -rwxr-xr-x root/root        15 2014-05-12 12:07:29 oasis-server-2.0.0/misc/rpm-preun.sh
-        -rwxr-xr-x root/root      1443 2014-05-12 12:07:29 oasis-server-2.0.0/misc/generate_gridmap
-        -rwxr-xr-x root/root      1177 2014-05-12 12:07:29 oasis-server-2.0.0/misc/generate_condormap
-        -rw-r--r-- root/root       743 2014-05-12 12:07:29 oasis-server-2.0.0/CHANGELOG
-        -rw-r--r-- root/root       249 2014-05-12 13:08:52 oasis-server-2.0.0/PKG-INFO
-        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/libexec/
-        -rwxr-xr-x root/root      6527 2014-05-12 12:07:29 oasis-server-2.0.0/libexec/oasis_job_wrapper.sh
-        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-server-2.0.0/bin/
-        -rw-r--r-- root/root       423 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-nosvn
-        -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-nodelete
-        -rwxr-xr-x root/root       281 2014-05-12 12:07:29 oasis-server-2.0.0/bin/request_oasis_update
-        -rw-r--r-- root/root       420 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-no
-        -rw-r--r-- root/root       429 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-numberfiles
-        -rw-r--r-- root/root      2706 2014-05-12 12:07:29 oasis-server-2.0.0/bin/runprobes
-        -rwxr-xr-x root/root      2371 2014-05-12 12:07:29 oasis-server-2.0.0/bin/do_oasis_update
-        -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-filesize
-        -rw-r--r-- root/root      5923 2014-05-12 12:07:29 oasis-server-2.0.0/bin/install.sh
-        -rwxr-xr-x root/root      1773 2014-05-12 12:07:29 oasis-server-2.0.0/bin/blank_osg_repository
-        -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-readable
-        -rwxr-xr-x root/root      1998 2014-05-12 12:07:29 oasis-server-2.0.0/bin/set_repository_property
-        -rw-r--r-- root/root      6230 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-projectadd
-        -rwxr-xr-x root/root      2704 2014-05-12 12:07:29 oasis-server-2.0.0/bin/unblank_osg_repository
-        -rw-r--r-- root/root      1208 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis
-        -rw-r--r-- root/root       118 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-list
-        -rw-r--r-- root/root       435 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-makecatalogdirtab
-        -rwxr-xr-x root/root      1424 2014-05-12 12:07:29 oasis-server-2.0.0/bin/expand_oasis_dirtab
-        -rwxr-xr-x root/root      1660 2014-05-12 12:07:29 oasis-server-2.0.0/bin/resign_osg_whitelist
-        -rwxr-xr-x root/root      1825 2014-05-12 12:07:29 oasis-server-2.0.0/bin/add_osg_repository
-        -rw-r--r-- root/root      1375 2014-05-12 12:07:29 oasis-server-2.0.0/bin/publish
-        -rwxr-xr-x root/root      3175 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis_status.sh
-        -rw-r--r-- root/root        18 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-projectdel
-        -rw-r--r-- root/root       423 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-quota
-        -rw-r--r-- root/root      5097 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis_new
-        -rw-r--r-- root/root       421 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-yes
-        -rwxr-xr-x root/root       796 2014-05-12 12:07:29 oasis-server-2.0.0/bin/generate_adduser.py
-        -rw-r--r-- root/root        49 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-rollback
-        -rwxr-xr-x root/root      1970 2014-05-12 12:07:29 oasis-server-2.0.0/bin/osg-oasis-update
-        -rw-r--r-- root/root       350 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasisd
-        -rw-r--r-- root/root       696 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-admin-resignwhitelist
-        -rw-r--r-- root/root       429 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-relocatable
-        -rw-r--r-- root/root       432 2014-05-12 12:07:29 oasis-server-2.0.0/bin/oasis-runprobe-forbiddenfiles
-        -rwxr-xr-x root/root      1177 2014-05-12 12:07:29 oasis-server-2.0.0/bin/generate_condormap.py
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-2.0.0/
+        -rw-r--r-- root/root     35147 2014-05-12 12:07:29 oasis-2.0.0/LICENSE
+        -rw-r--r-- root/root      3432 2014-05-12 12:07:29 oasis-2.0.0/setup.py
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-2.0.0/etc/
+        -rw-r--r-- root/root       659 2014-05-12 12:07:29 oasis-2.0.0/etc/oasisd.sysconfig-example
+        -rw-r--r-- root/root      1558 2014-05-12 12:07:29 oasis-2.0.0/etc/oasis.conf-example
+        -rw-r--r-- root/root      3638 2014-05-12 12:07:29 oasis-2.0.0/etc/oasisprojects.conf-example
+        -rw-r--r-- root/root      1910 2014-05-12 12:07:29 oasis-2.0.0/etc/oasisprobes.conf-example
+        -rwxr-xr-x root/root      4363 2014-05-12 12:07:29 oasis-2.0.0/etc/oasisd
+        -rw-r--r-- root/root       833 2014-05-12 12:07:29 oasis-2.0.0/etc/condor_oasis.conf-example
+        -rw-r--r-- root/root      1892 2014-05-12 12:07:29 oasis-2.0.0/README
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-2.0.0/oasispackage/
+        -rw-r--r-- root/root      9447 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/flagfiles.py
+        -rw-r--r-- root/root     42227 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/projects.py
+        -rw-r--r-- root/root         0 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/__init__.py
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-2.0.0/oasispackage/probes/
+        -rw-r--r-- root/root       537 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/numberfiles.py
+        -rw-r--r-- root/root       531 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/relocatable.py
+        -rw-r--r-- root/root       468 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/no.py
+        -rw-r--r-- root/root       468 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/yes.py
+        -rwxr-xr-x root/root      8336 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/makecatalogdirtab.py
+        -rw-r--r-- root/root       463 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/readable.py
+        -rw-r--r-- root/root       410 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/nosvn.py
+        -rw-r--r-- root/root      2094 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/nodelete.py
+        -rw-r--r-- root/root       877 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/filesize.py
+        -rw-r--r-- root/root      1115 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/quota.py
+        -rw-r--r-- root/root       472 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/forbiddenfiles.py
+        -rw-r--r-- root/root       448 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/probes/notarball.py
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-2.0.0/oasispackage/distributionplugins/
+        -rw-r--r-- root/root      7809 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/distributionplugins/cvmfs21.py
+        -rw-r--r-- root/root      2299 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/distributionplugins/cvmfs20.py
+        -rw-r--r-- root/root         0 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/distributionplugins/__init__.py
+        -rw-r--r-- root/root      5186 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/interfaces.py
+        -rw-r--r-- root/root     21855 2014-05-12 12:07:29 oasis-2.0.0/oasispackage/oasisAPI.py
+        -rw-r--r-- root/root       390 2014-05-12 12:07:29 oasis-2.0.0/setup.cfg
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-2.0.0/misc/
+        -rwxr-xr-x root/root       796 2014-05-12 12:07:29 oasis-2.0.0/misc/generate_adduser
+        -rwxr-xr-x root/root        15 2014-05-12 12:07:29 oasis-2.0.0/misc/rpm-pre.sh
+        -rw-r--r-- root/root       328 2014-05-12 12:07:29 oasis-2.0.0/misc/cron_oasis-login
+        -rwxr-xr-x root/root       706 2014-05-12 12:07:29 oasis-2.0.0/misc/rpm-post.sh
+        -rw-r--r-- root/root        92 2014-05-12 12:07:29 oasis-2.0.0/misc/cron_oasis
+        -rwxr-xr-x root/root        15 2014-05-12 12:07:29 oasis-2.0.0/misc/rpm-preun.sh
+        -rwxr-xr-x root/root      1443 2014-05-12 12:07:29 oasis-2.0.0/misc/generate_gridmap
+        -rwxr-xr-x root/root      1177 2014-05-12 12:07:29 oasis-2.0.0/misc/generate_condormap
+        -rw-r--r-- root/root       743 2014-05-12 12:07:29 oasis-2.0.0/CHANGELOG
+        -rw-r--r-- root/root       249 2014-05-12 13:08:52 oasis-2.0.0/PKG-INFO
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-2.0.0/libexec/
+        -rwxr-xr-x root/root      6527 2014-05-12 12:07:29 oasis-2.0.0/libexec/oasis_job_wrapper.sh
+        drwxr-xr-x root/root         0 2014-05-12 13:08:52 oasis-2.0.0/bin/
+        -rw-r--r-- root/root       423 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-nosvn
+        -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-nodelete
+        -rwxr-xr-x root/root       281 2014-05-12 12:07:29 oasis-2.0.0/bin/request_oasis_update
+        -rw-r--r-- root/root       420 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-no
+        -rw-r--r-- root/root       429 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-numberfiles
+        -rw-r--r-- root/root      2706 2014-05-12 12:07:29 oasis-2.0.0/bin/runprobes
+        -rwxr-xr-x root/root      2371 2014-05-12 12:07:29 oasis-2.0.0/bin/do_oasis_update
+        -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-filesize
+        -rw-r--r-- root/root      5923 2014-05-12 12:07:29 oasis-2.0.0/bin/install.sh
+        -rwxr-xr-x root/root      1773 2014-05-12 12:07:29 oasis-2.0.0/bin/blank_osg_repository
+        -rw-r--r-- root/root       426 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-readable
+        -rwxr-xr-x root/root      1998 2014-05-12 12:07:29 oasis-2.0.0/bin/set_repository_property
+        -rw-r--r-- root/root      6230 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-admin-projectadd
+        -rwxr-xr-x root/root      2704 2014-05-12 12:07:29 oasis-2.0.0/bin/unblank_osg_repository
+        -rw-r--r-- root/root      1208 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis
+        -rw-r--r-- root/root       118 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-admin-list
+        -rw-r--r-- root/root       435 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-makecatalogdirtab
+        -rwxr-xr-x root/root      1424 2014-05-12 12:07:29 oasis-2.0.0/bin/expand_oasis_dirtab
+        -rwxr-xr-x root/root      1660 2014-05-12 12:07:29 oasis-2.0.0/bin/resign_osg_whitelist
+        -rwxr-xr-x root/root      1825 2014-05-12 12:07:29 oasis-2.0.0/bin/add_osg_repository
+        -rw-r--r-- root/root      1375 2014-05-12 12:07:29 oasis-2.0.0/bin/publish
+        -rwxr-xr-x root/root      3175 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis_status.sh
+        -rw-r--r-- root/root        18 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-admin-projectdel
+        -rw-r--r-- root/root       423 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-quota
+        -rw-r--r-- root/root      5097 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis_new
+        -rw-r--r-- root/root       421 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-yes
+        -rwxr-xr-x root/root       796 2014-05-12 12:07:29 oasis-2.0.0/bin/generate_adduser.py
+        -rw-r--r-- root/root        49 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-admin-rollback
+        -rwxr-xr-x root/root      1970 2014-05-12 12:07:29 oasis-2.0.0/bin/osg-oasis-update
+        -rw-r--r-- root/root       350 2014-05-12 12:07:29 oasis-2.0.0/bin/oasisd
+        -rw-r--r-- root/root       696 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-admin-resignwhitelist
+        -rw-r--r-- root/root       429 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-relocatable
+        -rw-r--r-- root/root       432 2014-05-12 12:07:29 oasis-2.0.0/bin/oasis-runprobe-forbiddenfiles
+        -rwxr-xr-x root/root      1177 2014-05-12 12:07:29 oasis-2.0.0/bin/generate_condormap.py
         + STATUS=0
         + '[' 0 -ne 0 ']'
-        + cd oasis-server-2.0.0
+        + cd oasis-2.0.0
         ++ /usr/bin/id -u
         + '[' 0 = 0 ']'
         + /bin/chown -Rhf root .
@@ -653,7 +653,7 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         Executing(%build): /bin/sh -e /var/tmp/rpm-tmp.84934
         + umask 022
         + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
-        + cd oasis-server-2.0.0
+        + cd oasis-2.0.0
         + LANG=C
         + export LANG
         + unset DISPLAY
@@ -719,11 +719,11 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         Executing(%install): /bin/sh -e /var/tmp/rpm-tmp.84934
         + umask 022
         + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
-        + cd oasis-server-2.0.0
+        + cd oasis-2.0.0
         + LANG=C
         + export LANG
         + unset DISPLAY
-        + python setup.py install --root=/var/tmp/oasis-server-2.0.0-1-buildroot --record=INSTALLED_FILES
+        + python setup.py install --root=/var/tmp/oasis-2.0.0-1-buildroot --record=INSTALLED_FILES
         running install
         running build
         running build_py
@@ -731,121 +731,121 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         package init file 'oasispackage/probes/__init__.py' not found (or not a regular file)
         running build_scripts
         running install_lib
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
-        copying build/lib/oasispackage/flagfiles.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
-        copying build/lib/oasispackage/projects.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
-        copying build/lib/oasispackage/__init__.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/numberfiles.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/relocatable.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/no.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/yes.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/makecatalogdirtab.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/readable.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/nosvn.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/nodelete.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/filesize.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/quota.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/forbiddenfiles.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        copying build/lib/oasispackage/probes/notarball.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
-        copying build/lib/oasispackage/distributionplugins/cvmfs21.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
-        copying build/lib/oasispackage/distributionplugins/cvmfs20.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
-        copying build/lib/oasispackage/distributionplugins/__init__.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
-        copying build/lib/oasispackage/interfaces.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
-        copying build/lib/oasispackage/oasisAPI.py -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/flagfiles.py to flagfiles.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/projects.py to projects.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/__init__.py to __init__.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/numberfiles.py to numberfiles.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/relocatable.py to relocatable.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/no.py to no.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/yes.py to yes.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/makecatalogdirtab.py to makecatalogdirtab.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/readable.py to readable.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/nosvn.py to nosvn.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/nodelete.py to nodelete.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/filesize.py to filesize.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/quota.py to quota.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/forbiddenfiles.py to forbiddenfiles.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/notarball.py to notarball.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins/cvmfs21.py to cvmfs21.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins/cvmfs20.py to cvmfs20.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins/__init__.py to __init__.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/interfaces.py to interfaces.pyc
-        byte-compiling /var/tmp/oasis-server-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/oasisAPI.py to oasisAPI.pyc
+        creating /var/tmp/oasis-2.0.0-1-buildroot
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/lib
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        copying build/lib/oasispackage/flagfiles.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        copying build/lib/oasispackage/projects.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        copying build/lib/oasispackage/__init__.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/numberfiles.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/relocatable.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/no.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/yes.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/makecatalogdirtab.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/readable.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/nosvn.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/nodelete.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/filesize.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/quota.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/forbiddenfiles.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        copying build/lib/oasispackage/probes/notarball.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
+        copying build/lib/oasispackage/distributionplugins/cvmfs21.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
+        copying build/lib/oasispackage/distributionplugins/cvmfs20.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
+        copying build/lib/oasispackage/distributionplugins/__init__.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins
+        copying build/lib/oasispackage/interfaces.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        copying build/lib/oasispackage/oasisAPI.py -> /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/flagfiles.py to flagfiles.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/projects.py to projects.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/__init__.py to __init__.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/numberfiles.py to numberfiles.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/relocatable.py to relocatable.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/no.py to no.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/yes.py to yes.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/makecatalogdirtab.py to makecatalogdirtab.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/readable.py to readable.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/nosvn.py to nosvn.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/nodelete.py to nodelete.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/filesize.py to filesize.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/quota.py to quota.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/forbiddenfiles.py to forbiddenfiles.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/probes/notarball.py to notarball.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins/cvmfs21.py to cvmfs21.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins/cvmfs20.py to cvmfs20.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/distributionplugins/__init__.py to __init__.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/interfaces.py to interfaces.pyc
+        byte-compiling /var/tmp/oasis-2.0.0-1-buildroot/usr/lib/python2.4/site-packages/oasispackage/oasisAPI.py to oasisAPI.pyc
         writing byte-compilation script '/tmp/tmpYB7qKO.py'
         /usr/bin/python -O /tmp/tmpYB7qKO.py
         removing /tmp/tmpYB7qKO.py
         running install_scripts
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-runprobe-nodelete -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-runprobe-no -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-runprobe-numberfiles -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-runprobe-filesize -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-runprobe-readable -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-admin-projectadd -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-runprobe-quota -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis_new -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-runprobe-yes -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasisd -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-runprobe-relocatable -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        copying build/scripts-2.4/oasis-runprobe-forbiddenfiles -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-nodelete to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-no to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-numberfiles to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-filesize to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-readable to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-admin-projectadd to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-quota to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis_new to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-yes to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasisd to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-relocatable to 755
-        changing mode of /var/tmp/oasis-server-2.0.0-1-buildroot/usr/bin/oasis-runprobe-forbiddenfiles to 755
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-nodelete -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-no -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-numberfiles -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-filesize -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-readable -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-admin-projectadd -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-quota -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis_new -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-yes -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasisd -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-relocatable -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        copying build/scripts-2.4/oasis-runprobe-forbiddenfiles -> /var/tmp/oasis-2.0.0-1-buildroot/usr/bin
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-runprobe-nodelete to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-runprobe-no to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-runprobe-numberfiles to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-runprobe-filesize to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-runprobe-readable to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-admin-projectadd to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-runprobe-quota to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis_new to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-runprobe-yes to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasisd to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-runprobe-relocatable to 755
+        changing mode of /var/tmp/oasis-2.0.0-1-buildroot/usr/bin/oasis-runprobe-forbiddenfiles to 755
         running install_data
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/libexec
-        copying libexec/oasis_job_wrapper.sh -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/libexec
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/etc
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
-        copying etc/oasis.conf-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
-        copying etc/condor_oasis.conf-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
-        copying etc/oasisd.sysconfig-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/oasis
-        copying misc/generate_adduser -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/oasis
-        copying misc/generate_condormap -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/oasis
-        copying misc/generate_gridmap -> /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/oasis
-        copying etc/oasisprobes.conf-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
-        copying etc/oasisprojects.conf-example -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/oasis
-        creating /var/tmp/oasis-server-2.0.0-1-buildroot/etc/init.d
-        copying etc/oasisd -> /var/tmp/oasis-server-2.0.0-1-buildroot/etc/init.d
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/libexec
+        copying libexec/oasis_job_wrapper.sh -> /var/tmp/oasis-2.0.0-1-buildroot/usr/libexec
+        creating /var/tmp/oasis-2.0.0-1-buildroot/etc
+        creating /var/tmp/oasis-2.0.0-1-buildroot/etc/oasis
+        copying etc/oasis.conf-example -> /var/tmp/oasis-2.0.0-1-buildroot/etc/oasis
+        copying etc/condor_oasis.conf-example -> /var/tmp/oasis-2.0.0-1-buildroot/etc/oasis
+        copying etc/oasisd.sysconfig-example -> /var/tmp/oasis-2.0.0-1-buildroot/etc/oasis
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/share
+        creating /var/tmp/oasis-2.0.0-1-buildroot/usr/share/oasis
+        copying misc/generate_adduser -> /var/tmp/oasis-2.0.0-1-buildroot/usr/share/oasis
+        copying misc/generate_condormap -> /var/tmp/oasis-2.0.0-1-buildroot/usr/share/oasis
+        copying misc/generate_gridmap -> /var/tmp/oasis-2.0.0-1-buildroot/usr/share/oasis
+        copying etc/oasisprobes.conf-example -> /var/tmp/oasis-2.0.0-1-buildroot/etc/oasis
+        copying etc/oasisprojects.conf-example -> /var/tmp/oasis-2.0.0-1-buildroot/etc/oasis
+        creating /var/tmp/oasis-2.0.0-1-buildroot/etc/init.d
+        copying etc/oasisd -> /var/tmp/oasis-2.0.0-1-buildroot/etc/init.d
         package init file 'oasispackage/probes/__init__.py' not found (or not a regular file)
         writing list of installed files to 'INSTALLED_FILES'
-        + /usr/lib/rpm/find-debuginfo.sh /root/src/build/bdist.linux-x86_64/rpm/BUILD/oasis-server-2.0.0
+        + /usr/lib/rpm/find-debuginfo.sh /root/src/build/bdist.linux-x86_64/rpm/BUILD/oasis-2.0.0
         find: debug: No such file or directory
         + /usr/lib/rpm/redhat/brp-compress
         + /usr/lib/rpm/redhat/brp-strip-static-archive /usr/bin/strip
         + /usr/lib/rpm/redhat/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
         + /usr/lib/rpm/brp-python-bytecompile
         + /usr/lib/rpm/redhat/brp-java-repack-jars
-        Processing files: oasis-server-2.0.0-1
+        Processing files: oasis-2.0.0-1
         Executing(%doc): /bin/sh -e /var/tmp/rpm-tmp.47967
         + umask 022
         + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
-        + cd oasis-server-2.0.0
-        + DOCDIR=/var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/doc/oasis-server-2.0.0
+        + cd oasis-2.0.0
+        + DOCDIR=/var/tmp/oasis-2.0.0-1-buildroot/usr/share/doc/oasis-2.0.0
         + export DOCDIR
-        + rm -rf /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/doc/oasis-server-2.0.0
-        + /bin/mkdir -p /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/doc/oasis-server-2.0.0
-        + cp -pr CHANGELOG LICENSE README /var/tmp/oasis-server-2.0.0-1-buildroot/usr/share/doc/oasis-server-2.0.0
+        + rm -rf /var/tmp/oasis-2.0.0-1-buildroot/usr/share/doc/oasis-2.0.0
+        + /bin/mkdir -p /var/tmp/oasis-2.0.0-1-buildroot/usr/share/doc/oasis-2.0.0
+        + cp -pr CHANGELOG LICENSE README /var/tmp/oasis-2.0.0-1-buildroot/usr/share/doc/oasis-2.0.0
         + exit 0
         Provides: oasis
         Requires(interp): /bin/sh /bin/sh /bin/sh
@@ -854,28 +854,28 @@ For the time being, for this test, OASIS is deployed from source at SVN.
         Requires(post): /bin/sh
         Requires(preun): /bin/sh
         Requires: /bin/#!/bin/bash  /usr/bin/python cvmfs-server >= 2.1.13 python(abi) = 2.4
-        Checking for unpackaged file(s): /usr/lib/rpm/check-files /var/tmp/oasis-server-2.0.0-1-buildroot
-        Wrote: /root/src/build/bdist.linux-x86_64/rpm/SRPMS/oasis-server-2.0.0-1.src.rpm
-        Wrote: /root/src/build/bdist.linux-x86_64/rpm/RPMS/noarch/oasis-server-2.0.0-1.noarch.rpm
+        Checking for unpackaged file(s): /usr/lib/rpm/check-files /var/tmp/oasis-2.0.0-1-buildroot
+        Wrote: /root/src/build/bdist.linux-x86_64/rpm/SRPMS/oasis-2.0.0-1.src.rpm
+        Wrote: /root/src/build/bdist.linux-x86_64/rpm/RPMS/noarch/oasis-2.0.0-1.noarch.rpm
         Executing(%clean): /bin/sh -e /var/tmp/rpm-tmp.5221
         + umask 022
         + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
-        + cd oasis-server-2.0.0
-        + rm -rf /var/tmp/oasis-server-2.0.0-1-buildroot
+        + cd oasis-2.0.0
+        + rm -rf /var/tmp/oasis-2.0.0-1-buildroot
         + exit 0
         Executing(--clean): /bin/sh -e /var/tmp/rpm-tmp.5221
         + umask 022
         + cd /root/src/build/bdist.linux-x86_64/rpm/BUILD
-        + rm -rf oasis-server-2.0.0
+        + rm -rf oasis-2.0.0
         + exit 0
-        moving build/bdist.linux-x86_64/rpm/SRPMS/oasis-server-2.0.0-1.src.rpm -> dist
-        moving build/bdist.linux-x86_64/rpm/RPMS/noarch/oasis-server-2.0.0-1.noarch.rpm -> dist            
+        moving build/bdist.linux-x86_64/rpm/SRPMS/oasis-2.0.0-1.src.rpm -> dist
+        moving build/bdist.linux-x86_64/rpm/RPMS/noarch/oasis-2.0.0-1.noarch.rpm -> dist            
          
            
 If that failed with an error messages similar to this 
 
        building RPMs
-       rpm -ba --define _topdir /root/src/build/bdist.linux-x86_64/rpm --clean build/bdist.linux-x86_64/rpm/SPECS/oasis-server.spec
+       rpm -ba --define _topdir /root/src/build/bdist.linux-x86_64/rpm --clean build/bdist.linux-x86_64/rpm/SPECS/oasis.spec
        -ba: unknown option
        error: command 'rpm' failed with exit status 1
 
@@ -968,9 +968,9 @@ then install rpm-build  and try again
 
 -- deploy the created RPM:
 
-        [root@itb-oasis src]# rpm -Uhv dist/oasis-server-2.0.0-1.noarch.rpm 
+        [root@itb-oasis src]# rpm -Uhv dist/oasis-2.0.0-1.noarch.rpm 
         Preparing...                ########################################### [100%]
-           1:oasis-server           ########################################### [100%]
+           1:oasis                  ########################################### [100%]
 
 
 -- After deploying the RPM, the UNIX account "oasis" and some related directories should have been created:
