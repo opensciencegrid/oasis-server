@@ -107,6 +107,12 @@ class BaseDistribution(object):
         '''
         raise NotImplementedError
 
+    def createproject(self):
+        '''
+        when makes sense, creates a new project.
+        '''
+        raise NotImplementedError
+
     def shouldlock(self, listflagfiles):
         '''
         decides if the running process should lock and wait because
