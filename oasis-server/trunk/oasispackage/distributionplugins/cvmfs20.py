@@ -66,11 +66,21 @@ class cvmfs20(BaseDistribution):
         # FIXME !!!
         pass
         
-    def createrepository(self):
-       
 
-        #commands.getoutput('cvmfs_server mkfs -o cvmfs oasis.opensciencegrid.org')
-        rc, out = commands.getstatusoutput('sudo -u cvmfs mkdir /cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
+    def createrepository(self):
+        '''
+        create the project area in CVMFS
+        '''
+        pass
+        # TO BE IMPLEMENTED 
+
+
+    def createproject(self):
+        '''
+        create the project area in CVMFS
+        '''
+        #rc, out = commands.getstatusoutput('sudo -u cvmfs mkdir /cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
+        rc, out = commands.getstatusoutput('sudo -u %s mkdir /cvmfs/oasis.opensciencegrid.org/%s' %(self.project.username, self.project.projectname))
         return rc, out
 
 
