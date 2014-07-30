@@ -33,8 +33,11 @@
 #   OPTIONAL
 #
 # projectsconf = path to the oasisproject.conf configuration file
+#   MANDATORY
 #
 # probesconf = path to the configuration file with generic OASIS probes
+#   MANDATORY
+#   NOTE: the file can be left blank if no probes are needed
 #
 
 # =========================================================================== 
