@@ -56,7 +56,7 @@
 #       Typically, the owner of the CVMFS repository.
 #        MANDATORY only when distribution tool is cvmfs21
 #
-# projectprobes = name of the configuration files for probes 
+# projectprobes = path to the configuration files for probes 
 #        underneath the directory pointed by varible 'directoryconf'
 #        in oasis.conf
 #        MANDATORY
@@ -113,7 +113,7 @@ enabled = True
 [ATLAS]
 VO = atlas
 user = usatlas1
-projectprobes = atlas.conf
+projectprobes = /etc/oasis/atlas.conf
 
 [MIS]
 
@@ -121,7 +121,7 @@ VO = mis
 user = ouser.mis
 srcdir = %(OSG_APP)s/%(project)s
 destdir = /cvmfs/%(project)s.opensciencegrid.org 
-projectprobes = mis.conf
+projectprobes = /etc/oasis/mis.conf
 
 
 
