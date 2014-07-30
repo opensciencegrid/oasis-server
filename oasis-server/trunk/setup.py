@@ -86,13 +86,13 @@ setup(
                'bin/osg-oasis-update',
                'bin/resign_osg_whitelist',
                'bin/set_repository_property',
-               'bin/stratumones.pl',
                'bin/unblank_osg_repository',
                #'bin/do_oasis_update',
                #'bin/expand_oasis_dirtab',
                #'bin/generate_adduser',
                #'bin/generate_gridmap',
                #'bin/request_oasis_update',
+               #'bin/stratumones.pl',
 
                # =============================
                #    admin tools 
