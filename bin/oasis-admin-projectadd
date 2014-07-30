@@ -154,7 +154,7 @@ class ProjectHandler(object):
         rc = self.createsrcdir()
         if rc:
             return rc 
-        rc = self.createrepository()
+        rc = self.createproject()
         return rc
 
 
@@ -242,17 +242,17 @@ class ProjectHandler(object):
         return 0
 
 
-    def createrepository(self):
+    def createproject(self):
         '''
         uses the distribution plugin included in the Project() object,
-        and calls the method createrepository() 
+        and calls the method createproject() 
         '''
 
         # FIXME
         # at this step, if it is the first repo being created, 
         # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
     
-        rc,out = self.project.distributionplugin.createrepository()
+        rc,out = self.project.distributionplugin.createproject()
 
         if rc:
             self.log.critical('destination repository could not be created.')
