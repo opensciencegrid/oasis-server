@@ -737,6 +737,11 @@ class Project(ProjectBasicConfig):
         # maybe it should return a python object with all info
         # at let the ProjectThread::run method to fill the flagfile
         #
+        # FIXME
+        # do not write the XML like that.
+        # we should use a python library to handle XML.
+        #
+
         self.flagfile.write('<data>')
         self.flagfile.write('<probes>')
        
@@ -754,6 +759,10 @@ class Project(ProjectBasicConfig):
             # maybe this method should not add content to XML flagfile
             # maybe it should return a python object with all info
             # at let the ProjectThread::run method to fill the flagfile
+            #
+            # FIXME
+            # do not write the XML like that.
+            # we should use a python library to handle XML.
             #
 
             self.flagfile.write('</probes>')
@@ -777,6 +786,10 @@ class Project(ProjectBasicConfig):
             # maybe it should return a python object with all info
             # at let the ProjectThread::run method to fill the flagfile
             #
+            # FIXME
+            # do not write the XML like that.
+            # we should use a python library to handle XML.
+            #
             self.flagfile.write('</probes>')
 
             return rc
@@ -793,6 +806,10 @@ class Project(ProjectBasicConfig):
         # maybe this method should not add content to XML flagfile
         # maybe it should return a python object with all info
         # at let the ProjectThread::run method to fill the flagfile
+        #
+        # FIXME
+        # do not write the XML like that.
+        # we should use a python library to handle XML.
         #
         self.flagfile.write('</probes>')
         return 0
@@ -882,6 +899,10 @@ class Project(ProjectBasicConfig):
 
         self.log.info('output of probe %s: %s' %(probe, out))
 
+        # FIXME
+        # do not write the XML like that.
+        # we should use a python library to handle XML.
+        #
         #self.flagfile.write('output of probe %s: %s\n' %(probe, out))
         self.flagfile.write('   <probe>')
         self.flagfile.write('       <a n="probe"><s>%s</s></a>' %probe)
@@ -932,6 +953,10 @@ class Project(ProjectBasicConfig):
         # maybe it should return a python object with all info
         # at let the ProjectThread::run method to fill the flagfile
         #
+        # FIXME
+        # do not write the XML like that.
+        # we should use a python library to handle XML.
+        #
         self.flagfile.write('<transfer>')
         self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
         self.flagfile.write('   <a n="out"><s>%s</s></a>' %out)
@@ -977,6 +1002,10 @@ class Project(ProjectBasicConfig):
         # maybe this method should not add content to XML flagfile
         # maybe it should return a python object with all info
         # at let the ProjectThread::run method to fill the flagfile
+        #
+        # FIXME
+        # do not write the XML like that.
+        # we should use a python library to handle XML.
         #
         self.flagfile.write('<publish>')
         self.flagfile.write('   <a n="rc"><i>%d</i></a>' %rc)
@@ -1263,6 +1292,10 @@ class ProjectThread(threading.Thread):
                         # maybe this method should not add content to XML flagfile
                         # maybe it should return a python object with all info
                         # at let the ProjectThread::run method to fill the flagfile
+                        # FIXME
+                        # do not write the XML like that.
+                        # we should use a python library to handle XML.
+                        #
                         #
                         self.project.flagfile.write('</data>')
                         self.project.flagfile.setfailed()
@@ -1286,6 +1319,10 @@ class ProjectThread(threading.Thread):
                             # maybe it should return a python object with all info
                             # at let the ProjectThread::run method to fill the flagfile
                             #
+                            # FIXME
+                            # do not write the XML like that.
+                            # we should use a python library to handle XML.
+                            #
                             self.project.flagfile.write('</data>')
                             self.project.flagfile.setfailed()
                         else:
@@ -1308,6 +1345,10 @@ class ProjectThread(threading.Thread):
                                 # maybe it should return a python object with all info
                                 # at let the ProjectThread::run method to fill the flagfile
                                 #
+                                # FIXME
+                                # do not write the XML like that.
+                                # we should use a python library to handle XML.
+                                #
                                 self.project.flagfile.write('</data>')
                                 self.project.flagfile.setdone()
                             else:
@@ -1319,6 +1360,10 @@ class ProjectThread(threading.Thread):
                                 # maybe this method should not add content to XML flagfile
                                 # maybe it should return a python object with all info
                                 # at let the ProjectThread::run method to fill the flagfile
+                                #
+                                # FIXME
+                                # do not write the XML like that.
+                                # we should use a python library to handle XML.
                                 #
                                 self.project.flagfile.write('</data>')
                                 self.project.flagfile.setfailed()
