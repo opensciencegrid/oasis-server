@@ -36,9 +36,6 @@
 #
 # probesconf = path to the configuration file with generic OASIS probes
 #
-# directoryconf = path to the directory with all probes configuration
-#                 files for Projects 
-#
 
 # =========================================================================== 
 
@@ -51,4 +48,3 @@ SMTPServer = server
 projectsconf = /etc/oasis/oasisprojects.conf
 
 probesconf = /etc/oasis/oasisprobes.conf
-directoryconf = /etc/oasis/
