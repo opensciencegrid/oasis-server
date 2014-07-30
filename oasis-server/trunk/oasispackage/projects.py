@@ -454,7 +454,6 @@ class Project(ProjectBasicConfig):
         '''
 
         self.log.debug('Starting.')
-        oasisconfigdir = self.oasisconf.get('OASIS', 'directoryconf')
         oasisprojectprobesconffilename = self.projectsconf.get(self.projectsection, 'projectprobes')
         oasisprojectprobesconf = SafeConfigParser()
         oasisprojectprobesconf.readfp(open('%s/%s' %(oasisconfigdir, oasisprojectprobesconffilename)))
