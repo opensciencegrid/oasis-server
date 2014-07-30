@@ -81,7 +81,7 @@ setup(
                # =============================
                'bin/add_osg_repository',
                'bin/blank_osg_repository',
-               'bin/oasis_replica_status.sh',
+               #'bin/oasis_replica_status.sh',
                'bin/oasis_status.sh',
                'bin/osg-oasis-update',
                'bin/resign_osg_whitelist',
