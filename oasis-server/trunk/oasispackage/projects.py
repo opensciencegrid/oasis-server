@@ -80,6 +80,8 @@ class ProjectBasicConfig(object):
 
             self.username = self.projectsconf.get(self.projectsection, 'user')
             self.log.debug('variable username has value %s', self.username)
+            if self.usename == 'root':
+                raise Exception('user cannot be root')
 
             self.projectname = self.projectsconf.get(self.projectsection, 'project')
             self.log.debug('variable projectname has value %s', self.projectname)
@@ -102,6 +104,8 @@ class ProjectBasicConfig(object):
 
             self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
             self.log.debug('variable destdiruser has value %s', self.destdiruser)
+            if self.destdiruser == 'root':
+                raise Exception('destdiruser cannot be root')
 
             self.distributionplugin = self._getdistributionplugin()
             self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
