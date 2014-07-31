@@ -80,13 +80,13 @@ setup(
                # OASIS 1 tools
                # =============================
                'bin/add_osg_repository',
-               #'bin/blank_osg_repository',
-               #'bin/oasis_replica_status.sh',
+               'bin/blank_osg_repository',
+               'bin/oasis_replica_status.sh',
                'bin/oasis_status.sh',
                'bin/osg-oasis-update',
                'bin/resign_osg_whitelist',
                'bin/set_repository_property',
-               #'bin/unblank_osg_repository',
+               'bin/unblank_osg_repository',
 
                #'bin/do_oasis_update',
                #'bin/expand_oasis_dirtab',
