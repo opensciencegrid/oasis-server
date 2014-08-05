@@ -1,0 +1,15 @@
+
+-- only accept content audited at the Stratum-0 
+   What to do then with External repos? 
+
+-- mirroring
+
+-- audit [also] at the Stratum-1, and notify in case of bad content, but let it to go all the way down to the clients.
+
+-- audit [also] at the Stratum-1, and ban the entire repo in case of bad content is detected.
+
+-- run a client at the Stratum-1 with direct download from Stratum-0, audit the content, and if OK then run the real snapshot at the Stratum-1
+
+-- if only checks we are interested are in the catalog, run a remote query using the new python API, and if OK then run the snapshot.
+
+-- read all the files into one directory with the cvmfs snapshot command, but configure apache to read from another which includes a symlink to the data directory.
