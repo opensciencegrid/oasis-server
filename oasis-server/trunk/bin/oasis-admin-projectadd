@@ -11,6 +11,7 @@ import pwd
 from ConfigParser import SafeConfigParser
 
 from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory
+from oasispackage.oasisAPI import oasisCLI
 
 major, minor, release, st, num = sys.version_info
 
