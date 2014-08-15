@@ -80,7 +80,7 @@ class ProjectBasicConfig(object):
 
             self.username = self.projectsconf.get(self.projectsection, 'user')
             self.log.debug('variable username has value %s', self.username)
-            if self.usename == 'root':
+            if self.username == 'root':
                 raise Exception('user cannot be root')
 
             self.projectname = self.projectsconf.get(self.projectsection, 'project')
