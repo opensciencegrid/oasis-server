@@ -1,25 +1,31 @@
-%define name oasis
-%define version 2.0.0
-%define release 1
+Name:       oasis
+Version:    2.0.0
+Release:    1
+Prefix:     %{_prefix}
+Summary:    OASIS package
 
-Summary: OASIS package
-Name: %{name}
-Version: %{version}
-Release: %{release}
-Source0: %{name}-%{version}.tar.gz
-License: GPL
-Group: Development/Libraries
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Prefix: %{_prefix}
-BuildArch: noarch
-Vendor: Jose Caballero <jcaballero@bnl.gov>
-Packager: RACF <grid@rcf.rhic.bnl.gov>
-Provides: oasis
-Obsoletes: oasis-server
-Url: http://www.opensciencegrid.org
+Group:      Development/Libraries
+License:    Apache 2.0
+URL:        http://www.opensciencegrid.org
+
+Source0:    %{name}-%{version}.tar.gz
+
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+BuildArch:  noarch
+
+Vendor:     Jose Caballero <jcaballero@bnl.gov>
+Packager:   RACF <grid@rcf.rhic.bnl.gov>
+Provides:   oasis
+Obsoletes:  oasis-server
 
 %description
-This package contains OASIS
+%{summary}
+
+
+#         19 Requires(post): chkconfig
+#         20 Requires(preun): chkconfig
+#         21 # This is for /sbin/service
+#         22 Requires(preun): initscripts
 
 %prep
 %setup
