@@ -22,7 +22,7 @@
 # Description: run probes and publishing files for OASIS
 ### END INIT INFO
 
-f_factdir(){
+f_dir(){
     # little function to find out where actually
     # this script is located.
     # In case of an user custom installation it could
@@ -61,7 +61,7 @@ done
 #      In case of non-root, it cannot be a regular user. 
 #      It should be a special dedicated user, i.e. 'oasis'
 
-f_factdir
+f_dir
 
 if [ `id -u` = 0 ]; then
     OASISHEAD=/
