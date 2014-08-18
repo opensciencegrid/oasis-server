@@ -57,7 +57,7 @@ setup(
     version=release_version,
     description='OASIS package',
     long_description='''This package contains OASIS''',
-    license='GPL',
+    license='Apache 2.0',
     author='OSG Technology Investigation Group',
     author_email='jcaballero@bnl.gov',
     maintainer='Jose Caballero',
