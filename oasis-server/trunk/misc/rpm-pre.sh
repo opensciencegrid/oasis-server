@@ -1,6 +1,24 @@
 #!/bin/bash 
 #
 
+f_create_oasis_account(){
+    #
+    # creates, if does not exist already, system account "oasis"
+    # adding the sticky bit 
+    # so everyone can write, but only each user
+    # can delete her own content
+    #
+
+    id oasis &> /dev/null
+    rc=$?
+    if [ $rc -ne 0 ]; then
+        useradd -r -m oasis
+        chmod 1777 /home/oasis
+    fi
+}
+
+
+
 f_stop_daemon(){
     #
     # checks if the daemon is running,
@@ -26,4 +44,5 @@ f_stop_daemon(){
 #                           M A I N                                         # 
 # ------------------------------------------------------------------------- #  
 
+f_create_oasis_account 
 f_stop_daemon $1
