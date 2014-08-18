@@ -45,4 +45,4 @@ f_stop_daemon(){
 # ------------------------------------------------------------------------- #  
 
 f_create_oasis_account 
-f_stop_daemon $1
+##f_stop_daemon $1
