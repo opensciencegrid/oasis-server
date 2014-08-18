@@ -22,8 +22,9 @@ Obsoletes:  oasis-server
 %{summary}
 
 
-#         19 Requires(post): chkconfig
-#         20 Requires(preun): chkconfig
+Requires(post): chkconfig
+Requires(preun): chkconfig
+
 #         21 # This is for /sbin/service
 #         22 Requires(preun): initscripts
 
