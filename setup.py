@@ -40,9 +40,10 @@ initd_files = ['etc/oasisd']
 
 rpm_data_files=[('/usr/libexec', libexec_files),
                 ('/etc/oasis', oasis_etc_files),
-                ('/etc/oasis', condor_etc_files),
-                #('/etc/sysconfig', oasis_sysconfig),
-                ('/etc/oasis', oasis_sysconfig),
+                #('/etc/oasis', condor_etc_files),
+                ('/usr/share/doc/oasis', condor_etc_files),
+                ('/etc/sysconfig', oasis_sysconfig),
+                #('/etc/oasis', oasis_sysconfig),
                 ('/usr/share/oasis', utils_files),
                 #('/usr/share/doc/oasis-server-%s' %release_version, oasis_etc_docs),
                 ('/etc/oasis' , oasis_etc_docs),
