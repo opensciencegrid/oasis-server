@@ -1,5 +1,6 @@
 %define name oasis
 %define version 2.0.0
+%define unmangled_version 2.0.0
 %define release 1
 
 Summary: OASIS package
@@ -15,7 +16,6 @@ BuildArch: noarch
 Vendor: Jose Caballero <jcaballero@bnl.gov>
 Packager: RACF <grid@rcf.rhic.bnl.gov>
 Provides: oasis
-Obsoletes: oasis-server
 Url: http://www.opensciencegrid.org
 
 %description
