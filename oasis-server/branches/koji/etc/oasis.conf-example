@@ -1,0 +1,53 @@
+#
+#   oasis.conf 
+#
+# Initial configuration file for OASIS
+# Includes some basic variables -in section [OASIS]-
+# and the path to the rest of configuration files
+# in the other sections
+#
+# The path to this config file is setup in two different places:
+#       -- within /usr/bin/oasis for the user
+#       -- /etc/sysconfig/oasis.sysconfig  for the daemon
+# This config file may be split in the future into two different files,
+# so it is a good thing to have it setup separately by these two clients.
+
+# Examples for the other configuration files, pointed by the variables in here,
+# can be found in /usr/share/doc/oasis-server-X.Y.Z
+
+# =========================================================================== 
+#               VARIABLES
+# =========================================================================== 
+
+# [OASIS]
+#
+# sleep = it is the time between cycles for the daemon,
+#         waiting to see if all threads, one per Project, 
+#         need to be shutdown
+#         Time is expressed in seconds.
+#
+# email = email address to notify CRITICAL events
+#   OPTIONAL
+#
+# SMTPServer = SMTP server to be used to send email notifications
+#   OPTIONAL
+#
+# projectsconf = path to the oasisproject.conf configuration file
+#   MANDATORY
+#
+# probesconf = path to the configuration file with generic OASIS probes
+#   MANDATORY
+#   NOTE: the file can be left blank if no probes are needed
+#
+
+# =========================================================================== 
+
+[OASIS]
+
+sleep = 100
+email = neo@matrix.net
+SMTPServer = server
+
+projectsconf = /etc/oasis/oasisprojects.conf
+
+probesconf = /etc/oasis/oasisprobes.conf
