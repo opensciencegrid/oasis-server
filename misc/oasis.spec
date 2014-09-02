@@ -1,5 +1,6 @@
 %define name oasis
 %define version 2.0.0
+%define unmangled version 2.0.0
 %define release 1
 
 Summary: OASIS package
@@ -15,7 +16,6 @@ BuildArch: noarch
 Vendor: Jose Caballero <jcaballero@bnl.gov>
 Packager: RACF <grid@rcf.rhic.bnl.gov>
 Provides: oasis
-Obsoletes: oasis-server
 Url: http://www.opensciencegrid.org
 
 %description
@@ -30,8 +30,11 @@ python setup.py build
 %install
 python setup.py install --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
 
+mkdir -pm0755 $RPM_BUILD_ROOT%{_var}/log/oasis
+
 %clean
 rm -rf $RPM_BUILD_ROOT
+
 
 %pre
 #!/bin/bash  
@@ -48,7 +51,7 @@ f_create_oasis_account(){
     id oasis &> /dev/null
     rc=$?
     if [ $rc -ne 0 ]; then
-        useradd -r -m oasis
+        /usr/sbin/useradd -r -m oasis --comment "OASIS account" --shell /bin/bash oasis
         chmod 1777 /home/oasis
     fi
 }
