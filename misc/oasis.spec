@@ -14,7 +14,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Prefix: %{_prefix}
 BuildArch: noarch
 Vendor: Jose Caballero <jcaballero@bnl.gov>
-Packager: RACF <grid@rcf.rhic.bnl.gov>
+###Packager: RACF <grid@rcf.rhic.bnl.gov>
 Provides: oasis
 Url: http://www.opensciencegrid.org
 
