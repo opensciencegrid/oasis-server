@@ -53,112 +53,11 @@ f_create_oasis_account(){
     fi
 }
 
-
-
-f_stop_daemon(){
-    #
-    # checks if the daemon is running,
-    # if so, stops it
-    #
-
-    if [ $1 -eq 2 ]; then 
-        #$1 == 2 => upgrade
-        #$1 == 1 => install 
-        # FIXME: should we check if RC == 1 (dead but PID file exists) or RC == 2 (dead but subsys locked)?
-        # FIXME: how does this translate to the final spec file?
-
-        service oasisd status 1>/dev/null
-        rc=$?
-        if [ $rc -eq 0 ]; then
-            # daemon is running...
-            service oasisd stop 1>/dev/null
-        fi
-    fi
-}
-
-# ------------------------------------------------------------------------- #  
-#                           M A I N                                         # 
-# ------------------------------------------------------------------------- #  
-
 f_create_oasis_account 
-##f_stop_daemon $1
-
 
 %post
 #!/bin/bash  
 
-f_wrapper_permissions(){
-    #
-    # ensures the condor_oasis_wrapper has execution permissions
-    # NOTE: this actually maybe should be done separately, 
-    #       since it is a pure CE task, more than OASIS
-    #
-
-    chmod +x /usr/libexec/condor_oasis_wrapper.sh 
-}
-
-f_user_client_permissions(){
-    #
-    # ensures the osg-oasis-update script has execution permissions
-    #
-
-    chmod +x /usr/bin/osg-oasis-update 
-}
-
-f_permissions(){
-    #  
-    # enforces certain permissions set for some CLI programs
-    #
-
-    # oasis-admin-* executable only by root
-    chmod 744 /usr/bin/oasis-admin-*
-
-}
-   
-f_create_log_directory(){
-    #
-    # creates directory /var/log/oasis/
-    # adding the sticky bit 
-    # so everyone can write, but only each user
-    # can delete her own content
-    #
-
-    if [ ! -d /var/log/oasis ]; then
-        mkdir /var/log/oasis
-        chmod 1777 /var/log/oasis
-    fi
-}
-
-f_create_oasis_account(){
-    #
-    # creates, if does not exist already, system account "oasis"
-    # adding the sticky bit 
-    # so everyone can write, but only each user
-    # can delete her own content
-    #
-
-    id oasis &> /dev/null
-    rc=$?
-    if [ $rc -ne 0 ]; then
-        useradd -r -m oasis
-        chmod 1777 /home/oasis
-    fi
-}
-
-f_create_run_directory(){
-    #
-    # creates directory /var/run/oasis/
-    # adding the sticky bit 
-    # so everyone can write, but only each user
-    # can delete her own content
-    #
-
-    if [ ! -d /var/run/oasis ]; then
-        mkdir /var/run/oasis
-        chmod 1777 /var/run/oasis
-    fi
-}
-    
 f_chkconfig(){
     #
     # add oasis daemon to checkconfig
@@ -172,28 +71,7 @@ f_chkconfig(){
     fi
 }
 
-f_start_daemon(){
-    #
-    # starts the daemon
-    #
-    
-    # FIXME
-    # what about when the RPM is installed on the login host, which does not need daemon?
-    
-    service oasisd start 1>/dev/null
-}
-
-# ------------------------------------------------------------------------- #  
-#                           M A I N                                         # 
-# ------------------------------------------------------------------------- #  
-# #f_wrapper_permissions
-# #f_user_client_permissions
-# f_permissions
-# f_create_log_directory
-# f_create_oasis_account
-# f_create_run_directory
 f_chkconfig $1
-#f_start_daemon
 
 
 %preun
