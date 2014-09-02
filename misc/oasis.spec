@@ -34,7 +34,7 @@ python setup.py install --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-#!/bin/#!/bin/bash  
+#!/bin/bash  
 #
 
 f_create_oasis_account(){
@@ -85,7 +85,7 @@ f_create_oasis_account
 
 
 %post
-#!/bin/#!/bin/bash  
+#!/bin/bash  
 
 f_wrapper_permissions(){
     #
@@ -197,7 +197,7 @@ f_chkconfig $1
 
 
 %preun
-#!/bin/#!/bin/bash  
+#!/bin/bash  
 #
 
 
@@ -242,7 +242,7 @@ f_clean_chkconfig $1
 
 
 %postun
-#!/bin/#!/bin/bash  
+#!/bin/bash  
 #
 
 f_restart_daemon(){
