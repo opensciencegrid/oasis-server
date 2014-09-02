@@ -145,4 +145,4 @@ f_restart_daemon $1
 %config(noreplace) %{_sysconfdir}/oasis/oasis.conf
 %config(noreplace) %{_sysconfdir}/oasis/oasisprojects.conf
 %config(noreplace) %{_sysconfdir}/oasis/oasisprobes.conf
-%config(noreplace) %{_sysconfdir}/sysconfig/oasis
+%config(noreplace) %{_sysconfdir}/sysconfig/oasisd
