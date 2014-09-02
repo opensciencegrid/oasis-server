@@ -141,4 +141,8 @@ f_restart_daemon $1
 %files -f INSTALLED_FILES
 %defattr(-,root,root)
 %doc CHANGELOG LICENSE README
-
+%dir %{_var}/log/oasis
+%config(noreplace) %{_sysconfdir}/oasis/oasis.conf
+%config(noreplace) %{_sysconfdir}/oasis/oasisprojects.conf
+%config(noreplace) %{_sysconfdir}/oasis/oasisprobes.conf
+%config(noreplace) %{_sysconfdir}/sysconfig/oasis
