@@ -1,6 +1,6 @@
 %define name oasis
 %define version 2.0.0
-%define unmangled_version 2.0.0
+%define unmangled version 2.0.0
 %define release 1
 
 Summary: OASIS package
@@ -14,7 +14,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Prefix: %{_prefix}
 BuildArch: noarch
 Vendor: Jose Caballero <jcaballero@bnl.gov>
-Packager: RACF <grid@rcf.rhic.bnl.gov>
+###Packager: RACF <grid@rcf.rhic.bnl.gov>
 Provides: oasis
 Url: http://www.opensciencegrid.org
 
@@ -30,11 +30,14 @@ python setup.py build
 %install
 python setup.py install --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
 
+mkdir -pm0755 $RPM_BUILD_ROOT%{_var}/log/oasis
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+
 %pre
-#!/bin/bash 
+#!/bin/bash  
 #
 
 f_create_oasis_account(){
@@ -48,16 +51,15 @@ f_create_oasis_account(){
     id oasis &> /dev/null
     rc=$?
     if [ $rc -ne 0 ]; then
-        useradd -r -m oasis
+        /usr/sbin/useradd -r -m oasis --comment "OASIS account" --shell /bin/bash oasis
         chmod 1777 /home/oasis
     fi
 }
 
 f_create_oasis_account 
 
-
 %post
-#!/bin/bash 
+#!/bin/bash  
 
 f_chkconfig(){
     #
@@ -76,7 +78,7 @@ f_chkconfig $1
 
 
 %preun
-#!/bin/bash 
+#!/bin/bash  
 #
 
 
@@ -117,7 +119,7 @@ f_clean_chkconfig $1
 
 
 %postun
-#!/bin/bash 
+#!/bin/bash  
 #
 
 f_restart_daemon(){
@@ -140,7 +142,7 @@ f_restart_daemon $1
 %defattr(-,root,root)
 %doc CHANGELOG LICENSE README
 %dir %{_var}/log/oasis
-$config(noreplace) %{_sysconfdir}/oasis/oasis.conf
-$config(noreplace) %{_sysconfdir}/oasis/oasisprobes.conf
-$config(noreplace) %{_sysconfdir}/oasis/oasisprojects.conf
-$config(noreplace) %{_sysconfdir}/sysconfig/oasisd
+%config(noreplace) %{_sysconfdir}/oasis/oasis.conf
+%config(noreplace) %{_sysconfdir}/oasis/oasisprojects.conf
+%config(noreplace) %{_sysconfdir}/oasis/oasisprobes.conf
+%config(noreplace) %{_sysconfdir}/sysconfig/oasisd
