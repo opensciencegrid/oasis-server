@@ -140,10 +140,22 @@ f_restart_daemon $1
 %files -f INSTALLED_FILES
 %defattr(-,root,root)
 %doc CHANGELOG LICENSE README
-%dir %{_var}/log/oasis
+
+# ensure the /var/log/oasis directory has the sticky bit
+# so everyone can write but each user can only delete her own content
+%dir %attr(1777, root, root)  %{_var}/log/oasis
+
+# ensure the /var/run/oasis directory has the sticky bit
+# so everyone can write but each user can only delete her own content
+%dir %attr(1777, root, root)  %{_var}/run/oasis
 
 %config(noreplace) %{_sysconfdir}/oasis/oasis.conf
 %config(noreplace) %{_sysconfdir}/oasis/oasisprojects.conf
 %config(noreplace) %{_sysconfdir}/oasis/oasisprobes.conf
-
 %config(noreplace) %{_sysconfdir}/sysconfig/oasisd
+
+# ensure osg-oasis-update has execution permissions for everyone
+%attr(0755, root, root) %{_bindir}/osg-oasis-update
+
+# ensure oasis-admin-* tools has execution permissions only for root
+%attr(0744, root, root) %{_bindir}/oasis-admin-*
