@@ -1,0 +1,25 @@
+###
+###         ABSTRACT FOR CHEP 2013
+###
+###   The Open Science Grid encourages the concept of software portability:
+###   a user's scientific application should be able to run at as many sites as
+###   possible.
+###   It is necessary to provide a mechanism for OSG Virtual Organizations to install software at sites.
+###   Since its initial release, the OSG Compute Element has provided an application
+###   software installation directory to Virtual Organizations, where they can create
+###   their own sub-directory, install software into that sub-directory, and have the
+###   directory shared on the worker nodes at that site.
+###   
+###   The current model has shortcomings with regard to permissions,
+###   policies, versioning, and the lack of a unified, collective procedure or toolset for deploying software across all sites.
+###   Therefore, a new mechanism for data and software distributing is desirable.
+###   
+###   The architecture for the OSG Application Software Installation Service (OASIS) is a server-client model:
+###   the software and data are installed only once in a single place,
+###   and are automatically distributed to all client sites simultaneously.
+###   
+###   Central file distribution offers other advantages,
+###   including server-side authentication and authorization, activity records, quota management,
+###   data validation and inspection, and well-defined versioning and deletion policies.
+###   
+###   The architecture, as well as a complete analysis of the current implementation, will be described in this paper.
