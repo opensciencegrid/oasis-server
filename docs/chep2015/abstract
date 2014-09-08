@@ -9,7 +9,11 @@ as a product that can be deployed at any place,
 as a service provided centrally by Open Science Grid, 
 and as a network of federated partners in a many-to-many servers-to-clients architecture.
 
-An evaluation of the central service performanc is presented.
+An evaluation of the central service performance is presented.
+[ Stratum-1 monitor ]
+
 A description of the product components is presented.
+[ Description of the user tools and admin tools ]
+
 A description of the mechanism to allow partern to join the network is presented. 
 
