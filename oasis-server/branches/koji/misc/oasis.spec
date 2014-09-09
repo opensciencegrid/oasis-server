@@ -158,4 +158,4 @@ f_restart_daemon $1
 %attr(0755, root, root) %{_bindir}/osg-oasis-update
 
 # ensure oasis-admin-* tools has execution permissions only for root
-%attr(0744, root, root) %{_bindir}/oasis-admin-*
+%attr(0744, root, root) %{_sbindir}/oasis-admin-*
