@@ -1,0 +1,333 @@
+#!/bin/env python
+
+import commands
+import getopt
+import logging
+import os
+import sys
+import time
+import pwd
+
+from ConfigParser import SafeConfigParser
+
+from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory
+from oasispackage.oasisAPI import oasisCLI
+
+major, minor, release, st, num = sys.version_info
+
+"""
+OASIS admin tool to add a new project to the server
+Steps:
+
+    -- create an UNIX ID
+
+    -- if needed, add the UNIX ID to a dedicated OASIS group (for example the group included in sudoers)
+
+    -- Maybe, create an empty user scratch are for that UNIX ID.
+
+    -- create a CVMFS repo
+
+    -- if possible, creates a template for oasisprojects.conf  ????
+
+Everything being done is logged to  /var/log/oasis/oasis.log
+
+The username and the name of the repo 
+are read from the oasisprojects.conf configuration file
+So it must be written before calling this tool
+(maybe unless I pass the arguments from command line)
+
+"""
+
+# FIXME write an usage() function
+
+
+# FIXME should this type of tools executable only by root??
+
+
+# FIXME should the functionalities included in class oasisAPI::Project()
+#       in the same way some of them are in the distributionplugin 
+#       ???
+
+
+# FIXME write the logging 
+
+# FIXME --allproject does not work at this point, I think
+
+
+class ProjectHandler(object):
+    # In the future, if makes sense, 
+    # it could be inherited 
+    # from an Interface class generic
+    # for all oasis-admin- tools
+    # For example, setting the logger is going to be the same
+    # for all admin tools...
+    # QUESTION: ?? where the base class would be placed ?? underneath site-packages/ ??
+
+
+###    def __init__(self, projectname, loglevel):
+###        # FIXME!! if projectname is None, it should abort !!
+###
+###        self.projectname = projectname
+###        self.loglevel = loglevel
+###
+###        self._setuplogging()
+###        # do we still need to setup logging if I get a Project class?
+###
+###        # create an object Project(), 
+###        # which includes an attribute self.distributionplugin
+###
+###        
+###        self.oasisconf = SafeConfigParser()
+###        self.oasisconf.readfp(open(oasisconfpath))
+###
+###        try:        
+###            projectfactory = ProjectFactory(clstype=ProjectBasicConfig, projectname=projectname)
+###            self.project = projectfactory.getProject()
+###        except Exception, ex:
+###            self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
+###            self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
+###            raise ex
+
+    
+    def __init__(self, projectname, loglevel):
+        # FIXME!! if projectname is None, it should abort !!
+
+        self.projectname = projectname
+        self.loglevel = loglevel
+
+        self._setuplogging()
+        # do we still need to setup logging if I get a Project class?
+
+        # create an object Project(), 
+        # which includes an attribute self.distributionplugin
+        
+        try:        
+            oasis = oasisCLI(projectname=self.projectname)
+            self.project = oasis.project 
+        except Exception, ex:
+            self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
+            self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
+            raise ex
+
+
+
+    def _setuplogging(self):
+        
+        #self.log = logging.getLogger('admin-addproject')
+        self.log = logging.getLogger('logfile')   #FIXME !! Fix the mess with logger hierarchy
+        self.console = logging.getLogger('console')   #FIXME !! Fix the mess with logger hierarchy
+ 
+        # set the messages format
+        if major == 2 and minor == 4:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d : %(message)s'
+            STDOUT_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s : %(message)s'
+        else:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d %(funcName)s(): %(message)s'
+            STDOUT_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s : %(message)s'
+
+        logfile_formatter = logging.Formatter(LOGFILE_FORMAT)
+        stdout_formatter = logging.Formatter(STDOUT_FORMAT)
+
+        logfile_formatter.converter = time.gmtime  # to convert timestamps to UTC
+        stdout_formatter.converter = time.gmtime  # to convert timestamps to UTC
+
+        logStream = logging.FileHandler('/var/log/oasis/oasis.log')
+        logStream.setFormatter(logfile_formatter)
+        self.log.addHandler(logStream)
+        #self.log.setLevel(self.loglevel)   #FIXME
+        self.log.setLevel(logging.DEBUG)
+
+        logStdout = logging.StreamHandler(sys.stdout)
+        logStdout.setFormatter(stdout_formatter)
+        self.console.addHandler(logStdout)
+        self.console.setLevel(self.loglevel)   #FIXME
+        #self.console.setLevel(logging.DEBUG)
+
+
+    def run(self):
+        '''
+        main method performing all checks, running commands, etc.
+        '''
+
+        rc = self.adduser()
+        if rc:
+            return rc 
+        rc = self.createsrcdir()
+        if rc:
+            return rc 
+        rc = self.createproject()
+        return rc
+
+
+    def adduser(self):
+        '''
+        creates the UNIX ID
+        '''
+
+        uid = self._checkuser()
+        if uid:
+            self.log.warning('user %s already exists' %self.project.username)
+            self.console.warning('user %s already exists' %self.project.username)
+            return 0
+        else:
+            user = self.project.username
+            group = self.project.username  # maybe in the future is a generic group name like 'oasis'?
+  
+            # FIXME: what about the group?? 
+            # option -g in adduser requires the group to exist !!
+            # or we put all users in the same group... 
+            cmd = '/usr/sbin/adduser -m %s' %user
+            rc, out = commands.getstatusoutput(cmd)
+
+            if rc == 0:
+                self.log.debug('user %s created' %user)
+                self.console.debug('user %s created' %user)
+            else:
+                self.log.critical('user %s creation failed' %user)
+                self.console.critical('user %s creation failed' %user)
+
+            return rc
+        
+
+    def _checkuser(self):
+        '''
+        checks if that username already exists
+        '''
+        # FIXME is this really needed?
+
+        user = self.project.username
+        try:
+            pw = pwd.getpwnam(user)
+            return pw.pw_uid 
+        except:
+            return None
+
+
+    def createsrcdir(self):
+        '''
+        creates the source directory
+        '''
+
+        user = self.project.username
+        uid = pwd.getpwnam(user).pw_uid
+        gid = pwd.getpwnam(user).pw_gid
+        
+        srcdir = self.project.srcdir
+
+        # checks if OSG_APP is defined, and make sure everyone can write
+        osg_app = self.project.osg_app
+        if osg_app:
+            # FIXME
+            # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
+            commands.getoutput('chmod 1777 %s' %osg_app) 
+        
+        if not os.path.isdir(srcdir):
+            try:
+                os.makedirs(srcdir)
+                os.chown(srcdir, uid , gid)
+
+                # FIXME
+                # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
+                commands.getoutput('chmod o=g,o-w %s' %srcdir)
+
+                self.log.debug('directory %s created' %srcdir)
+                self.console.debug('directory %s created' %srcdir)
+            except Exception, ex:
+                self.log.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                self.console.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                return 1
+        else:
+            self.log.warning('directory %s already existed' %srcdir)
+            self.console.warning('directory %s already existed' %srcdir)
+
+        return 0
+
+
+    def createproject(self):
+        '''
+        uses the distribution plugin included in the Project() object,
+        and calls the method createproject() 
+        '''
+
+        # FIXME
+        # at this step, if it is the first repo being created, 
+        # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
+    
+        rc,out = self.project.distributionplugin.createproject()
+
+        if rc:
+            self.log.critical('destination repository could not be created.')
+            self.console.critical('destination repository could not be created.')
+        else:
+            self.log.debug('destination repository created.')
+            self.console.debug('destination repository created.')
+
+        return rc
+
+
+
+#class ProjectHandlerManager(object):
+#
+#    def __init__(self):
+#        pass
+#    
+#    def _getprojectsconfig(self):
+#        '''
+#        gets the ConfigParser object for oasisprojects.conf
+#        '''
+#        # FIXME  this code is duplicated from oasisAPI
+#        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+#        oasisprojectsconf = SafeConfigParser()
+#        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+#        return oasisprojectsconf
+#
+#    def addallprojects(self):
+#        listprojects = self.oasisd.projectsconf.sections()
+#        for projectsection in listprojects:
+#            project = Project(projectsection, self.oasisd.oasisconf)
+#
+
+
+
+def main(options):
+
+    # FIXME
+    # if the section in projects.conf is not defined, it should abort. 
+    # and print out an error message in console and log file
+
+    # defaults
+    level = logging.WARNING
+
+    # parse input options
+    opts, args = getopt.getopt(options, 
+                               'v', 
+                               ['verbose', 'project=', 'allprojects'])
+
+    project = None
+    for o,a in opts:
+        if o == '--project':
+            project = a
+        if o == '--allprojects':
+            project = None  #FIXME
+        if o == '-v' or o == '--verbose':
+            level = logging.DEBUG
+
+    # run the processes
+    try:
+        obj = ProjectHandler(project, level)
+        rc = obj.run()
+        return rc
+    except Exception, ex:
+        return 1
+
+
+if __name__ == '__main__':
+    rc = main(sys.argv[1:])
+    sys.exit(rc)
+
+
+# ================================================================
+
+
+
+
