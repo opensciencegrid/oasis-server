@@ -16,5 +16,7 @@ a monitor is (will) be setup collecting run time data for auditing and troublesh
 To facilitate the usage as well administration of the product, 
 a suite user and admintrator toolbox has been (is being) deployed. 
 
-A description of the mechanism to allow partern to join the network is presented. 
+The mechanism to allow parterns to join the network is described.
+The infrastructure allows other servers to distribute their content
+without the need to distribute a new set of keys to the clients.
 
