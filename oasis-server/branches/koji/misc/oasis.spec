@@ -5,7 +5,7 @@
 Summary: OASIS package
 Name: %{name}
 Version: %{version}
-Release: %{release}
+Release: %{release}%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
 Group: Development/Libraries
@@ -14,7 +14,7 @@ Prefix: %{_prefix}
 BuildArch: noarch
 Vendor: Jose Caballero <jcaballero@bnl.gov>
 ###Packager: RACF <grid@rcf.rhic.bnl.gov>
-Provides: oasis
+###Provides: oasis
 Url: http://www.opensciencegrid.org
 
 %description
@@ -30,15 +30,13 @@ python setup.py build
 python setup.py install --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
 
 mkdir -pm0755 $RPM_BUILD_ROOT%{_var}/log/oasis
+mkdir -pm0755 $RPM_BUILD_ROOT%{_var}/run/oasis
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 
 %pre
-#!/bin/bash  
-#
-
 f_create_oasis_account(){
     #
     # creates, if does not exist already, system account "oasis"
@@ -54,12 +52,9 @@ f_create_oasis_account(){
         chmod 1777 /home/oasis
     fi
 }
-
 f_create_oasis_account 
 
 %post
-#!/bin/bash  
-
 f_chkconfig(){
     #
     # add oasis daemon to checkconfig
@@ -72,15 +67,10 @@ f_chkconfig(){
         chkconfig oasisd off
     fi
 }
-
 f_chkconfig $1
 
 
 %preun
-#!/bin/bash  
-#
-
-
 f_stop_daemon(){
     #
     # stops the daemon
@@ -110,17 +100,10 @@ f_clean_chkconfig(){
         chkconfig --del oasisd 1>/dev/null
     fi
 }
-
 f_stop_daemon $1
 f_clean_chkconfig $1
 
-
-
-
 %postun
-#!/bin/bash  
-#
-
 f_restart_daemon(){
     #
     # checks if the daemon is running,
@@ -133,7 +116,6 @@ f_restart_daemon(){
 
         service oasisd condrestart >/dev/null 2>&1
 }
-
 f_restart_daemon $1
 
 
