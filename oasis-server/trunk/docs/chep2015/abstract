@@ -13,8 +13,8 @@ In order to evaluate properly the performance of the central service,
 a monitor is (will) be setup collecting run time data for auditing and troubleshooting. 
 (examples of graphs with those data are shown in this paper)
 
-To facilitate the usage as well administration of the product, 
-a suite user and admintrator toolbox has been (is being) deployed. 
+To facilitate the usage as well the administration of the product, 
+a suite of user and admintrator tools has been (is being) deployed. 
 
 The mechanism to allow parterns to join the network is described.
 The infrastructure allows other servers to distribute their content
