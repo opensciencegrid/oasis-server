@@ -38,7 +38,17 @@ utils_files = ['misc/generate_adduser',
 
 initd_files = ['etc/oasisd']
 
-
+# =============================
+#    admin tools 
+# =============================
+sbin_files = ['sbin/oasis-admin-projectadd',
+              #'sbin/oasis-admin-projectdel',
+              #'sbin/oasis-admin-list',
+              #'sbin/oasis-admin-rollback',
+              'sbin/oasis-admin-start',
+              'sbin/oasis-admin-stop',
+              'sbin/oasis-admin-status',
+             ]
 
 # -----------------------------------------------------------
 
@@ -52,6 +62,7 @@ rpm_data_files=[('/usr/libexec', libexec_files),
                 #('/usr/share/doc/oasis-server-%s' %release_version, oasis_etc_docs),
                 ('/etc/oasis' , oasis_etc_docs),
                 ('/etc/init.d', initd_files),
+                ('/usr/sbin', sbin_files),
                ]
 
 # ===========================================================
@@ -100,16 +111,16 @@ setup(
                #'bin/request_oasis_update',
                #'bin/stratumones.pl',
 
-               # =============================
-               #    admin tools 
-               # =============================
-               'bin/oasis-admin-projectadd',
-               #'bin/oasis-admin-projectdel',
-               #'bin/oasis-admin-list',
-               #'bin/oasis-admin-rollback',
-               'bin/oasis-admin-start',
-               'bin/oasis-admin-stop',
-               'bin/oasis-admin-status',
+               #### =============================
+               ####    admin tools 
+               #### =============================
+               ###'bin/oasis-admin-projectadd',
+               ####'bin/oasis-admin-projectdel',
+               ####'bin/oasis-admin-list',
+               ####'bin/oasis-admin-rollback',
+               ###'bin/oasis-admin-start',
+               ###'bin/oasis-admin-stop',
+               ###'bin/oasis-admin-status',
                                
                # =============================
                #  wrappers to the probes
