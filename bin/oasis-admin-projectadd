@@ -301,16 +301,22 @@ def main(options):
     # parse input options
     opts, args = getopt.getopt(options, 
                                'v', 
-                               ['verbose', 'project=', 'allprojects'])
+                               ['verbose', 'project='])
+                               #['verbose', 'project=', 'allprojects'])
 
     project = None
     for o,a in opts:
         if o == '--project':
             project = a
-        if o == '--allprojects':
-            project = None  #FIXME
+        #if o == '--allprojects':
+        #    project = None  #FIXME
         if o == '-v' or o == '--verbose':
             level = logging.DEBUG
+
+    if not project:
+        # FIXME: we need an usage() printout
+        print "ERROR: no project was passed"
+        return 1
 
     # run the processes
     try:
