@@ -9,13 +9,16 @@ as a product that can be deployed at any place,
 as a service provided centrally by Open Science Grid, 
 and as a network of federated partners in a many-to-many servers-to-clients architecture.
 
+[OaaS]
 In order to evaluate properly the performance of the central service, 
 a monitor is (will) be setup collecting run time data for auditing and troubleshooting. 
 (examples of graphs with those data are shown in this paper. For example, those requested already by Miron. Will they be made using the python API?)
 
+[OaaP]
 To facilitate the usage as well the administration of the product, 
 a suite of user and admintrator tools has been (is being) deployed. 
 
+[OaaN]
 The mechanism to allow parterns to join the network is described.
 The infrastructure allows other servers to distribute their content
 without the need to distribute a new set of keys to the clients.
