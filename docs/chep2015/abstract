@@ -11,7 +11,7 @@ and as a network of federated partners in a many-to-many servers-to-clients arch
 
 In order to evaluate properly the performance of the central service, 
 a monitor is (will) be setup collecting run time data for auditing and troubleshooting. 
-(examples of graphs with those data are shown in this paper)
+(examples of graphs with those data are shown in this paper. For example, those requested already by Miron. Will they be made using the python API?)
 
 To facilitate the usage as well the administration of the product, 
 a suite of user and admintrator tools has been (is being) deployed. 
