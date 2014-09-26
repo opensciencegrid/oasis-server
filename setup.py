@@ -26,7 +26,8 @@ libexec_files = ['libexec/%s' %file for file in os.listdir('libexec') if os.path
 #oasis_sysconfig = ['etc/oasisd.sysconfig-example']
 #oasis_etc_docs = ['etc/oasisprobes.conf-example', 'etc/oasisprojects.conf-example']
 oasis_etc_files = ['etc/oasis.conf']
-oasis_sysconfig = ['etc/oasisd.sysconfig']
+#oasis_sysconfig = ['etc/oasisd.sysconfig']
+oasis_sysconfig = ['etc/oasis']
 oasis_etc_docs = ['etc/oasisprobes.conf', 'etc/oasisprojects.conf']
 
 condor_etc_files = ['etc/condor_oasis.conf-example',]
