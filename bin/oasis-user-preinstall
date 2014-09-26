@@ -75,17 +75,22 @@ def usage():
 
 
 # =============================================================================
+
+def main(options):
     
-
-if __name__ == '__main__':
-
     # parse input options
     opts, args = getopt.getopt(options, 'h', ['help'])
     for o,a in opts:
         if o == '-h' or o == '--help':
             usage()
-    
+
     # run the process
     action = Action()
     rc = action.preinstall()
+    return rc
+
+
+if __name__ == '__main__':
+    rc = main(sys.argv[1:])
     sys.exit(rc)
+
