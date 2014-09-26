@@ -29,11 +29,6 @@ or from another client, e.g. HTCondor.
 
 #
 # FIXME
-# write an usage() function
-#
-
-#
-# FIXME
 # this script is very similar to bin/oasisd
 # should they be merged?
 #
@@ -58,11 +53,39 @@ class Action(object):
         self.oasis.project.preinstall() 
 
 
+def usage():
+
+    print 'oasis-user-preinstall:'
+    print ''
+    print ' Syntax:'
+    print '     oasis-user-preinstall [--help|-h]'
+    print ''
+    print ' Description:'
+    print '     Synchronizes the user scratch area'
+    print '     and the destination area.'
+    print '     Reason is to remove any orphan file that'
+    print '     could remain in the scratch area from'
+    print '     previous failed installation processes.'
+    print ''
+    print ' Options:'
+    print '     --help | -h         Displays usage and exits'
+    print ''
+    sys.exit()
+
+
+
 # =============================================================================
     
 
 if __name__ == '__main__':
 
+    # parse input options
+    opts, args = getopt.getopt(options, 'h', ['help'])
+    for o,a in opts:
+        if o == '-h' or o == '--help':
+            usage()
+    
+    # run the process
     action = Action()
     rc = action.preinstall()
     sys.exit(rc)
