@@ -326,11 +326,8 @@ def main(options):
         if o == '-v' or o == '--verbose':
             level = logging.DEBUG
         
-
     if not project:
-        # FIXME: we need an usage() printout
-        print "ERROR: no project was passed"
-        return 1
+        usage()
 
     # run the processes
     try:
