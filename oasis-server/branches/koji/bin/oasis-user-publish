@@ -29,11 +29,6 @@ or from another client, e.g. HTCondor.
 
 #
 # FIXME
-# write an usage() function
-#
-
-#
-# FIXME
 # this script is very similar to bin/oasisd
 # should they be merged?
 #
@@ -75,15 +70,36 @@ class Action(object):
 
 # =============================================================================
     
+def usage():
 
-if __name__ == '__main__':
+    print 'oasis-user-publish:'
+    print ''
+    print ' Syntax:'
+    print '     oasis-user-publish [--help|-h] [--block <value>]'
+    print ''
+    print ' Description:'
+    print '     Transfer all files from the user scratch area'
+    print '     to the destination area, and publish them.'
+    print '     The behavior in case there is already another publishing'
+    print '     process going on for a different project depends on the'
+    print '     value of the input option "block".'
+    print '     When block is TRUE, the process retains prompt and waits in a loop.'
+    print '     This loop expires when the publishing can be done or when'
+    print '     a timeout setup in the config files is reached.'
+    print '     When block is FALSE, the process just aborts'
+    print '     and a messages is displayed asking the user to try later'
+    print ''
+    print ' Options:'
+    print '     --help | -h         Displays usage and exits'
+    print '     --block <value>     value can be False/No/Off or True/Yes/On'
+    print '                         case insensitive.'
+    print '                         DEFAULT: False'
+    print ''
+    sys.exit()
+    
 
-###    action = Action()
-###    rc = action.publish()
-###    sys.exit(rc)
+def main(options):
 
-
-    action = Action()
 
     # defaults
     # FIXME: find better name instead of 'block'
@@ -92,18 +108,25 @@ if __name__ == '__main__':
     #   block == True means process does retain prompt and waits in a loop
     #   block == False means abort and message asking user to try again later 
     
-    opts, args = getopt.getopt(sys.argv[1:], '', ['block='])
+    opts, args = getopt.getopt(sys.argv[1:], 'h', ['help', 'block='])
     
     for k,v in opts:
+        if k == '-h' or k == '--help':
+            usage()
         if k == '--block':
             if v.lower() in ['false', 'no', 'off']:
                 block = False
             elif v.lower() in ['true', 'yes', 'on']:
                 block = True
             else:
-                print "variable %s has unknown value" %k
-                # FIXME add here a usage() function
-                sys.exit(1)
-    
+                usage()
+   
+    # run the process 
+    action = Action()
     rc = action.publish(block)
+    return rc
+
+if __name__ == '__main__':
+    rc = main(sys.argv[1:])
     sys.exit(rc)
+
