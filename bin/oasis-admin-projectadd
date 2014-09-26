@@ -292,12 +292,12 @@ def usage():
 
     print 'oasis-admin-projectadd:'
     print ''
-    print 'Syntax oasis-admin-projectadd [--help|-h] [--verbose|-v] [--project projectname]'
+    print 'Syntax oasis-admin-projectadd [--help|-h] [--verbose|-v] [--project <name>]'
     print ''
-    print ' Options:'
-    print '     --help | -h             Displays usage and exits' 
-    print '     --verbose | -v          Enters in DEBUG mode for the logging'
-    print '     --projectname <name>    Name of the project being created'
+    print ' Options:'               
+    print '     --help | -h         Displays usage and exits' 
+    print '     --verbose | -v      Enters in DEBUG mode for the logging'
+    print '     --project <name>    Name of the project being created'
     print ''
     sys.exit()
 
