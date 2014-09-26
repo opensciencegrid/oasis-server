@@ -288,6 +288,19 @@ class ProjectHandler(object):
 #
 
 
+def usage():
+
+    print 'oasis-admin-projectadd:'
+    print ''
+    print 'Syntax oasis-admin-projectadd [--help|-h] [--verbose|-v] [--project <name>]'
+    print ''
+    print ' Options:'               
+    print '     --help | -h         Displays usage and exits' 
+    print '     --verbose | -v      Enters in DEBUG mode for the logging'
+    print '     --project <name>    Name of the project being created'
+    print ''
+    sys.exit()
+
 
 def main(options):
 
@@ -300,17 +313,21 @@ def main(options):
 
     # parse input options
     opts, args = getopt.getopt(options, 
-                               'v', 
-                               ['verbose', 'project=', 'allprojects'])
+                               'hv', 
+                               ['help', 'verbose', 'project='])
+                               #['verbose', 'project=', 'allprojects'])
 
     project = None
     for o,a in opts:
         if o == '--project':
             project = a
-        if o == '--allprojects':
-            project = None  #FIXME
+        if o == '-h' or o == '--help':
+            usage() 
         if o == '-v' or o == '--verbose':
             level = logging.DEBUG
+        
+    if not project:
+        usage()
 
     # run the processes
     try:
