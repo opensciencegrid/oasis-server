@@ -313,8 +313,8 @@ def main(options):
 
     # parse input options
     opts, args = getopt.getopt(options, 
-                               'v', 
-                               ['verbose', 'project='])
+                               'hv', 
+                               ['help', 'verbose', 'project='])
                                #['verbose', 'project=', 'allprojects'])
 
     project = None
