@@ -204,10 +204,14 @@ class cvmfs21(BaseDistribution):
         shutil.rmtree(tmpdir)
 
 
-
-
+    # FIXME
+    #
+    # temporary solution:  createrepository() the same that createreproject()
+    #
     def createrepository(self):
-
+        rc, out = commands.getstatusoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
+        return rc, out
+    def createreproject(self):
         rc, out = commands.getstatusoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
         return rc, out
 
