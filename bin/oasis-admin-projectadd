@@ -38,6 +38,13 @@ So it must be written before calling this tool
 
 """
 
+# FIXME
+# should this tool also create the cron for step 6 in 
+#   https://twiki.grid.iu.edu/bin/view/Documentation/Release3/OasisExternalRepositories#Procedure_to_add_an_externally_h
+# ?
+
+
+
 # FIXME should the functionalities included in class oasisAPI::Project()
 #       in the same way some of them are in the distributionplugin 
 #       ???
