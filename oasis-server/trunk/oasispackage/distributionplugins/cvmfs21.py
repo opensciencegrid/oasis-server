@@ -211,7 +211,7 @@ class cvmfs21(BaseDistribution):
     def createrepository(self):
         rc, out = commands.getstatusoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
         return rc, out
-    def createreproject(self):
+    def createproject(self):
         rc, out = commands.getstatusoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
         return rc, out
 
