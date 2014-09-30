@@ -48,7 +48,7 @@ f_create_oasis_account(){
     id oasis &> /dev/null
     rc=$?
     if [ $rc -ne 0 ]; then
-        /usr/sbin/useradd -r -m oasis --comment "OASIS account" --shell /bin/bash oasis
+        /usr/sbin/useradd -r -m oasis --comment "OASIS account" --shell /bin/bash
         chmod 1777 /home/oasis
     fi
 }
