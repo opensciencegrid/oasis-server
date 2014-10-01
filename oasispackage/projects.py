@@ -59,7 +59,7 @@ class ProjectBasicConfig(object):
         oasisconf is the ConfigParser object for oasis.conf
 
         We pass oasis.conf and not the projects conf file directly 
-        because we need it to get some variables like directoryconf
+        because we need it to get some variables from it
         '''
 
         # FIXME  those names 'logfile.foo' and 'user.bar' are part of the message FORMAT. Use something less ugly
@@ -285,7 +285,7 @@ class Project(ProjectBasicConfig):
         oasisconf is the ConfigParser object for oasis.conf
 
         We pass oasis.conf and not projects config  directly 
-        because we need it to get some variables like directoryconf
+        because we need it to get some variables from it
         '''
         #
         # !!  FIXME !!
@@ -329,7 +329,7 @@ class Project(ProjectBasicConfig):
 ###        oasisconf is the ConfigParser object for oasis.conf
 ###
 ###        We pass oasis.conf and not projects conf directly 
-###        because we need it to get some variables like directoryconf
+###        because we need it to get some variables from it
 ###        '''
 ###        #
 ###        # !!  FIXME !!
@@ -455,10 +455,9 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Starting.')
 
-        oasisconfigdir = self.oasisconf.get('OASIS', 'directoryconf')
-        oasisprojectprobesconffilename = self.projectsconf.get(self.projectsection, 'projectprobes')
+        oasisprojectprobesconffilename = self.projectsconf.get(self.projectsection, 'projectprobesconf')
         oasisprojectprobesconf = SafeConfigParser()
-        oasisprojectprobesconf.readfp(open('%s/%s' %(oasisconfigdir, oasisprojectprobesconffilename)))
+        oasisprojectprobesconf.readfp(open(oasisprojectprobesconffilename))
         self.log.debug('Leaving returning config object %s.' %oasisprojectprobesconf)
         return oasisprojectprobesconf
 
