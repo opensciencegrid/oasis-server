@@ -57,8 +57,6 @@
 #        MANDATORY only when distribution tool is cvmfs21
 #
 # projectprobes = path to the configuration files for probes 
-#        underneath the directory pointed by varible 'directoryconf'
-#        in oasis.conf
 #        MANDATORY
 #        NOTE: the file can be left blank if no probes needed.
 #
