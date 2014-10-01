@@ -303,6 +303,8 @@ def usage():
     print '     For the destination directory, a new repository in CVMFS is created if needed.'
     print '     All the needed information to create the project is read' 
     print '     from the "projects" configuration file.'
+    print '     The value of input option --project must match the value'
+    print '     of variable "project" in configuration file oasisprojects.conf'
     print ''
     print ' Options:'               
     print '     --help | -h         Displays usage and exits' 
