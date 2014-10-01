@@ -14,7 +14,12 @@
 
 # Examples for the other configuration files, pointed by the variables in here,
 # can be found in /usr/share/doc/oasis-server-X.Y.Z
-
+#
+# WARNING: 
+#
+#   The name of the only section in this config file *must* be [OASIS].
+#   Do not change it. 
+#
 # =========================================================================== 
 #               VARIABLES
 # =========================================================================== 
