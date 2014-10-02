@@ -47,6 +47,7 @@ sbin_files = ['sbin/oasis-admin-projectadd',
               #'sbin/oasis-admin-list',
               #'sbin/oasis-admin-rollback',
               'sbin/oasis-admin-start',
+              'sbin/oasis-admin-restart',
               'sbin/oasis-admin-stop',
               'sbin/oasis-admin-status',
              ]
