@@ -103,6 +103,7 @@ setup(
                #'bin/oasis-admin-list',
                #'bin/oasis-admin-rollback',
                'bin/oasis-admin-start',
+               'bin/oasis-admin-restart',
                'bin/oasis-admin-stop',
                'bin/oasis-admin-status',
                                
