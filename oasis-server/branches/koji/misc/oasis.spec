@@ -121,7 +121,7 @@ f_restart_daemon $1
 
 %files -f INSTALLED_FILES
 %defattr(-,root,root)
-%doc CHANGELOG LICENSE README
+%doc CHANGELOG LICENSE README etc/condor_oasis.conf-example
 
 # ensure the /var/log/oasis directory has the sticky bit
 # so everyone can write but each user can only delete her own content
