@@ -126,7 +126,10 @@ class oasisCLI(object):
         logfile_formatter = logging.Formatter(LOGFILE_FORMAT)
         logfile_formatter.converter = time.gmtime  # to convert timestamps to UTC
         username = pwd.getpwuid(os.getuid()).pw_name  
-        logStream = logging.FileHandler('/var/log/oasis/oasis.%s.log' %username)
+        if os.getuid() == 0:
+            logStream = logging.FileHandler('/var/log/oasis/oasis.root.log')
+        else:
+            logStream = logging.FileHandler('/var/log/oasis/oasis.%s.log' %username)
         logStream.setFormatter(logfile_formatter)
 
         error.addHandler(logStream)
@@ -172,7 +175,10 @@ class oasisCLI(object):
         logfile_formatter.converter = time.gmtime  # to convert timestamps to UTC
         stdout_formatter.converter = time.gmtime  # to convert timestamps to UTC
        
-        logStream = logging.FileHandler('/var/log/oasis/oasis.%s.log' % self.projectsection)
+        if os.getuid() == 0:
+            logStream = logging.FileHandler('/var/log/oasis/oasis.root.log')
+        else:
+            logStream = logging.FileHandler('/var/log/oasis/oasis.%s.log' % self.projectsection)
 
         logStream.setFormatter(logfile_formatter)
         self.log.addHandler(logStream)
