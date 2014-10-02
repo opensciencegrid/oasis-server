@@ -65,14 +65,14 @@ f_dir
 
 if [ `id -u` = 0 ]; then
     OASISHEAD=/
-    SYSCONF=/etc/sysconfig/oasisd
+    SYSCONF=/etc/sysconfig/oasis
     BINDIR=/usr/bin
     ETCDIR=/etc/oasis
     PIDFILE=/var/run/oasisd.pid
 else
     OASISHEAD=`dirname $OASISDIR`
 
-    SYSCONF=$OASISHEAD/etc/oasisd
+    SYSCONF=$OASISHEAD/etc/oasis
     BINDIR=$OASISHEAD/bin
     ETCDIR=$OASISHEAD/etc
     PIDFILE=$OASISHEAD/var/run/oasisd.pid
@@ -129,9 +129,11 @@ start() {
         create_var_log
 	    # daemon --pidfile=${PIDFILE} "$BINDIR/oasisd --conf $CONFFILE $OPTIONS "
         if [ -n "$CONSOLE_LOG" ]; then
-        	$BINDIR/oasisd --conf $CONFFILE $OPTIONS >> $CONSOLE_LOG 2>&1 &
+        	#$BINDIR/oasisd --conf $CONFFILE $OPTIONS >> $CONSOLE_LOG 2>&1 &
+        	$BINDIR/oasisd $OPTIONS >> $CONSOLE_LOG 2>&1 &
         else
-            $BINDIR/oasisd --conf $CONFFILE $OPTIONS &
+            #$BINDIR/oasisd --conf $CONFFILE $OPTIONS &
+            $BINDIR/oasisd $OPTIONS &
         fi
         RETVAL=$?
 		PID=$!
