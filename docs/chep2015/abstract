@@ -10,7 +10,7 @@ as a service provided centrally by Open Science Grid (OASIS as a Service, or Oaa
 and as a network of federated partners in a many-to-many servers-to-clients architecture (OASIS as a Service, or OaaS).
 
 [OaaS]
-An evaluation of the current utilization of the service is presented.
+An evaluation of the current utilization of OASIS as a Service is presented.
 In order to evaluate properly the performance of the central service, 
 a monitor is (will) be setup collecting run time data for auditing and troubleshooting. 
 (examples of graphs with those data are shown in this paper. For example, those requested already by Miron. Will they be made using the python API?)
