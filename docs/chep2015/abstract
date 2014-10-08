@@ -22,5 +22,8 @@ The mechanism to allow parterns to join the OASIS as a Network is described.
 The infrastructure allows other servers to distribute their content
 without the need to distribute a new set of keys to the clients.
 The security aspects of this model is described.
+Those include both the proper management of the keys at the central place
+and the real time monitoring of the remote servers content being accepted into the network, 
+as well as the mechanism to ban that content in case of problems.
 
 Finally, proposals for future plans are described. 
