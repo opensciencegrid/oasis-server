@@ -9,19 +9,16 @@ as a product that can be deployed at any place (OASIS as a Product, or OaaP),
 as a service provided centrally by Open Science Grid (OASIS as a Service, or OaaS),
 and as a network of federated partners in a many-to-many servers-to-clients architecture (OASIS as a Service, or OaaS).
 
-[OaaS]
 An evaluation of the current utilization of OASIS as a Service is presented.
 In order to evaluate properly the performance of the central service, 
 a monitor is (will) be setup collecting run time data for auditing and troubleshooting. 
 (examples of graphs with those data are shown in this paper. For example, those requested already by Miron. Will they be made using the python API?)
 
-[OaaP]
-To facilitate the usage as well the administration of the product, 
+To facilitate the usage as well the administration OASIS as a Product, 
 a suite of user and admintrator tools has been (is being) developed.
 They are described.
 
-[OaaN]
-The mechanism to allow parterns to join the network is described.
+The mechanism to allow parterns to join the OASIS as a Network is described.
 The infrastructure allows other servers to distribute their content
 without the need to distribute a new set of keys to the clients.
 The security aspects of this model is described.
