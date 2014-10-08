@@ -4,11 +4,10 @@ However, to ensure a higher level of quality service, some
 improvements have been implemented or are in the process to be included. 
 
 This paper describes the different aspects of the project OASIS, 
-depending on the different point of views:
+depending on the point of view:
 as a product that can be deployed at any place, 
 as a service provided centrally by Open Science Grid, 
 and as a network of federated partners in a many-to-many servers-to-clients architecture.
-
 
 [OaaS]
 An evaluation of the current utilization of the service is presented.
