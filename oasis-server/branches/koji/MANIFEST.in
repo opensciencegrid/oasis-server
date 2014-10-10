@@ -1,5 +1,6 @@
 include CHANGELOG LICENSE README
 include etc/*
+include etc/logrotate/*
 include libexec/*
 include bin/*
 include sbin/*
