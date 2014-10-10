@@ -1,0 +1,18 @@
+/var/log/oasis/*log {
+  create
+  missingok
+  notifempty
+  sharedscripts
+  size 100M
+  rotate 10
+  nocompress
+
+  prerotate
+    [ -e /etc/init.d/oasisd ] && /etc/init.d/oasisd stop >/dev/null 2>&1 || true
+  endscript
+
+  postrotate
+    [ -e /etc/init.d/oasisd ] && /etc/init.d/oasisd start >/dev/null 2>&1 || true
+  endscript
+}
+
