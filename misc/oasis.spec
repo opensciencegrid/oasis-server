@@ -31,6 +31,7 @@ python setup.py install --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
 
 mkdir -pm0755 $RPM_BUILD_ROOT%{_var}/log/oasis
 mkdir -pm0755 $RPM_BUILD_ROOT%{_var}/run/oasis
+mkdir -pm0755 $RPM_BUILD_ROOT%{_sysconfdir}/etc/oasis
 
 %clean
 rm -rf $RPM_BUILD_ROOT
