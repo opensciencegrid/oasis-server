@@ -51,9 +51,9 @@ sbin_files = ['sbin/oasis-admin-projectadd',
 # -----------------------------------------------------------
 
 rpm_data_files=[('/usr/libexec', libexec_files),
-                ('/etc/oasis' , oasis_etc_docs),
-                ('/etc/logrotate.d', oasis_logrotate),
-                ('/etc/sysconfig', oasis_sysconfig),
+                #('/etc/oasis' , oasis_etc_docs),
+                #('/etc/logrotate.d', oasis_logrotate),
+                #('/etc/sysconfig', oasis_sysconfig),
                 ('/usr/share/oasis', utils_files),
                 ('/etc/init.d', initd_files),
                 ('/usr/sbin', sbin_files),
