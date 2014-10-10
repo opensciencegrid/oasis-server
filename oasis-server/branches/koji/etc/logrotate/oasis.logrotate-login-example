@@ -1,0 +1,10 @@
+/var/log/oasis/*log {
+  create
+  missingok
+  notifempty
+  sharedscripts
+  size 100M
+  rotate 10
+  nocompress
+}
+
