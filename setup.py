@@ -22,13 +22,12 @@ from distutils.command.install_data import install_data as install_data_org
 
 libexec_files = ['libexec/%s' %file for file in os.listdir('libexec') if os.path.isfile('libexec/%s' %file)]
 
-#oasis_etc_files = ['etc/oasis.conf-example']
-#oasis_sysconfig = ['etc/oasisd.sysconfig-example']
-#oasis_etc_docs = ['etc/oasisprobes.conf-example', 'etc/oasisprojects.conf-example']
-oasis_etc_files = ['etc/oasis.conf']
-#oasis_sysconfig = ['etc/oasisd.sysconfig']
+oasis_etc_docs = ['etc/oasis.conf', 'etc/oasisprobes.conf', 'etc/oasisprojects.conf']
+
+oasis_logrotate = ['etc/logrotate/oasis' ]
+
 oasis_sysconfig = ['etc/oasis']
-oasis_etc_docs = ['etc/oasisprobes.conf', 'etc/oasisprojects.conf']
+#oasis_sysconfig = ['etc/oasisd.sysconfig']
 
 condor_etc_files = ['etc/condor_oasis.conf-example',]
 
@@ -56,12 +55,12 @@ sbin_files = ['sbin/oasis-admin-projectadd',
 
 rpm_data_files=[('/usr/libexec', libexec_files),
                 ('/etc/oasis', oasis_etc_files),
-                #('/etc/oasis', condor_etc_files),
+                ('/etc/oasis' , oasis_etc_docs),
+                ('/etc/logrotate.d', oasis_logrotate),
                 ('/etc/sysconfig', oasis_sysconfig),
                 #('/etc/oasis', oasis_sysconfig),
                 ('/usr/share/oasis', utils_files),
                 #('/usr/share/doc/oasis-server-%s' %release_version, oasis_etc_docs),
-                ('/etc/oasis' , oasis_etc_docs),
                 ('/etc/init.d', initd_files),
                 ('/usr/sbin', sbin_files),
                ]
