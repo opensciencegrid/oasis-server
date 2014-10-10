@@ -135,6 +135,7 @@ f_restart_daemon $1
 %config(noreplace) %{_sysconfdir}/oasis/oasisprojects.conf
 %config(noreplace) %{_sysconfdir}/oasis/oasisprobes.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/oasis
+%config(noreplace) %{_sysconfdir}/logrotate.d/oasis
 
 # ensure osg-oasis-update has execution permissions for everyone
 %attr(0755, root, root) %{_bindir}/osg-oasis-update
