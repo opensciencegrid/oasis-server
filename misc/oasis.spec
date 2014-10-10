@@ -121,7 +121,7 @@ f_restart_daemon $1
 
 %files -f INSTALLED_FILES
 %defattr(-,root,root)
-%doc CHANGELOG LICENSE README etc/condor_oasis.conf-example
+%doc CHANGELOG LICENSE README etc/*
 
 # ensure the /var/log/oasis directory has the sticky bit
 # so everyone can write but each user can only delete her own content
@@ -131,11 +131,13 @@ f_restart_daemon $1
 # so everyone can write but each user can only delete her own content
 %dir %attr(1777, root, root)  %{_var}/run/oasis
 
-%config(noreplace) %{_sysconfdir}/oasis/oasis.conf
-%config(noreplace) %{_sysconfdir}/oasis/oasisprojects.conf
-%config(noreplace) %{_sysconfdir}/oasis/oasisprobes.conf
-%config(noreplace) %{_sysconfdir}/sysconfig/oasis
-%config(noreplace) %{_sysconfdir}/logrotate.d/oasis
+#   %config(noreplace) %{_sysconfdir}/oasis/oasis.conf
+#   %config(noreplace) %{_sysconfdir}/oasis/oasisprojects.conf
+#   %config(noreplace) %{_sysconfdir}/oasis/oasisprobes.conf
+#   %config(noreplace) %{_sysconfdir}/sysconfig/oasis
+#   %config(noreplace) %{_sysconfdir}/logrotate.d/oasis
+# ensure the /etc/oasis is created
+%dir %attr(0755, root, root)  %{_sysconfdir}/oasis
 
 # ensure osg-oasis-update has execution permissions for everyone
 %attr(0755, root, root) %{_bindir}/osg-oasis-update
