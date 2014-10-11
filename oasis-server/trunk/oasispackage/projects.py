@@ -120,8 +120,8 @@ class ProjectBasicConfig(object):
             self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
 
             self.flagfilebasedir = '/var/run/oasis/'  #DEFAULT
-            if self.projectsconf.has_option(self.projectsection, 'flagfilebasedir'):
-                self.flagfilebasedir = self.projectsconf.get(self.projectsection, 'flagfilebasedir')
+            if self.oasisconf.has_option('OASIS', 'flagfilebasedir'):
+                self.flagfilebasedir = self.oasisconf.get('OASIS', 'flagfilebasedir')
             self.log.debug('variable flagfilebasedir has value %s', self.flagfilebasedir)
 
             self.email = None  # DEFAULT
