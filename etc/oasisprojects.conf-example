@@ -91,7 +91,7 @@
 #
 # flagfilebasedir = path to the flagfile
 #   OPTIONAL
-#   DEFAULT value, when not used, is /var/log/oasis/
+#   DEFAULT value, when not used, is /var/run/oasis/
 
 # =========================================================================== 
 
