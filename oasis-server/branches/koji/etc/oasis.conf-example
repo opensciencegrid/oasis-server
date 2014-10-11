@@ -44,6 +44,9 @@
 #   MANDATORY
 #   NOTE: the file can be left blank if no probes are needed
 #
+# flagfilebasedir = path to the flagfile
+#   OPTIONAL
+#   DEFAULT value, when not used, is /var/run/oasis/
 
 # =========================================================================== 
 
