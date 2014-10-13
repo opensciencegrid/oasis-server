@@ -10,7 +10,7 @@ An evaluation of the current utilization of OASIS as a Service is presented. In 
 To facilitate the usage and administration of OASIS as a Product,
 a suite of user and administrator tools have been developed. They are described.
 
-The mechanism to allow parters to join the OASIS as a Network is described. The infrastructure allows other servers to distribute their content without the need to distribute a new set of keys to the clients.
+The mechanism to allow partners to join the OASIS as a Network is described. The infrastructure allows other servers to distribute their content without the need to distribute a new set of keys to the clients.
 The security aspects of this model is described. Those include both the proper central management of cryptographic keys, and the real time monitoring of the remote servers content being accepted into the network, as well as a mechanism to ban that content in case of problems.
 
 Finally, proposals for future plans are described.
