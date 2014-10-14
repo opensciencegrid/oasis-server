@@ -254,7 +254,7 @@ class ProjectHandler(object):
         # at this step, if it is the first repo being created, 
         # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
     
-        rc,out = self.project.distributionplugin.createproject()
+        rc = self.project.distributionplugin.createproject()
 
         if rc:
             self.log.critical('destination repository could not be created.')
