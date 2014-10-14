@@ -256,12 +256,12 @@ class oasisCLI(object):
                 [PROJ1]
                 foo = bar
                 user = blah
-                project = PROJ1
+                projectname = PROJ1
 
                 [PROJ2]
                 foo2 = barz
                 user = bloh
-                project = proj2
+                projectname = proj2
 
         We need to find out the <section> given the user.
         Only reason the section name is not the username itself is just aesthetic,
@@ -283,12 +283,12 @@ class oasisCLI(object):
                 [PROJ1]
                 foo = bar
                 user = blah
-                project = PROJ1
+                projectname = PROJ1
 
                 [PROJ2]
                 foo2 = barz
                 user = bloh
-                project = proj2
+                projectname = proj2
 
         We need to find out the <section> given the project.
         Only reason the section name is not the username itself is just aesthetic,
@@ -296,7 +296,7 @@ class oasisCLI(object):
         '''
 
         for section in conf.sections():
-            if conf.get(section, 'project') == projectname:
+            if conf.get(section, 'projectname') == projectname:
                 if conf.getboolean(section, 'enabled'):
                     return section
         return None
