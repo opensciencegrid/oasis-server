@@ -28,7 +28,7 @@
 #                 than VO. Several parts in the code may still be mixing
 #                 VO and project to calculate paths. 
 #                 Therefore, the recommended value is  
-#                       project = %(VO)s
+#                       projectname = %(VO)s
 #
 #        MANDATORY
 #          
