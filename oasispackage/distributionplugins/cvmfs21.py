@@ -204,16 +204,46 @@ class cvmfs21(BaseDistribution):
         shutil.rmtree(tmpdir)
 
 
-    # FIXME
-    #
-    # temporary solution:  createrepository() the same that createreproject()
-    #
+
+    # FIXME: duplicated code in cvmfs20 and cvmfs21 !!
+    def checkrepository(self):
+        return os.path.isdir('/cvmfs/%s' %self.project.repository)
+
+    # FIXME: duplicated code in cvmfs20 and cvmfs21 !!
+    def checkproject(self):
+        return os.path.isdir('/cvmfs/%s' %self.project.project)
+
     def createrepository(self):
-        rc, out = commands.getstatusoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
-        return rc, out
+        '''
+        create the repo area in CVMFS 2.1
+        '''
+ 
+        self.log.info('creating repository %s' %self.project.repository)
+        if self.checkrepository():
+            self.log.info('repository %s already exists' %self.project.repository)
+            return 0
+        else:
+            rc, out = commands.getstatusoutput('service httpd start; cvmfs_server mkfs -o %s %s' %(self.project.repositoryuser, self.project.repository))
+            self.log.info('rc = %s, out=%s' %(rc,out))
+            return rc
+
     def createproject(self):
-        rc, out = commands.getstatusoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
-        return rc, out
+        '''
+        create the project area in CVMFS 2.1
+        '''
+
+        self.log.info('creating project %s' %self.project.project)
+        if self.checkproject():
+            self.log.info('project %s already exists' %self.project.project)
+            return 0
+        else: 
+            self.createrepository()
+
+            rc, out = commands.getstatusoutput('sudo -u %s cvmfs_server transaction %s; mkdir /cvmfs/%s; chown %s /cvmfs/%s' %(self.project.projectuser, self.project.repository, self.project.project, self.project.projectuser, self.project.project))
+            self._publish()
+            return rc
+
+
 
 
     def shouldlock(self, listflagfiles):

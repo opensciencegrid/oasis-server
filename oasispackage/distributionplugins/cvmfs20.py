@@ -69,16 +69,17 @@ class cvmfs20(BaseDistribution):
         # FIXME !!!
         pass
         
-
+    # FIXME: duplicated code in cvmfs20 and cvmfs21 !!
     def checkrepository(self):
         return os.path.isdir('/cvmfs/%s' %self.project.repository)
 
+    # FIXME: duplicated code in cvmfs20 and cvmfs21 !!
     def checkproject(self):
         return os.path.isdir('/cvmfs/%s' %self.project.project)
 
     def createrepository(self):
         '''
-        create the project area in CVMFS
+        create the repo area in CVMFS 2.0
         '''
         
         self.log.info('creating repository %s' %self.project.repository)
@@ -92,7 +93,7 @@ class cvmfs20(BaseDistribution):
 
     def createproject(self):
         '''
-        create the project area in CVMFS
+        create the project area in CVMFS 2.0
         '''
 
         self.log.info('creating project %s' %self.project.project)
