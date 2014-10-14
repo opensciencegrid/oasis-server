@@ -31,7 +31,7 @@ class cvmfs21(BaseDistribution):
 
         super(cvmfs21, self).__init__(project)
 
-        #self.log = logging.getLogger("cvmfs")
+        self.log = logging.getLogger("logfile.cvmfs21")
         self.log.debug('init of cvmfs21 plugin')
 
         # self.project.dest is like  /cvmfs/myvo.opensciencegrid.org
