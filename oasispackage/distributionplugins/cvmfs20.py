@@ -13,7 +13,7 @@ class cvmfs20(BaseDistribution):
     def __init__(self, project):
         super(cvmfs20, self).__init__(project)
 
-        #self.log = logging.getLogger("cvmfs")
+        self.log = logging.getLogger("logfile.cvmfs20")
         self.log.debug('init of cvmfs20 plugin')
 
 
