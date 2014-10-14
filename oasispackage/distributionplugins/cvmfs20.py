@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 
 
 import commands
@@ -70,21 +70,42 @@ class cvmfs20(BaseDistribution):
         pass
         
 
+    def checkrepository(self):
+        return os.path.isdir('/cvmfs/%s' %self.project.repository)
+
+    def checkproject(self):
+        return os.path.isdir('/cvmfs/%s' %self.project.project)
+
     def createrepository(self):
         '''
         create the project area in CVMFS
         '''
-        pass
-        # TO BE IMPLEMENTED 
-
+        
+        self.log.info('creating repository %s' %self.project.repository)
+        if self.checkrepository():
+            self.log.info('repository %s already exists' %self.project.repository)
+            return 0
+        else:
+            rc, out = commands.getstatusoutput('cvmfs_server mkfs %s' %self.project.repository))
+            self.log.info('rc = %s, out=%s' %(rc,out))
+            return rc
 
     def createproject(self):
         '''
         create the project area in CVMFS
         '''
-        #rc, out = commands.getstatusoutput('sudo -u cvmfs mkdir /cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
-        rc, out = commands.getstatusoutput('sudo -u %s mkdir /cvmfs/oasis.opensciencegrid.org/%s' %(self.project.destdiruser, self.project.projectname))
-        return rc, out
+
+        self.log.info('creating project %s' %self.project.project)
+        if self.checkproject():
+            self.log.info('project %s already exists' %self.project.project)
+            return 0
+        else: 
+            self.createrepository()
+  
+            #rc, out = commands.getstatusoutput('sudo -u cvmfs mkdir /cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
+            #rc, out = commands.getstatusoutput('sudo -u %s mkdir /cvmfs/oasis.opensciencegrid.org/%s' %(self.project.destdiruser, self.project.projectname))
+            rc, out = commands.getstatusoutput('sudo -u %s mkdir /cvmfs/%s' %(self.project.projectuser, self.project.project))
+            return rc
 
 
     def shouldlock(self, listflagfiles):
