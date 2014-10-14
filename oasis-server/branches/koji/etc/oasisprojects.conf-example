@@ -23,12 +23,12 @@
 #        e.g. to write in the project scratch area.
 #        MANDATORY
 #
-# project = the name of the project, typically the same than the VO.
+# projectname = the name of the project, typically the same than the VO.
 #        WARNING: unless having a strong reason against it, use the value 
 #                 than VO. Several parts in the code may still be mixing
 #                 VO and project to calculate paths. 
 #                 Therefore, the recommended value is  
-#                       project = %(VO)s
+#                       projectname = %(VO)s
 #
 #        MANDATORY
 #          
@@ -94,9 +94,9 @@
 [DEFAULT]
 
 OSG_APP = /home/data/
-project = %(VO)s
-srcdir = %(OSG_APP)s/%(project)s
-destdir = /cvmfs/%(project)s.opensciencegrid.org 
+projectname = %(VO)s
+srcdir = %(OSG_APP)s/%(projectname)s
+destdir = /cvmfs/%(projectname)s.opensciencegrid.org 
 distributiontool = cvmfs21
 sleep = 100
 starttimeout = 600
@@ -114,8 +114,8 @@ projectprobesconf = /etc/oasis/atlas.conf
 
 VO = mis 
 user = ouser.mis
-srcdir = %(OSG_APP)s/%(project)s
-destdir = /cvmfs/%(project)s.opensciencegrid.org 
+srcdir = %(OSG_APP)s/%(projectname)s
+destdir = /cvmfs/%(projectname)s.opensciencegrid.org 
 projectprobesconf = /etc/oasis/mis.conf
 
 
