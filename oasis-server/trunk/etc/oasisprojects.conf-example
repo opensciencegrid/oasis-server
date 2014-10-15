@@ -50,8 +50,6 @@
 #           cvmfs20 = code to interact with CVMFS server version 2.0.x
 #           cvmfs21 = code to interact with CVMFS server version 2.1.x
 #
-
-
 # repositoryname = the name of the repository.
 #       A repository refers to content being distributed together. 
 #       A project may or may not be the same than a repository.
@@ -112,13 +110,10 @@
 #       It will be the only UNIX ID allowed to do some tasks,
 #       e.g. to write in the project scratch area.
 #       MANDATORY
-
+#
 # project_dest_owner = UNIX ID owner of the project_dest_dir.
 #       Typically, the owner of the CVMFS project directory under repository directory.
 #       MANDATORY
-
-
-
 
 # =========================================================================== 
 
@@ -136,18 +131,20 @@ destdiruser = oasis
 
 enabled = True
 
-[ATLAS]
-VO = atlas
-user = usatlas1
-projectprobesconf = /etc/oasis/atlas.conf
-
 [MIS]
 
 VO = mis 
-user = ouser.mis
-srcdir = %(OSG_APP)s/%(projectname)s
-destdir = /cvmfs/%(projectname)s.opensciencegrid.org 
+
+repositoryname = mis.opensciencegrid.org
+repository_src_dir = %(OSG_APP)s/mis
+repository_dest_dir = mis.opensciencegrid.org
+repository_src_owner = %(project_src_owner)s
+repository_dest_owner = %(project_dest_owner)s 
+
+projectname = mis
+project_src_dir = ""
+project_dest_dir = ""
+project_src_owner = ouser.mis
+project_dest_owner = oasis
+
 projectprobesconf = /etc/oasis/mis.conf
-
-
-
