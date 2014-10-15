@@ -255,6 +255,11 @@ class cvmfs21(cvmfs):
     def createproject(self):
         '''
         create the project area in CVMFS 2.1
+        Example:
+            $ sudo -u ouser.osg cvmfs_server transaction osg.opensciencegrid.org
+            $ mkdir /cvmfs/osg.opensciencegrid.org/bio/
+            $ chown ouser.osg:ouser.osg /cvmfs/osg.opensciencegrid.org/bio
+            $ cvmfs_server publish osg.opensciencegrid.org
         '''
 
         self.log.info('creating project %s' %self.project.project)
