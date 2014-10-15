@@ -17,45 +17,6 @@
 #        MANDATORY if it is being used for interpolation in other variables,
 #        or in case the jobs expect the environment to have a variable $OSG_APP.
 #
-# user = the UNIX ID of the entity calling oasisCLI or 
-#        the UNIX ID the daemon needs to drop privileges to.
-#        It will be the only UNIX ID allowed to do some tasks,
-#        e.g. to write in the project scratch area.
-#        MANDATORY
-#
-# projectname = the name of the project, typically the same than the VO.
-#        WARNING: unless having a strong reason against it, use the value 
-#                 than VO. Several parts in the code may still be mixing
-#                 VO and project to calculate paths. 
-#                 Therefore, the recommended value is  
-#                       projectname = %(VO)s
-#
-#        MANDATORY
-#          
-# srcdir = path to the project scratch area. 
-#        It is the place where the user payload will put new content.
-#
-#        Unless very unique conditions, it should be the same than 
-#
-#                   %(OSG_APP)s/<vo>
-#
-#        if that is not the case, then the installation jobs will
-#        write new content under  $OSG_APP/<vo> 
-#        but the transfer tool will copy from a different place. 
-#
-#        MANDATORY
-#
-# destdir = path to the final place for the files to be distributed. 
-#        Examples:
-#           -- for cvmfs 2.0:  /cvmfs/oasis.opensciencegrid.org/<vo>
-#           -- for cvmfs 2.1:  /cvmfs/<vo>.opensciencegrid.org/
-#
-#        MANDATORY
-#
-# destdiruser = the owner of the destination tree filesystem.
-#       Typically, the owner of the CVMFS repository.
-#        MANDATORY only when distribution tool is cvmfs21
-#
 # projectprobesconf = path to the configuration files for probes 
 #        MANDATORY
 #        NOTE: the file can be left blank if no probes needed.
@@ -89,6 +50,76 @@
 #           cvmfs20 = code to interact with CVMFS server version 2.0.x
 #           cvmfs21 = code to interact with CVMFS server version 2.1.x
 #
+
+
+# repositoryname = the name of the repository.
+#       A repository refers to content being distributed together. 
+#       A project may or may not be the same than a repository.
+#       A repository can have one or more projects. But a project belongs to a single repository.
+#       Typically corresponds to a Virtual Organization (VO), but not necessarily.
+#       MANDATORY
+#
+# repository_src_dir = it is root tree for the project in the user scratch area.
+#       ???      It is the place where the user payload will put new content.
+#       ???      Unless very unique conditions, it should be the same than 
+#       ???                 %(OSG_APP)s/<vo>
+#       ???      if that is not the case, then the installation jobs will
+#       ???      write new content under  $OSG_APP/<vo> 
+#       ???      but the transfer tool will copy from a different place. 
+#        MANDATORY
+#
+#repository_dest_dir = it is the root tree for the project in the destination filesystem.
+#       Examples:
+#           -- for cvmfs 2.0: oasis.opensciencegrid.org  
+#                             (as the data will be placed under /cvmfs/oasis.opensciencegrid.org/)
+#           -- for cvmfs 2.1: <vo>.opensciencegrid.org  
+#                             (as the data will be placed under /cvmfs/<vo>.opensciencegrid.org/)
+#       MANDATORY
+#
+# repository_src_owner = UNIX ID owner of the repository_src_dir
+#       MANDATORY
+#
+# repository_dest_owner = UNIX ID owner of the repository_dest_dir
+#       Typically, the owner of the CVMFS repository.
+#        MANDATORY only when distribution tool is cvmfs21
+#
+# projectname = the name of the project.
+#       A project refers to content to be distributed 
+#       handled by a single unique UNIX ID.
+#       A project may or may not be the same than a repository.
+#       A repository can have one or more projects. But a project belongs to a single repository.
+#       Typically corresponds to a Virtual Organization (VO), but not necessarily.
+#       MANDATORY
+#
+# project_src_dir = is the path, relative to repository_src_dir, 
+#       ???      It is the place where the user payload will put new content.
+#       ???      Unless very unique conditions, it should be the same than 
+#       ???                 %(OSG_APP)s/<vo>
+#       ???      if that is not the case, then the installation jobs will
+#       ???      write new content under  $OSG_APP/<vo> 
+#       ???      but the transfer tool will copy from a different place. 
+#       When the project and the repository are the same thing, then it is just ""
+#       MANDATORY
+#       
+# project_dest_dir = is the path, relative to repository_dest_dir, 
+#       in the destination filesytem.
+#       When the project and the repository are the same thing, then it is just ""
+#       MANDATORY
+#
+# project_src_owner = UNIX ID onwer of the project_src_dir.
+#       it is the UNIX ID of the entity calling oasisCLI or 
+#       the UNIX ID the daemon needs to drop privileges to.
+#       It will be the only UNIX ID allowed to do some tasks,
+#       e.g. to write in the project scratch area.
+#       MANDATORY
+
+# project_dest_owner = UNIX ID owner of the project_dest_dir.
+#       Typically, the owner of the CVMFS project directory under repository directory.
+#       MANDATORY
+
+
+
+
 # =========================================================================== 
 
 [DEFAULT]
