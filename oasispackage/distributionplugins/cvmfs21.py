@@ -23,8 +23,9 @@ import time
 
 
 from oasispackage.interfaces import BaseDistribution
+from oasispackage.distributionplugins.cvmfs import cvmfs
 
-class cvmfs21(BaseDistribution):
+class cvmfs21(cvmfs):
 
 
     def __init__(self, project):
@@ -203,15 +204,6 @@ class cvmfs21(BaseDistribution):
         # delete everything in the temporary directory
         shutil.rmtree(tmpdir)
 
-
-
-    # FIXME: duplicated code in cvmfs20 and cvmfs21 !!
-    def checkrepository(self):
-        return os.path.isdir('/cvmfs/%s' %self.project.repository)
-
-    # FIXME: duplicated code in cvmfs20 and cvmfs21 !!
-    def checkproject(self):
-        return os.path.isdir('/cvmfs/%s' %self.project.project)
 
     def createrepository(self):
         '''

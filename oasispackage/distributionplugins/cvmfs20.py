@@ -6,8 +6,9 @@ import logging
 import os
 
 from oasispackage.interfaces import BaseDistribution
+from oasispackage.distributionplugins.cvmfs import cvmfs
 
-class cvmfs20(BaseDistribution):
+class cvmfs20(cvmfs):
 
 
     def __init__(self, project):
@@ -69,13 +70,6 @@ class cvmfs20(BaseDistribution):
         # FIXME !!!
         pass
         
-    # FIXME: duplicated code in cvmfs20 and cvmfs21 !!
-    def checkrepository(self):
-        return os.path.isdir('/cvmfs/%s' %self.project.repository)
-
-    # FIXME: duplicated code in cvmfs20 and cvmfs21 !!
-    def checkproject(self):
-        return os.path.isdir('/cvmfs/%s' %self.project.project)
 
     def createrepository(self):
         '''
