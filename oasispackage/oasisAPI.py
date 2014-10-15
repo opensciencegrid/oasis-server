@@ -269,7 +269,7 @@ class oasisCLI(object):
         '''
 
         for section in conf.sections():
-            if conf.get(section, 'user') == username:
+            if conf.get(section, 'project_src_owner') == username:
                 if conf.getboolean(section, 'enabled'):
                     return section
         return None
