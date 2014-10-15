@@ -46,13 +46,13 @@ class cvmfs21(cvmfs):
 
             1. start a transaction section
             examples:   
-                cvmfs_server transaction atlas.opensciencegrid.org
-                sudo -u ouser.atlas cvmfs_server transaction atlas.opensciencegrid.org
+                $ cvmfs_server transaction atlas.opensciencegrid.org
+                $ sudo -u ouser.atlas cvmfs_server transaction atlas.opensciencegrid.org
 
             2. copy, with rsync, data from the user scratch area
             example:   
-                rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
-                sudo -u ouser.atlas rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+                $ rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+                $ sudo -u ouser.atlas rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
         
         """
 
@@ -118,6 +118,11 @@ class cvmfs21(cvmfs):
     # --------------------------------------------------------------------
 
     def publish(self):
+        """
+        publish the CVMFS repo.
+        example:   
+            $ cvmfs_server publish atlas.opensciencegrid.org
+        """
         
         rc, out = self._publish()
         if rc:
@@ -127,11 +132,9 @@ class cvmfs21(cvmfs):
 
     def _publish(self):
 
-        self.log.info('publishing CVMFS for repository %s' %self.repo)
+        self.log.info('publishing CVMFS for repository %s' %self.project.repositoryname)
 
-        ## cmd = 'cvmfs_server publish %s' %self.repo 
-        # example:   cvmfs_server publish atlas.opensciencegrid.org
-        cmd = 'sudo -u %s cvmfs_server publish %s' %(self.project.destdiruser, self.repo)
+        cmd = 'sudo -u %s cvmfs_server publish %s' %(self.project.repository_dest_owner, self.project.repositoryname)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
@@ -156,14 +159,14 @@ class cvmfs21(cvmfs):
 
         #FIXME: allow re-signing from remote host
         
-        masterkey = '/etc/cvmfs/keys/%s.masterkey' %self.repo
+        masterkey = '/etc/cvmfs/keys/%s.masterkey' %self.project.repositoryname
         # FIXME
         # check if masterkey file exists, and raise an exception otherwise 
         # for example, if this code is run at a Replica host
         
-        whitelist = '/srv/cvmfs/%s/.cvmfswhitelist' %sef.repo
+        whitelist = '/srv/cvmfs/%s/.cvmfswhitelist' %self.project.repositoryname
         
-        self.log.info('Signing 7-day whitelist for repo %s  with master key...' %self.repo)
+        self.log.info('Signing 7-day whitelist for repo %s  with master key...' %self.project.repositoryname)
         
         now = datetime.datetime.utcnow()
         now_str = now.strftime('%Y%m%d%H%M%S')
@@ -236,6 +239,8 @@ class cvmfs21(cvmfs):
     def createrepository(self):
         '''
         create the repo area in CVMFS 2.1
+        example:
+            $ service httpd start; cvmfs_server mkfs -o ouser.atlas atlas.opensciencegrid.org 
         '''
  
         self.log.info('creating repository %s' %self.project.repository)
@@ -243,7 +248,7 @@ class cvmfs21(cvmfs):
             self.log.info('repository %s already exists' %self.project.repository)
             return 0
         else:
-            rc, out = commands.getstatusoutput('service httpd start; cvmfs_server mkfs -o %s %s' %(self.project.repositoryuser, self.project.repository))
+            rc, out = commands.getstatusoutput('service httpd start; cvmfs_server mkfs -o %s %s' %(self.project.repositor_dest_owner, self.project.repositoryname))
             self.log.info('rc = %s, out=%s' %(rc,out))
             return rc
 
