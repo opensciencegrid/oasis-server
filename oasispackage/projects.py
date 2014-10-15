@@ -78,13 +78,52 @@ class ProjectBasicConfig(object):
             self.enabled = self.projectsconf.get(self.projectsection, 'enabled')
             self.log.debug('variable enabled has value %s', self.enabled)
 
-            self.username = self.projectsconf.get(self.projectsection, 'user')
-            self.log.debug('variable username has value %s', self.username)
-            if self.username == 'root':
-                raise Exception('user cannot be root')
+            #self.username = self.projectsconf.get(self.projectsection, 'user')
+            #self.log.debug('variable username has value %s', self.username)
+            #if self.username == 'root':
+            #    raise Exception('user cannot be root')
+            #self.srcdir = self._getsrcdir()
+            #self.log.debug('variable srcdir has value %s', self.srcdir)
+            #self.destdir = self._getdestdir()
+            #self.log.debug('variable destdir has value %s', self.destdir)
+            #self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
+            #self.log.debug('variable destdiruser has value %s', self.destdiruser)
+            #if self.destdiruser == 'root':
+            #    raise Exception('destdiruser cannot be root')
 
-            self.projectname = self.projectsconf.get(self.projectsection, 'projectname')
-            self.log.debug('variable projectname has value %s', self.projectname)
+            self.repositoryname = self.projectsconf.get(self.projectsection, 'repositoryname') 
+            self.log.debug('variable repositoryname has value %s' %self.repositoryname)  
+
+            self.repository_src_dir = self.projectsconf.get(self.projectsection, 'repository_src_dir') 
+            self.log.debug('variable repository_src_dir has value %s' %self.repository_src_dir)  
+
+            self.repository_dest_dir = self.projectsconf.get(self.projectsection, 'repository_dest_dir') 
+            self.log.debug('variable repository_dest_dir has value %s' %self.repository_dest_dir)  
+
+            self.repository_src_owner = self.projectsconf.get(self.projectsection, 'repository_src_owner') 
+            self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)  
+            if self.repository_src_owner == 'root':
+                raise Exception('repository_src_owner cannot be root')
+
+            self.repository_dest_owner = self.projectsconf.get(self.projectsection, 'repository_dest_owner') 
+            self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)  
+
+            self.projectname = self.projectsconf.get(self.projectsection, 'projectname') 
+            self.log.debug('variable projectname has value %s' %self.projectname)  
+
+            self.project_src_dir = self.projectsconf.get(self.projectsection, 'project_src_dir') 
+            self.log.debug('variable project_src_dir has value %s' %self.project_src_dir)  
+
+            self.project_dest_dir = self.projectsconf.get(self.projectsection, 'project_dest_dir') 
+            self.log.debug('variable project_dest_dir has value %s' %self.project_dest_dir)  
+
+            self.project_src_owner = self.projectsconf.get(self.projectsection, 'project_src_owner') 
+            self.log.debug('variable project_src_owner has value %s' %self.project_src_owner)  
+            if self.project_src_dir == 'root':
+                raise Exception('project_src_dir cannot be root')
+
+            self.project_dest_owner = self.projectsconf.get(self.projectsection, 'project_dest_owner') 
+            self.log.debug('variable project_dest_owner has value %s' %self.project_dest_owner)  
 
             self.vo = self._getvo()
             self.log.debug('variable vo has value %s', self.vo)
@@ -95,17 +134,6 @@ class ProjectBasicConfig(object):
 
             self.distributiontool = self.projectsconf.get(self.projectsection, 'distributiontool')
             self.log.debug('variable distributiontool has value %s', self.distributiontool)
-
-            self.srcdir = self._getsrcdir()
-            self.log.debug('variable srcdir has value %s', self.srcdir)
-
-            self.destdir = self._getdestdir()
-            self.log.debug('variable destdir has value %s', self.destdir)
-
-            self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
-            self.log.debug('variable destdiruser has value %s', self.destdiruser)
-            if self.destdiruser == 'root':
-                raise Exception('destdiruser cannot be root')
 
             self.distributionplugin = self._getdistributionplugin()
             self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
