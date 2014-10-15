@@ -125,9 +125,6 @@ class ProjectBasicConfig(object):
             self.project_dest_owner = self.projectsconf.get(self.projectsection, 'project_dest_owner') 
             self.log.debug('variable project_dest_owner has value %s' %self.project_dest_owner)  
 
-            self.vo = self._getvo()
-            self.log.debug('variable vo has value %s', self.vo)
-
             self.osg_app = self._getosgapp()
             #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
             self.log.debug('variable osg_app has value %s', self.osg_app)
@@ -182,32 +179,6 @@ class ProjectBasicConfig(object):
         self.log.debug('Leaving returning config object %s.' %oasisprojectsconf)
         return oasisprojectsconf
 
-
-    def _getvo(self):
-        '''
-        gets the VO from the projects config file.
-        '''
-        
-        self.log.debug('Starting.')
-        
-        if self.projectsconf.has_option(self.projectsection, "VO"):
-            vo = self.projectsconf.get(self.projectsection, 'VO')
-        else:
-            self.log.warning('There is no variable VO defined in the config file')
-            vo = None
-
-        # try to get VO from x509, and interpolate just in case
-        #try:    
-        #    st, vo = commands.getstatusoutput('voms-proxy-info -vo')
-        #    if st == 0:
-        #        vo_temp = string.Template(self.vo)
-        #        vo = vo_temp.substitute(VO_FROM_X509, vo) 
-        #except:
-        #    pass
-
-        self.log.debug('Returning VO %s.' %vo)
-        return vo
-
     def _getosgapp(self):
         '''
         gets the variable OSG_APP from the projects config file.
@@ -237,7 +208,6 @@ class ProjectBasicConfig(object):
 
         self.log.debug('Starting.')
         src = self.projectsconf.get(self.projectsection, "srcdir")
-        ## src = string.Template(src).substitute(OSG_APP=self.osg_app, VO=self.vo, project=self.projectname)
         # normalize, just in case
         src = os.path.normpath(src)
         self.log.debug('Returning src dir %s.' %src)
@@ -255,7 +225,6 @@ class ProjectBasicConfig(object):
 
         self.log.debug('Starting.')
         dest = self.projectsconf.get(self.projectsection, "destdir")
-        ## dest = string.Template(dest).substitute(VO=self.vo, project=self.projectname)
         # normalize, just in case
         dest = os.path.normpath(dest)
         self.log.debug('Returning dest dir %s.' %dest)
@@ -395,31 +364,6 @@ class Project(ProjectBasicConfig):
     #                 Read variables from config object 
     # -------------------------------------------------------------------------
 
-    def _getvo(self):
-        '''
-        gets the VO from the projects config file.
-        '''
-        
-        self.log.debug('Starting.')
-        
-        if self.projectsconf.has_option(self.projectsection, "VO"):
-            vo = self.projectsconf.get(self.projectsection, 'VO')
-        else:
-            self.log.warning('There is no variable VO defined in the config file')
-            vo = None
-
-        # try to get VO from x509, and interpolate just in case
-        #try:    
-        #    st, vo = commands.getstatusoutput('voms-proxy-info -vo')
-        #    if st == 0:
-        #        vo_temp = string.Template(self.vo)
-        #        vo = vo_temp.substitute(VO_FROM_X509, vo) 
-        #except:
-        #    pass
-
-        self.log.debug('Returning VO %s.' %vo)
-        return vo
-
     def _getosgapp(self):
         '''
         gets the variable OSG_APP from the projects config file.
@@ -449,7 +393,6 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Starting.')
         src = self.projectsconf.get(self.projectsection, "srcdir")
-        ## src = string.Template(src).substitute(OSG_APP=self.osg_app, VO=self.vo, project=self.projectname)
         # normalize, just in case
         src = os.path.normpath(src)
         self.log.debug('Returning src dir %s.' %src)
@@ -467,7 +410,6 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Starting.')
         dest = self.projectsconf.get(self.projectsection, "destdir")
-        ## dest = string.Template(dest).substitute(VO=self.vo, project=self.projectname)
         # normalize, just in case
         dest = os.path.normpath(dest)
         self.log.debug('Returning dest dir %s.' %dest)
