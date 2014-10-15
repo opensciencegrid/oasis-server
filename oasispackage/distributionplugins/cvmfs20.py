@@ -87,7 +87,7 @@ class cvmfs20(BaseDistribution):
             self.log.info('repository %s already exists' %self.project.repository)
             return 0
         else:
-            rc, out = commands.getstatusoutput('cvmfs_server mkfs %s' %self.project.repository))
+            rc, out = commands.getstatusoutput('cvmfs_server mkfs %s' %self.project.repository)
             self.log.info('rc = %s, out=%s' %(rc,out))
             return rc
 
