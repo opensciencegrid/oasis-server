@@ -284,13 +284,6 @@ class ProjectBasicConfig(object):
         return distribution_obj
 
 
-
-
-
-
-
-
-#class Project(object):
 class Project(ProjectBasicConfig):
     '''
     class to keep together all actions related a Project.
