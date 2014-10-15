@@ -35,20 +35,39 @@ class cvmfs21(cvmfs):
         self.log = logging.getLogger("logfile.cvmfs21")
         self.log.debug('init of cvmfs21 plugin')
 
-        # self.project.dest is like  /cvmfs/myvo.opensciencegrid.org
-        # the repo is the <myvo.opensciencegrid.org> part
-        self.repo = self.project.destdir.split('/')[2]
-
+    # --------------------------------------------------------------------
+    #           transfer
+    # --------------------------------------------------------------------
 
     def transfer(self):
+        """
+        transfer files from user scratch area to CVMFS filesystem.
+        Steps:
+
+            1. start a transaction section
+            examples:   
+                cvmfs_server transaction atlas.opensciencegrid.org
+                sudo -u ouser.atlas cvmfs_server transaction atlas.opensciencegrid.org
+
+            2. copy, with rsync, data from the user scratch area
+            example:   
+                rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+                sudo -u ouser.atlas rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+        
+        """
 
         self.log.info('transfering files from %s to %s' %(self.project.srcdir, self.project.destdir))
 
-        ## cmd = 'cvmfs_server transaction %s' %self.repo
-        # example:   cvmfs_server transaction atlas.opensciencegrid.org
-        cmd = 'sudo -u %s cvmfs_server transaction %s' %(self.project.destdiruser, self.repo)
-        self.log.info('command = %s' %cmd)
+        rc, out = self._starttransaction()
+        if rc != 0:
+            return rc, out
+        rc, out = self._transfer()
+        return rc, out
+       
+    def _starttransaction(self): 
 
+        cmd = 'sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname)
+        self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
         if st:
@@ -57,11 +76,7 @@ class cvmfs21(cvmfs):
             self.log.critical('output = %s' %out)
             return st, out
 
-        ## cmd = 'rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
-        # example:   rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
-        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.destdiruser, self.project.srcdir, self.project.destdir)
-        self.log.info('command = %s' %cmd)
-
+    def _transfer(self):
         # FIXME
         #  perhaps parsing the output of rsync --stats instead of 
         #  logging the entire output???
@@ -84,14 +99,20 @@ class cvmfs21(cvmfs):
         #       total size is 0  speedup is 0.00
         #       
 
+        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.destdiruser, self.project.srcdir, self.project.destdir)
+        self.log.info('command = %s' %cmd)
+
         st, out = commands.getstatusoutput(cmd)
         if st:
             self.log.critical('transferring files failed.')
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
-            return st, out
 
         return st, out
+
+    # --------------------------------------------------------------------
+    #       publish
+    # --------------------------------------------------------------------
 
     def publish(self):
         
@@ -117,6 +138,10 @@ class cvmfs21(cvmfs):
             self.log.critical('output = %s' %out)
         return st, out
     
+    # --------------------------------------------------------------------
+    #       adminstrative methods
+    # --------------------------------------------------------------------
+
     def resign(self):
         '''
         Re-sign the .cvmfswhitelist of a  given repository
@@ -234,8 +259,6 @@ class cvmfs21(cvmfs):
             rc, out = commands.getstatusoutput('sudo -u %s cvmfs_server transaction %s; mkdir /cvmfs/%s; chown %s /cvmfs/%s' %(self.project.projectuser, self.project.repository, self.project.project, self.project.projectuser, self.project.project))
             self._publish()
             return rc
-
-
 
 
     def shouldlock(self, listflagfiles):
