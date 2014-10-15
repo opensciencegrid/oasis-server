@@ -283,6 +283,14 @@ class cvmfs21(cvmfs):
                 return rc
 
 
+    def _intransaction(self):
+        '''
+        checks if the CVMFS repo is already in transaction 
+        (someone else is publishing)
+        '''
+        return os.path.isdir('/var/spool/cvmfs/%s/in_transaction' %self.project.repositoryname)
+
+
     def shouldlock(self, listflagfiles):
         '''
         it should lock only if any of the flagfiles belongs to the same project
