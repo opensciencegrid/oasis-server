@@ -260,17 +260,24 @@ class ProjectHandler(object):
         # FIXME
         # at this step, if it is the first repo being created, 
         # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
+   
+        try: 
+            rc = self.project.distributionplugin.createproject()
     
-        rc = self.project.distributionplugin.createproject()
-
-        if rc:
-            self.log.critical('destination repository could not be created.')
-            self.console.critical('destination repository could not be created.')
-        else:
-            self.log.debug('destination repository created.')
-            self.console.debug('destination repository created.')
-
-        return rc
+            if rc:
+                self.log.critical('destination repository could not be created.')
+                self.console.critical('destination repository could not be created.')
+            else:
+                self.log.debug('destination repository created.')
+                self.console.debug('destination repository created.')
+    
+            return rc
+        except Exception, ex:
+            self.log.critical('Exception received when trying to create destination project directory: %s' %ex)
+            self.console.critical('Exception received when trying to create destination project directory: %s' %ex)
+            # FIXME
+            return 1
+            
 
 # ================================================================
 
