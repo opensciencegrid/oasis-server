@@ -10,9 +10,6 @@
 #               VARIABLES
 # =========================================================================== 
 
-# VO = The Virtual Organization, when makes sense.
-#        NOT MANDATORY, unless it is being used for interpolation in other variables.
-#
 # OSG_APP = for legacy reasons, we maintain the environment variable OSG_APP
 #        MANDATORY if it is being used for interpolation in other variables,
 #        or in case the jobs expect the environment to have a variable $OSG_APP.
@@ -132,8 +129,6 @@ destdiruser = oasis
 enabled = True
 
 [MIS]
-
-VO = mis 
 
 repositoryname = mis.opensciencegrid.org
 repository_src_dir = %(OSG_APP)s/mis
