@@ -259,6 +259,10 @@ class cvmfs21(cvmfs):
             $ sudo -u ouser.bio /cvmfs/osg.opensciencegrid.org/bio/
             $ cvmfs_server publish osg.opensciencegrid.org
 
+        NOTE: we only create a project directory if 
+              the CVMFS repo is not already in transaction
+              (someone else is publishing)
+
         NOTE: we only need to create a project directory if 
               it is different that the repo directory
         '''
@@ -271,7 +275,11 @@ class cvmfs21(cvmfs):
             rc = self.createrepository()
             if rc != 0:
                 self.log.critical('creating repository %s failed. Aborting' % self.project.repositoryname)
-                reutrn rc
+                return rc
+
+            if self._intransaction():
+                self.log.info('the repository %s is currently in a transaction session. Aborting.' %self.project.repositoryname)
+                raise Exception('the repository %s is currently in a transaction session. Aborting.' %self.project.repositoryname)
 
             if self.project.project_dest_dir == "":
                 self.log.info('the project destination directory is the same that the repository destination directory. Nothing to do')
