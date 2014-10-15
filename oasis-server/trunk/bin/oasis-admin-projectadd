@@ -107,8 +107,6 @@ class ProjectHandler(object):
             self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
             raise ex
 
-
-
     def _setuplogging(self):
         
         #self.log = logging.getLogger('admin-addproject')
@@ -298,6 +296,7 @@ def main(options):
         return rc
     except Exception, ex:
         return 1
+
 
 if __name__ == '__main__':
     rc = main(sys.argv[1:])
