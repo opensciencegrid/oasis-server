@@ -20,6 +20,9 @@ class cvmfs(BaseDistribution):
     def __init__(self, project):
         super(cvmfs, self).__init__(project)
 
+        self.src = '%s/%s' %(self.project.repository_src_directory, self.project.project_src_dir)
+        self.dest = '/cvmfs/%s/%s' %(self.project.repository_dest_directory, self.project.project_dest_dir)
+
 
     def checkrepository(self):
         check = os.path.isdir('/cvmfs/%s' %self.project.repository)

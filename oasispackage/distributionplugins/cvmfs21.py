@@ -56,9 +56,6 @@ class cvmfs21(cvmfs):
         
         """
 
-        self.src = '%s/%s' %(self.project.repository_src_directory, self.project.project_src_dir)
-        self.dest = '%s/%s' %(self.project.repository_dest_directory, self.project.project_dest_dir)
-
         self.log.info('transfering files from %s to %s' %(self.src, self.dest))
 
         rc, out = self._starttransaction()
@@ -243,9 +240,9 @@ class cvmfs21(cvmfs):
             $ service httpd start; cvmfs_server mkfs -o ouser.atlas atlas.opensciencegrid.org 
         '''
  
-        self.log.info('creating repository %s' %self.project.repository)
+        self.log.info('creating repository %s' %self.project.repositoryname)
         if self.checkrepository():
-            self.log.info('repository %s already exists' %self.project.repository)
+            self.log.info('repository %s already exists' %self.project.repositoryname)
             return 0
         else:
             rc, out = commands.getstatusoutput('service httpd start; cvmfs_server mkfs -o %s %s' %(self.project.repositor_dest_owner, self.project.repositoryname))
@@ -262,9 +259,9 @@ class cvmfs21(cvmfs):
             $ cvmfs_server publish osg.opensciencegrid.org
         '''
 
-        self.log.info('creating project %s' %self.project.project)
+        self.log.info('creating project %s' %self.project.projectname)
         if self.checkproject():
-            self.log.info('project %s already exists' %self.project.project)
+            self.log.info('project %s already exists' %self.project.projectname)
             return 0
         else: 
             self.createrepository()
