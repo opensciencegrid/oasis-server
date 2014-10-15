@@ -100,8 +100,8 @@ class ProjectHandler(object):
         # which includes an attribute self.distributionplugin
         
         try:        
-            oasis = oasisCLI(projectname=self.projectname)
-            self.project = oasis.project 
+            self.oasis = oasisCLI(projectname=self.projectname)
+            self.project = self.oasis.project 
         except Exception, ex:
             self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
             self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
@@ -204,6 +204,12 @@ class ProjectHandler(object):
         creates the source directory
         '''
 
+        if 'login' not in self.oasis.services:
+            self.log.info('Not a login host: no need to create src directory')
+            self.console.info('Not a login host: no need to create src directory')
+            return 0
+            
+
         user = self.project.username
         uid = pwd.getpwnam(user).pw_uid
         gid = pwd.getpwnam(user).pw_gid
@@ -244,6 +250,12 @@ class ProjectHandler(object):
         uses the distribution plugin included in the Project() object,
         and calls the method createproject() 
         '''
+
+        if 'server' not in self.oasis.services:
+            self.log.info('Not a server host: no need to create dest directory')
+            self.console.info('Not a server host: no need to create dest directory')
+            return 0
+        
 
         # FIXME
         # at this step, if it is the first repo being created, 
