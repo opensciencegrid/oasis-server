@@ -8,6 +8,13 @@ import os
 from oasispackage.interfaces import BaseDistribution
 from oasispackage.distributionplugins.cvmfs import cvmfs
 
+#
+#  !! FIXME !!
+#  Temporary implementation
+#  use subprocess() instead of commands.getstatusoutput()
+#
+
+
 class cvmfs20(cvmfs):
 
 
@@ -17,19 +24,24 @@ class cvmfs20(cvmfs):
         self.log = logging.getLogger("logfile.cvmfs20")
         self.log.debug('init of cvmfs20 plugin')
 
+    # --------------------------------------------------------------------
+    #           transfer
+    # --------------------------------------------------------------------
 
     def transfer(self):
+        """
+        transfer files from user scratch area to CVMFS filesystem.
+        example:   
+           $ rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+           $ sudo -u ouser.atlas rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+        """
         #
-        #  !! FIXME !!
-        #  Temporary implementation
-        #  use subprocess() instead of commands.getstatusoutput()
+        # FIXME : the code here is the same of _transfer() in cvmfs21. It should go to base cvmfs.py
         #
-
-        self.log.info('transfering files from %s to %s' %(self.project.srcdir, self.project.destdir))
-
-        #cmd = 'sudo -u cvmfs rsync --stats -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
-        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.destdiruser, self.project.srcdir, self.project.destdir)
-        # example:   rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+        
+        self.log.info('transfering files from %s to %s' %(self.src, self.dest))
+        
+        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.project_dest_owner, self.src, self.dest)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
@@ -39,6 +51,9 @@ class cvmfs20(cvmfs):
             self.log.critical('output = %s' %out)
         return st, out
 
+    # --------------------------------------------------------------------
+    #       publish
+    # --------------------------------------------------------------------
 
     def publish(self):
 
@@ -66,6 +81,10 @@ class cvmfs20(cvmfs):
         return st, out
 
 
+    # --------------------------------------------------------------------
+    #       adminstrative methods
+    # --------------------------------------------------------------------
+
     def resign(self):
         # FIXME !!!
         pass
@@ -76,30 +95,30 @@ class cvmfs20(cvmfs):
         create the repo area in CVMFS 2.0
         '''
         
-        self.log.info('creating repository %s' %self.project.repository)
+        self.log.info('creating repository %s' %self.project.repositoryname)
         if self.checkrepository():
-            self.log.info('repository %s already exists' %self.project.repository)
+            self.log.info('repository %s already exists' %self.project.repositoryname)
             return 0
         else:
-            rc, out = commands.getstatusoutput('cvmfs_server mkfs %s' %self.project.repository)
+            rc, out = commands.getstatusoutput('cvmfs_server mkfs %s' %self.project.repositoryname)
             self.log.info('rc = %s, out=%s' %(rc,out))
             return rc
 
     def createproject(self):
         '''
         create the project area in CVMFS 2.0
+        Example:
+            $ sudo -u ouser.atlas mkdir /cvmfs/oasis.opensciencegrid.org/atlas/
         '''
 
-        self.log.info('creating project %s' %self.project.project)
+        self.log.info('creating project %s' %self.project.projectname)
         if self.checkproject():
-            self.log.info('project %s already exists' %self.project.project)
+            self.log.info('project %s already exists' %self.project.projectname)
             return 0
         else: 
             self.createrepository()
   
-            #rc, out = commands.getstatusoutput('sudo -u cvmfs mkdir /cvmfs/oasis.opensciencegrid.org/%s' %self.project.projectname)  # ?? should I now publish ??
-            #rc, out = commands.getstatusoutput('sudo -u %s mkdir /cvmfs/oasis.opensciencegrid.org/%s' %(self.project.destdiruser, self.project.projectname))
-            rc, out = commands.getstatusoutput('sudo -u %s mkdir /cvmfs/%s' %(self.project.projectuser, self.project.project))
+            rc, out = commands.getstatusoutput('sudo -u %s mkdir /cvmfs/%s/%s' %(self.project.project_dest_owner, self.project.repository_dest_dir, self.project.project_dest_dir))
             return rc
 
 
