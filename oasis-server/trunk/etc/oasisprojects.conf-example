@@ -52,6 +52,9 @@
 #       A project may or may not be the same than a repository.
 #       A repository can have one or more projects. But a project belongs to a single repository.
 #       Typically corresponds to a Virtual Organization (VO), but not necessarily.
+#       Examples:    
+#           oasis.opensciencegrid.org
+#           mis.opensciencegrid.org
 #       MANDATORY
 #
 # repository_src_dir = it is root tree for the project in the user scratch area.
@@ -64,6 +67,7 @@
 #        MANDATORY
 #
 #repository_dest_dir = it is the root tree for the project in the destination filesystem.
+#       In the case of CVMFS 2.0 and 2.1, it is the same that repositoryname
 #       Examples:
 #           -- for cvmfs 2.0: oasis.opensciencegrid.org  
 #                             (as the data will be placed under /cvmfs/oasis.opensciencegrid.org/)
