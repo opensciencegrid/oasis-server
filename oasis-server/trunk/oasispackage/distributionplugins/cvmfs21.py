@@ -247,6 +247,8 @@ class cvmfs21(cvmfs):
         else:
             rc, out = commands.getstatusoutput('service httpd start; cvmfs_server mkfs -o %s %s' %(self.project.repositor_dest_owner, self.project.repositoryname))
             self.log.info('rc = %s, out=%s' %(rc,out))
+            if rc != 0:
+                self.log.critical('creating repository %s failed.' % self.project.repositoryname)
             return rc
 
     def createproject(self):
@@ -256,6 +258,9 @@ class cvmfs21(cvmfs):
             $ sudo -u ouser.osg cvmfs_server transaction osg.opensciencegrid.org
             $ sudo -u ouser.bio /cvmfs/osg.opensciencegrid.org/bio/
             $ cvmfs_server publish osg.opensciencegrid.org
+
+        NOTE: we only need to create a project directory if 
+              it is different that the repo directory
         '''
 
         self.log.info('creating project %s' %self.project.projectname)
@@ -263,12 +268,18 @@ class cvmfs21(cvmfs):
             self.log.info('project %s already exists' %self.project.projectname)
             return 0
         else: 
-            self.createrepository()
+            rc = self.createrepository()
+            if rc != 0:
+                self.log.critical('creating repository %s failed. Aborting' % self.project.repositoryname)
 
-            rc, out = commands.getstatusoutput('sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname))
-            rc, out = commands.getstatusoutput('sudo -u %s mkdir %s' %(self.project.project_dest_owner, self.dest))
-            self._publish()
-            return rc
+            if self.project.project_dest_dir == "":
+                self.log.info('the project destination directory is the same that the repository destination directory. Nothing to do')
+                return 0
+            else:
+                rc, out = commands.getstatusoutput('sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname))
+                rc, out = commands.getstatusoutput('sudo -u %s mkdir %s' %(self.project.project_dest_owner, self.dest))
+                self._publish()
+                return rc
 
 
     def shouldlock(self, listflagfiles):
