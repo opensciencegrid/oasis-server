@@ -271,6 +271,7 @@ class cvmfs21(cvmfs):
             rc = self.createrepository()
             if rc != 0:
                 self.log.critical('creating repository %s failed. Aborting' % self.project.repositoryname)
+                reutrn rc
 
             if self.project.project_dest_dir == "":
                 self.log.info('the project destination directory is the same that the repository destination directory. Nothing to do')

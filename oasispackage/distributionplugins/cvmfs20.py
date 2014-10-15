@@ -102,6 +102,8 @@ class cvmfs20(cvmfs):
         else:
             rc, out = commands.getstatusoutput('cvmfs_server mkfs %s' %self.project.repositoryname)
             self.log.info('rc = %s, out=%s' %(rc,out))
+            if rc != 0:
+                self.log.critical('creating repository %s failed.' % self.project.repositoryname)
             return rc
 
     def createproject(self):
@@ -116,9 +118,12 @@ class cvmfs20(cvmfs):
             self.log.info('project %s already exists' %self.project.projectname)
             return 0
         else: 
-            self.createrepository()
+            rc = self.createrepository()
+            if rc != 0:
+                self.log.critical('creating repository %s failed. Aborting.' % self.project.repositoryname)
+                return rc
   
-            rc, out = commands.getstatusoutput('sudo -u %s mkdir /cvmfs/%s/%s' %(self.project.project_dest_owner, self.project.repository_dest_dir, self.project.project_dest_dir))
+            rc, out = commands.getstatusoutput('sudo -u %s mkdir %s' %(self.project.project_dest_owner, self.dest))
             return rc
 
 
