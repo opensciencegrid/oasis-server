@@ -254,8 +254,7 @@ class cvmfs21(cvmfs):
         create the project area in CVMFS 2.1
         Example:
             $ sudo -u ouser.osg cvmfs_server transaction osg.opensciencegrid.org
-            $ mkdir /cvmfs/osg.opensciencegrid.org/bio/
-            $ chown ouser.osg:ouser.osg /cvmfs/osg.opensciencegrid.org/bio
+            $ sudo -u ouser.bio /cvmfs/osg.opensciencegrid.org/bio/
             $ cvmfs_server publish osg.opensciencegrid.org
         '''
 
@@ -266,7 +265,8 @@ class cvmfs21(cvmfs):
         else: 
             self.createrepository()
 
-            rc, out = commands.getstatusoutput('sudo -u %s cvmfs_server transaction %s; mkdir /cvmfs/%s; chown %s /cvmfs/%s' %(self.project.projectuser, self.project.repository, self.project.project, self.project.projectuser, self.project.project))
+            rc, out = commands.getstatusoutput('sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname))
+            rc, out = commands.getstatusoutput('sudo -u %s mkdir %s' %(self.project.project_dest_owner, self.dest))
             self._publish()
             return rc
 
