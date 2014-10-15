@@ -64,32 +64,6 @@ class ProjectHandler(object):
     # for all admin tools...
     # QUESTION: ?? where the base class would be placed ?? underneath site-packages/ ??
 
-
-###    def __init__(self, projectname, loglevel):
-###        # FIXME!! if projectname is None, it should abort !!
-###
-###        self.projectname = projectname
-###        self.loglevel = loglevel
-###
-###        self._setuplogging()
-###        # do we still need to setup logging if I get a Project class?
-###
-###        # create an object Project(), 
-###        # which includes an attribute self.distributionplugin
-###
-###        
-###        self.oasisconf = SafeConfigParser()
-###        self.oasisconf.readfp(open(oasisconfpath))
-###
-###        try:        
-###            projectfactory = ProjectFactory(clstype=ProjectBasicConfig, projectname=projectname)
-###            self.project = projectfactory.getProject()
-###        except Exception, ex:
-###            self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
-###            self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
-###            raise ex
-
-    
     def __init__(self, projectname, loglevel):
         # FIXME!! if projectname is None, it should abort !!
 
@@ -264,29 +238,6 @@ class ProjectHandler(object):
             self.console.debug('destination repository created.')
 
         return rc
-
-
-
-#class ProjectHandlerManager(object):
-#
-#    def __init__(self):
-#        pass
-#    
-#    def _getprojectsconfig(self):
-#        '''
-#        gets the ConfigParser object for oasisprojects.conf
-#        '''
-#        # FIXME  this code is duplicated from oasisAPI
-#        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
-#        oasisprojectsconf = SafeConfigParser()
-#        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
-#        return oasisprojectsconf
-#
-#    def addallprojects(self):
-#        listprojects = self.oasisd.projectsconf.sections()
-#        for projectsection in listprojects:
-#            project = Project(projectsection, self.oasisd.oasisconf)
-#
 
 
 def usage():
