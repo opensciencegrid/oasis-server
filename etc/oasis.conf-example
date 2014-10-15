@@ -26,7 +26,7 @@
 
 # [OASIS]
 #
-# service = type, or types in a list split by comma,  
+# services = type, or types in a list split by comma,  
 #       of OASIS services provided by this host. 
 #       Options: login, server, replica 
 #       MANDATORY
@@ -57,7 +57,7 @@
 
 [OASIS]
 
-service = login, server
+services = login, server
 sleep = 100
 email = neo@matrix.net
 SMTPServer = server
