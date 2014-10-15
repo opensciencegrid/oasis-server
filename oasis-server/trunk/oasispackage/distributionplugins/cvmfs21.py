@@ -56,7 +56,10 @@ class cvmfs21(cvmfs):
         
         """
 
-        self.log.info('transfering files from %s to %s' %(self.project.srcdir, self.project.destdir))
+        self.src = '%s/%s' %(self.project.repository_src_directory, self.project.project_src_dir)
+        self.dest = '%s/%s' %(self.project.repository_dest_directory, self.project.project_dest_dir)
+
+        self.log.info('transfering files from %s to %s' %(self.src, self.dest))
 
         rc, out = self._starttransaction()
         if rc != 0:
@@ -99,7 +102,7 @@ class cvmfs21(cvmfs):
         #       total size is 0  speedup is 0.00
         #       
 
-        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.destdiruser, self.project.srcdir, self.project.destdir)
+        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.project_dest_owner, self.src, self.dest)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
