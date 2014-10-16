@@ -302,14 +302,21 @@ class cvmfs21(cvmfs):
 
     def shouldlock(self, listflagfiles):
         '''
-        it should lock only if any of the flagfiles belongs to the same project
+        it should lock only if any of the flagfiles belongs to the same repository
         listflagfiles is a list of flagfiles as paths 
         '''
         # FIXME: should I pay attention to the <status> field???
         for flagfile in listflagfiles:
             flagfile = os.path.basename(flagfile)
-            if flagfile.startswith(self.project.projectname):
+            ###if flagfile.startswith(self.project.projectname):
+            ###    return True
+
+            flagfile_projectname = flagfile.split('.')[0]   #FIXME: this should be a method of FlagFile class
+            # check if flagfile_projectname belongs to the same repo
+            # that current projectname
+            if self.project.repository(flagfile_projectname) == self.project.repository():
                 return True
+
         return False
 
 
