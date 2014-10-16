@@ -258,7 +258,7 @@ class ProjectBasicConfig(object):
     # =========================================================================
 
 
-    def repository(self, project=None)
+    def repository(self, project=None):
         '''
         returns to which repository a given projects belongs to. 
         If not project variable is passed, then it is this one.
