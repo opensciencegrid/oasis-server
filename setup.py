@@ -22,7 +22,7 @@ from distutils.command.install_data import install_data as install_data_org
 
 libexec_files = ['libexec/%s' %file for file in os.listdir('libexec') if os.path.isfile('libexec/%s' %file)]
 
-oasis_etc_docs = ['etc/oasis.conf', 'etc/oasisprobes.conf', 'etc/oasisprojects.conf']
+oasis_etc_docs = ['etc/oasis.conf', 'etc/probes.conf', 'etc/projects.conf']
 oasis_logrotate = ['etc/logrotate/oasis' ]
 oasis_sysconfig = ['etc/sysconfig/oasis']
 
