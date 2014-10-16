@@ -245,7 +245,7 @@ class cvmfs21(cvmfs):
             self.log.info('repository %s already exists' %self.project.repositoryname)
             return 0
         else:
-            rc, out = commands.getstatusoutput('service httpd start; cvmfs_server mkfs -o %s %s' %(self.project.repositor_dest_owner, self.project.repositoryname))
+            rc, out = commands.getstatusoutput('service httpd start; cvmfs_server mkfs -o %s %s' %(self.project.repository_dest_owner, self.project.repositoryname))
             self.log.info('rc = %s, out=%s' %(rc,out))
             if rc != 0:
                 self.log.critical('creating repository %s failed.' % self.project.repositoryname)
