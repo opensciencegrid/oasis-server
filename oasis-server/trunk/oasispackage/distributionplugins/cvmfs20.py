@@ -110,7 +110,8 @@ class cvmfs20(cvmfs):
         '''
         create the project area in CVMFS 2.0
         Example:
-            $ sudo -u ouser.atlas mkdir /cvmfs/oasis.opensciencegrid.org/atlas/
+            $ mkdir /cvmfs/oasis.opensciencegrid.org/atlas/
+            $ (if needed) chown user.atlas:ouser.atlas /cvmfs/oasis.opensciencegrid.org/atlas/
         '''
 
         self.log.info('creating project %s' %self.project.projectname)
@@ -123,7 +124,7 @@ class cvmfs20(cvmfs):
                 self.log.critical('creating repository %s failed. Aborting.' % self.project.repositoryname)
                 return rc
   
-            rc, out = commands.getstatusoutput('sudo -u %s mkdir %s' %(self.project.project_dest_owner, self.dest))
+            rc, out = commands.getstatusoutput('mkdir %s; chown %s:%s %s' %(self.dest, self.project.project_dest_owner, self.project.project_dest_owner, self.dest))
             return rc
 
 
