@@ -26,11 +26,11 @@ class cvmfs(BaseDistribution):
 
     def checkrepository(self):
         check = os.path.isdir('/cvmfs/%s' %self.project.repository)
-        self.log.info('repository /cvmfs/%s exists = %s' %(sef.project.repository, check))
+        self.log.info('repository /cvmfs/%s exists = %s' %(self.project.repository, check))
         return check
 
     def checkproject(self):
         check = os.path.isdir('/cvmfs/%s' %self.project.projectname)
-        self.log.info('project /cvmfs/%s exists = %s' %(sef.project.projectname, check))
+        self.log.info('project /cvmfs/%s exists = %s' %(self.project.projectname, check))
         return check
 
