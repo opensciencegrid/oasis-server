@@ -253,6 +253,26 @@ class ProjectBasicConfig(object):
         return distribution_obj
 
 
+    # =========================================================================
+    #   actions and checks related the configuration values
+    # =========================================================================
+
+
+    def repository(self, project=None)
+        '''
+        returns to which repository a given projects belongs to. 
+        If not project variable is passed, then it is this one.
+        '''
+
+        if not project:
+            return self.repositoryname
+        else:
+            for sect in self.projectsconf.sections():
+                if self.projectsconf.get(sect, 'projectname') == project:
+                    return self.projectsconf.get(sect, 'repositoryname')
+
+
+
 class Project(ProjectBasicConfig):
     '''
     class to keep together all actions related a Project.
