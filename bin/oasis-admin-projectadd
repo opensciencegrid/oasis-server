@@ -214,7 +214,7 @@ class ProjectHandler(object):
         uid = pwd.getpwnam(user).pw_uid
         gid = pwd.getpwnam(user).pw_gid
         
-        srcdir = self.project.srcdir
+        srcdir = self.project.project_src_dir
 
         # checks if OSG_APP is defined, and make sure everyone can write
         osg_app = self.project.osg_app
