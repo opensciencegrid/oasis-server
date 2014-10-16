@@ -105,6 +105,10 @@ class ProjectBasicConfig(object):
             if self.repository_src_owner == 'root':
                 raise Exception('repository_src_owner cannot be root')
 
+            # FIXME 
+            # we keep this for compatibility (there are still old code using that variable)
+            self.username = self.repository_src_owner
+
             self.repository_dest_owner = self.projectsconf.get(self.projectsection, 'repository_dest_owner') 
             self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)  
 
