@@ -191,7 +191,7 @@ class ProjectHandler(object):
         '''
         # FIXME is this really needed?
 
-        user = self.project.username
+        user = self.project.project_src_owner
         try:
             pw = pwd.getpwnam(user)
             return pw.pw_uid 
