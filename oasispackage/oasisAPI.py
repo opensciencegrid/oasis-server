@@ -80,7 +80,7 @@ class oasisCLI(object):
             # FIXME
             # there is no yet a self.log. 
             # use __logerror() within _getbasicconfig(), _getusername() and _getprojectsection()
-            self.services = [x.strip() for x in self.oasisconf.get('OASIS', 'services')]
+            self.services = [x.strip() for x in self.oasisconf.get('OASIS', 'services').split(',')]
         except Exception, ex:
             self.__logerror(ex)
             sys.exit(1)
