@@ -42,7 +42,10 @@
 # SMTPServer = SMTP server to be used to send email notifications
 #   OPTIONAL
 #
-# projectsconf = path to the oasisproject.conf configuration file
+# projectsconf = path to the project.conf configuration file
+#   MANDATORY
+#
+# repositoriesconf = path to the repositories.conf configuration file
 #   MANDATORY
 #
 # probesconf = path to the configuration file with generic OASIS probes
@@ -63,5 +66,6 @@ email = neo@matrix.net
 SMTPServer = server
 
 projectsconf = /etc/oasis/projects.conf
+repositoriesconf = /etc/oasis/repositories.conf
 
 probesconf = /etc/oasis/probes.conf
