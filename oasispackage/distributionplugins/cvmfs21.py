@@ -336,7 +336,7 @@ class cvmfs21(cvmfs):
         uid = self._checkuser(user)
         if uid:
             self.log.warning('user %s already exists' %user)
-            self.console.warning('user %s already exists' %user)
+            #self.console.warning('user %s already exists' %user)
             return 0
         else:
             group = user  # maybe in the future is a generic group name like 'oasis'?
@@ -366,7 +366,7 @@ class cvmfs21(cvmfs):
         uid = self._checkuser(user)
         if uid:
             self.log.warning('user %s already exists' %user)
-            self.console.warning('user %s already exists' %user)
+            #self.console.warning('user %s already exists' %user)
             return 0
         else:
             group = user  # maybe in the future is a generic group name like 'oasis'?
