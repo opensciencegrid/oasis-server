@@ -48,10 +48,8 @@ class cvmfs(BaseDistribution):
         #       maybe it should be implemented in the distribution plugin?
         #       for example, to allow easier sync from remote host
         #
-        destdir = '/cvmfs/%s/%' %(self.project.repository_dest_dir, self.project.project_dest_dir)
-        srcdir = '%s/%' %(self.project.repository_src_dir, self.project.project_src_dir)
 
-        cmd = 'rsync --stats -a -l --delete %s/ %s/' %(destdir, srcdir)
+        cmd = 'rsync --stats -a -l --delete %s/ %s/' %(self.dest, self.src)
         self.log.debug('synchronization cmd = %s' %cmd)
 
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
