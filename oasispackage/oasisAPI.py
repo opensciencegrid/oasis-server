@@ -447,6 +447,11 @@ class oasisCLI(object):
 
 
     def _wait(self):
+        '''
+        checks if there is a flagfile for the same repository 
+        (even if not the same project),
+        and decides if aborting or waiting in that case
+        '''
 
         self.log.debug('Start.')
 
@@ -462,26 +467,31 @@ class oasisCLI(object):
                 # no flagfile, jump out of the loop
                 break
             else:
-                if self.block == False:
-                # block == False means abort and message asking user to try again later 
-                    self.log.error('There is currently a publishing process going on. Aborting.')
-                    self.console.error('There is currently a publishing process going on. Aborting. Try it again in a while.')
-                    return 1
+                # the presence of a flagfile may be relevant or not, 
+                # depending on which one and the underlying technology for file distribution.
+                lock = self.project.distributionplugin.shouldlock( listflagfiles )
+                # FIXME we are checking if we should lock or not on every cycle
+                #       maybe it is better to search for flagfiles and check if lock
+                #       before the loop. 
+                #       However, I am not sure if that is risky 
+                #       (like a new flagfile appears before next cycle and we miss it
+                #       because we did not check it again)
+
+                if not lock:
+                    # no existing flagfile belongs to the same repository
+                    # we can continue
+                    break
                 else:
-                    # block == True means process does retain prompt and waits in a loop
+                    # there is a flagfile
 
-                    # the presence of a flagfile may be relevant or not, 
-                    # depending on the underlying technology for file distribution.
-                    lock = self.project.distributionplugin.shouldlock( listflagfiles )
-                    # FIXME we are checking if we should lock or not on every cycle
-                    #       maybe it is better to search for flagfiles and check if lock
-                    #       before the loop. 
-                    #       However, I am not sure if that is risky 
-                    #       (like a new flagfile appears before next cycle and we miss it
-                    #       because we did not check it again)
+                    if self.block == False:
+                    # block == False means abort and message asking user to try again later 
+                        self.log.error('There is currently a publishing process going on. Aborting.')
+                        self.console.error('There is currently a publishing process going on. Aborting. Try it again in a while.')
+                        return 1
+                    else:
+                        # block == True means process does retain prompt and waits in a loop
 
-                    if lock:
-                        # there is a flagfile, wait a little bit
                         elapsed = time.time() - inittime
                         if elapsed < self.project.starttimeout:
                             if elapsed >= nextmessagein: 
