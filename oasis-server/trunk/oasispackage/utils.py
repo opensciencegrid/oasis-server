@@ -5,9 +5,9 @@ def adduser(user):
     creates the UNIX ID
     '''
 
-    uid = self._checkuser(user)
+    uid = _checkuser(user)
     if uid:
-        self.log.warning('user %s already exists' %user)
+        #self.log.warning('user %s already exists' %user)
         return 0
     else:
         group = user  # maybe in the future is a generic group name like 'oasis'?
@@ -18,10 +18,10 @@ def adduser(user):
         cmd = '/usr/sbin/adduser -m %s' %user
         rc, out = commands.getstatusoutput(cmd)
 
-        if rc == 0:
-            self.log.debug('user %s created' %user)
-        else:
-            self.log.critical('user %s creation failed' %user)
+        #if rc == 0:
+        #    self.log.debug('user %s created' %user)
+        #else:
+        #    self.log.critical('user %s creation failed' %user)
 
         return rc
 
