@@ -1,6 +1,6 @@
 
 
-def addrepositoryuser(user):
+def adduser(user):
     '''
     creates the UNIX ID
     '''
