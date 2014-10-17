@@ -749,7 +749,7 @@ class Project(ProjectBasicConfig):
             if enabled:
                 self.log.debug('candidate probe %s is enabled' %probe) 
 
-                out, err, rc = self._runprobe(self.username, probe, executable, options)
+                out, err, rc = self._runprobe(self.project_src_owner, probe, executable, options)
                 self.log.info('Output of probe %s was\n%s' %(probe, out))
                 self.log.info('Error of probe %s was\n%s' %(probe, err))
                 self.log.info('RC of probe %s was %s' %(probe, rc))
