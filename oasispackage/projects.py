@@ -133,30 +133,30 @@ class ProjectBasicConfig(object):
             #  repository configuration
             # -------------------------------
 
-            self.repositoryconffile = self.oasisconf.get('OASIS', 'repositoriesconf')
-            self.repositoryconf = SafeConfigParser()
-            self.repositoryconf.readfp(open(self.repositoryconffile))
+            self.repositoriesconffile = self.oasisconf.get('OASIS', 'repositoriesconf')
+            self.repositoriesconf = SafeConfigParser()
+            self.repositoriesconf.readfp(open(self.repositoriesconffile))
 
             self.repositorysection = self.projectsconf.get(self.projectsection, 'repositorysection')
 
-            self.repositoryname = self.repositoryconf.get(self.repositorysection, 'repositoryname')
+            self.repositoryname = self.repositoriesconf.get(self.repositorysection, 'repositoryname')
             self.log.debug('variable repositoryname has value %s' %self.repositoryname)
 
-            self.repository_src_dir = self.repositoryconf.get(self.repositorysection, 'repository_src_dir')
+            self.repository_src_dir = self.repositoriesconf.get(self.repositorysection, 'repository_src_dir')
             self.log.debug('variable repository_src_dir has value %s' %self.repository_src_dir)
 
-            self.repository_dest_dir = self.repositoryconf.get(self.repositorysection, 'repository_dest_dir')
+            self.repository_dest_dir = self.repositoriesconf.get(self.repositorysection, 'repository_dest_dir')
             self.log.debug('variable repository_dest_dir has value %s' %self.repository_dest_dir)
 
-            self.repository_src_owner = self.repositoryconf.get(self.repositorysection, 'repository_src_owner')
+            self.repository_src_owner = self.repositoriesconf.get(self.repositorysection, 'repository_src_owner')
             self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)
             if self.repository_src_owner == 'root':
                 raise Exception('repository_src_owner cannot be root')
 
-            self.repository_dest_owner = self.repositoryconf.get(self.repositorysection, 'repository_dest_owner')
+            self.repository_dest_owner = self.repositoriesconf.get(self.repositorysection, 'repository_dest_owner')
             self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)
 
-            self.distributiontool = self.repositoryconf.get(self.repositorysection, 'distributiontool')
+            self.distributiontool = self.repositoriesconf.get(self.repositorysection, 'distributiontool')
             self.log.debug('variable distributiontool has value %s', self.distributiontool)
 
             self.distributionplugin = self._getdistributionplugin()
