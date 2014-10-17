@@ -89,14 +89,10 @@
 [DEFAULT]
 
 OSG_APP = /home/data/
-projectname = %(VO)s
-srcdir = %(OSG_APP)s/%(projectname)s
-destdir = /cvmfs/%(projectname)s.opensciencegrid.org 
 distributiontool = cvmfs21
 sleep = 100
 starttimeout = 600
 finishtimeout = 600
-destdiruser = oasis
 
 enabled = True
 
