@@ -40,13 +40,6 @@
 #        Time is expressed in seconds
 #        MANDATORY
 #
-# distributiontool = it is the name of the plugin with code
-#        to interact with the 3rd party underlying technology for files
-#        distribution.
-#        Current options are:
-#           cvmfs20 = code to interact with CVMFS server version 2.0.x
-#           cvmfs21 = code to interact with CVMFS server version 2.1.x
-#
 # repositorysection = section in repositories.conf configuration file
 #       with setup for the repository a project belongs to. 
 #
@@ -89,7 +82,6 @@
 [DEFAULT]
 
 OSG_APP = /home/data/
-distributiontool = cvmfs21
 sleep = 100
 starttimeout = 600
 finishtimeout = 600
