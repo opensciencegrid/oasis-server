@@ -274,6 +274,9 @@ class ProjectBasicConfig(object):
                 if self.projectsconf.get(sect, 'projectname') == project:
                     return self.projectsconf.get(sect, 'repositoryname')
 
+        # if the project is not listed in any section in the config file
+        return None
+
 
 
 class Project(ProjectBasicConfig):
