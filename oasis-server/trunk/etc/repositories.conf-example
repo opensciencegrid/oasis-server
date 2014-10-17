@@ -10,6 +10,13 @@
 #               VARIABLES
 # =========================================================================== 
 
+# distributiontool = it is the name of the plugin with code
+#        to interact with the 3rd party underlying technology for files
+#        distribution.
+#        Current options are:
+#           cvmfs20 = code to interact with CVMFS server version 2.0.x
+#           cvmfs21 = code to interact with CVMFS server version 2.1.x
+#
 # repositoryname = the name of the repository.
 #       A repository refers to content being distributed together. 
 #       A project may or may not be the same than a repository.
@@ -51,7 +58,7 @@
 [DEFAULT]
 
 OSG_APP = /home/data/
-
+distributiontool = cmvfs21
 
 [MIS]
 
