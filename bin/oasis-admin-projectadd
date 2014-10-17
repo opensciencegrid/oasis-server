@@ -210,9 +210,14 @@ class ProjectHandler(object):
             return 0
             
 
-        user = self.project.username
-        uid = pwd.getpwnam(user).pw_uid
-        gid = pwd.getpwnam(user).pw_gid
+        project_user = self.project.username
+        project_uid = pwd.getpwnam(project_user).pw_uid
+        project_gid = pwd.getpwnam(project_user).pw_gid
+
+        repository_user = self.project.repository_src_owner
+        repository_uid = pwd.getpwnam(repository_user).pw_uid
+        repository_gid = pwd.getpwnam(repository_user).pw_gid
+
         
         srcdir = '%s/%s' %(self.project.repository_src_dir, self.project.project_src_dir)
 
@@ -222,11 +227,35 @@ class ProjectHandler(object):
             # FIXME
             # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
             commands.getoutput('chmod 1777 %s' %osg_app) 
-        
+       
+
+        # FIXME !!
+        # I am creating here the project_src_dir and the repository_src_dir
+        # the repository_src_dir should be done in a different method. 
+        # Or even in a different tool: oasis-admin-repositoryadd
+ 
+        if not os.path.isdir(self.project.repository_src_dir):
+            try:
+                os.makedirs(self.project.repository_src_dir)
+                os.chown(self.project.repository_src_dir, repository_uid, repository_gid)
+                # FIXME
+                # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
+                #commands.getoutput('chmod o=g,o-w %s' %self.project.repository_src_dir)
+                self.log.debug('directory %s created' %self.project.repository_src_dir)
+                self.console.debug('directory %s created' %self.project.repository_src_dir)
+            except Exception, ex:
+                self.log.critical('directory %s could not be created. Exception %s was raised' %(self.project.repository_src_dir, ex))
+                self.console.critical('directory %s could not be created. Exception %s was raised' %(self.project.repository_src_dir, ex))
+                return 1
+        else:
+            self.log.warning('directory %s already existed' %self.project.repository_src_dir)
+            self.console.warning('directory %s already existed' %self.project.repository_src_dir)
+
+
         if not os.path.isdir(srcdir):
             try:
                 os.makedirs(srcdir)
-                os.chown(srcdir, uid , gid)
+                os.chown(srcdir, project_uid , project_gid)
 
                 # FIXME
                 # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
