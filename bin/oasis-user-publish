@@ -82,16 +82,16 @@ def usage():
     print '     to the destination area, and publishes them.'
     print '     The behavior in case there is already another publishing'
     print '     process going on for a different project depends on the'
-    print '     value of the input option "block".'
-    print '     When block is TRUE, the process retains prompt and waits in a loop.'
+    print '     value of the input option "wait".'
+    print '     When "wait"  is TRUE, the process retains prompt and waits in a loop.'
     print '     This loop expires when the publishing can be done or when'
     print '     a timeout setup in the config files is reached.'
-    print '     When block is FALSE, the process just aborts'
+    print '     When "wait"  is FALSE, the process just aborts'
     print '     and a message is displayed asking the user to try later.'
     print ''
     print ' Options:'
     print '     --help | -h         Displays usage and exits'
-    print '     --block <value>     value can be False/No/Off or True/Yes/On'
+    print '     --wait  <value>     value can be False/No/Off or True/Yes/On'
     print '                         case insensitive.'
     print '                         DEFAULT: False'
     print ''
@@ -102,18 +102,16 @@ def main(options):
 
 
     # defaults
-    # FIXME: find better name instead of 'block'
-    #        and fix its name in oasisCLI::__init__()
     block = False 
     #   block == True means process does retain prompt and waits in a loop
     #   block == False means abort and message asking user to try again later 
     
-    opts, args = getopt.getopt(sys.argv[1:], 'h', ['help', 'block='])
+    opts, args = getopt.getopt(sys.argv[1:], 'h', ['help', 'wait='])
     
     for k,v in opts:
         if k == '-h' or k == '--help':
             usage()
-        if k == '--block':
+        if k == '--wait':
             if v.lower() in ['false', 'no', 'off']:
                 block = False
             elif v.lower() in ['true', 'yes', 'on']:
