@@ -1,6 +1,8 @@
 import commands
 import pwd
 
+# FIXME: add log messages. ?? Do we need a dedicated Logger ??
+
 def adduser(user):
     '''
     creates the UNIX ID
