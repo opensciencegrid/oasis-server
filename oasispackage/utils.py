@@ -1,4 +1,4 @@
-
+import commands
 
 def adduser(user):
     '''
