@@ -1,6 +1,6 @@
 import commands
 import pwd
-
+import logging
 
 log = logging.getLogger('logfile')   #FIXME !! Fix the mess with logger hierarchy
 console = logging.getLogger('console')   #FIXME !! Fix the mess with logger hierarchy
