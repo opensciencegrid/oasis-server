@@ -349,10 +349,10 @@ class cvmfs21(cvmfs):
 
             if rc == 0:
                 self.log.debug('user %s created' %user)
-                self.console.debug('user %s created' %user)
+                #self.console.debug('user %s created' %user)
             else:
                 self.log.critical('user %s creation failed' %user)
-                self.console.critical('user %s creation failed' %user)
+                #self.console.critical('user %s creation failed' %user)
 
             return rc
 
@@ -379,10 +379,10 @@ class cvmfs21(cvmfs):
 
             if rc == 0:
                 self.log.debug('user %s created' %user)
-                self.console.debug('user %s created' %user)
+                #self.console.debug('user %s created' %user)
             else:
                 self.log.critical('user %s creation failed' %user)
-                self.console.critical('user %s creation failed' %user)
+                #self.console.critical('user %s creation failed' %user)
 
             return rc
 
