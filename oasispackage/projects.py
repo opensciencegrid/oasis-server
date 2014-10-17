@@ -93,34 +93,6 @@ class ProjectBasicConfig(object):
 
 
             # -------------------------------
-            #  repository configuration
-            # -------------------------------
-
-            self.repositoryconffile = self.oasisconf.get('OASIS', 'repositoriesconf')
-            self.repositoryconf = SafeConfigParser()
-            self.repositoryconf.readfp(open(self.repositoryconffile))
-
-            self.repositorysection = self.projectsconf.get(self.projectsection, 'repositorysection')
-
-            self.repositoryname = self.repositoryconf.get(self.repositorysection, 'repositoryname')
-            self.log.debug('variable repositoryname has value %s' %self.repositoryname)
-
-            self.repository_src_dir = self.repositoryconf.get(self.repositorysection, 'repository_src_dir')
-            self.log.debug('variable repository_src_dir has value %s' %self.repository_src_dir)
-
-            self.repository_dest_dir = self.repositoryconf.get(self.repositorysection, 'repository_dest_dir')
-            self.log.debug('variable repository_dest_dir has value %s' %self.repository_dest_dir)
-
-            self.repository_src_owner = self.repositoryconf.get(self.repositorysection, 'repository_src_owner')
-            self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)
-            if self.repository_src_owner == 'root':
-                raise Exception('repository_src_owner cannot be root')
-
-            self.repository_dest_owner = self.repositoryconf.get(self.repositorysection, 'repository_dest_owner')
-            self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)
-
-
-            # -------------------------------
             #  project configuration
             # -------------------------------
 
@@ -148,12 +120,6 @@ class ProjectBasicConfig(object):
             #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
             self.log.debug('variable osg_app has value %s', self.osg_app)
 
-            self.distributiontool = self.projectsconf.get(self.projectsection, 'distributiontool')
-            self.log.debug('variable distributiontool has value %s', self.distributiontool)
-
-            self.distributionplugin = self._getdistributionplugin()
-            self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
-
             self.sleep = self.projectsconf.getint(self.projectsection, 'sleep')
             self.log.debug('variable sleep has value %s', self.sleep)
 
@@ -162,6 +128,43 @@ class ProjectBasicConfig(object):
 
             self.finishtimeout = self.projectsconf.getint(self.projectsection, 'finishtimeout')
             self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
+
+            # -------------------------------
+            #  repository configuration
+            # -------------------------------
+
+            self.repositoryconffile = self.oasisconf.get('OASIS', 'repositoriesconf')
+            self.repositoryconf = SafeConfigParser()
+            self.repositoryconf.readfp(open(self.repositoryconffile))
+
+            self.repositorysection = self.projectsconf.get(self.projectsection, 'repositorysection')
+
+            self.repositoryname = self.repositoryconf.get(self.repositorysection, 'repositoryname')
+            self.log.debug('variable repositoryname has value %s' %self.repositoryname)
+
+            self.repository_src_dir = self.repositoryconf.get(self.repositorysection, 'repository_src_dir')
+            self.log.debug('variable repository_src_dir has value %s' %self.repository_src_dir)
+
+            self.repository_dest_dir = self.repositoryconf.get(self.repositorysection, 'repository_dest_dir')
+            self.log.debug('variable repository_dest_dir has value %s' %self.repository_dest_dir)
+
+            self.repository_src_owner = self.repositoryconf.get(self.repositorysection, 'repository_src_owner')
+            self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)
+            if self.repository_src_owner == 'root':
+                raise Exception('repository_src_owner cannot be root')
+
+            self.repository_dest_owner = self.repositoryconf.get(self.repositorysection, 'repository_dest_owner')
+            self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)
+
+            self.distributiontool = self.repositoryconf.get(self.repositorysection, 'distributiontool')
+            self.log.debug('variable distributiontool has value %s', self.distributiontool)
+
+            self.distributionplugin = self._getdistributionplugin()
+            self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
+
+            # -------------------------------
+            #  OASIS configuration
+            # -------------------------------
 
             self.flagfilebasedir = '/var/run/oasis/'  #DEFAULT
             if self.oasisconf.has_option('OASIS', 'flagfilebasedir'):
@@ -177,6 +180,8 @@ class ProjectBasicConfig(object):
             if self.oasisconf.has_option('OASIS', 'SMTPServer'):
                 self.smtpserver = self.oasisconf.get('OASIS', 'SMTPServer')
             self.log.debug('variable smtpserver has value %s', self.smtpserver)
+
+
 
         except Exception, ex:
             self.log.critical('Configuration cannot be read. Error message = "%s". Aborting.' %ex)
@@ -253,13 +258,15 @@ class ProjectBasicConfig(object):
     #                  Get the plugin for the distribution tool 
     # -------------------------------------------------------------------------
 
+    # FIXME: this method is duplicated
     def _getdistributionplugin(self):
         '''
         get the plugin for a given distribution tool, 
         i.e. cvmfs21
         '''
 
-        tool = self.projectsconf.get(self.projectsection, "distributiontool")
+        #tool = self.projectsconf.get(self.projectsection, "distributiontool")
+        tool = self.distributiontool
         distribution_plugin = __import__('oasispackage.distributionplugins.%s' %tool,
                                          globals(),
                                          locals(),
@@ -468,7 +475,8 @@ class Project(ProjectBasicConfig):
         i.e. cvmfs21
         '''
 
-        tool = self.projectsconf.get(self.projectsection, "distributiontool")
+        #tool = self.projectsconf.get(self.projectsection, "distributiontool")
+        tool = self.distributiontool
         distribution_plugin = __import__('oasispackage.distributionplugins.%s' %tool,
                                          globals(),
                                          locals(),
