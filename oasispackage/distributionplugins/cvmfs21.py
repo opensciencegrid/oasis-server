@@ -24,6 +24,7 @@ import time
 
 from oasispackage.interfaces import BaseDistribution
 from oasispackage.distributionplugins.cvmfs import cvmfs
+import  oasispackage.utils
 
 class cvmfs21(cvmfs):
 
@@ -322,83 +323,15 @@ class cvmfs21(cvmfs):
         return False
 
 
-    #
-    # FIXME !! THIS CODE IS DUPLICATED IN OASIS-ADMIN-PROJECTADD   
-    #
-
     def addprojectuser(self):
         '''
         creates the UNIX ID
         '''
+        return oasispackage.utils.adduser(self.project.project_dest_owner)
 
-        user = self.project.project_dest_owner
-
-        uid = self._checkuser(user)
-        if uid:
-            self.log.warning('user %s already exists' %user)
-            #self.console.warning('user %s already exists' %user)
-            return 0
-        else:
-            group = user  # maybe in the future is a generic group name like 'oasis'?
-
-            # FIXME: what about the group?? 
-            # option -g in adduser requires the group to exist !!
-            # or we put all users in the same group... 
-            cmd = '/usr/sbin/adduser -m %s' %user
-            rc, out = commands.getstatusoutput(cmd)
-
-            if rc == 0:
-                self.log.debug('user %s created' %user)
-                #self.console.debug('user %s created' %user)
-            else:
-                self.log.critical('user %s creation failed' %user)
-                #self.console.critical('user %s creation failed' %user)
-
-            return rc
 
     def addrepositoryuser(self):
         '''
         creates the UNIX ID
         '''
-
-        user = self.project.repository_dest_owner
-
-        uid = self._checkuser(user)
-        if uid:
-            self.log.warning('user %s already exists' %user)
-            #self.console.warning('user %s already exists' %user)
-            return 0
-        else:
-            group = user  # maybe in the future is a generic group name like 'oasis'?
-
-            # FIXME: what about the group?? 
-            # option -g in adduser requires the group to exist !!
-            # or we put all users in the same group... 
-            cmd = '/usr/sbin/adduser -m %s' %user
-            rc, out = commands.getstatusoutput(cmd)
-
-            if rc == 0:
-                self.log.debug('user %s created' %user)
-                #self.console.debug('user %s created' %user)
-            else:
-                self.log.critical('user %s creation failed' %user)
-                #self.console.critical('user %s creation failed' %user)
-
-            return rc
-
-
-    def _checkuser(self, user):
-        '''
-        checks if that username already exists
-        '''
-        # FIXME is this really needed?
-
-        try:
-            pw = pwd.getpwnam(user)
-            return pw.pw_uid
-        except:
-            return None
-
-
-
-
+        return oasispackage.utils.adduser(self.project.repository_dest_owner)
