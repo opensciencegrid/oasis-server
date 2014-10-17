@@ -1,7 +1,9 @@
 import commands
 import pwd
 
-# FIXME: add log messages. ?? Do we need a dedicated Logger ??
+
+log = logging.getLogger('logfile')   #FIXME !! Fix the mess with logger hierarchy
+console = logging.getLogger('console')   #FIXME !! Fix the mess with logger hierarchy
 
 def adduser(user):
     '''
