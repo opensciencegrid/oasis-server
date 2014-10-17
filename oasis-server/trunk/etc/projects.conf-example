@@ -1,5 +1,5 @@
 #
-# oasisprojects.conf
+# projects.conf
 #
 # Configuration file for Projects.
 # Each section is a Project. A project will be typically a VO, but not always.
