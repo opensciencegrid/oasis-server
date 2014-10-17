@@ -7,6 +7,7 @@ import os
 
 from oasispackage.interfaces import BaseDistribution
 from oasispackage.distributionplugins.cvmfs import cvmfs
+import oasispackage.utils
 
 #
 #  !! FIXME !!
@@ -113,6 +114,9 @@ class cvmfs20(cvmfs):
             $ mkdir /cvmfs/oasis.opensciencegrid.org/atlas/
             $ (if needed) chown user.atlas:ouser.atlas /cvmfs/oasis.opensciencegrid.org/atlas/
         '''
+
+        # just in case, we can try to create the user
+        oasispackage.utils.adduser(self.project.project_dest_owner)
 
         self.log.info('creating project %s' %self.project.projectname)
         if self.checkproject():
