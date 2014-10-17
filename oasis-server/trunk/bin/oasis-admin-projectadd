@@ -200,14 +200,15 @@ class ProjectHandler(object):
         creates the UNIX ID
         '''
 
-        uid = self._checkuser(self.project.username)
+        user = self.project.project_src_owner
+
+        uid = self._checkuser(user)
         if uid:
-            self.log.warning('user %s already exists' %self.project.username)
-            self.console.warning('user %s already exists' %self.project.username)
+            self.log.warning('user %s already exists' %user)
+            self.console.warning('user %s already exists' %user)
             return 0
         else:
-            user = self.project.username
-            group = self.project.username  # maybe in the future is a generic group name like 'oasis'?
+            group = user  # maybe in the future is a generic group name like 'oasis'?
   
             # FIXME: what about the group?? 
             # option -g in adduser requires the group to exist !!
