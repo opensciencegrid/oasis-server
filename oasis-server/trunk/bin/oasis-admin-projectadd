@@ -190,7 +190,7 @@ class ProjectHandler(object):
             return 0
             
 
-        project_user = self.project.username
+        project_user = self.project.project_src_owner
         project_uid = pwd.getpwnam(project_user).pw_uid
         project_gid = pwd.getpwnam(project_user).pw_gid
 
