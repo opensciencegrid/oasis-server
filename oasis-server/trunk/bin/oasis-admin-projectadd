@@ -145,7 +145,10 @@ class ProjectHandler(object):
         main method performing all checks, running commands, etc.
         '''
 
-        rc = self.adduser()
+        rc = self.addrepositoryuser()
+        if rc:
+            return rc 
+        rc = self.addprojectuser()
         if rc:
             return rc 
         rc = self.createprojectsrcdir()
@@ -155,12 +158,49 @@ class ProjectHandler(object):
         return rc
 
 
-    def adduser(self):
+
+    # FIXME !!
+    # I am creating here the project_src_dir and the repository_src_dir
+    # the repository_src_dir should be done in a different method. 
+    # Or even in a different tool: oasis-admin-repositoryadd
+
+    def addrepositoryuser(self):
         '''
         creates the UNIX ID
         '''
 
-        uid = self._checkuser()
+        uid = self._checkuser(self.project.repository_src_owner)
+        if uid:
+            self.log.warning('user %s already exists' %self.project.repository_src_onwer)
+            self.console.warning('user %s already exists' %self.project.repository_src_onwer)
+            return 0
+        else:
+            user = self.project.repository_src_onwer
+            group = self.project.repository_src_onwer # maybe in the future is a generic group name like 'oasis'?
+  
+            # FIXME: what about the group?? 
+            # option -g in adduser requires the group to exist !!
+            # or we put all users in the same group... 
+            cmd = '/usr/sbin/adduser -m %s' %user
+            rc, out = commands.getstatusoutput(cmd)
+
+            if rc == 0:
+                self.log.debug('user %s created' %user)
+                self.console.debug('user %s created' %user)
+            else:
+                self.log.critical('user %s creation failed' %user)
+                self.console.critical('user %s creation failed' %user)
+
+            return rc
+
+
+
+    def addprojectuser(self):
+        '''
+        creates the UNIX ID
+        '''
+
+        uid = self._checkuser(self.project.username)
         if uid:
             self.log.warning('user %s already exists' %self.project.username)
             self.console.warning('user %s already exists' %self.project.username)
@@ -185,13 +225,12 @@ class ProjectHandler(object):
             return rc
         
 
-    def _checkuser(self):
+    def _checkuser(self, user):
         '''
         checks if that username already exists
         '''
         # FIXME is this really needed?
 
-        user = self.project.project_src_owner
         try:
             pw = pwd.getpwnam(user)
             return pw.pw_uid 
