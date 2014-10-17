@@ -12,7 +12,8 @@ def adduser(user):
 
     uid = _checkuser(user)
     if uid:
-        #self.log.warning('user %s already exists' %user)
+        log.warning('user %s already exists' %user)
+        console.warning('user %s already exists' %user)
         return 0
     else:
         group = user  # maybe in the future is a generic group name like 'oasis'?
@@ -23,10 +24,12 @@ def adduser(user):
         cmd = '/usr/sbin/adduser -m %s' %user
         rc, out = commands.getstatusoutput(cmd)
 
-        #if rc == 0:
-        #    self.log.debug('user %s created' %user)
-        #else:
-        #    self.log.critical('user %s creation failed' %user)
+        if rc == 0:
+            log.debug('user %s created' %user)
+            console.debug('user %s created' %user)
+        else:
+            log.critical('user %s creation failed' %user)
+            console.critical('user %s creation failed' %user)
 
         return rc
 
