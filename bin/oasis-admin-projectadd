@@ -257,8 +257,6 @@ class ProjectHandler(object):
         repository_uid = pwd.getpwnam(repository_user).pw_uid
         repository_gid = pwd.getpwnam(repository_user).pw_gid
 
-        
-        srcdir = '%s/%s' %(self.project.repository_src_dir, self.project.project_src_dir)
 
         # checks if OSG_APP is defined, and make sure everyone can write
         osg_app = self.project.osg_app
@@ -291,24 +289,28 @@ class ProjectHandler(object):
             self.console.warning('directory %s already existed' %self.project.repository_src_dir)
 
 
-        if not os.path.isdir(srcdir):
-            try:
-                os.makedirs(srcdir)
-                os.chown(srcdir, project_uid , project_gid)
+        if self.project.project_src_dir != "":
 
-                # FIXME
-                # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
-                commands.getoutput('chmod o=g,o-w %s' %srcdir)
+            srcdir = '%s/%s' %(self.project.repository_src_dir, self.project.project_src_dir)
 
-                self.log.debug('directory %s created' %srcdir)
-                self.console.debug('directory %s created' %srcdir)
-            except Exception, ex:
-                self.log.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
-                self.console.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
-                return 1
-        else:
-            self.log.warning('directory %s already existed' %srcdir)
-            self.console.warning('directory %s already existed' %srcdir)
+            if not os.path.isdir(srcdir):
+                try:
+                    os.makedirs(srcdir)
+                    os.chown(srcdir, project_uid , project_gid)
+
+                    # FIXME
+                    # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
+                    commands.getoutput('chmod o=g,o-w %s' %srcdir)
+
+                    self.log.debug('directory %s created' %srcdir)
+                    self.console.debug('directory %s created' %srcdir)
+                except Exception, ex:
+                    self.log.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                    self.console.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                    return 1
+            else:
+                self.log.warning('directory %s already existed' %srcdir)
+                self.console.warning('directory %s already existed' %srcdir)
 
         return 0
 
