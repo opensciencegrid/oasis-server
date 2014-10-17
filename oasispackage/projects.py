@@ -404,39 +404,39 @@ class Project(ProjectBasicConfig):
         self.log.debug('Returning OSG_APP %s.' %osg_app)
         return osg_app
 
-    def _getsrcdir(self):
-        '''
-        gets the source directory from the projects config file.
-        It is the directory where the user payload writes.
-
-        Reason to have a dedicated method is to allow
-        the possibility that variable in the config file
-        is not the final value and requires later interpolation.
-        '''
-
-        self.log.debug('Starting.')
-        src = self.projectsconf.get(self.projectsection, "srcdir")
-        # normalize, just in case
-        src = os.path.normpath(src)
-        self.log.debug('Returning src dir %s.' %src)
-        return src
-
-    def _getdestdir(self):
-        '''
-        gets the destination directory from the projects config file.
-        It is the directory where files are transferred for publication.
-
-        Reason to have a dedicated method is to allow
-        the possibility that variable in the config file
-        is not the final value and requires later interpolation.
-        '''
-
-        self.log.debug('Starting.')
-        dest = self.projectsconf.get(self.projectsection, "destdir")
-        # normalize, just in case
-        dest = os.path.normpath(dest)
-        self.log.debug('Returning dest dir %s.' %dest)
-        return dest
+    ###def _getsrcdir(self):
+    ###    '''
+    ###    gets the source directory from the projects config file.
+    ###    It is the directory where the user payload writes.
+    ###
+    ###    Reason to have a dedicated method is to allow
+    ###    the possibility that variable in the config file
+    ###    is not the final value and requires later interpolation.
+    ###    '''
+    ###
+    ###    self.log.debug('Starting.')
+    ###    src = self.projectsconf.get(self.projectsection, "srcdir")
+    ###    # normalize, just in case
+    ###    src = os.path.normpath(src)
+    ###    self.log.debug('Returning src dir %s.' %src)
+    ###    return src
+    ###
+    ###def _getdestdir(self):
+    ###    '''
+    ###    gets the destination directory from the projects config file.
+    ###    It is the directory where files are transferred for publication.
+    ###
+    ###    Reason to have a dedicated method is to allow
+    ###    the possibility that variable in the config file
+    ###    is not the final value and requires later interpolation.
+    ###    '''
+    ###
+    ###    self.log.debug('Starting.')
+    ###    dest = self.projectsconf.get(self.projectsection, "destdir")
+    ###    # normalize, just in case
+    ###    dest = os.path.normpath(dest)
+    ###    self.log.debug('Returning dest dir %s.' %dest)
+    ###    return dest
 
 
     # -------------------------------------------------------------------------
@@ -512,7 +512,10 @@ class Project(ProjectBasicConfig):
         #       maybe it should be implemented in the distribution plugin?
         #       for example, to allow easier sync from remote host
         #
-        cmd = 'rsync --stats -a -l --delete %s/ %s/' %(self.destdir, self.srcdir)
+        destdir = '/cvmfs/%s/%' %(self.project.repository_dest_dir, self.project.project_dest_dir)
+        srcdir = '%s/%' %(self.project.repository_src_dir, self.project.project_src_dir)
+
+        cmd = 'rsync --stats -a -l --delete %s/ %s/' %(destdir, srcdir)
         self.log.debug('synchronization cmd = %s' %cmd)
         
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
