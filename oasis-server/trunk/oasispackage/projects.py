@@ -78,35 +78,51 @@ class ProjectBasicConfig(object):
             self.enabled = self.projectsconf.get(self.projectsection, 'enabled')
             self.log.debug('variable enabled has value %s', self.enabled)
 
-            #self.username = self.projectsconf.get(self.projectsection, 'user')
-            #self.log.debug('variable username has value %s', self.username)
-            #if self.username == 'root':
-            #    raise Exception('user cannot be root')
-            #self.srcdir = self._getsrcdir()
-            #self.log.debug('variable srcdir has value %s', self.srcdir)
-            #self.destdir = self._getdestdir()
-            #self.log.debug('variable destdir has value %s', self.destdir)
-            #self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
-            #self.log.debug('variable destdiruser has value %s', self.destdiruser)
-            #if self.destdiruser == 'root':
-            #    raise Exception('destdiruser cannot be root')
+            #self.repositoryname = self.projectsconf.get(self.projectsection, 'repositoryname') 
+            #self.log.debug('variable repositoryname has value %s' %self.repositoryname)  
+            #self.repository_src_dir = self.projectsconf.get(self.projectsection, 'repository_src_dir') 
+            #self.log.debug('variable repository_src_dir has value %s' %self.repository_src_dir)  
+            #self.repository_dest_dir = self.projectsconf.get(self.projectsection, 'repository_dest_dir') 
+            #self.log.debug('variable repository_dest_dir has value %s' %self.repository_dest_dir)  
+            #self.repository_src_owner = self.projectsconf.get(self.projectsection, 'repository_src_owner') 
+            #self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)  
+            #if self.repository_src_owner == 'root':
+            #    raise Exception('repository_src_owner cannot be root')
+            #self.repository_dest_owner = self.projectsconf.get(self.projectsection, 'repository_dest_owner') 
+            #self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)  
 
-            self.repositoryname = self.projectsconf.get(self.projectsection, 'repositoryname') 
-            self.log.debug('variable repositoryname has value %s' %self.repositoryname)  
 
-            self.repository_src_dir = self.projectsconf.get(self.projectsection, 'repository_src_dir') 
-            self.log.debug('variable repository_src_dir has value %s' %self.repository_src_dir)  
+            # -------------------------------
+            #  repository configuration
+            # -------------------------------
 
-            self.repository_dest_dir = self.projectsconf.get(self.projectsection, 'repository_dest_dir') 
-            self.log.debug('variable repository_dest_dir has value %s' %self.repository_dest_dir)  
+            self.repositoryconffile = self.oasisconf.get('OASIS', 'repositoriesconf')
+            self.repositoryconf = SafeConfigParser()
+            self.repositoryconf.readfp(open(self.repositoryconffile))
 
-            self.repository_src_owner = self.projectsconf.get(self.projectsection, 'repository_src_owner') 
-            self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)  
+            self.repositorysection = self.projectsconf.get(self.projectsection, 'repositorysection')
+
+            self.repositoryname = self.repositoryconf.get(self.repositorysection, 'repositoryname')
+            self.log.debug('variable repositoryname has value %s' %self.repositoryname)
+
+            self.repository_src_dir = self.repositoryconf.get(self.repositorysection, 'repository_src_dir')
+            self.log.debug('variable repository_src_dir has value %s' %self.repository_src_dir)
+
+            self.repository_dest_dir = self.repositoryconf.get(self.repositorysection, 'repository_dest_dir')
+            self.log.debug('variable repository_dest_dir has value %s' %self.repository_dest_dir)
+
+            self.repository_src_owner = self.repositoryconf.get(self.repositorysection, 'repository_src_owner')
+            self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)
             if self.repository_src_owner == 'root':
                 raise Exception('repository_src_owner cannot be root')
 
-            self.repository_dest_owner = self.projectsconf.get(self.projectsection, 'repository_dest_owner') 
-            self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)  
+            self.repository_dest_owner = self.repositoryconf.get(self.repositorysection, 'repository_dest_owner')
+            self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)
+
+
+            # -------------------------------
+            #  project configuration
+            # -------------------------------
 
             self.projectname = self.projectsconf.get(self.projectsection, 'projectname') 
             self.log.debug('variable projectname has value %s' %self.projectname)  
