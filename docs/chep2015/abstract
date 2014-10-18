@@ -3,6 +3,20 @@ has been already in production for more than one year. However, to ensure a high
 
 This paper describes the different aspects of the OASIS project: as a product that can be deployed by OSG virtual organizations, or others (OASIS as a Product, or OP), as a service provided centrally by Open Science Grid (OASIS as a Service, or OS), and as a network of federated partners in a many-to-many servers-to-clients architecture (OASIS as a network, or ON).
 
+
+
+[Should we include here some paragraph on internals, or that is too much detail?]
+[From the section OASIS architecture in the OasisDeployment twiki page:]
+ OASIS 2 is built around two key concepts:
+    Repositories. A Repository is a single content management unit. That means, the whole amount of content to be distributed together. 
+    Projects. A Project is a single administrative management unit. In other words, refers to the data being managed by a given unique UNIX ID. 
+A Project must belong to a Repository, and only one. A Repository can have one or more Projects.
+A Repository is composed by the source directory, the destination directory, and the particular underlying technology to distribute content. Currently the only technology being used by OASIS is CVMFS.
+A Project is composed by the source directory (relative to the source directory of the repository it belongs to) and the destination directory (relative to the destination directory of the repository it belongs to).
+Each Project is associated to one, and only one, UNIX ID. This UNIX ID is the username of the users logged into the OASIS login host, and also the identity under which the OASIS daemon runs some tasks. 
+
+
+
 An evaluation of the current utilization of OASIS as a Service is presented. In order to evaluate properly the performance of the central service, a monitor collects runtime data for auditing and troubleshooting. Examples of graphs with those data are shown.
 
 [For example, those requested already by Miron. Will they be made using the python API?]
