@@ -75,7 +75,7 @@ def usage():
     print 'oasis-user-publish:'
     print ''
     print ' Syntax:'
-    print '     oasis-user-publish [--help|-h] [--block <value>]'
+    print '     oasis-user-publish [--help|-h] [--wait <value>]'
     print ''
     print ' Description:'
     print '     Transfers all files from the user scratch area'
