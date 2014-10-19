@@ -116,10 +116,6 @@ class ProjectBasicConfig(object):
             self.project_dest_owner = self.projectsconf.get(self.projectsection, 'project_dest_owner') 
             self.log.debug('variable project_dest_owner has value %s' %self.project_dest_owner)  
 
-            self.osg_app = self._getosgapp()
-            #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
-            self.log.debug('variable osg_app has value %s', self.osg_app)
-
             self.sleep = self.projectsconf.getint(self.projectsection, 'sleep')
             self.log.debug('variable sleep has value %s', self.sleep)
 
@@ -155,6 +151,10 @@ class ProjectBasicConfig(object):
 
             self.repository_dest_owner = self.repositoriesconf.get(self.repositorysection, 'repository_dest_owner')
             self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)
+
+            self.osg_app = self._getosgapp()
+            #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+            self.log.debug('variable osg_app has value %s', self.osg_app)
 
             self.distributiontool = self.repositoriesconf.get(self.repositorysection, 'distributiontool')
             self.log.debug('variable distributiontool has value %s', self.distributiontool)
@@ -210,8 +210,8 @@ class ProjectBasicConfig(object):
 
         self.log.debug('Starting.')
         
-        if self.projectsconf.has_option(self.projectsection, "OSG_APP"):
-            osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+        if self.repositoriesconf.has_option(self.repositorysection, "OSG_APP"):
+            osg_app = self.repositoriesconf.get(self.repositorysection, "OSG_APP")
         else:
             self.log.warning('There is no variable OSG_APP defined in the config file')
             osg_app = None
@@ -420,8 +420,8 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Starting.')
         
-        if self.projectsconf.has_option(self.projectsection, "OSG_APP"):
-            osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+        if self.repositoriesconf.has_option(self.repositorysection, "OSG_APP"):
+            osg_app = self.repositoriesconf.get(self.repositorysection, "OSG_APP")
         else:
             self.log.warning('There is no variable OSG_APP defined in the config file')
             osg_app = None
