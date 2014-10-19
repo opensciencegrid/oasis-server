@@ -10,6 +10,10 @@
 #               VARIABLES
 # =========================================================================== 
 
+# OSG_APP = for legacy reasons, we maintain the environment variable OSG_APP
+#        MANDATORY if it is being used for interpolation in other variables,
+#        or in case the jobs expect the environment to have a variable $OSG_APP.
+#
 # distributiontool = it is the name of the plugin with code
 #        to interact with the 3rd party underlying technology for files
 #        distribution.
