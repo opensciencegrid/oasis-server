@@ -10,10 +10,6 @@
 #               VARIABLES
 # =========================================================================== 
 
-# OSG_APP = for legacy reasons, we maintain the environment variable OSG_APP
-#        MANDATORY if it is being used for interpolation in other variables,
-#        or in case the jobs expect the environment to have a variable $OSG_APP.
-#
 # projectprobesconf = path to the configuration files for probes 
 #        MANDATORY
 #        NOTE: the file can be left blank if no probes needed.
@@ -81,7 +77,6 @@
 
 [DEFAULT]
 
-OSG_APP = /home/data/
 sleep = 100
 starttimeout = 600
 finishtimeout = 600
