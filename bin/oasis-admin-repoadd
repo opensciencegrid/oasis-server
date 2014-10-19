@@ -1,0 +1,95 @@
+#!/bin/env python
+
+#######################################################
+#
+#       T E M P O R A R Y       S O L U T I O N     
+#
+#######################################################
+
+
+import commands
+import getopt
+import logging
+import os
+import sys
+import time
+import pwd
+
+from ConfigParser import SafeConfigParser
+
+from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory
+from oasispackage.oasisAPI import oasisCLI
+import oasispackage.utils
+
+major, minor, release, st, num = sys.version_info
+
+
+# ---- Mock class ---
+
+class MockRepo(object):
+    def __init__(self, sect):
+        # needed by base class cvmfs.py
+        self.project_src_dir = ""
+        self.project_dest_dir = ""
+       
+        self.repositoryname = repoconf.get(sect, 'repositoryname')
+        self.repository_src_dir = repoconf.get(sect, 'repository_src_dir')
+        self.repository_dest_dir = repoconf.get(sect, 'repository_dest_dir')
+        self.repository_src_owner = repoconf.get(sect, 'repository_src_owner')
+        self.repository_dest_owner = repoconf.get(sect, 'repository_dest_owner')
+        self.tool = repoconf.get(sect, 'distributiontool')
+        self.plugin = self._getdistributionplugin()
+        
+
+    def _getdistributionplugin(self):
+        '''
+        get the plugin for a given distribution tool, 
+        i.e. cvmfs21
+        '''
+
+        tool = self.tool
+    
+        distribution_plugin = __import__('oasispackage.distributionplugins.%s' %tool,
+                                         globals(),
+                                         locals(),
+                                         ['%s' %tool])
+    
+        # Always the name of the plugin and the name of the class are equal
+        distribution_cls_name = tool
+        distribution_cls = getattr(distribution_plugin, distribution_cls_name)
+        distribution_obj = distribution_cls(self)
+        return distribution_obj
+
+
+
+def main(options):
+
+    # parse input options
+    opts, args = getopt.getopt(options, '', ['repo='])
+
+    for o,a in opts:
+        if o == '--repo':
+            reponame = a
+
+
+
+    oasisconff = '/etc/oasis/oasis.conf'
+    c = SafeConfigParser()
+    c.readfp(open(oasisconff))
+    
+    repoconff = c.get('OASIS', 'repositories.conf')
+    repoconf = SafeConfigParser()
+    repoconf.readfp(open(repoconff))
+    # loop
+    for sect in repoconf.sections()
+    if repoconf.get(sect, 'repositoryname') == reponame:
+        repo = MockRepo(sect)
+        repo.plugin.createrepository()
+
+
+if __name__ == '__main__':
+    rc = main(sys.argv[1:])
+    sys.exit(rc)
+
+
+
