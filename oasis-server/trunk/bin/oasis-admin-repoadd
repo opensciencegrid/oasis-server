@@ -31,6 +31,13 @@ class MockRepo(object):
         # needed by base class cvmfs.py
         self.project_src_dir = ""
         self.project_dest_dir = ""
+
+        oasisconff = '/etc/oasis/oasis.conf'
+        c = SafeConfigParser()
+        c.readfp(open(oasisconff))
+        repoconff = c.get('OASIS', 'repositoriesconf')
+        repoconf = SafeConfigParser()
+        repoconf.readfp(open(repoconff))
        
         self.repositoryname = repoconf.get(sect, 'repositoryname')
         self.repository_src_dir = repoconf.get(sect, 'repository_src_dir')
@@ -77,14 +84,14 @@ def main(options):
     c = SafeConfigParser()
     c.readfp(open(oasisconff))
     
-    repoconff = c.get('OASIS', 'repositories.conf')
+    repoconff = c.get('OASIS', 'repositoriesconf')
     repoconf = SafeConfigParser()
     repoconf.readfp(open(repoconff))
     # loop
-    for sect in repoconf.sections()
-    if repoconf.get(sect, 'repositoryname') == reponame:
-        repo = MockRepo(sect)
-        repo.plugin.createrepository()
+    for sect in repoconf.sections():
+        if repoconf.get(sect, 'repositoryname') == reponame:
+            repo = MockRepo(sect)
+            repo.plugin.createrepository()
 
 
 if __name__ == '__main__':
