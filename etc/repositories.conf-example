@@ -62,7 +62,7 @@
 [DEFAULT]
 
 OSG_APP = /home/data/
-distributiontool = cmvfs21
+distributiontool = cvmfs21
 
 [MIS]
 
