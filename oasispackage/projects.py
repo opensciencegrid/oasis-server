@@ -804,10 +804,8 @@ class Project(ProjectBasicConfig):
         # create the list of input options
         # one mandatory for every probe is the root directory 
         # the rest comes from the config file
-        options = '--oasisproberootdir=%s/%s ' %(self.repository_src_dir, self.project_src_dir)
-        # FIXME !!
-        #   I am hardcoding /cvmfs/ for the destination path. It should come from the cvmfs2x plugin
-        options += '--oasisprobedestdir=/cvmfs/%s/%s ' %(self.repository_dest_dir, self.project_dest_dir)
+        options = '--oasisproberootdir=%s ' %self.distributionplugin.src
+        options += '--oasisprobedestdir=%s ' %self.distributionplugin.dest
         options += opts
         
         # if user is root (this process is run by the daemon)
