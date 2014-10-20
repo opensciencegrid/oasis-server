@@ -75,7 +75,7 @@ class cvmfs21(cvmfs):
             self.log.critical('interaction with cvmfs server failed.')
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
-            return st, out
+        return st, out
 
     def _transfer(self):
         # FIXME
