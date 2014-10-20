@@ -13,8 +13,7 @@ def adduser(user):
     uid = _checkuser(user)
     if uid:
         log.warning('user %s already exists' %user)
-        # FIXME: for the time being I disable the console warning because we are calling this fuction twice per user account
-        #console.warning('user %s already exists' %user)
+        console.warning('user %s already exists' %user)
         return 0
     else:
         group = user  # maybe in the future is a generic group name like 'oasis'?
