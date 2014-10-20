@@ -295,7 +295,7 @@ class ProjectBasicConfig(object):
         else:
             for sect in self.projectsconf.sections():
                 if self.projectsconf.get(sect, 'projectname') == project:
-                    repositorysection = self.projectsconf.get(sect, 'repositorysection'):
+                    repositorysection = self.projectsconf.get(sect, 'repositorysection')
                     repositoryname = self.repositoriesconf.get(repositorysection, 'repositoryname')
                     return repositoryname
 
