@@ -26,6 +26,11 @@
 
 # [OASIS]
 #
+# services = type, or types in a list split by comma,  
+#       of OASIS services provided by this host. 
+#       Options: login, server, replica 
+#       MANDATORY
+#
 # sleep = it is the time between cycles for the daemon,
 #         waiting to see if all threads, one per Project, 
 #         need to be shutdown
@@ -37,7 +42,10 @@
 # SMTPServer = SMTP server to be used to send email notifications
 #   OPTIONAL
 #
-# projectsconf = path to the oasisproject.conf configuration file
+# projectsconf = path to the project.conf configuration file
+#   MANDATORY
+#
+# repositoriesconf = path to the repositories.conf configuration file
 #   MANDATORY
 #
 # probesconf = path to the configuration file with generic OASIS probes
@@ -52,10 +60,12 @@
 
 [OASIS]
 
+services = login, server
 sleep = 100
 email = neo@matrix.net
 SMTPServer = server
 
 projectsconf = /etc/oasis/projects.conf
+repositoriesconf = /etc/oasis/repositories.conf
 
 probesconf = /etc/oasis/probes.conf
