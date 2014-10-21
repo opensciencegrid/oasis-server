@@ -78,37 +78,43 @@ class ProjectBasicConfig(object):
             self.enabled = self.projectsconf.get(self.projectsection, 'enabled')
             self.log.debug('variable enabled has value %s', self.enabled)
 
-            self.username = self.projectsconf.get(self.projectsection, 'user')
-            self.log.debug('variable username has value %s', self.username)
-            if self.username == 'root':
-                raise Exception('user cannot be root')
+            #self.repositoryname = self.projectsconf.get(self.projectsection, 'repositoryname') 
+            #self.log.debug('variable repositoryname has value %s' %self.repositoryname)  
+            #self.repository_src_dir = self.projectsconf.get(self.projectsection, 'repository_src_dir') 
+            #self.log.debug('variable repository_src_dir has value %s' %self.repository_src_dir)  
+            #self.repository_dest_dir = self.projectsconf.get(self.projectsection, 'repository_dest_dir') 
+            #self.log.debug('variable repository_dest_dir has value %s' %self.repository_dest_dir)  
+            #self.repository_src_owner = self.projectsconf.get(self.projectsection, 'repository_src_owner') 
+            #self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)  
+            #if self.repository_src_owner == 'root':
+            #    raise Exception('repository_src_owner cannot be root')
+            #self.repository_dest_owner = self.projectsconf.get(self.projectsection, 'repository_dest_owner') 
+            #self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)  
 
-            self.projectname = self.projectsconf.get(self.projectsection, 'projectname')
-            self.log.debug('variable projectname has value %s', self.projectname)
 
-            self.vo = self._getvo()
-            self.log.debug('variable vo has value %s', self.vo)
+            # -------------------------------
+            #  project configuration
+            # -------------------------------
 
-            self.osg_app = self._getosgapp()
-            #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
-            self.log.debug('variable osg_app has value %s', self.osg_app)
+            self.projectname = self.projectsconf.get(self.projectsection, 'projectname') 
+            self.log.debug('variable projectname has value %s' %self.projectname)  
 
-            self.distributiontool = self.projectsconf.get(self.projectsection, 'distributiontool')
-            self.log.debug('variable distributiontool has value %s', self.distributiontool)
+            self.project_src_dir = self.projectsconf.get(self.projectsection, 'project_src_dir') 
+            self.log.debug('variable project_src_dir has value %s' %self.project_src_dir)  
 
-            self.srcdir = self._getsrcdir()
-            self.log.debug('variable srcdir has value %s', self.srcdir)
+            self.project_dest_dir = self.projectsconf.get(self.projectsection, 'project_dest_dir') 
+            self.log.debug('variable project_dest_dir has value %s' %self.project_dest_dir)  
 
-            self.destdir = self._getdestdir()
-            self.log.debug('variable destdir has value %s', self.destdir)
+            self.project_src_owner = self.projectsconf.get(self.projectsection, 'project_src_owner') 
+            self.log.debug('variable project_src_owner has value %s' %self.project_src_owner)  
+            if self.project_src_dir == 'root':
+                raise Exception('project_src_dir cannot be root')
+            # FIXME 
+            # we keep this for compatibility (there are still old code using that variable)
+            self.username = self.project_src_owner
 
-            self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
-            self.log.debug('variable destdiruser has value %s', self.destdiruser)
-            if self.destdiruser == 'root':
-                raise Exception('destdiruser cannot be root')
-
-            self.distributionplugin = self._getdistributionplugin()
-            self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
+            self.project_dest_owner = self.projectsconf.get(self.projectsection, 'project_dest_owner') 
+            self.log.debug('variable project_dest_owner has value %s' %self.project_dest_owner)  
 
             self.sleep = self.projectsconf.getint(self.projectsection, 'sleep')
             self.log.debug('variable sleep has value %s', self.sleep)
@@ -118,6 +124,47 @@ class ProjectBasicConfig(object):
 
             self.finishtimeout = self.projectsconf.getint(self.projectsection, 'finishtimeout')
             self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
+
+            # -------------------------------
+            #  repository configuration
+            # -------------------------------
+
+            self.repositoriesconffile = self.oasisconf.get('OASIS', 'repositoriesconf')
+            self.repositoriesconf = SafeConfigParser()
+            self.repositoriesconf.readfp(open(self.repositoriesconffile))
+
+            self.repositorysection = self.projectsconf.get(self.projectsection, 'repositorysection')
+
+            self.repositoryname = self.repositoriesconf.get(self.repositorysection, 'repositoryname')
+            self.log.debug('variable repositoryname has value %s' %self.repositoryname)
+
+            self.repository_src_dir = self.repositoriesconf.get(self.repositorysection, 'repository_src_dir')
+            self.log.debug('variable repository_src_dir has value %s' %self.repository_src_dir)
+
+            self.repository_dest_dir = self.repositoriesconf.get(self.repositorysection, 'repository_dest_dir')
+            self.log.debug('variable repository_dest_dir has value %s' %self.repository_dest_dir)
+
+            self.repository_src_owner = self.repositoriesconf.get(self.repositorysection, 'repository_src_owner')
+            self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)
+            if self.repository_src_owner == 'root':
+                raise Exception('repository_src_owner cannot be root')
+
+            self.repository_dest_owner = self.repositoriesconf.get(self.repositorysection, 'repository_dest_owner')
+            self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)
+
+            self.osg_app = self._getosgapp()
+            #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+            self.log.debug('variable osg_app has value %s', self.osg_app)
+
+            self.distributiontool = self.repositoriesconf.get(self.repositorysection, 'distributiontool')
+            self.log.debug('variable distributiontool has value %s', self.distributiontool)
+
+            self.distributionplugin = self._getdistributionplugin()
+            self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
+
+            # -------------------------------
+            #  OASIS configuration
+            # -------------------------------
 
             self.flagfilebasedir = '/var/run/oasis/'  #DEFAULT
             if self.oasisconf.has_option('OASIS', 'flagfilebasedir'):
@@ -133,6 +180,8 @@ class ProjectBasicConfig(object):
             if self.oasisconf.has_option('OASIS', 'SMTPServer'):
                 self.smtpserver = self.oasisconf.get('OASIS', 'SMTPServer')
             self.log.debug('variable smtpserver has value %s', self.smtpserver)
+
+
 
         except Exception, ex:
             self.log.critical('Configuration cannot be read. Error message = "%s". Aborting.' %ex)
@@ -154,32 +203,6 @@ class ProjectBasicConfig(object):
         self.log.debug('Leaving returning config object %s.' %oasisprojectsconf)
         return oasisprojectsconf
 
-
-    def _getvo(self):
-        '''
-        gets the VO from the projects config file.
-        '''
-        
-        self.log.debug('Starting.')
-        
-        if self.projectsconf.has_option(self.projectsection, "VO"):
-            vo = self.projectsconf.get(self.projectsection, 'VO')
-        else:
-            self.log.warning('There is no variable VO defined in the config file')
-            vo = None
-
-        # try to get VO from x509, and interpolate just in case
-        #try:    
-        #    st, vo = commands.getstatusoutput('voms-proxy-info -vo')
-        #    if st == 0:
-        #        vo_temp = string.Template(self.vo)
-        #        vo = vo_temp.substitute(VO_FROM_X509, vo) 
-        #except:
-        #    pass
-
-        self.log.debug('Returning VO %s.' %vo)
-        return vo
-
     def _getosgapp(self):
         '''
         gets the variable OSG_APP from the projects config file.
@@ -187,8 +210,8 @@ class ProjectBasicConfig(object):
 
         self.log.debug('Starting.')
         
-        if self.projectsconf.has_option(self.projectsection, "OSG_APP"):
-            osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+        if self.repositoriesconf.has_option(self.repositorysection, "OSG_APP"):
+            osg_app = self.repositoriesconf.get(self.repositorysection, "OSG_APP")
         else:
             self.log.warning('There is no variable OSG_APP defined in the config file')
             osg_app = None
@@ -209,7 +232,6 @@ class ProjectBasicConfig(object):
 
         self.log.debug('Starting.')
         src = self.projectsconf.get(self.projectsection, "srcdir")
-        ## src = string.Template(src).substitute(OSG_APP=self.osg_app, VO=self.vo, project=self.projectname)
         # normalize, just in case
         src = os.path.normpath(src)
         self.log.debug('Returning src dir %s.' %src)
@@ -227,7 +249,6 @@ class ProjectBasicConfig(object):
 
         self.log.debug('Starting.')
         dest = self.projectsconf.get(self.projectsection, "destdir")
-        ## dest = string.Template(dest).substitute(VO=self.vo, project=self.projectname)
         # normalize, just in case
         dest = os.path.normpath(dest)
         self.log.debug('Returning dest dir %s.' %dest)
@@ -237,13 +258,15 @@ class ProjectBasicConfig(object):
     #                  Get the plugin for the distribution tool 
     # -------------------------------------------------------------------------
 
+    # FIXME: this method is duplicated
     def _getdistributionplugin(self):
         '''
         get the plugin for a given distribution tool, 
         i.e. cvmfs21
         '''
 
-        tool = self.projectsconf.get(self.projectsection, "distributiontool")
+        #tool = self.projectsconf.get(self.projectsection, "distributiontool")
+        tool = self.distributiontool
         distribution_plugin = __import__('oasispackage.distributionplugins.%s' %tool,
                                          globals(),
                                          locals(),
@@ -256,13 +279,31 @@ class ProjectBasicConfig(object):
         return distribution_obj
 
 
+    # =========================================================================
+    #   actions and checks related the configuration values
+    # =========================================================================
+
+
+    def repository(self, project=None):
+        '''
+        returns to which repository a given projects belongs to. 
+        If not project variable is passed, then it is this one.
+        '''
+
+        if not project:
+            return self.repositoryname
+        else:
+            for sect in self.projectsconf.sections():
+                if self.projectsconf.get(sect, 'projectname') == project:
+                    repositorysection = self.projectsconf.get(sect, 'repositorysection')
+                    repositoryname = self.repositoriesconf.get(repositorysection, 'repositoryname')
+                    return repositoryname
+
+        # if the project is not listed in any section in the config file
+        return None
 
 
 
-
-
-
-#class Project(object):
 class Project(ProjectBasicConfig):
     '''
     class to keep together all actions related a Project.
@@ -323,98 +364,6 @@ class Project(ProjectBasicConfig):
         self.log.debug('Object Project created.')
 
 
-###    def __init__(self, projectsection, oasisconf):
-###        '''
-###        projectsection is the section name in the projects config file
-###        oasisconf is the ConfigParser object for oasis.conf
-###
-###        We pass oasis.conf and not projects conf directly 
-###        because we need it to get some variables from it
-###        '''
-###        #
-###        # !!  FIXME !!
-###        # pass more reasonable inputs:
-###        # instead of <project section name> and oasisconf
-###        # maybe it should projectname and oasisconf
-###        # or even projectname and projectsconf
-###        #
-###        # also, if oasisconf is only needed for one or two things, 
-###        # just pass them as input to __init__() directly
-###        #
-###
-###
-###        # FIXME  those names 'logfile.foo' and 'user.bar' are part of the message FORMAT. Use something less ugly
-###        self.log = logging.getLogger('logfile.%s' %projectsection)
-###        self.console = logging.getLogger('user.%s' %projectsection)
-###
-###        self.projectsection = projectsection
-###        self.oasisconf = oasisconf
-###        self.projectsconf = self._getprojectsconfig() 
-###
-###        try:
-###            # !! FIXME !!
-###            # some variables, like VO or OSG_APP, may end up with value None
-###            # but then being needed for interpolation to srcdir, destdir, etc.
-###            # in that case, an exception should be raised, and abort
-###            self.enabled = self.projectsconf.get(self.projectsection, 'enabled')
-###            self.log.debug('variable enabled has value %s', self.enabled)
-###
-###            self.username = self.projectsconf.get(self.projectsection, 'user')
-###            self.log.debug('variable username has value %s', self.username)
-###
-###            self.projectname = self.projectsconf.get(self.projectsection, 'project')
-###            self.log.debug('variable projectname has value %s', self.projectname)
-###
-###            self.vo = self._getvo()
-###            self.log.debug('variable vo has value %s', self.vo)
-###
-###            self.osg_app = self._getosgapp()
-###            #self.osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
-###            self.log.debug('variable osg_app has value %s', self.osg_app)
-###
-###            self.distributiontool = self.projectsconf.get(self.projectsection, 'distributiontool')
-###            self.log.debug('variable distributiontool has value %s', self.distributiontool)
-###
-###            self.srcdir = self._getsrcdir()
-###            self.log.debug('variable srcdir has value %s', self.srcdir)
-###
-###            self.destdir = self._getdestdir()
-###            self.log.debug('variable destdir has value %s', self.destdir)
-###
-###            self.destdiruser = self.projectsconf.get(self.projectsection, 'destdiruser') 
-###            self.log.debug('variable destdiruser has value %s', self.destdiruser)
-###
-###            self.distributionplugin = self._getdistributionplugin()
-###            self.log.debug('variable distributionplugin has value %s', self.distributionplugin)
-###
-###            self.oasisprobesconf = self._getprobesconfig()
-###            # FIXME : maybe allow VO with no own probes, so "projectprobes" is undefined
-###            self.log.debug('variable oasisprobesconf has value %s', self.oasisprobesconf)
-###
-###            # FIXME: allow more than one oasisproject.conf, split by comma
-###            # FIXME: maybe the class should be able to be instantiated without the probes conf defined. 
-###            #        For example, oasis-admin-addproject will not work if that config file does not exist, which is annoying.
-###            #        Maybe a solution could be a hierarchy of classes, 'a la java'
-###            self.oasisprojectprobesconf = self._getprojectprobesconfig()
-###            self.log.debug('variable oasisprojectprobesconf has value %s', self.oasisprojectprobesconf)
-###
-###            self.sleep = self.projectsconf.getint(self.projectsection, 'sleep')
-###            self.log.debug('variable sleep has value %s', self.sleep)
-###
-###            self.starttimeout = self.projectsconf.getint(self.projectsection, 'starttimeout')
-###            self.log.debug('variable starttimetime has value %s', self.starttimeout)
-###
-###            self.finishtimeout = self.projectsconf.getint(self.projectsection, 'finishtimeout')
-###            self.log.debug('variable finishtimeout has value %s', self.finishtimeout)
-###
-###        except:
-###            self.log.critical('Configuration cannot be read. Aborting.')
-###            # FIXME !! do not exit, propagate an exception and oasisCLI or oasisd exit
-###            sys.exit(1)
-###
-###        self.log.debug('Object Project created.')
-
-
     # =========================================================================
     #                   READ CONFIG FILES AND SETS OBJECT ATTRIBUTES
     # =========================================================================
@@ -466,31 +415,6 @@ class Project(ProjectBasicConfig):
     #                 Read variables from config object 
     # -------------------------------------------------------------------------
 
-    def _getvo(self):
-        '''
-        gets the VO from the projects config file.
-        '''
-        
-        self.log.debug('Starting.')
-        
-        if self.projectsconf.has_option(self.projectsection, "VO"):
-            vo = self.projectsconf.get(self.projectsection, 'VO')
-        else:
-            self.log.warning('There is no variable VO defined in the config file')
-            vo = None
-
-        # try to get VO from x509, and interpolate just in case
-        #try:    
-        #    st, vo = commands.getstatusoutput('voms-proxy-info -vo')
-        #    if st == 0:
-        #        vo_temp = string.Template(self.vo)
-        #        vo = vo_temp.substitute(VO_FROM_X509, vo) 
-        #except:
-        #    pass
-
-        self.log.debug('Returning VO %s.' %vo)
-        return vo
-
     def _getosgapp(self):
         '''
         gets the variable OSG_APP from the projects config file.
@@ -498,8 +422,8 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Starting.')
         
-        if self.projectsconf.has_option(self.projectsection, "OSG_APP"):
-            osg_app = self.projectsconf.get(self.projectsection, "OSG_APP")
+        if self.repositoriesconf.has_option(self.repositorysection, "OSG_APP"):
+            osg_app = self.repositoriesconf.get(self.repositorysection, "OSG_APP")
         else:
             self.log.warning('There is no variable OSG_APP defined in the config file')
             osg_app = None
@@ -508,41 +432,39 @@ class Project(ProjectBasicConfig):
         self.log.debug('Returning OSG_APP %s.' %osg_app)
         return osg_app
 
-    def _getsrcdir(self):
-        '''
-        gets the source directory from the projects config file.
-        It is the directory where the user payload writes.
-
-        Reason to have a dedicated method is to allow
-        the possibility that variable in the config file
-        is not the final value and requires later interpolation.
-        '''
-
-        self.log.debug('Starting.')
-        src = self.projectsconf.get(self.projectsection, "srcdir")
-        ## src = string.Template(src).substitute(OSG_APP=self.osg_app, VO=self.vo, project=self.projectname)
-        # normalize, just in case
-        src = os.path.normpath(src)
-        self.log.debug('Returning src dir %s.' %src)
-        return src
-
-    def _getdestdir(self):
-        '''
-        gets the destination directory from the projects config file.
-        It is the directory where files are transferred for publication.
-
-        Reason to have a dedicated method is to allow
-        the possibility that variable in the config file
-        is not the final value and requires later interpolation.
-        '''
-
-        self.log.debug('Starting.')
-        dest = self.projectsconf.get(self.projectsection, "destdir")
-        ## dest = string.Template(dest).substitute(VO=self.vo, project=self.projectname)
-        # normalize, just in case
-        dest = os.path.normpath(dest)
-        self.log.debug('Returning dest dir %s.' %dest)
-        return dest
+    ###def _getsrcdir(self):
+    ###    '''
+    ###    gets the source directory from the projects config file.
+    ###    It is the directory where the user payload writes.
+    ###
+    ###    Reason to have a dedicated method is to allow
+    ###    the possibility that variable in the config file
+    ###    is not the final value and requires later interpolation.
+    ###    '''
+    ###
+    ###    self.log.debug('Starting.')
+    ###    src = self.projectsconf.get(self.projectsection, "srcdir")
+    ###    # normalize, just in case
+    ###    src = os.path.normpath(src)
+    ###    self.log.debug('Returning src dir %s.' %src)
+    ###    return src
+    ###
+    ###def _getdestdir(self):
+    ###    '''
+    ###    gets the destination directory from the projects config file.
+    ###    It is the directory where files are transferred for publication.
+    ###
+    ###    Reason to have a dedicated method is to allow
+    ###    the possibility that variable in the config file
+    ###    is not the final value and requires later interpolation.
+    ###    '''
+    ###
+    ###    self.log.debug('Starting.')
+    ###    dest = self.projectsconf.get(self.projectsection, "destdir")
+    ###    # normalize, just in case
+    ###    dest = os.path.normpath(dest)
+    ###    self.log.debug('Returning dest dir %s.' %dest)
+    ###    return dest
 
 
     # -------------------------------------------------------------------------
@@ -555,7 +477,8 @@ class Project(ProjectBasicConfig):
         i.e. cvmfs21
         '''
 
-        tool = self.projectsconf.get(self.projectsection, "distributiontool")
+        #tool = self.projectsconf.get(self.projectsection, "distributiontool")
+        tool = self.distributiontool
         distribution_plugin = __import__('oasispackage.distributionplugins.%s' %tool,
                                          globals(),
                                          locals(),
@@ -608,26 +531,33 @@ class Project(ProjectBasicConfig):
 
 
     def _synchronize_back(self):
-        """
-        ensure the user scratch area has a perfect copy of what 
-        is currently in the final destination area 
-        """
-        self.log.debug('Starting.')
+        return self.distributionplugin.synchronize_back()
 
-        # FIXME temporary solution ??
-        #       maybe it should be implemented in the distribution plugin?
-        #       for example, to allow easier sync from remote host
-        #
-        cmd = 'rsync --stats -a -l --delete %s/ %s/' %(self.destdir, self.srcdir)
-        self.log.debug('synchronization cmd = %s' %cmd)
-        
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        (out, err) = p.communicate()
-        rc = p.returncode
 
-        self.log.debug('Output of synchronization cmd = %s' %out)
-        self.log.debug('Leaving with RC=%s' %rc)
-        return rc
+    ###def _synchronize_back(self):
+    ###    """
+    ###    ensure the user scratch area has a perfect copy of what 
+    ###    is currently in the final destination area 
+    ###    """
+    ###    self.log.debug('Starting.')
+
+    ###    # FIXME temporary solution ??
+    ###    #       maybe it should be implemented in the distribution plugin?
+    ###    #       for example, to allow easier sync from remote host
+    ###    #
+    ###    destdir = '/cvmfs/%s/%' %(self.project.repository_dest_dir, self.project.project_dest_dir)
+    ###    srcdir = '%s/%' %(self.project.repository_src_dir, self.project.project_src_dir)
+
+    ###    cmd = 'rsync --stats -a -l --delete %s/ %s/' %(destdir, srcdir)
+    ###    self.log.debug('synchronization cmd = %s' %cmd)
+    ###    
+    ###    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    ###    (out, err) = p.communicate()
+    ###    rc = p.returncode
+
+    ###    self.log.debug('Output of synchronization cmd = %s' %out)
+    ###    self.log.debug('Leaving with RC=%s' %rc)
+    ###    return rc
 
 
     def runpayload(self, payload):
@@ -845,7 +775,7 @@ class Project(ProjectBasicConfig):
             if enabled:
                 self.log.debug('candidate probe %s is enabled' %probe) 
 
-                out, err, rc = self._runprobe(self.username, probe, executable, options)
+                out, err, rc = self._runprobe(self.project_src_owner, probe, executable, options)
                 self.log.info('Output of probe %s was\n%s' %(probe, out))
                 self.log.info('Error of probe %s was\n%s' %(probe, err))
                 self.log.info('RC of probe %s was %s' %(probe, rc))
@@ -874,8 +804,8 @@ class Project(ProjectBasicConfig):
         # create the list of input options
         # one mandatory for every probe is the root directory 
         # the rest comes from the config file
-        options = '--oasisproberootdir=%s ' %self.srcdir
-        options += '--oasisprobedestdir=%s ' %self.destdir
+        options = '--oasisproberootdir=%s ' %self.distributionplugin.src
+        options += '--oasisprobedestdir=%s ' %self.distributionplugin.dest
         options += opts
         
         # if user is root (this process is run by the daemon)
