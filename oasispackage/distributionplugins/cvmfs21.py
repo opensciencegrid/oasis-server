@@ -23,8 +23,10 @@ import time
 
 
 from oasispackage.interfaces import BaseDistribution
+from oasispackage.distributionplugins.cvmfs import cvmfs
+import  oasispackage.utils
 
-class cvmfs21(BaseDistribution):
+class cvmfs21(cvmfs):
 
 
     def __init__(self, project):
@@ -34,33 +36,48 @@ class cvmfs21(BaseDistribution):
         self.log = logging.getLogger("logfile.cvmfs21")
         self.log.debug('init of cvmfs21 plugin')
 
-        # self.project.dest is like  /cvmfs/myvo.opensciencegrid.org
-        # the repo is the <myvo.opensciencegrid.org> part
-        self.repo = self.project.destdir.split('/')[2]
-
+    # --------------------------------------------------------------------
+    #           transfer
+    # --------------------------------------------------------------------
 
     def transfer(self):
+        """
+        transfer files from user scratch area to CVMFS filesystem.
+        Steps:
 
-        self.log.info('transfering files from %s to %s' %(self.project.srcdir, self.project.destdir))
+            1. start a transaction section
+            examples:   
+                $ cvmfs_server transaction atlas.opensciencegrid.org
+                $ sudo -u ouser.atlas cvmfs_server transaction atlas.opensciencegrid.org
 
-        ## cmd = 'cvmfs_server transaction %s' %self.repo
-        # example:   cvmfs_server transaction atlas.opensciencegrid.org
-        cmd = 'sudo -u %s cvmfs_server transaction %s' %(self.project.destdiruser, self.repo)
+            2. copy, with rsync, data from the user scratch area
+            example:   
+                $ rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+                $ sudo -u ouser.atlas rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
+        
+        """
+
+        self.log.info('transfering files from %s to %s' %(self.src, self.dest))
+
+        rc, out = self._starttransaction()
+        if rc != 0:
+            return rc, out
+        rc, out = self._transfer()
+        return rc, out
+       
+    def _starttransaction(self): 
+
+        cmd = 'sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname)
         self.log.info('command = %s' %cmd)
-
 
         st, out = commands.getstatusoutput(cmd)
         if st:
             self.log.critical('interaction with cvmfs server failed.')
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
-            return st, out
+        return st, out
 
-        ## cmd = 'rsync -a -l --delete %s/ %s' %(self.project.srcdir, self.project.destdir)
-        # example:   rsync -a -l --delete /home/atlas /cvmfs/atlas.opensciencegrid.org
-        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.destdiruser, self.project.srcdir, self.project.destdir)
-        self.log.info('command = %s' %cmd)
-
+    def _transfer(self):
         # FIXME
         #  perhaps parsing the output of rsync --stats instead of 
         #  logging the entire output???
@@ -83,16 +100,27 @@ class cvmfs21(BaseDistribution):
         #       total size is 0  speedup is 0.00
         #       
 
+        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.project_dest_owner, self.src, self.dest)
+        self.log.info('command = %s' %cmd)
+
         st, out = commands.getstatusoutput(cmd)
         if st:
             self.log.critical('transferring files failed.')
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
-            return st, out
 
         return st, out
 
+    # --------------------------------------------------------------------
+    #       publish
+    # --------------------------------------------------------------------
+
     def publish(self):
+        """
+        publish the CVMFS repo.
+        example:   
+            $ cvmfs_server publish atlas.opensciencegrid.org
+        """
         
         rc, out = self._publish()
         if rc:
@@ -102,11 +130,9 @@ class cvmfs21(BaseDistribution):
 
     def _publish(self):
 
-        self.log.info('publishing CVMFS for repository %s' %self.repo)
+        self.log.info('publishing CVMFS for repository %s' %self.project.repositoryname)
 
-        ## cmd = 'cvmfs_server publish %s' %self.repo 
-        # example:   cvmfs_server publish atlas.opensciencegrid.org
-        cmd = 'sudo -u %s cvmfs_server publish %s' %(self.project.destdiruser, self.repo)
+        cmd = 'sudo -u %s cvmfs_server publish %s' %(self.project.repository_dest_owner, self.project.repositoryname)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
@@ -116,6 +142,10 @@ class cvmfs21(BaseDistribution):
             self.log.critical('output = %s' %out)
         return st, out
     
+    # --------------------------------------------------------------------
+    #       adminstrative methods
+    # --------------------------------------------------------------------
+
     def resign(self):
         '''
         Re-sign the .cvmfswhitelist of a  given repository
@@ -127,14 +157,14 @@ class cvmfs21(BaseDistribution):
 
         #FIXME: allow re-signing from remote host
         
-        masterkey = '/etc/cvmfs/keys/%s.masterkey' %self.repo
+        masterkey = '/etc/cvmfs/keys/%s.masterkey' %self.project.repositoryname
         # FIXME
         # check if masterkey file exists, and raise an exception otherwise 
         # for example, if this code is run at a Replica host
         
-        whitelist = '/srv/cvmfs/%s/.cvmfswhitelist' %sef.repo
+        whitelist = '/srv/cvmfs/%s/.cvmfswhitelist' %self.project.repositoryname
         
-        self.log.info('Signing 7-day whitelist for repo %s  with master key...' %self.repo)
+        self.log.info('Signing 7-day whitelist for repo %s  with master key...' %self.project.repositoryname)
         
         now = datetime.datetime.utcnow()
         now_str = now.strftime('%Y%m%d%H%M%S')
@@ -204,29 +234,104 @@ class cvmfs21(BaseDistribution):
         shutil.rmtree(tmpdir)
 
 
-    # FIXME
-    #
-    # temporary solution:  createrepository() the same that createreproject()
-    #
     def createrepository(self):
-        rc, out = commands.getstatusoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
-        return rc, out
+        '''
+        create the repo area in CVMFS 2.1
+        example:
+            $ service httpd start; cvmfs_server mkfs -o ouser.atlas atlas.opensciencegrid.org 
+        '''
+ 
+        self.log.info('creating repository %s' %self.project.repositoryname)
+        self.addrepositoryuser()
+        if self.checkrepository():
+            self.log.info('repository %s already exists' %self.project.repositoryname)
+            return 0
+        else:
+            rc, out = commands.getstatusoutput('service httpd start; cvmfs_server mkfs -o %s %s' %(self.project.repository_dest_owner, self.project.repositoryname))
+            self.log.info('rc = %s, out=%s' %(rc,out))
+            if rc != 0:
+                self.log.critical('creating repository %s failed.' % self.project.repositoryname)
+            return rc
+
     def createproject(self):
-        rc, out = commands.getstatusoutput('cvmfs_server mkfs -o %s %s' %(self.project.destdiruser, self.repo))
-        return rc, out
+        '''
+        create the project area in CVMFS 2.1
+        Example:
+            $ sudo -u ouser.osg cvmfs_server transaction osg.opensciencegrid.org
+            $ mkdir /cvmfs/osg.opensciencegrid.org/bio/
+            $ chown ouser.bio:ouser.bio /cvmfs/osg.opensciencegrid.org/bio/
+            $ cvmfs_server publish osg.opensciencegrid.org
+
+        NOTE: we only create a project directory if 
+              the CVMFS repo is not already in transaction
+              (someone else is publishing)
+
+        NOTE: we only need to create a project directory if 
+              it is different that the repo directory
+        '''
+
+        self.log.info('creating project %s' %self.project.projectname)
+        self.addprojectuser()
+        if self.checkproject():
+            self.log.info('project %s already exists' %self.project.projectname)
+            return 0
+        else: 
+            rc = self.createrepository()
+            if rc != 0:
+                self.log.critical('creating repository %s failed. Aborting' % self.project.repositoryname)
+                return rc
+
+            if self._intransaction():
+                self.log.info('the repository %s is currently in a transaction session. Aborting.' %self.project.repositoryname)
+                raise Exception('the repository %s is currently in a transaction session. Aborting.' %self.project.repositoryname)
+
+            if self.project.project_dest_dir == "":
+                self.log.info('the project destination directory is the same that the repository destination directory. Nothing to do')
+                return 0
+            else:
+                rc, out = commands.getstatusoutput('sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname))
+                rc, out = commands.getstatusoutput('mkdir %s; chown %s:%s %s'  %(self.dest, self.project.project_dest_owner, self.project.project_dest_owner, self.dest))
+                self._publish()
+                return rc
+
+
+    def _intransaction(self):
+        '''
+        checks if the CVMFS repo is already in transaction 
+        (someone else is publishing)
+        '''
+        return os.path.isdir('/var/spool/cvmfs/%s/in_transaction' %self.project.repositoryname)
 
 
     def shouldlock(self, listflagfiles):
         '''
-        it should lock only if any of the flagfiles belongs to the same project
+        it should lock only if any of the flagfiles belongs to the same repository
         listflagfiles is a list of flagfiles as paths 
         '''
         # FIXME: should I pay attention to the <status> field???
         for flagfile in listflagfiles:
             flagfile = os.path.basename(flagfile)
-            if flagfile.startswith(self.project.projectname):
+            ###if flagfile.startswith(self.project.projectname):
+            ###    return True
+
+            flagfile_projectname = flagfile.split('.')[0]   #FIXME: this should be a method of FlagFile class
+            # check if flagfile_projectname belongs to the same repo
+            # that current projectname
+            if self.project.repository(flagfile_projectname) == self.project.repository():
                 return True
+
         return False
 
 
-   
+    def addprojectuser(self):
+        '''
+        creates the UNIX ID
+        '''
+        return oasispackage.utils.adduser(self.project.project_dest_owner)
+
+
+    def addrepositoryuser(self):
+        '''
+        creates the UNIX ID
+        '''
+        return oasispackage.utils.adduser(self.project.repository_dest_owner)
