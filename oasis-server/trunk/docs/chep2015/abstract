@@ -28,3 +28,14 @@ The mechanism to allow partners to join the OASIS as a Network is described. The
 The security aspects of this model is described. Those include both the proper central management of cryptographic keys, and the real time monitoring of the remote servers content being accepted into the network, as well as a mechanism to ban that content in case of problems.
 
 Finally, proposals for future plans are described.
+
+
+
+=================================
+version by Brian
+
+The Open Science Grid Application Software Installation Service (OASIS) provides an application-install service for OSG virtual organizations built on top of the CERN Virtual Machine File System (CVMFS).  This paper provides an overview and progress report of this service, which has been in production for over a year.  OASIS can either be used directly as a service run by OSG Operations or as a standalone software product.  In either use case, the VO’s files feed into a network of Stratum-1 servers, along with other partners within the federation.  The OASIS network has the flexibility of allowing pure CVMFS repositories, the OSG-run central OASIS repository, or VO-run OASIS repositories.  Depending on their needs, VOs can integrate into OASIS at several different points, leading to a complex trust model than standard CVMFS.
+
+This paper describes how the usage and implementation of OASIS has evolved in the last 18 months, along with operational successes and issues.  Topics such as monitoring CVMFS, handling of cryptographic keys, and how we both technical & organizationally establish trust relationships are covered.  Finally, a roadmap for the future is presented.
+
+
