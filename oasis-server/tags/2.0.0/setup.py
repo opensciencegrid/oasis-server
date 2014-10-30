@@ -22,12 +22,6 @@ from distutils.command.install_data import install_data as install_data_org
 
 libexec_files = ['libexec/%s' %file for file in os.listdir('libexec') if os.path.isfile('libexec/%s' %file)]
 
-oasis_etc_docs = ['etc/oasis.conf', 'etc/probes.conf', 'etc/projects.conf']
-oasis_logrotate = ['etc/logrotate/oasis' ]
-oasis_sysconfig = ['etc/sysconfig/oasis']
-
-condor_etc_files = ['etc/condor_oasis.conf-example',]
-
 utils_files = ['misc/generate_adduser',
                'misc/generate_condormap',
                'misc/generate_gridmap',
@@ -39,9 +33,6 @@ initd_files = ['etc/oasisd']
 #    admin tools 
 # =============================
 sbin_files = ['sbin/oasis-admin-projectadd',
-              #'sbin/oasis-admin-projectdel',
-              #'sbin/oasis-admin-list',
-              #'sbin/oasis-admin-rollback',
               'sbin/oasis-admin-start',
               'sbin/oasis-admin-restart',
               'sbin/oasis-admin-stop',
@@ -51,9 +42,6 @@ sbin_files = ['sbin/oasis-admin-projectadd',
 # -----------------------------------------------------------
 
 rpm_data_files=[('/usr/libexec', libexec_files),
-                #('/etc/oasis' , oasis_etc_docs),
-                #('/etc/logrotate.d', oasis_logrotate),
-                #('/etc/sysconfig', oasis_sysconfig),
                 ('/usr/share/oasis', utils_files),
                 ('/etc/init.d', initd_files),
                 ('/usr/sbin', sbin_files),
@@ -84,7 +72,6 @@ setup(
                'bin/oasis-user-preinstall',
                'bin/oasis-user-publish',
                'bin/oasisd',
-               #'bin/runprobes', #temporary script, to be merge with oasis
 
                # =============================
                # OASIS 1 tools
@@ -98,24 +85,6 @@ setup(
                'bin/set_repository_property',
                'bin/unblank_osg_repository',
 
-               #'bin/do_oasis_update',
-               #'bin/expand_oasis_dirtab',
-               #'bin/generate_adduser',
-               #'bin/generate_gridmap',
-               #'bin/request_oasis_update',
-               #'bin/stratumones.pl',
-
-               #### =============================
-               ####    admin tools 
-               #### =============================
-               ###'bin/oasis-admin-projectadd',
-               ####'bin/oasis-admin-projectdel',
-               ####'bin/oasis-admin-list',
-               ####'bin/oasis-admin-rollback',
-               ###'bin/oasis-admin-start',
-               ###'bin/oasis-admin-stop',
-               ###'bin/oasis-admin-status',
-                               
                # =============================
                #  wrappers to the probes
                # =============================
