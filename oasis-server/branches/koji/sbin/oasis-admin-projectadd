@@ -12,6 +12,7 @@ from ConfigParser import SafeConfigParser
 
 from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory
 from oasispackage.oasisAPI import oasisCLI
+import oasispackage.utils
 
 major, minor, release, st, num = sys.version_info
 
@@ -43,16 +44,39 @@ So it must be written before calling this tool
 #   https://twiki.grid.iu.edu/bin/view/Documentation/Release3/OasisExternalRepositories#Procedure_to_add_an_externally_h
 # ?
 
-
-
 # FIXME should the functionalities included in class oasisAPI::Project()
 #       in the same way some of them are in the distributionplugin 
 #       ???
 
-
 # FIXME write the logging 
 
 # FIXME --allproject does not work at this point, I think
+
+
+
+def usage():
+
+    print 'oasis-admin-projectadd:'
+    print ''
+    print ' Syntax:'
+    print '     oasis-admin-projectadd [--help|-h] [--verbose|-v] [--project <name>]'
+    print ''
+    print ' Description:'
+    print '     prepares everything to start working with a new project.'
+    print '     Creates, if needed, the UNIX user account,'
+    print '     the scratch directory and destination directory.'
+    print '     For the destination directory, a new repository in CVMFS is created if needed.'
+    print '     All the needed information to create the project is read' 
+    print '     from the "projects" and "repositories" configuration files.'
+    print '     The value of input option --project must match the value'
+    print '     of variable "projectname" in configuration file projects.conf'
+    print ''
+    print ' Options:'               
+    print '     --help | -h         Displays usage and exits' 
+    print '     --verbose | -v      Enters in DEBUG mode for the logging'
+    print '     --project <name>    Name of the project being created'
+    print ''
+    sys.exit()
 
 
 class ProjectHandler(object):
@@ -64,32 +88,6 @@ class ProjectHandler(object):
     # for all admin tools...
     # QUESTION: ?? where the base class would be placed ?? underneath site-packages/ ??
 
-
-###    def __init__(self, projectname, loglevel):
-###        # FIXME!! if projectname is None, it should abort !!
-###
-###        self.projectname = projectname
-###        self.loglevel = loglevel
-###
-###        self._setuplogging()
-###        # do we still need to setup logging if I get a Project class?
-###
-###        # create an object Project(), 
-###        # which includes an attribute self.distributionplugin
-###
-###        
-###        self.oasisconf = SafeConfigParser()
-###        self.oasisconf.readfp(open(oasisconfpath))
-###
-###        try:        
-###            projectfactory = ProjectFactory(clstype=ProjectBasicConfig, projectname=projectname)
-###            self.project = projectfactory.getProject()
-###        except Exception, ex:
-###            self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
-###            self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
-###            raise ex
-
-    
     def __init__(self, projectname, loglevel):
         # FIXME!! if projectname is None, it should abort !!
 
@@ -103,14 +101,12 @@ class ProjectHandler(object):
         # which includes an attribute self.distributionplugin
         
         try:        
-            oasis = oasisCLI(projectname=self.projectname)
-            self.project = oasis.project 
+            self.oasis = oasisCLI(projectname=self.projectname)
+            self.project = self.oasis.project 
         except Exception, ex:
             self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
             self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
             raise ex
-
-
 
     def _setuplogging(self):
         
@@ -150,70 +146,58 @@ class ProjectHandler(object):
         main method performing all checks, running commands, etc.
         '''
 
-        rc = self.adduser()
+        rc = self.addrepositoryuser()
         if rc:
             return rc 
-        rc = self.createsrcdir()
+        rc = self.addprojectuser()
+        if rc:
+            return rc 
+        rc = self.createprojectsrcdir()
         if rc:
             return rc 
         rc = self.createproject()
         return rc
 
 
-    def adduser(self):
+
+    # FIXME !!
+    # I am creating here the project_src_dir and the repository_src_dir
+    # the repository_src_dir should be done in a different method. 
+    # Or even in a different tool: oasis-admin-repositoryadd
+
+    def addrepositoryuser(self):
         '''
         creates the UNIX ID
         '''
+        return oasispackage.utils.adduser(self.project.repository_src_owner)
 
-        uid = self._checkuser()
-        if uid:
-            self.log.warning('user %s already exists' %self.project.username)
-            self.console.warning('user %s already exists' %self.project.username)
-            return 0
-        else:
-            user = self.project.username
-            group = self.project.username  # maybe in the future is a generic group name like 'oasis'?
-  
-            # FIXME: what about the group?? 
-            # option -g in adduser requires the group to exist !!
-            # or we put all users in the same group... 
-            cmd = '/usr/sbin/adduser -m %s' %user
-            rc, out = commands.getstatusoutput(cmd)
 
-            if rc == 0:
-                self.log.debug('user %s created' %user)
-                self.console.debug('user %s created' %user)
-            else:
-                self.log.critical('user %s creation failed' %user)
-                self.console.critical('user %s creation failed' %user)
-
-            return rc
+    def addprojectuser(self):
+        '''
+        creates the UNIX ID
+        '''
+        return oasispackage.utils.adduser(self.project.project_src_owner)
         
 
-    def _checkuser(self):
-        '''
-        checks if that username already exists
-        '''
-        # FIXME is this really needed?
-
-        user = self.project.username
-        try:
-            pw = pwd.getpwnam(user)
-            return pw.pw_uid 
-        except:
-            return None
-
-
-    def createsrcdir(self):
+    def createprojectsrcdir(self):
         '''
         creates the source directory
         '''
 
-        user = self.project.username
-        uid = pwd.getpwnam(user).pw_uid
-        gid = pwd.getpwnam(user).pw_gid
-        
-        srcdir = self.project.srcdir
+        if 'login' not in self.oasis.services:
+            self.log.info('Not a login host: no need to create src directory')
+            self.console.info('Not a login host: no need to create src directory')
+            return 0
+            
+
+        project_user = self.project.project_src_owner
+        project_uid = pwd.getpwnam(project_user).pw_uid
+        project_gid = pwd.getpwnam(project_user).pw_gid
+
+        repository_user = self.project.repository_src_owner
+        repository_uid = pwd.getpwnam(repository_user).pw_uid
+        repository_gid = pwd.getpwnam(repository_user).pw_gid
+
 
         # checks if OSG_APP is defined, and make sure everyone can write
         osg_app = self.project.osg_app
@@ -221,25 +205,53 @@ class ProjectHandler(object):
             # FIXME
             # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
             commands.getoutput('chmod 1777 %s' %osg_app) 
-        
-        if not os.path.isdir(srcdir):
-            try:
-                os.makedirs(srcdir)
-                os.chown(srcdir, uid , gid)
+       
 
+        # FIXME !!
+        # I am creating here the project_src_dir and the repository_src_dir
+        # the repository_src_dir should be done in a different method. 
+        # Or even in a different tool: oasis-admin-repositoryadd
+ 
+        if not os.path.isdir(self.project.repository_src_dir):
+            try:
+                os.makedirs(self.project.repository_src_dir)
+                os.chown(self.project.repository_src_dir, repository_uid, repository_gid)
                 # FIXME
                 # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
-                commands.getoutput('chmod o=g,o-w %s' %srcdir)
-
-                self.log.debug('directory %s created' %srcdir)
-                self.console.debug('directory %s created' %srcdir)
+                #commands.getoutput('chmod o=g,o-w %s' %self.project.repository_src_dir)
+                self.log.debug('directory %s created' %self.project.repository_src_dir)
+                self.console.debug('directory %s created' %self.project.repository_src_dir)
             except Exception, ex:
-                self.log.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
-                self.console.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                self.log.critical('directory %s could not be created. Exception %s was raised' %(self.project.repository_src_dir, ex))
+                self.console.critical('directory %s could not be created. Exception %s was raised' %(self.project.repository_src_dir, ex))
                 return 1
         else:
-            self.log.warning('directory %s already existed' %srcdir)
-            self.console.warning('directory %s already existed' %srcdir)
+            self.log.warning('directory %s already existed' %self.project.repository_src_dir)
+            self.console.warning('directory %s already existed' %self.project.repository_src_dir)
+
+
+        if self.project.project_src_dir != "":
+
+            srcdir = '%s/%s' %(self.project.repository_src_dir, self.project.project_src_dir)
+
+            if not os.path.isdir(srcdir):
+                try:
+                    os.makedirs(srcdir)
+                    os.chown(srcdir, project_uid , project_gid)
+
+                    # FIXME
+                    # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
+                    commands.getoutput('chmod o=g,o-w %s' %srcdir)
+
+                    self.log.debug('directory %s created' %srcdir)
+                    self.console.debug('directory %s created' %srcdir)
+                except Exception, ex:
+                    self.log.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                    self.console.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                    return 1
+            else:
+                self.log.warning('directory %s already existed' %srcdir)
+                self.console.warning('directory %s already existed' %srcdir)
 
         return 0
 
@@ -250,69 +262,35 @@ class ProjectHandler(object):
         and calls the method createproject() 
         '''
 
+        if 'server' not in self.oasis.services:
+            self.log.info('Not a server host: no need to create dest directory')
+            self.console.info('Not a server host: no need to create dest directory')
+            return 0
+        
+
         # FIXME
         # at this step, if it is the first repo being created, 
         # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
+   
+        try: 
+            rc = self.project.distributionplugin.createproject()
     
-        rc,out = self.project.distributionplugin.createproject()
+            if rc:
+                self.log.critical('destination repository could not be created.')
+                self.console.critical('destination repository could not be created.')
+            else:
+                self.log.debug('destination repository created.')
+                self.console.debug('destination repository created.')
+    
+            return rc
+        except Exception, ex:
+            self.log.critical('Exception received when trying to create destination project directory: %s' %ex)
+            self.console.critical('Exception received when trying to create destination project directory: %s' %ex)
+            # FIXME
+            return 1
+            
 
-        if rc:
-            self.log.critical('destination repository could not be created.')
-            self.console.critical('destination repository could not be created.')
-        else:
-            self.log.debug('destination repository created.')
-            self.console.debug('destination repository created.')
-
-        return rc
-
-
-
-#class ProjectHandlerManager(object):
-#
-#    def __init__(self):
-#        pass
-#    
-#    def _getprojectsconfig(self):
-#        '''
-#        gets the ConfigParser object for oasisprojects.conf
-#        '''
-#        # FIXME  this code is duplicated from oasisAPI
-#        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
-#        oasisprojectsconf = SafeConfigParser()
-#        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
-#        return oasisprojectsconf
-#
-#    def addallprojects(self):
-#        listprojects = self.oasisd.projectsconf.sections()
-#        for projectsection in listprojects:
-#            project = Project(projectsection, self.oasisd.oasisconf)
-#
-
-
-def usage():
-
-    print 'oasis-admin-projectadd:'
-    print ''
-    print ' Syntax:'
-    print '     oasis-admin-projectadd [--help|-h] [--verbose|-v] [--project <name>]'
-    print ''
-    print ' Description:'
-    print '     prepares everything to start working with a new project.'
-    print '     Creates, if needed, the UNIX user account,'
-    print '     the scratch directory and destination directory.'
-    print '     For the destination directory, a new repository in CVMFS is created if needed.'
-    print '     All the needed information to create the project is read' 
-    print '     from the "projects" configuration file.'
-    print '     The value of input option --project must match the value'
-    print '     of variable "project" in configuration file oasisprojects.conf'
-    print ''
-    print ' Options:'               
-    print '     --help | -h         Displays usage and exits' 
-    print '     --verbose | -v      Enters in DEBUG mode for the logging'
-    print '     --project <name>    Name of the project being created'
-    print ''
-    sys.exit()
-
+# ================================================================
 
 def main(options):
 
@@ -353,10 +331,3 @@ def main(options):
 if __name__ == '__main__':
     rc = main(sys.argv[1:])
     sys.exit(rc)
-
-
-# ================================================================
-
-
-
-
