@@ -1,0 +1,25 @@
+
+-----------------------------------------------------------------------------
+2.0.0
+-----------------------------------------------------------------------------
+
+Changes made on  May 5th 2014:
+
+    -- remove the string  oasisprobes.d/ for config variable, to avoid confusions.
+
+Changes made on  April 18 2014:
+
+    -- loop for a while, or until a timeout, when a flagfile is found at start
+
+Changes made on  April 17 2014:
+
+    -- added new config variable to oasisprojects.conf: time.starttimeout
+
+    -- change name of config variable in oasisprojects.conf:
+
+            time.timeout  ->  time.finishtimeout
+
+    -- late interpolation removed. 
+       No more  %{XYZ} in the oasisprojects.conf. 
+       From now on, use regular  %(XYZ)s 
+
