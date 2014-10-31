@@ -255,6 +255,28 @@ f_main(){
     f_exit $rc
 }
 
+###
+###     POTENTIAL ALTERNATIVE CODE
+###     
+###     f_main(){
+###         f_print_line
+###         f_print_info_msg 'OASIS starts'
+###         f_print_line
+###         
+###         # print out some platform info
+###         f_platform_info
+###         f_print_line
+###     
+###         /usr/bin/oasis-user-preinstall
+###         $@      # ??? Does that work ???
+###         /usr/bin/oasis-user-publish --wait=True
+###         rc=$?
+###     
+###         f_print_line
+###         f_exit $rc
+###     }
+###
+
 
 f_main $@
 
