@@ -116,6 +116,7 @@ f_restart_daemon(){
         #$1 == 0 => uninstall 
 
         service oasisd condrestart >/dev/null 2>&1
+    fi
 }
 f_restart_daemon $1
 
