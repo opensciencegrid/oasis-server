@@ -56,8 +56,11 @@ set -e
 BLANKREVISION="`cat -v /srv/cvmfs/$REPO/.cvmfspublished|sed -n 's/^S//p'`"
 
 echo "Restoring $REPO.$STAMP"
-echo "  but first need to remove $REPO"
-cvmfs_server rmfs $REPO
+
+if [ -d /etc/cvmfs/repositories.d/$REPO ]; then
+    echo "  but first need to remove $REPO (answer y to the prompt)"
+    cvmfs_server rmfs $REPO
+fi
 
 for D in $REPODIRS; do
     if [ -d $D/$REPO ]; then
