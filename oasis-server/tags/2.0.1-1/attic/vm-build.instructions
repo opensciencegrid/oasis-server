@@ -1,0 +1,14 @@
+vm=oasis.3
+mkvm $vm
+bsize=2T
+
+dev=hdc
+dest=srv
+
+disk=/net/nas01/$dest/${vm}-${dev}.qcow2
+qemu-img create -f qcow2 -o size=$bsize,preallocation=metadata $disk
+echo "preparing to format /$dest"
+guestfish add $disk : run : part-disk /dev/vda gpt : mkfs-opts ext4 /dev/vda1 blocksize:4096 : set-e2label /dev/vda1 /$dest
+echo "finished format of /$dest"
+virsh attach-disk $vm $disk $dev --persistent --driver qemu --subdriver qcow2 --sourcetype file --cache none
+
