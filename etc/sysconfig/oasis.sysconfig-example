@@ -3,7 +3,7 @@
 #
 
 #
-#  VERY IMPORTANT : cp this file to /etc/sysconfig/oasis
+#  VERY IMPORTANT : cp this file to /etc/sysconfig/oasisd
 #
 
 #  OPTIONS:
