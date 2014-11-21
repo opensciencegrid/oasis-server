@@ -4,7 +4,7 @@
 #
 #
 
-release_version='2.0.0'
+release_version='2.0.2'
 
 import commands
 import os
@@ -78,7 +78,7 @@ setup(
                #'bin/runprobes', #temporary script, to be merge with oasis
 
                # =============================
-               # OASIS 1 tools
+               # OASIS 1 - style tools
                # =============================
                'bin/add_osg_repository',
                'bin/blank_osg_repository',
@@ -88,6 +88,7 @@ setup(
                'bin/resign_osg_whitelist',
                'bin/set_repository_property',
                'bin/unblank_osg_repository',
+               'bin/generate_replicas',
 
                #'bin/do_oasis_update',
                #'bin/expand_oasis_dirtab',
