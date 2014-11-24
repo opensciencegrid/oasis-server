@@ -49,6 +49,7 @@ if len(sys.argv) > 2:
 
 def logmsg(msg):
     print time.asctime(time.localtime(time.time())) + ' ' + msg
+    sys.stdout.flush()
 
 logmsg('Starting')
 
