@@ -1,5 +1,4 @@
 from oasispackage.interfaces import BaseDistribution
-from oasispackage.distributionplugins.cvmfs import cvmfs
 import  oasispackage.utils
 
 
@@ -8,7 +7,7 @@ class mock(object):
     def __init__(self, project):
 
         # FIXME : this is calling the root logger...
-        self.log = logging.getLogger('distribution')
+        self.log = logging.getLogger('logfile.mock')
         self.project = project
 
 
@@ -28,5 +27,5 @@ class mock(object):
         return 0
 
     def shouldlock(self, listflagfiles):
-        return 0  # ???
+        return False  # ???
 
