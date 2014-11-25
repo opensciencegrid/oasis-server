@@ -14,6 +14,7 @@ f_create_oasis_account(){
     if [ $rc -ne 0 ]; then
         useradd -r -m oasis
         chmod 1777 /home/oasis
+        # FIXME: do we really need the home directory for oasis to have the sticky bit???
     fi
 }
 
