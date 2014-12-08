@@ -103,8 +103,8 @@ f_start_daemon(){
 # #f_wrapper_permissions
 # #f_user_client_permissions
 # f_permissions
- f_create_log_directory
+# f_create_log_directory
 # f_create_oasis_account
- f_create_run_directory
+# f_create_run_directory
 f_chkconfig $1
 #f_start_daemon
