@@ -1,6 +1,7 @@
 
 * fixing the layout in trunk/ directory, to be equal to the one in tags directories.
   Adding spec file to trunk/misc directory
+  fixed the rpm scripts to be equal to the those in the tags directories
 
 -----------------------------------------------------------------------------
 2.0.1-1
