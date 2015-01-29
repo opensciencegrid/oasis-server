@@ -54,11 +54,14 @@ if [ -f /srv/cvmfs/$REPO/pub/catalogs/.cvmfs_master_replica ]; then
 elif [ -f /srv/cvmfs/$REPO/.cvmfs_master_replica ]; then
     # cvmfs 2.1.x
     TMPFILE="/tmp/setrepoprop$$"
-    trap "rm -f ${TMPFILE}" 0
+    trap "rm -f ${TMPFILE}*" 0
     cvmfs_server transaction $REPO
-    mknod $TMPFILE p
+    mknod $TMPFILE.in p
+    mknod $TMPFILE.out p
     (
-    cvmfs_server publish -p $REPO <$TMPFILE | while read P1 P2 P3 P4 P5 REST; do
+    # script is used to prevent output buffering
+    script -f -q -c "cvmfs_server publish -p $REPO <$TMPFILE.in" $TMPFILE.out >/dev/null 2>&1 &
+    while read P1 P2 P3 P4 P5 REST; do
 	if [ "$P1 $P2 $P3 $P4" = "Allowing for tweaks in" ]; then
 	    insert_or_update $P5 "$KEY" "$VALUE"
 	    # send a blank line to the input of cvmfs_server publish
@@ -66,8 +69,8 @@ elif [ -f /srv/cvmfs/$REPO/.cvmfs_master_replica ]; then
 	else
 	    echo "$P1 $P2 $P3 $P4 $P5 $REST"
 	fi
-    done
-    ) 3>&1 >&2 | head -1 | tee $TMPFILE >/dev/null
+    done <$TMPFILE.out
+    ) 3>&1 >&2 | head -1 | tee $TMPFILE.in >/dev/null
 else 
     echo "$ME: cannot locate the catalog of $REPO" >&2
     exit 1
