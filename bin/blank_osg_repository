@@ -24,6 +24,11 @@ if [ ! -f /srv/cvmfs/$REPO/.cvmfspublished ]; then
     usage
 fi
 
+if [ -f /cvmfs/$REPO/intentionally_blank ]; then
+    echo "$REPO already blanked (/cvmfs/$REPO/intentionally_blank exists)" >&2
+    exit 2
+fi
+
 set -e
 
 REVISION="`cat -v /srv/cvmfs/$REPO/.cvmfspublished|sed -n 's/^S//p'`"
