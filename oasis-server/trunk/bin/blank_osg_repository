@@ -64,7 +64,7 @@ fi
 
 wget --header="Pragma: no-cache" -O/srv/cvmfs/$REPO/.cvmfswhitelist "http://$STRATUM0/cvmfs/$REPO/.cvmfswhitelist"
 rm -f /etc/cvmfs/keys/$REPO.pub
-ln -s /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/$REPO.pub
+cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/$REPO.pub
 # subtract 1 because set_repository_property always adds 1 when publishing
 let REVISION-=1
 $MYDIR/set_repository_property revision $REVISION $REPO
