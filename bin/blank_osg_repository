@@ -38,8 +38,8 @@ echo "Blank $REPO revision will be set to $REVISION"
 NOW="`date +%Y%m%d%H%M%S`"
 REPODIRS="/srv/cvmfs /etc/cvmfs/repositories.d /var/spool/cvmfs"
 for D in $REPODIRS; do
-    echo "Renaming $D/$REPO to $D/$REPO.$NOW"
-    mv $D/$REPO $D/$REPO.$NOW
+    echo "Renaming $D/$REPO to $D/.$REPO.$NOW"
+    mv $D/$REPO $D/.$REPO.$NOW
 done
 
 echo "Making $REPO"

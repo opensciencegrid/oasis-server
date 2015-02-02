@@ -25,23 +25,23 @@ fi
 if [ $# = 2 ]; then
     STAMP="$2"
 else
-    PATHS="`ls -d /srv/cvmfs/$REPO.??????????????`"
+    PATHS="`ls -d /srv/cvmfs/.$REPO.??????????????`"
     if [ -z "$PATHS" ]; then
-	echo "$ME: no saved repository found at /srv/cvmfs/$REPO.*" >&2
+	echo "$ME: no saved repository found at /srv/cvmfs/.$REPO.*" >&2
 	usage
     fi
     if [ `echo "$PATHS"|wc -l` != 1 ]; then
-	echo "$ME: too many saved repositories found at /srv/cvmfs/$REPO.*" >&2
+	echo "$ME: too many saved repositories found at /srv/cvmfs/.$REPO.*" >&2
 	echo "Either delete all but one or specify which one you want." >&2
 	usage
     fi
-    STAMP="`echo $PATHS|sed "s,^/srv/cvmfs/$REPO\.,,"`"
+    STAMP="`echo $PATHS|sed "s,^/srv/cvmfs/.$REPO\.,,"`"
 fi
 
 REPODIRS="/srv/cvmfs /etc/cvmfs/repositories.d /var/spool/cvmfs"
 for D in $REPODIRS; do
-    if [ ! -d "$D/$REPO.$STAMP" ]; then
-	echo "$ME: $D/$REPO.$STAMP not found" >&2
+    if [ ! -d "$D/.$REPO.$STAMP" ]; then
+	echo "$ME: $D/.$REPO.$STAMP not found" >&2
 	exit 1
     fi
 done
@@ -55,7 +55,7 @@ set -e
 
 BLANKREVISION="`cat -v /srv/cvmfs/$REPO/.cvmfspublished|sed -n 's/^S//p'`"
 
-echo "Restoring $REPO.$STAMP"
+echo "Restoring .$REPO.$STAMP to $REPO"
 
 if [ -d /etc/cvmfs/repositories.d/$REPO ]; then
     echo "  but first need to remove $REPO (answer y to the prompt)"
@@ -70,8 +70,8 @@ for D in $REPODIRS; do
 done
 
 for D in $REPODIRS; do
-    echo "Renaming $D/$REPO.$STAMP to $D/$REPO"
-    mv $D/$REPO.$STAMP $D/$REPO
+    echo "Renaming $D/.$REPO.$STAMP to $D/$REPO"
+    mv $D/.$REPO.$STAMP $D/$REPO
 done
 
 REPOURL="`sed -n 's/^CVMFS_STRATUM0=//p' /etc/cvmfs/repositories.d/$REPO/server.conf`"
