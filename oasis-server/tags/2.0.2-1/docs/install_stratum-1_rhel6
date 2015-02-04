@@ -1,0 +1,469 @@
+Following instructions from document at https://webdocs.racf.bnl.gov/cgit/puppet/catalog/tree/grid/cvmfs/manifests/replica.pp
+
+        [root@itb-oasisreplica ~]# hostname
+        itb-oasisreplica.racf.bnl.gov
+        
+        [root@itb-oasisreplica ~]# cat /etc/redhat-release 
+        Red Hat Enterprise Linux Workstation release 6.5 (Santiago)
+        
+#####################################################################################################
+#                                                                                                   #
+#                I N S T A L L           I N S T R U C T I O N S                                    #
+#                                                                                                   #
+#####################################################################################################
+
+
+#####################################################################################################
+#                                                                                                   #
+#                I N S T A L L           C V M F S   R E P L I C A                                  #
+#                                                                                                   #
+#####################################################################################################
+
+-- Install the .repo from CERN, at http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/6/x86_64/
+
+
+        [root@itb-oasisreplica ~]# rpm -Uhv http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/6/x86_64/cvmfs-release-2-4.el6.noarch.rpm
+        Retrieving http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/6/x86_64/cvmfs-release-2-4.el6.noarch.rpm
+        warning: /var/tmp/rpm-tmp.hiWn4P: Header V4 DSA/SHA1 Signature, key ID 8ae45ce7: NOKEY
+        Preparing...                ########################################### [100%]
+           1:cvmfs-release          ########################################### [100%]
+        
+
+-- Edit the repo file /etc/yum.repos.d/cernvm.repo 
+   Sometimes is not capable of resolving the nomenclature property. 
+   So to avoid problem edit it and replace lines with the baseurl like this
+
+            baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/$releasever/$basearch/
+
+   by lines like this 
+
+            baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/6/x86_64/
+
+   and also to enable the sections [cernvm-testing] and [cernvm-kernel]
+   Note: the [cervm-testing] section is needed because the rpm package cvmfs-server for EL 6 is not in the [cernvm] repo. 
+         Once it is in that repo, then [cernvm-testing] is not needed.
+         [cernvm-kernel] is needed to install AUFS kernel module.
+
+
+        [root@itb-oasisreplica ~]# cat /etc/yum.repos.d/cernvm.repo
+        
+        [cernvm]
+        name=CernVM packages
+        baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/6/x86_64/
+        gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
+        gpgcheck=1
+        enabled=1
+        protect=1
+        
+        [cernvm-ng]
+        name=CernVM-FS 2.1 packages
+        baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs-ng/EL/$releasever/$basearch/
+        gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
+        gpgcheck=1
+        enabled=0
+        protect=1
+        
+        [cernvm-testing]
+        name=CernVM testing packages
+        baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs-testing/EL/6/x86_64/
+        gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
+        gpgcheck=1
+        enabled=1
+        protect=1
+        
+        [cernvm-kernel]
+        name=CernVM-FS AUFS enabled SL6 kernel
+        baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs-kernel/EL/6/x86_64/
+        gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
+        gpgcheck=1
+        enabled=1
+        protect=1
+                        
+
+-- Install the CVMFS packages and depedencies
+
+        [root@itb-oasisreplica ~]# yum install kernel-2.6.32-358.18.1.el6.aufs21
+
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        126 packages excluded due to repository priority protections
+        Setting up Install Process
+        Resolving Dependencies
+        --> Running transaction check
+        ---> Package kernel.x86_64 0:2.6.32-358.18.1.el6.aufs21 will be installed
+        --> Finished Dependency Resolution
+        
+        Dependencies Resolved
+        
+        =======================================================================================================================================================================================================
+         Package                                  Arch                                     Version                                                       Repository                                       Size
+        =======================================================================================================================================================================================================
+        Installing:
+         kernel                                   x86_64                                   2.6.32-358.18.1.el6.aufs21                                    cernvm-kernel                                    26 M
+        
+        Transaction Summary
+        =======================================================================================================================================================================================================
+        Install       1 Package(s)
+        
+        Total download size: 26 M
+        Installed size: 116 M
+        Is this ok [y/N]: y
+        Downloading Packages:
+        kernel-2.6.32-358.18.1.el6.aufs21.x86_64.rpm                                                                                                                                    |  26 MB     00:07     
+        warning: rpmts_HdrFromFdno: Header V4 DSA/SHA1 Signature, key ID 8ae45ce7: NOKEY
+        Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
+        Importing GPG key 0x8AE45CE7:
+         Userid : CernVM Administrator (cvmadmin) <cernvm.administrator@cern.ch>
+         Package: cvmfs-release-2-4.el6.noarch (installed)
+         From   : /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
+        Is this ok [y/N]: y
+        Running rpm_check_debug
+        Running Transaction Test
+        Transaction Test Succeeded
+        Running Transaction
+        Warning: RPMDB altered outside of yum.
+          Installing : kernel-2.6.32-358.18.1.el6.aufs21.x86_64                                                                                                                                            1/1 
+          Verifying  : kernel-2.6.32-358.18.1.el6.aufs21.x86_64                                                                                                                                            1/1 
+        
+        Installed:
+          kernel.x86_64 0:2.6.32-358.18.1.el6.aufs21                                                                                                                                                           
+        
+        Complete!
+
+
+
+        [root@itb-oasisreplica ~]# yum install cvmfs-server
+
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        cernvm                                                                                                                                                                          | 2.3 kB     00:00     
+        cernvm-kernel                                                                                                                                                                   | 2.3 kB     00:00     
+        cernvm-testing                                                                                                                                                                  | 2.3 kB     00:00     
+        cernvm-testing/primary_db                                                                                                                                                       |  38 kB     00:00     
+        126 packages excluded due to repository priority protections
+        Setting up Install Process
+        Resolving Dependencies
+        --> Running transaction check
+        ---> Package cvmfs-server.x86_64 0:2.1.19-1.el6 will be installed
+        --> Processing Dependency: cvmfs-keys >= 1.2 for package: cvmfs-server-2.1.19-1.el6.x86_64
+        --> Processing Dependency: httpd for package: cvmfs-server-2.1.19-1.el6.x86_64
+        --> Running transaction check
+        ---> Package cvmfs-keys.noarch 0:1.4-1 will be installed
+        ---> Package httpd.x86_64 0:2.2.15-30.el6_5 will be installed
+        --> Processing Dependency: httpd-tools = 2.2.15-30.el6_5 for package: httpd-2.2.15-30.el6_5.x86_64
+        --> Processing Dependency: apr-util-ldap for package: httpd-2.2.15-30.el6_5.x86_64
+        --> Running transaction check
+        ---> Package apr-util-ldap.x86_64 0:1.3.9-3.el6_0.1 will be installed
+        ---> Package httpd-tools.x86_64 0:2.2.15-30.el6_5 will be installed
+        --> Finished Dependency Resolution
+        
+        Dependencies Resolved
+        
+        =======================================================================================================================================================================================================
+         Package                                       Arch                                   Version                                          Repository                                                 Size
+        =======================================================================================================================================================================================================
+        Installing:
+         cvmfs-server                                  x86_64                                 2.1.19-1.el6                                     cernvm-testing                                            8.3 M
+        Installing for dependencies:
+         apr-util-ldap                                 x86_64                                 1.3.9-3.el6_0.1                                  rhel-x86_64-workstation-6                                  15 k
+         cvmfs-keys                                    noarch                                 1.4-1                                            cernvm                                                    4.0 k
+         httpd                                         x86_64                                 2.2.15-30.el6_5                                  rhel-x86_64-workstation-6                                 821 k
+         httpd-tools                                   x86_64                                 2.2.15-30.el6_5                                  rhel-x86_64-workstation-6                                  73 k
+        
+        Transaction Summary
+        =======================================================================================================================================================================================================
+        Install       5 Package(s)
+        
+        Total download size: 9.2 M
+        Installed size: 34 M
+        Is this ok [y/N]: y
+        Downloading Packages:
+        (1/5): apr-util-ldap-1.3.9-3.el6_0.1.x86_64.rpm                                                                                                                                 |  15 kB     00:00     
+        (2/5): cvmfs-keys-1.4-1.noarch.rpm                                                                                                                                              | 4.0 kB     00:00     
+        (3/5): cvmfs-server-2.1.19-1.el6.x86_64.rpm                                                                                                                                     | 8.3 MB     00:05     
+        (4/5): httpd-2.2.15-30.el6_5.x86_64.rpm                                                                                                                                         | 821 kB     00:00     
+        (5/5): httpd-tools-2.2.15-30.el6_5.x86_64.rpm                                                                                                                                   |  73 kB     00:00     
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        Total                                                                                                                                                                  1.5 MB/s | 9.2 MB     00:06     
+        Running rpm_check_debug
+        Running Transaction Test
+        Transaction Test Succeeded
+        Running Transaction
+          Installing : cvmfs-keys-1.4-1.noarch                                                                                                                                                             1/5 
+          Installing : apr-util-ldap-1.3.9-3.el6_0.1.x86_64                                                                                                                                                2/5 
+          Installing : httpd-tools-2.2.15-30.el6_5.x86_64                                                                                                                                                  3/5 
+          Installing : httpd-2.2.15-30.el6_5.x86_64                                                                                                                                                        4/5 
+          Installing : cvmfs-server-2.1.19-1.el6.x86_64                                                                                                                                                    5/5 
+          Verifying  : httpd-2.2.15-30.el6_5.x86_64                                                                                                                                                        1/5 
+          Verifying  : cvmfs-server-2.1.19-1.el6.x86_64                                                                                                                                                    2/5 
+          Verifying  : httpd-tools-2.2.15-30.el6_5.x86_64                                                                                                                                                  3/5 
+          Verifying  : apr-util-ldap-1.3.9-3.el6_0.1.x86_64                                                                                                                                                4/5 
+          Verifying  : cvmfs-keys-1.4-1.noarch                                                                                                                                                             5/5 
+        
+        Installed:
+          cvmfs-server.x86_64 0:2.1.19-1.el6                                                                                                                                                                   
+        
+        Dependency Installed:
+          apr-util-ldap.x86_64 0:1.3.9-3.el6_0.1                 cvmfs-keys.noarch 0:1.4-1                 httpd.x86_64 0:2.2.15-30.el6_5                 httpd-tools.x86_64 0:2.2.15-30.el6_5                
+        
+        Complete!
+        
+        
+        [root@itb-oasisreplica ~]# yum install cvmfs-devel cvmfs-release cvmfs-keys cvmfs
+        
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        126 packages excluded due to repository priority protections
+        Setting up Install Process
+        Package cvmfs-release-2-4.el6.noarch already installed and latest version
+        Package cvmfs-keys-1.4-1.noarch already installed and latest version
+        Resolving Dependencies
+        --> Running transaction check
+        ---> Package cvmfs.x86_64 0:2.1.19-1.el6 will be installed
+        --> Processing Dependency: libfuse.so.2(FUSE_2.6)(64bit) for package: cvmfs-2.1.19-1.el6.x86_64
+        --> Processing Dependency: libfuse.so.2(FUSE_2.5)(64bit) for package: cvmfs-2.1.19-1.el6.x86_64
+        --> Processing Dependency: libfuse.so.2(FUSE_2.4)(64bit) for package: cvmfs-2.1.19-1.el6.x86_64
+        --> Processing Dependency: fuse-libs for package: cvmfs-2.1.19-1.el6.x86_64
+        --> Processing Dependency: fuse for package: cvmfs-2.1.19-1.el6.x86_64
+        --> Processing Dependency: autofs for package: cvmfs-2.1.19-1.el6.x86_64
+        --> Processing Dependency: libfuse.so.2()(64bit) for package: cvmfs-2.1.19-1.el6.x86_64
+        ---> Package cvmfs-devel.x86_64 0:2.1.19-1.el6 will be installed
+        --> Running transaction check
+        ---> Package autofs.x86_64 1:5.0.5-89.el6_5.1 will be installed
+        --> Processing Dependency: libtirpc.so.1()(64bit) for package: 1:autofs-5.0.5-89.el6_5.1.x86_64
+        ---> Package fuse.x86_64 0:2.8.3-4.el6 will be installed
+        ---> Package fuse-libs.x86_64 0:2.8.3-4.el6 will be installed
+        --> Running transaction check
+        ---> Package libtirpc.x86_64 0:0.2.1-6.el6_5.1 will be installed
+        --> Processing Dependency: libgssglue.so.1(libgssapi_CITI_2)(64bit) for package: libtirpc-0.2.1-6.el6_5.1.x86_64
+        --> Processing Dependency: libgssglue.so.1()(64bit) for package: libtirpc-0.2.1-6.el6_5.1.x86_64
+        --> Running transaction check
+        ---> Package libgssglue.x86_64 0:0.1-11.el6 will be installed
+        --> Finished Dependency Resolution
+        
+        Dependencies Resolved
+        
+        =======================================================================================================================================================================================================
+         Package                                     Arch                                   Version                                            Repository                                                 Size
+        =======================================================================================================================================================================================================
+        Installing:
+         cvmfs                                       x86_64                                 2.1.19-1.el6                                       cernvm-testing                                            6.3 M
+         cvmfs-devel                                 x86_64                                 2.1.19-1.el6                                       cernvm-testing                                            3.2 M
+        Installing for dependencies:
+         autofs                                      x86_64                                 1:5.0.5-89.el6_5.1                                 rhel-x86_64-workstation-6                                 496 k
+         fuse                                        x86_64                                 2.8.3-4.el6                                        rhel-x86_64-workstation-6                                  71 k
+         fuse-libs                                   x86_64                                 2.8.3-4.el6                                        rhel-x86_64-workstation-6                                  74 k
+         libgssglue                                  x86_64                                 0.1-11.el6                                         rhel-x86_64-workstation-6                                  23 k
+         libtirpc                                    x86_64                                 0.2.1-6.el6_5.1                                    rhel-x86_64-workstation-6                                  79 k
+        
+        Transaction Summary
+        =======================================================================================================================================================================================================
+        Install       7 Package(s)
+        
+        Total download size: 10 M
+        Installed size: 40 M
+        Is this ok [y/N]: y
+        Downloading Packages:
+        (1/7): autofs-5.0.5-89.el6_5.1.x86_64.rpm                                                                                                                                       | 496 kB     00:00     
+        (2/7): cvmfs-2.1.19-1.el6.x86_64.rpm                                                                                                                                            | 6.3 MB     00:04     
+        (3/7): cvmfs-devel-2.1.19-1.el6.x86_64.rpm                                                                                                                                      | 3.2 MB     00:04     
+        (4/7): fuse-2.8.3-4.el6.x86_64.rpm                                                                                                                                              |  71 kB     00:00     
+        (5/7): fuse-libs-2.8.3-4.el6.x86_64.rpm                                                                                                                                         |  74 kB     00:00     
+        (6/7): libgssglue-0.1-11.el6.x86_64.rpm                                                                                                                                         |  23 kB     00:00     
+        (7/7): libtirpc-0.2.1-6.el6_5.1.x86_64.rpm                                                                                                                                      |  79 kB     00:00     
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        Total                                                                                                                                                                  1.0 MB/s |  10 MB     00:10     
+        Running rpm_check_debug
+        Running Transaction Test
+        Transaction Test Succeeded
+        Running Transaction
+          Installing : fuse-libs-2.8.3-4.el6.x86_64                                                                                                                                                        1/7 
+          Installing : fuse-2.8.3-4.el6.x86_64                                                                                                                                                             2/7 
+          Installing : libgssglue-0.1-11.el6.x86_64                                                                                                                                                        3/7 
+          Installing : libtirpc-0.2.1-6.el6_5.1.x86_64                                                                                                                                                     4/7 
+          Installing : 1:autofs-5.0.5-89.el6_5.1.x86_64                                                                                                                                                    5/7 
+          Installing : cvmfs-2.1.19-1.el6.x86_64                                                                                                                                                           6/7 
+          Installing : cvmfs-devel-2.1.19-1.el6.x86_64                                                                                                                                                     7/7 
+          Verifying  : cvmfs-devel-2.1.19-1.el6.x86_64                                                                                                                                                     1/7 
+          Verifying  : 1:autofs-5.0.5-89.el6_5.1.x86_64                                                                                                                                                    2/7 
+          Verifying  : libgssglue-0.1-11.el6.x86_64                                                                                                                                                        3/7 
+          Verifying  : fuse-2.8.3-4.el6.x86_64                                                                                                                                                             4/7 
+          Verifying  : libtirpc-0.2.1-6.el6_5.1.x86_64                                                                                                                                                     5/7 
+          Verifying  : cvmfs-2.1.19-1.el6.x86_64                                                                                                                                                           6/7 
+          Verifying  : fuse-libs-2.8.3-4.el6.x86_64                                                                                                                                                        7/7 
+        
+        Installed:
+          cvmfs.x86_64 0:2.1.19-1.el6                                                                     cvmfs-devel.x86_64 0:2.1.19-1.el6                                                                    
+        
+        Dependency Installed:
+          autofs.x86_64 1:5.0.5-89.el6_5.1         fuse.x86_64 0:2.8.3-4.el6         fuse-libs.x86_64 0:2.8.3-4.el6         libgssglue.x86_64 0:0.1-11.el6         libtirpc.x86_64 0:0.2.1-6.el6_5.1        
+        
+        Complete!
+         
+
+        [root@itb-oasisreplica ~]# yum install httpd
+        
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        126 packages excluded due to repository priority protections
+        Setting up Install Process
+        Package httpd-2.2.15-30.el6_5.x86_64 already installed and latest version
+        Nothing to do
+        
+
+
+        [root@itb-oasisreplica ~]# yum install nfs-utils nfs4-acl-tools
+
+        Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+        This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+        This system is receiving updates from RHN Classic or RHN Satellite.
+        126 packages excluded due to repository priority protections
+        Setting up Install Process
+        Resolving Dependencies
+        --> Running transaction check
+        ---> Package nfs-utils.x86_64 1:1.2.3-39.el6 will be installed
+        --> Processing Dependency: keyutils >= 1.4-4 for package: 1:nfs-utils-1.2.3-39.el6.x86_64
+        --> Processing Dependency: nfs-utils-lib >= 1.1.0-3 for package: 1:nfs-utils-1.2.3-39.el6.x86_64
+        --> Processing Dependency: rpcbind for package: 1:nfs-utils-1.2.3-39.el6.x86_64
+        --> Processing Dependency: libevent for package: 1:nfs-utils-1.2.3-39.el6.x86_64
+        --> Processing Dependency: libevent-1.4.so.2()(64bit) for package: 1:nfs-utils-1.2.3-39.el6.x86_64
+        --> Processing Dependency: libnfsidmap.so.0()(64bit) for package: 1:nfs-utils-1.2.3-39.el6.x86_64
+        ---> Package nfs4-acl-tools.x86_64 0:0.3.3-6.el6 will be installed
+        --> Running transaction check
+        ---> Package keyutils.x86_64 0:1.4-4.el6 will be installed
+        ---> Package libevent.x86_64 0:1.4.13-4.el6 will be installed
+        ---> Package nfs-utils-lib.x86_64 0:1.1.5-6.el6 will be installed
+        ---> Package rpcbind.x86_64 0:0.2.0-11.el6 will be installed
+        --> Finished Dependency Resolution
+        
+        Dependencies Resolved
+        
+        =======================================================================================================================================================================================================
+         Package                                        Arch                                   Version                                         Repository                                                 Size
+        =======================================================================================================================================================================================================
+        Installing:
+         nfs-utils                                      x86_64                                 1:1.2.3-39.el6                                  rhel-x86_64-workstation-6                                 320 k
+         nfs4-acl-tools                                 x86_64                                 0.3.3-6.el6                                     rhel-x86_64-workstation-6                                  43 k
+        Installing for dependencies:
+         keyutils                                       x86_64                                 1.4-4.el6                                       rhel-x86_64-workstation-6                                  39 k
+         libevent                                       x86_64                                 1.4.13-4.el6                                    rhel-x86_64-workstation-6                                  66 k
+         nfs-utils-lib                                  x86_64                                 1.1.5-6.el6                                     rhel-x86_64-workstation-6                                  67 k
+         rpcbind                                        x86_64                                 0.2.0-11.el6                                    rhel-x86_64-workstation-6                                  51 k
+        
+        Transaction Summary
+        =======================================================================================================================================================================================================
+        Install       6 Package(s)
+        
+        Total download size: 586 k
+        Installed size: 0  
+        Is this ok [y/N]: y
+        Downloading Packages:
+        (1/6): keyutils-1.4-4.el6.x86_64.rpm                                                                                                                                            |  39 kB     00:00     
+        (2/6): libevent-1.4.13-4.el6.x86_64.rpm                                                                                                                                         |  66 kB     00:00     
+        (3/6): nfs-utils-1.2.3-39.el6.x86_64.rpm                                                                                                                                        | 320 kB     00:00     
+        (4/6): nfs-utils-lib-1.1.5-6.el6.x86_64.rpm                                                                                                                                     |  67 kB     00:00     
+        (5/6): nfs4-acl-tools-0.3.3-6.el6.x86_64.rpm                                                                                                                                    |  43 kB     00:00     
+        (6/6): rpcbind-0.2.0-11.el6.x86_64.rpm                                                                                                                                          |  51 kB     00:00     
+        -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        Total                                                                                                                                                                  1.0 MB/s | 586 kB     00:00     
+        Running rpm_check_debug
+        Running Transaction Test
+        Transaction Test Succeeded
+        Running Transaction
+          Installing : keyutils-1.4-4.el6.x86_64                                                                                                                                                           1/6 
+          Installing : libevent-1.4.13-4.el6.x86_64                                                                                                                                                        2/6 
+          Installing : rpcbind-0.2.0-11.el6.x86_64                                                                                                                                                         3/6 
+          Installing : nfs-utils-lib-1.1.5-6.el6.x86_64                                                                                                                                                    4/6 
+          Installing : 1:nfs-utils-1.2.3-39.el6.x86_64                                                                                                                                                     5/6 
+          Installing : nfs4-acl-tools-0.3.3-6.el6.x86_64                                                                                                                                                   6/6 
+          Verifying  : rpcbind-0.2.0-11.el6.x86_64                                                                                                                                                         1/6 
+          Verifying  : libevent-1.4.13-4.el6.x86_64                                                                                                                                                        2/6 
+          Verifying  : nfs-utils-lib-1.1.5-6.el6.x86_64                                                                                                                                                    3/6 
+          Verifying  : 1:nfs-utils-1.2.3-39.el6.x86_64                                                                                                                                                     4/6 
+          Verifying  : nfs4-acl-tools-0.3.3-6.el6.x86_64                                                                                                                                                   5/6 
+          Verifying  : keyutils-1.4-4.el6.x86_64                                                                                                                                                           6/6 
+        
+        Installed:
+          nfs-utils.x86_64 1:1.2.3-39.el6                                                                  nfs4-acl-tools.x86_64 0:0.3.3-6.el6                                                                 
+        
+        Dependency Installed:
+          keyutils.x86_64 0:1.4-4.el6                   libevent.x86_64 0:1.4.13-4.el6                   nfs-utils-lib.x86_64 0:1.1.5-6.el6                   rpcbind.x86_64 0:0.2.0-11.el6                  
+        
+        Complete!
+        
+
+-- copy the public keys from the Stratum-0
+
+        [root@itb-oasisreplica ~]# scp itb-oasis.racf.bnl.gov:/etc/cvmfs/keys/oasis.opensciencegrid.org.pub /etc/cvmfs/keys/
+        The authenticity of host 'itb-oasis.racf.bnl.gov (130.199.185.147)' can't be established.
+        RSA key fingerprint is 62:5d:c2:af:f2:ef:ab:34:0c:1c:0a:22:c3:53:95:04.
+        Are you sure you want to continue connecting (yes/no)? yes
+        Warning: Permanently added 'itb-oasis.racf.bnl.gov,130.199.185.147' (RSA) to the list of known hosts.
+        oasis.opensciencegrid.org.pub                                                                                                   
+        
+        [root@itb-oasisreplica ~]# ll /etc/cvmfs/keys/
+        total 20
+        -r--r--r-- 1 root root 451 Jun  4  2012 cern.ch.pub
+        -r--r--r-- 1 root root 451 Jun  4  2012 cern-it1.cern.ch.pub
+        -r--r--r-- 1 root root 451 Jun  4  2012 cern-it2.cern.ch.pub
+        -r--r--r-- 1 root root 451 Jun  4  2012 cern-it3.cern.ch.pub
+        -r--r--r-- 1 root root 451 May 20 11:54 oasis.opensciencegrid.org.pub
+
+-- add Stratum-0
+
+    
+        [root@itb-oasisreplica ~]# /etc/init.d/httpd start
+        Starting httpd:                                            [  OK  ]
+        
+        [root@itb-oasisreplica ~]# cvmfs_server add-replica -o root http://itb-oasis.racf.bnl.gov/cvmfs/oasis.opensciencegrid.org /etc/cvmfs/keys/oasis.opensciencegrid.org.pub 
+        Creating configuration files... done
+        Create CernVM-FS Storage... done
+        
+        Use 'cvmfs_server snapshot' to replicate oasis.opensciencegrid.org.
+        Make sure to install the repository public key in /etc/cvmfs/keys/
+        You might have to add the key in /etc/cvmfs/repositories.d/oasis.opensciencegrid.org/replica.conf
+        
+        [root@itb-oasisreplica ~]# cvmfs_server snapshot oasis.opensciencegrid.org
+        Initial snapshot
+        CernVM-FS: replicating from http://itb-oasis.racf.bnl.gov/cvmfs/oasis.opensciencegrid.org
+        CernVM-FS: using public key(s) /etc/cvmfs/keys/oasis.opensciencegrid.org.pub
+        Starting 16 workers
+        Replicating from trunk catalog at /
+          Processing chunks: . fetched 1 new chunks out of 1 processed chunks
+        Stopping 16 workers
+        Uploading manifest ensemble
+        Fetched 1 new chunks out of 1 processed chunks
+        
+
+        [root@itb-oasisreplica ~]# ls -ltr /srv/cvmfs/oasis.opensciencegrid.org/data/
+        total 1028
+        drwxr-xr-x 2 root root 4096 May 20 16:09 00
+        drwxr-xr-x 2 root root 4096 May 20 16:09 01
+        drwxr-xr-x 2 root root 4096 May 20 16:09 02
+        drwxr-xr-x 2 root root 4096 May 20 16:09 03
+        drwxr-xr-x 2 root root 4096 May 20 16:09 04
+        drwxr-xr-x 2 root root 4096 May 20 16:09 05
+        drwxr-xr-x 2 root root 4096 May 20 16:09 06
+           [...]
+        drwxr-xr-x 2 root root 4096 May 20 16:09 f8
+        drwxr-xr-x 2 root root 4096 May 20 16:09 f9
+        drwxr-xr-x 2 root root 4096 May 20 16:09 fa
+        drwxr-xr-x 2 root root 4096 May 20 16:09 fb
+        drwxr-xr-x 2 root root 4096 May 20 16:09 fc
+        drwxr-xr-x 2 root root 4096 May 20 16:09 fd
+        drwxr-xr-x 2 root root 4096 May 20 16:09 fe
+        drwxr-xr-x 2 root root 4096 May 20 16:09 ff
+        drwxr-xr-x 2 root root 4096 May 20 16:18 e8
+        drwxr-xr-x 2 root root 4096 May 20 16:18 3e
+        drwxr-xr-x 2 root root 4096 May 20 16:18 ea
+        drwxr-xr-x 2 root root 4096 May 20 16:18 txn
+
+
+
+
+
+

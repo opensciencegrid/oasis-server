@@ -1,0 +1,142 @@
+*WORK IN PROGRESS*
+
+
+
+---+!! %SPACEOUT{ "Update content on OASIS 2 via Gatekeeper Interface" }%
+%TOC{depth="3"}%
+
+
+---# About this Document
+
+This document describes the procedure to update content on OASIS 2 using condor-g jobs via a gatekeeper. 
+
+---# Requirements
+
+Managers who want to distribute content will need an X.509 credentials with specific VOMS attributes (group and/or role). 
+Ask your VO admins for the specific values in your VO. 
+Example, in the case of US-ATLAS T3:
+
+<pre class="file">
+/atlas/usatlast3/Role=software
+</pre>
+
+---# Execution
+
+To update content on OASIS 2,
+the managers prepare an installation job and submit that job with condor-g to the gatekeeper giving access to the OASIS server hosting your VO repository. 
+A typical condor submit would be similar to this (in the case of the OASIS server at BNL for US-ATLAS T3):
+
+<pre class="file">
+universe = grid
+grid_resource = condor grid42.racf.bnl.gov grid42.racf.bnl.gov:9619
+ 
+executable = install.sh
+arguments = 
+transfer_executable = True
+
+
+output = $(Cluster).$(Process).out
+error = $(Cluster).$(Process).err
+log = $(Cluster).$(Process).log
+
+x509userproxy = /tmp/x509up_u12345
+
+notify_user = neo@matrix.net
+stream_output = False
+
+queue 1
+</pre>
+
+The managers only need to be sure that the installation job copies all new content under directory =$OSG_APP/&lt;VO&gt;=.
+For example, in the case of US-ATLAS T3, it would be:
+
+<pre class="file">
+$OSG_APP/usatlast3/
+</pre>
+
+The installation job could just download a tarball containing the new content already built, unpack it, and copy the files to =$OSG_APP/&lt;VO&gt;=
+This way allows for faster publishing process, the managers can ensure the new software has been properly compiled and built before trying to distribute it, and no problems with non-relocatable software.
+
+---# Results
+
+If everything goes fine, new content will be available at the WNs under directory
+
+<pre class="file">
+/cvmfs/&lt;VO&gt;.opensciencegrid.org/
+</pre>
+
+The condor-g output file looks similar to this one:
+
+<pre class="file">
+------------------------------------------------------------
+2014-11-17 15:56:09,295 (UTC) - OASIS [ INFO ]  OASIS starts
+------------------------------------------------------------
+OASIS running at...
+OASIS VERSION:  2.0.0
+date (UTC):     Mon Nov 17 15:56:09 UTC 2014
+hostname:       grid43.racf.bnl.gov
+working dir:    /var/lib/condor/execute/dir_30696
+user:           uid=504(ouser.usatlast3) gid=34001(ouser.usatlast3) groups=34001(ouser.usatlast3)
+                ouser.usatlast3:x:504:34001::/home/ouser.usatlast3:/bin/bash
+------------------------------------------------------------
+2014-11-17 15:56:09,302 (UTC) - OASIS [ INFO ]  environment:
+GLOBUS_LOCATION=/usr
+GLOBUS_TCP_PORT_RANGE=20000,30000
+GLOBUS_TCP_PORT_RANGE_STATE_FILE=/tmp/globus_tcp.state
+HOME=/home/ouser.usatlast3
+OSG_APP=/data/oasis/
+OSG_DATA=/usatlas/prodjob/share/
+OSG_DEFAULT_SE=None
+OSG_GLEXEC_LOCATION=None
+OSG_GRID=/afs/usatlas/osg/wn-client/@sys/osg-wn-client-3.2.12/
+OSG_HOSTNAME=grid42.racf.bnl.gov
+OSG_SITE_NAME=
+OSG_SITE_READ=None
+OSG_SITE_WRITE=None
+OSG_SQUID_LOCATION=squid.sec.bnl.local:3128
+OSG_STORAGE_ELEMENT=False
+OSG_WN_TMP=/tmp
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+PWD=/var/lib/condor/execute/dir_30696
+SHLVL=1
+TEMP=/var/lib/condor/execute/dir_30696
+TMP=/var/lib/condor/execute/dir_30696
+TMPDIR=/var/lib/condor/execute/dir_30696
+X509_USER_PROXY=/var/lib/condor/execute/dir_30696/x509up_u10139_software
+_=/bin/env
+_CONDOR_ANCESTOR_30323=30326:1414607541:4007459376
+_CONDOR_ANCESTOR_30326=30696:1416239768:1818027273
+_CONDOR_ANCESTOR_30696=30700:1416239769:4069883474
+_CONDOR_HIGHPORT=30000
+_CONDOR_JOB_AD=/var/lib/condor/execute/dir_30696/.job.ad
+_CONDOR_JOB_IWD=/var/lib/condor/execute/dir_30696
+_CONDOR_JOB_PIDS=
+_CONDOR_LOWPORT=20000
+_CONDOR_MACHINE_AD=/var/lib/condor/execute/dir_30696/.machine.ad
+_CONDOR_SCRATCH_DIR=/var/lib/condor/execute/dir_30696
+_CONDOR_SLOT=slot1
+_CONDOR_WRAPPER_ERROR_FILE=/var/lib/condor/execute/dir_30696/.job_wrapper_failure
+
+------------------------------------------------------------
+2014-11-17 15:56:09,396 (UTC) - OASIS [ INFO ] &lt;ouser.usatlast3:USATLAST3&gt; user.USATLAST3 : Running installation job
+2014-11-17 15:56:09,400 (UTC) - OASIS [ INFO ] &lt;ouser.usatlast3:USATLAST3&gt; user.USATLAST3 : Output from installation job: 
+**** INSTALL JOB: BEGIN ****
+    [ Here goes whatever the install job writes in the stdout ]
+**** INSTALL JOB: END ****
+2014-11-17 15:56:09,400 (UTC) - OASIS [ INFO ] &lt;ouser.usatlast3:USATLAST3&gt; user.USATLAST3 : Installation job finished OK
+2014-11-17 15:56:09,400 (UTC) - OASIS [ INFO ] &lt;ouser.usatlast3:USATLAST3&gt; user : Starting publishing.
+2014-11-17 15:56:09,402 (UTC) - OASIS [ INFO ] &lt;ouser.usatlast3:USATLAST3&gt; user : Waiting for OASIS to transfer and publish new content (Maximum = 30 minutes)
+2014-11-17 15:56:39,434 (UTC) - OASIS [ INFO ] &lt;ouser.usatlast3:USATLAST3&gt; user : Waiting for OASIS to transfer and publish new content. Waiting 1 minute(s). Maximum waiting time = 30 minute(s) 
+2014-11-17 15:57:09,466 (UTC) - OASIS [ DEBUG ] &lt;ouser.usatlast3:USATLAST3&gt; user : output from the OASIS daemon:
+2014-11-17 15:57:09,470 (UTC) - OASIS [ DEBUG ] &lt;ouser.usatlast3:USATLAST3&gt; user : probe yes started at 2014-11-17 10:56:45.277261 and run for 0 seconds with RC=0
+2014-11-17 15:57:09,470 (UTC) - OASIS [ DEBUG ] &lt;ouser.usatlast3:USATLAST3&gt; user : file trasfers started at 2014-11-17 10:56:45.309839 and run for 0 seconds with RC=0
+2014-11-17 15:57:09,470 (UTC) - OASIS [ DEBUG ] &lt;ouser.usatlast3:USATLAST3&gt; user : publishing started at 2014-11-17 10:56:45.464257 and run for 0 seconds with RC=0
+2014-11-17 15:57:09,471 (UTC) - OASIS [ INFO ] &lt;ouser.usatlast3:USATLAST3&gt; user : Publishing finished with rc=0
+------------------------------------------------------------
+2014-11-17 15:57:09,478 (UTC) - OASIS [ INFO ]  Exiting with return code 0
+2014-11-17 15:57:09,479 (UTC) - OASIS [ INFO ]  OASIS ends
+</pre>
+
+
+-- Main.JoseCaballero - 08 Nov 2014
+
