@@ -3,7 +3,7 @@
 # Setup prog for OASIS 
 #
 #
-release_version='2.0.2'
+release_version='2.0.3'
 
 import commands
 import os
