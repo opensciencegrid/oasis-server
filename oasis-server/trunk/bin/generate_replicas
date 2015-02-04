@@ -63,15 +63,18 @@ for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
     url = urlfield.content
     repo = url[url.rfind('/')+1:]
     serverconf = '/etc/cvmfs/repositories.d/' + repo + '/server.conf'
+    replicaconf = '/etc/cvmfs/repositories.d/' + repo + '/replica.conf'
     if os.path.exists(serverconf):
-	# repo exists.  If add command using the full url and it doesn't
+	# Repo exists.  If there's no replica.conf, it may
+	#   be blanked so skip that.
+	# If add command using the full url and it doesn't
 	#   match what is in server.conf, edit server.conf.
-	if add_repo_command.find('%u') >= 0:
+	if os.path.exists(replicaconf) and (add_repo_command.find('%u') >= 0):
 	    contents = open(serverconf).read()
 	    if ('CVMFS_STRATUM0=' + url) not in contents:
 		start = contents.find('CVMFS_STRATUM0=')
 		if start > 0:
-		    start += len('CVMFS_STRATUM=') + 1
+		    start += len('CVMFS_STRATUM0=')
 		    end = contents.find('\n',start)
 		    if (end > 0):
 			contents = contents[:start] + url + contents[end:]
