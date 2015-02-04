@@ -1,8 +1,14 @@
+-----------------------------------------------------------------------------
+2.0.2-1
+-----------------------------------------------------------------------------
 
-* fixing the layout in trunk/ directory, to be equal to the one in tags directories.
-  Adding spec file to trunk/misc directory
-  fixed the rpm scripts to be equal to the those in the tags directories
-  fixed the distutils files setup.py and setup.cfg
+* Fixed the layout in trunk/ directory, to be equal to the one in tags directories.
+* Added spec file to trunk/misc directory
+* Fixed the rpm scripts to be equal to the those in the tags directories
+* Fixed the distutils files setup.py and setup.cfg
+* Fixed blank_osg_repository, unblank_osg_repository, and
+   set_repository_property as detailed in OO-31
+* Changed generate_replicas to ignore blanked repositories
 
 -----------------------------------------------------------------------------
 2.0.1-1
