@@ -10,9 +10,16 @@ STRATUM0=oasis.opensciencegrid.org
 
 usage()
 {
-    echo "Usage: $ME http_url_of_repo_server" >&2
+    echo "Usage: $ME [-a] http_url_of_repo_server" >&2
+    echo " -a: add only, do not run snapshot" >&2
     exit 1
 }
+
+DOSNAPSHOT=true
+if [ "$1" = "-a" ]; then
+    DOSNAPSHOT=false
+    shift
+fi
 
 if [ $# != 1 ]; then
     usage
@@ -58,8 +65,10 @@ elif [ -f /etc/cvmfs/repositories.d/$STRATUM0/replica.conf ]; then
     # make this also look like a master because other stratum 1s
     #   may read from it
     touch /srv/cvmfs/$REPONAME/.cvmfs_master_replica
-    # pull initial snapshot
-    cvmfs_server snapshot $REPONAME
+    if $DOSNAPSHOT; then
+	# pull initial snapshot
+	cvmfs_server snapshot $REPONAME
+    fi
 else
     # on stratum 0 without masterkey installed
     echo "$ME: this should only be run on the stratum 0 when the masterkey is installed" >&2
