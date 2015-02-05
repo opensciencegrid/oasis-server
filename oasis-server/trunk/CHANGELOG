@@ -1,4 +1,14 @@
 -----------------------------------------------------------------------------
+2.0.3
+-----------------------------------------------------------------------------
+* Changed unblank_osg_repository to not print scary-looking prompt
+    when cleaning up blanked repository
+* Added -a option to add_osg_repository to only and and not run snapshot
+* Fixed add_osg_repository to avoid being confused when the signature
+    on .cvmfswhitelist begins with a capital N
+* Added print_osg_repos tool
+
+-----------------------------------------------------------------------------
 2.0.2-1
 -----------------------------------------------------------------------------
 
