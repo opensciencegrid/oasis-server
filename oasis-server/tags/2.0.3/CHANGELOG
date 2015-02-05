@@ -1,0 +1,58 @@
+-----------------------------------------------------------------------------
+2.0.3
+-----------------------------------------------------------------------------
+* Changed unblank_osg_repository to not print scary-looking prompt
+    when cleaning up blanked repository
+* Added -a option to add_osg_repository to only and and not run snapshot
+* Fixed add_osg_repository to avoid being confused when the signature
+    on .cvmfswhitelist begins with a capital N
+* Added print_osg_repos tool
+
+-----------------------------------------------------------------------------
+2.0.2-1
+-----------------------------------------------------------------------------
+
+* Fixed the layout in trunk/ directory, to be equal to the one in tags directories.
+* Added spec file to trunk/misc directory
+* Fixed the rpm scripts to be equal to the those in the tags directories
+* Fixed the distutils files setup.py and setup.cfg
+* Fixed blank_osg_repository, unblank_osg_repository, and
+   set_repository_property as detailed in OO-31
+* Changed generate_replicas to ignore blanked repositories
+
+-----------------------------------------------------------------------------
+2.0.1-1
+-----------------------------------------------------------------------------
+
+* Added script generate_replicas, written by Dave Dykstra
+
+-----------------------------------------------------------------------------
+2.0.0-2
+-----------------------------------------------------------------------------
+
+* Fixed bug in post uninstall rpm script
+
+-----------------------------------------------------------------------------
+2.0.0
+-----------------------------------------------------------------------------
+
+Changes made on  May 5th 2014:
+
+    -- remove the string  oasisprobes.d/ for config variable, to avoid confusions.
+
+Changes made on  April 18 2014:
+
+    -- loop for a while, or until a timeout, when a flagfile is found at start
+
+Changes made on  April 17 2014:
+
+    -- added new config variable to oasisprojects.conf: time.starttimeout
+
+    -- change name of config variable in oasisprojects.conf:
+
+            time.timeout  ->  time.finishtimeout
+
+    -- late interpolation removed. 
+       No more  %{XYZ} in the oasisprojects.conf. 
+       From now on, use regular  %(XYZ)s 
+

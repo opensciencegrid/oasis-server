@@ -1,0 +1,408 @@
+*WORK IN PROGRESS!!!*
+
+*WORK IN PROGRESS!!!*
+ 
+*DO WE NEED TO FILL THE REQUIREMENTS SECTION???*
+
+*SECTION ON ARCHITECTURE SHOULD BE IN A GENERIC OASIS PAGE*
+
+*SECTION USERS SHOULD GO TO THE UPDATE PAGE*
+
+*CONSIDER ADDING A SECTION ON THE REPLICA HOST WITH LIST OF ADMIN TOOLS BEING DEPLOYED BY THE RPM*
+
+<!-- some useful definitions  (need 3 white spaces before * to enable it)
+   * Set UCL_PROMPT_ROOT_OASIS = [root@oasis ~]$
+   * Set UCL_PROMPT_ROOT_LOGIN = [root@login ~]$
+   * Set UCL_PROMPT_ROOT_REPLICA = [root@replica ~]$
+   * Set UCL_PROMPT_ROOT_CLIENT = [root@client ~]$
+   * Set UCL_PROMPT_USER_LOGIN = [user@login ~]$
+   * Set UCL_PROMPT_USER_CLIENT = [user@client ~]$
+-->
+
+
+---+!! %SPACEOUT{ "Deployment of OASIS 2" }%
+<!--
+%DOC_STATUS_TABLE%
+-->
+%TOC{depth="3"}%
+
+---# About this Document
+
+This document describes how to install and configure OASIS 2 in a server host, an user login host, and a replica host.  
+
+%INCLUDE{"Documentation/DocumentationTeam/DocConventions" section="Header"}%
+%INCLUDE{"Documentation/DocumentationTeam/DocConventions" section="CommandLine"}%
+
+---# Applicable versions
+The applicable software versions for this document are OASIS 2.0.0 and, as requirements, CVMFS server 2.0.x and 2.1.x.
+
+---# Requirements
+*QUESTION: Do we need an specific requirement section, or they are already explained in other twikies (CVMFS, ...) and can be linked???*
+
+---# Install Instructions
+
+These instructions apply to the 3 hosts, if needed: the server host, the user login host, and the replica host. 
+In the case of the server host and the replica host, CVMFS need to be installed first. 
+Instructions to install CVMFS can be found here [[https://twiki.grid.iu.edu/bin/view/Documentation/Release3/InstallCvmfsStratum1][here]]
+
+Install the OASIS RPM:
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_OASIS% yum -y install oasis</pre>
+
+
+*TEMPORARY SOLUTION:*
+as the RPM is not yet available in the OSG repo, meanwhile it can be installed from development repo:
+
+On RHEL 5
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_OASIS% rpm -Uhv http://repo.grid.iu.edu/osg/3.2/osg-3.2-el5-release-latest.rpm
+%UCL_PROMPT_ROOT_OASIS% yum -y install --enablerepo=osg-development  oasis
+</pre>
+
+On RHEL 6
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_OASIS% rpm -Uhv http://repo.grid.iu.edu/osg/3.2/osg-3.2-el6-release-latest.rpm
+%UCL_PROMPT_ROOT_OASIS% yum -y install --enablerepo=osg-development  oasis
+</pre>
+
+<!--
+*TEMPORARY SOLUTION:*
+
+as the RPM is not yet available in the OSG repo, meanwhile it can be installed from source code:
+
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_OASIS% mkdir src
+%UCL_PROMPT_ROOT_OASIS% cd src
+%UCL_PROMPT_ROOT_OASIS% svn co http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/trunk/ .
+%UCL_PROMPT_ROOT_OASIS% python setup.py bdist_rpm
+%UCL_PROMPT_ROOT_OASIS% rpm -Uhv dist/oasis-2.0.0-1.noarch.rpm
+</pre>
+
+-->
+
+---# Configuration
+
+---## OASIS architecture
+*WARNING: This section probably does not make sense in a deployment wiki. Maybe it should be moved to the generic wiki for OASIS project*
+
+OASIS 2 is built around two key concepts:
+
+   * *Repositories*. A Repository is a single content management unit. That means, the whole amount of content to be distributed together. 
+
+   * *Projects*. A Project is a single administrative management unit. In other words, refers to the data being managed by a given unique UNIX ID.
+
+A Project must belong to a Repository, and only one. A Repository can have one or more Projects.
+
+A Repository is composed by its source directory, its destination directory, and the particular underlying technology to distribute content. Currently the only technology being used by OASIS is CVMFS, both 2.0.x and 2.1.x versions. 
+A Project is composed by its source directory (relative to the source directory of the repository it belongs to) and its destination directory (relative to the destination directory of the repository it belongs to). 
+
+The user scratch area is, therefore, composed as =&lt;REPOSITORY_SOURCE_DIRECTORY&gt;/&lt;PROJECT_SOURCE_DIRECTORY&gt;=
+The users must be able to find that place by using the old fashion =$OSG_APP/&lt;VO&gt;/=
+
+Each Project is associated to one unique UNIX ID. This UNIX ID is the username of the users logged into the OASIS login host, and also the identity under which the OASIS daemon runs some tasks.
+This unique UNIX ID is the owner of the user scratch space.
+
+
+Repositories and Projects are set up in the corresponding =repositories.conf= and =projects.conf= configuration files.
+
+
+---## Hosts configuration
+
+The instructions in the next sections applies to both the user login host and the server host, if they are separate hosts. The content of the OASIS configuration files in both hosts *must be identical*, except the =services= variable.
+
+No configuration is needed for the replica host. 
+
+---## Configuration files
+
+The same configuration must be identical in the user login host and the server host. No configuration is needed for the replica host. 
+
+There are at least 3 configuration files: the oasis.conf, the oasisprojects.conf, the oasisprobes.conf.
+Then, for each project (typically a VO, but not necessarily), there is a dedicated {project}probes.conf.
+
+The format of the configuration files is similar to the Microsoft INI files. 
+The configuration file consists of sections, led by a =[section]= header and followed by =name: value= entries, with continuations in the style of [[http://tools.ietf.org/html/rfc822.html][RFC 822]] (see section 3.1.1, “LONG HEADER FIELDS”); =name=value= is also accepted. Note that leading whitespace is removed from values. The optional values can contain format strings which refer to other values in the same section, or values in a special =[DEFAULT]= section. Additional defaults can be provided on initialization and retrieval. Lines beginning with '#' or ';' are ignored and may be used to provide comments.
+
+Configuration files may include comments, prefixed by specific characters (# and ;). Comments may appear on their own in an otherwise empty line, or may be entered in lines holding values or section names. In the latter case, they need to be preceded by a whitespace character to be recognized as a comment. (For backwards compatibility, only ; starts an inline comment, while # does not.)
+
+It supports interpolation. This means values can contain format strings which refer to other values in the same section, or values in a special =[DEFAULT]= section. Additional defaults can be provided on initialization.
+
+As the python package !ConfigParser is being used to digest the configuration files, a wider explanation and examples can be found in the [[https://docs.python.org/2/library/configparser.html][python documentation page]].
+
+---### Location of the configuration files
+
+After installing OASIS 2 from RPM, examples of the configuration files are located under directory =/usr/share/doc/oasis-2.x.y/=.
+They need to be copied to the real destination. At least =oasis.conf= *must* be placed under =/etc/oasis/=. Therefore, it is a good practice, for consistency, to place all of them at the same path. 
+
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_OASIS% cp /usr/share/doc/oasis-2.0.0/oasis.conf-example /etc/oasis/oasis.conf
+%UCL_PROMPT_ROOT_OASIS% cp /usr/share/doc/oasis-2.0.0/repositories.conf-example /etc/oasis/repositories.conf
+%UCL_PROMPT_ROOT_OASIS% cp /usr/share/doc/oasis-2.0.0/projects.conf-example /etc/oasis/projects.conf
+%UCL_PROMPT_ROOT_OASIS% cp /usr/share/doc/oasis-2.0.0/probes.conf-example /etc/oasis/probes.conf
+</pre>
+
+Also the sysconfig file and the logrotation file need to be copied from the same place to final destination.
+In the case of the login host:
+
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_LOGIN% cp /usr/share/doc/oasis-2.0.0/logrotate/oasis.logrotate-login-example /etc/logrotate.d/oasis
+</pre>
+
+In the case of the server host:
+
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_OASIS% cp /usr/share/doc/oasis-2.0.0/sysconfig/oasis.sysconfig-example /etc/sysconfig/oasis
+%UCL_PROMPT_ROOT_OASIS% cp /usr/share/doc/oasis-2.0.0/logrotate/oasis.logrotate-server-example /etc/logrotate.d/oasis
+</pre>
+
+
+---### Configuring /etc/oasis/oasis.conf
+
+It is the main configuration file for OASIS. 
+
+It has a single section, called *[OASIS]*. This head section name can not changed.
+
+| *Variable* | *Description* | *Mandatory* |
+| =services= | list of OASIS services, split by comma, provided by OASIS on a particular host. <BR> Current valid values are =login=, =server=, =replica=.| MANDATORY |
+| =sleep= | it is the time between cycles for the daemon, waiting to see if all threads, one per Project, need to be shutdown Time is expressed in seconds.  | MANDATORY |
+| =email= | email address to notify CRITICAL events | OPTIONAL |
+| =SMTPServer= | SMTP server to be used to send email notifications | OPTIONAL |
+| =projectsconf= | path to the Projects configuration file | MANDATORY |
+| =repositoriessconf= | path to the Repositories configuration file | MANDATORY |
+| =probesconf= | path to the configuration file with generic OASIS probes. <BR> *NOTE*: the file must exist, but can be left blank if no probe is needed. | MANDATORY |
+| =flagfilebasedir= | path to the flagfiles. <BR> *WARNING*: in the case where the user login host is a different machine than the server hosts, this path *must* be in a shared filesystem. <BR> Default: =/var/run/oasis/= | OPTIONAL |
+
+A typical configuration file looks like this:
+
+<pre class="file">
+[OASIS]
+
+services = login, server
+sleep = 100 
+email = neo@matrix.net
+SMTPServer = server
+repositoriesconf = /etc/oasis/repositories.conf
+projectsconf = /etc/oasis/projects.conf
+probesconf = /etc/oasis/probes.conf
+</pre>
+
+
+---### Configuring /etc/oasis/repositories.conf
+
+ Configuration file for Repositories. The filename is the value of the variable =repositoriesconf= from the =oasis.conf= file.
+
+This configuration file has a section per Repository. The name of the section has no meaning, it is just a string. 
+
+| *Variable* | *Description* | *Mandatory* |
+| =OSG_APP= | for legacy reasons, we maintain the environment variable $OSG_APP | MANDATORY |
+| =repositoryname= | the name of the repository. <BR> Examples:  =oasis.opensciencegrid.org= and =mis.opensciencegrid.org= | MANDATORY |
+| =repository_src_dir= | it is root tree for the repository in the user scratch area. | MANDATORY |
+| =repository_dest_dir= | it is the root tree for the repository in the destination filesystem. <BR> Examples: <UL><LI> for cvmfs 2.0: =oasis.opensciencegrid.org=  (as the data will be placed under /cvmfs/oasis.opensciencegrid.org/) </LI><LI> for cvmfs 2.1: =&lt;vo&gt;.opensciencegrid.org=  (as the data will be placed under /cvmfs/&lt;vo&gt;.opensciencegrid.org/) </LI></UL> | MANDATORY |
+| =repository_src_owner= | UNIX ID owner of the repository_src_dir | MANDATORY |
+| =repository_dest_owner= | UNIX ID owner of the repository_dest_dir Typically, the owner of the CVMFS repository. | MANDATORY |
+| =distributiontool= | it is the name of the plugin with code to interact with the 3rd party underlying technology for files distribution. <BR> Current options are: <UL><LI> =cvmfs20= = code to interact with CVMFS server version 2.0.x </LI><LI> =cvmfs21= = code to interact with CVMFS server version 2.1.x </LI></UL> | MANDATORY |
+
+A typical configuration file looks like this:
+
+<pre class="file">
+[DEFAULT]
+OSG_APP = /home/data
+distributiontool = cmvfs21
+
+[MIS]
+repositoryname = mis.opensciencegrid.org
+repository_src_dir = %(OSG_APP)s/mis
+repository_dest_dir = mis.opensciencegrid.org
+repository_src_owner = ouser.mis
+repository_dest_owner = oasis
+
+[PROJECTS]
+repositoryname = projects.opensciencegrid.org
+repository_src_dir = $(OSG_APP)s/projects
+repository_dest_dir = projects.opensciencegrid.org
+repository_src_owner = ouser.projects
+repository_dest_owner = oasis
+</pre>
+
+
+---### Configuring /etc/oasis/projects.conf
+
+ Configuration file for Projects. The filename is the value of the variable =projectsconf= from the =oasis.conf= file.
+
+This configuration file has a section per Project. The name of the section has no meaning, it is just a string. 
+
+| *Variable* | *Description* | *Mandatory* |
+| =projectprobesconf= | path to the configuration files for probes <BR> *NOTE*: the file must exist, but can be left blank if no probe is needed. | MANDATORY. |
+| =sleep= | time between cycles for each thread (one per project) Time is expressed in seconds | MANDATORY |
+| =starttimeout= | maximum time to wait when process detects there is a flagfile, so a previous installation and publishing task is still going on.  The current process can wait a little bit, but not forever.  Time is expressed in seconds | MANDATORY |
+| =finishtimeout= | maximum time the user process can stay waiting for the daemon process to finish.  When the user process runs the installation payload it leaves a flagfile asking for publication.  The daemon process will see that flagfile, run probes on the new content, transfer files to final place, publish them, and notify the user process (via the same flagfile) everything is done. This waiting time needs a timeout.  Time is expressed in seconds | MANDATORY |
+| =repositorysection= | section in repositories.conf configuration file with setup for the repository a project belongs to. | MANDATORY |
+| =projectname= | the name of the project.  A project refers to content to be distributed handled by a single unique UNIX ID. | MANDATORY |
+| =project_src_dir= | is the path, relative to repository_src_dir. When the project and the repository are the same thing, then it is just "" (blank string between quotes) | MANDATORY |
+| =project_dest_dir= | is the path, relative to repository_dest_dir, in the destination filesytem.  When the project and the repository are the same thing, then it is just "" (blank string between quotes) | MANDATORY |
+| =project_src_owner= | UNIX ID owner of the project_src_dir.  it is the UNIX ID of the user running processes, or the UNIX ID the daemon needs to drop privileges to.  It will be the only UNIX ID allowed to do some tasks, e.g. to write in the project scratch area. | MANDATORY |
+| =project_dest_owner= | UNIX ID owner of the project_dest_dir. | MANDATORY |
+| =enabled= | can be used to stop OASIS managing a project without the need to remove it from the configuration file. Values are =True= or =False=. | MANDATORY |
+
+A typical configuration file looks like this:
+
+<pre class="file">
+[DEFAULT]
+
+OSG_APP = /home/data/
+sleep = 100 
+starttimeout = 600 
+finishtimeout = 600 
+enabled = True
+
+[MIS]
+repositorysection = MIS 
+projectname = mis 
+project_src_dir = ""
+project_dest_dir = ""
+project_src_owner = ouser.mis
+project_dest_owner = oasis
+projectprobesconf = /etc/oasis/mis.conf
+
+[PROJECT1]
+repositorysection = PROJECTS 
+projectname = project1 
+project_src_dir = srddir1
+project_dest_dir = destdir1
+project_src_owner = ouser.project1
+project_dest_owner = oasis
+projectprobesconf = /etc/oasis/proj1probes.conf
+
+
+[PROJECT2]
+repositorysection = PROJECTS 
+projectname = project2 
+project_src_dir = srddir2
+project_dest_dir = destdir2
+project_src_owner = ouser.project2
+project_dest_owner = oasis
+projectprobesconf = /etc/oasis/proj2probes.conf
+</pre>
+
+
+
+---### Configuring /etc/oasis/oasisprobes.conf
+
+It is the configuration file with generic probes for all projects. It can be left blank if no probes are needed, but the file must exists. The filename is the value of the variable =probesconf= from the =oasis.conf= file.
+
+The section name is just an unique string, it is not the actual name of the probe. This allows to have several probes of the same type, but with different sets of parameters. 
+
+
+| *Variable* | *Description* | * Mandatory * |
+| =probe= | is the actual name of probe.  The probe code will be invoked by a wrapper whose name is /usr/bin/oasis-runprobe-&lt;probe&gt; where &lt;probe&gt; is the value of this variable 'probe' In case of a project-specific probe, therefore, it can be something like  &lt;project&gt;-&lt;probe&gt;, which will be invoked by wrapper /usr/bin/oasis-runprobe-&lt;project&gt;-&lt;probe&gt; | MANDATORY |
+| =options= | list of input options to be passed raw to the probe | OPTIONAL |
+| =enabled= | True/False variable.  The probe is only executed is enabled = True | MANDATORY |
+| =level= | warning/abort. If warning, just logs a WARNING message, but return 0 (OK) if abort, logs a CRITICAL message and return 1 (probe failed) or some other RC | MANDATORY |
+ 
+A typical configuration file looks like this:
+
+<pre class="file">
+[DEFAULT]
+enabled = True
+
+[probe1]
+probe = probename1 
+options = "foo"
+level = warning
+
+[probe2]
+probe = probename2 
+level = abort
+</pre>
+
+---### Configuring /etc/oasis/&lt;project&gt;probes.conf
+
+Each Project requires a dedicated configuration file for the specific probes that only apply to that project. It can be left blank if no probes are needed, but the file must exists. The filename is the value of the variable =projectprobesconf= from the =oasisprojects.conf= file.
+The format is the same than =oasisprobes.conf= 
+
+---# Creating the project
+
+After the configuration files have been properly setup, each repository and project has to be created. 
+Command =oasis-admin-projectadd= facilitates that task. 
+For each project, it creates the corresponding source and destination paths: =project_src_dir= and =project_dest_dir=, and the UNIX IDs owning those directories: =project_src_owner= and =project_dest_owner=. 
+It also creates, if needed, same paths and UNIX IDs for the repository that the project belongs to: =repository_src_dir=, =repository_dest_owner=, =repository_src_owner=, and =repository_dest_owner=.
+In the case of the =project_dest_dir=, it creates the CVMFS repository properly, so the admin does *not* need to run command =cvmfs_server mkfs= by hand.
+
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_OASIS% oasis-admin-projectadd --help
+oasis-admin-projectadd:
+ 
+ Syntax:
+     oasis-admin-projectadd [--help|-h] [--verbose|-v] [--project &lt;name&gt;]
+ 
+ Description:
+     prepares everything to start working with a new project.
+     Creates, if needed, the UNIX user account,
+     the scratch directory and destination directory.
+     For the destination directory, a new repository in CVMFS is created if needed.
+     All the needed information to create the project is read 
+     from the "projects" and "repositories" configuration files.
+     The value of input option --project must match the value
+     of variable "projectname" in configuration file projects.conf
+ 
+ Options:               
+     --help | -h         Displays usage and exits 
+     --verbose | -v      Enters in DEBUG mode for the logging
+     --project &lt;name&gt;    Name of the project being created
+
+%UCL_PROMPT_ROOT_OASIS% oasis-admin-projectadd --project &lt;projectname&gt; </pre>
+
+---# Start
+
+Once the configuration files have been properly setup, and the projects have been created, the oasis daemon must be started on the server host:
+
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_OASIS% service oasisd start
+</pre>
+
+---# Users
+
+Users who log into the login host to update content should run two commands. 
+First command is to ensure no orphan file has been left in the user scratch space from previous failed updates.
+
+<pre class="screen">
+%UCL_PROMPT_USER_LOGIN% oasis-user-preinstall
+</pre>
+
+Then the user can run any compile or build command in their home directory. 
+New content to be distributed should then be place in the user area: %OSG_APP/&lt;VO&gt;/.../
+The VO should have communicated previously with the OASIS administrators to ensure the user area is properly setup in the config variables =repository_src_dir= and =project_src_dir=.
+Then the user can publish:
+
+<pre class="screen">
+%UCL_PROMPT_USER_LOGIN% oasis-user-publish --help
+oasis-user-publish:
+ 
+ Syntax:
+     oasis-user-publish [--help|-h] [--wait &lt;value&gt;]
+ 
+ Description:
+     Transfers all files from the user scratch area
+     to the destination area, and publishes them.
+     The behavior in case there is already another publishing
+     process going on for a different project depends on the
+     value of the input option "wait".
+     When "wait"  is TRUE, the process retains prompt and waits in a loop.
+     This loop expires when the publishing can be done or when
+     a timeout setup in the config files is reached.
+     When "wait"  is FALSE, the process just aborts
+     and a message is displayed asking the user to try later.
+ 
+ Options:
+     --help | -h         Displays usage and exits
+     --wait  &lt;value&gt;     value can be False/No/Off or True/Yes/On
+                         case insensitive.
+                         DEFAULT: False
+
+%UCL_PROMPT_USER_LOGIN% oasis-user-publish 
+</pre>
+
+
+
+
+-- Main.JoseCaballero - 08 Oct 2014
+

@@ -1,0 +1,70 @@
+#!/bin/bash
+# Publish a newer blank repository in place of an existing one
+# Run this on the stratum 1 (oasis-replica), only in time of emergency
+
+ME="`basename $0`"
+MYDIR="`dirname $0`"
+STRATUM0=oasis.opensciencegrid.org
+STRATUM1=oasis-replica.opensciencegrid.org
+
+usage()
+{
+    echo "Usage: $ME repositoryname" >&2
+    exit 1
+}
+
+if [ $# != 1 ]; then
+    usage
+fi
+
+REPO="$1"
+
+if [ ! -f /srv/cvmfs/$REPO/.cvmfspublished ]; then
+    echo "/srv/cvmfs/$REPO/.cvmfspublished does not exist" >&2
+    usage
+fi
+
+if [ -f /cvmfs/$REPO/intentionally_blank ]; then
+    echo "$REPO already blanked (/cvmfs/$REPO/intentionally_blank exists)" >&2
+    exit 2
+fi
+
+set -e
+
+REVISION="`cat -v /srv/cvmfs/$REPO/.cvmfspublished|sed -n 's/^S//p'`"
+let REVISION+=5
+echo "Blank $REPO revision will be set to $REVISION"
+
+NOW="`date +%Y%m%d%H%M%S`"
+REPODIRS="/srv/cvmfs /etc/cvmfs/repositories.d /var/spool/cvmfs"
+for D in $REPODIRS; do
+    echo "Renaming $D/$REPO to $D/.$REPO.$NOW"
+    mv $D/$REPO $D/.$REPO.$NOW
+done
+
+echo "Making $REPO"
+cvmfs_server mkfs -o root -w http://localhost:8080/cvmfs/$REPO $REPO
+rm -f /etc/httpd/conf.d/cvmfs.$REPO.conf
+cvmfs_server transaction $REPO
+mv /cvmfs/$REPO/new_repository /cvmfs/$REPO/intentionally_blank
+cvmfs_server publish $REPO
+
+echo "Flushing cache of /cvmfs/$REPO/.cvmfswhitelist"
+wget -qO/dev/null --header="Pragma: no-cache" http://localhost:8000/cvmfs/$REPO/.cvmfswhitelist
+
+echo 
+echo "Attempting to add $REPO on $STRATUM0"
+OASISCMD="$MYDIR/add_osg_repository http://$STRATUM1:8000/cvmfs/$REPO"
+if ! ssh $STRATUM0 $OASISCMD; then
+    echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
+    echo "  $OASISCMD" 2>&1
+    echo -n "and then hit return to continue: " 2>&1
+    read ANS
+fi
+
+wget --header="Pragma: no-cache" -O/srv/cvmfs/$REPO/.cvmfswhitelist "http://$STRATUM0/cvmfs/$REPO/.cvmfswhitelist"
+rm -f /etc/cvmfs/keys/$REPO.pub
+cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/$REPO.pub
+# subtract 1 because set_repository_property always adds 1 when publishing
+let REVISION-=1
+$MYDIR/set_repository_property revision $REVISION $REPO
