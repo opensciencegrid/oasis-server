@@ -39,7 +39,7 @@ if ! wget -qO$TMPFILE "$1/.cvmfswhitelist"; then
     echo "$ME: unable to wget $1/.cvmfswhitelist" >&2
     exit 1
 fi
-REPONAME="`cat -v $TMPFILE|sed -n 's/^N//p'`"
+REPONAME="`cat -v $TMPFILE|sed -n '/^N/{s/^N//p;q}'`"
 
 set -e
 
