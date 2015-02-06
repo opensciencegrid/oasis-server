@@ -2,31 +2,37 @@
 # Install and configure all application software on oasis-replica
 # Written by Dave Dykstra 2-4-2015
 
-ARCH=`arch`
-PATH="$PATH:/sbin"
 set -ex
+
+ARCH=`arch`
+AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
+CVMFSVER=2.1.20
+CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
+CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
+CVMFSCONFIGRPM=cvmfs-config-default-1.0-1.noarch.rpm
+SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
+AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
+OASISRPM=oasis-2.0.3-1.osg32.el5.noarch.rpm
+
+PATH="$PATH:/sbin"
+
+# remove non-mirrored repos
+rpm -e osg-release
+
 # download, build, and install aufs
-wget -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/aufs-0.20090202.cvs-6.sl5.src.rpm"
+wget -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
 mkdir -p /usr/src/redhat/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-rpm -i aufs-0.20090202.cvs-6.sl5.src.rpm
-rm -f aufs-0.20090202.cvs-6.sl5.src.rpm
+rpm -i $AUFSRPM
+rm -f $AUFSRPM
 yum install -y rpm-build kernel-devel-`uname -r` gcc
 rpmbuild -ba --target $ARCH --define "kernel `uname -r`" /usr/src/redhat/SPECS/aufs.spec
 rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
 
-# upgrade to osg 3.2
-OSGREL=osg-3.2-el5-release-latest.rpm
-wget -N http://repo.grid.iu.edu/osg/3.2/$OSGREL
-rpm -Uv $OSGREL
-rm -f $OSGREL
-
 # install cvmfs
-CVREV=2.1.20
-CVCONF=cvmfs-config-default-1.0-1
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVREV/cvmfs-$CVREV-1.el5.$ARCH.rpm
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVREV/cvmfs-server-$CVREV-1.el5.$ARCH.rpm
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVCONF.noarch.rpm
-CVRPMS="cvmfs-server-$CVREV-1.el5.$ARCH.rpm cvmfs-$CVREV-1.el5.$ARCH.rpm $CVCONF.noarch.rpm"
+wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
+wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
+CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
 # TODO: the --nogpgcheck is temporary until cvmfs-config-default is signed
 yum -y install --nogpgcheck $CVRPMS
 rm -f $CVRPMS
@@ -75,13 +81,20 @@ WSGIDaemonProcess cvmfs-api processes=2 display-name=%{GROUP} \
 WSGIProcessGroup cvmfs-api
 WSGISocketPrefix /var/run/wsgi
 WSGIScriptAliasMatch /cvmfs/([^/]+)/api /var/www/wsgi-scripts/cvmfs-api.wsgi/$1
+
+<Directory /usr/www/wsgi-scripts>
+    Order allow,deny
+    Allow from all
+</Directory>
 xEOFx
 chkconfig httpd on
 service httpd start
 
 # install frontier-squid & frontier-awstats
-rpm -i http://frontier.cern.ch/dist/rpms/RPMS/noarch/frontier-release-1.1-1.noarch.rpm
-yum -y install frontier-awstats
+wget -N http://frontier.cern.ch/dist/rpms/RPMS/$ARCH/$SQUIDRPM
+wget -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$AWSTATSRPM
+yum -y install $SQUIDRPM $AWSTATSRPM
+rm $SQUIDRPM $AWSTATSRPM
 cat >/etc/squid/customize.sh <<"xEOFx"
 #!/bin/bash
 
@@ -126,7 +139,9 @@ service frontier-squid start
 mkdir -p /srv
 
 # install oasis
-yum -y install --enablerepo=osg-development oasis
+wget -N http://repo.grid.iu.edu/osg/3.2/el5/development/$ARCH/$OASISRPM
+yum -y install $OASISRPM
+rm $OASISRPM
 
 # add cvmfs replicas
 ln -s /net/nas01/srv/`uname -n|cut -d. -f1`/cvmfs /srv
