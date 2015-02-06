@@ -81,11 +81,6 @@ WSGIDaemonProcess cvmfs-api processes=2 display-name=%{GROUP} \
 WSGIProcessGroup cvmfs-api
 WSGISocketPrefix /var/run/wsgi
 WSGIScriptAliasMatch /cvmfs/([^/]+)/api /var/www/wsgi-scripts/cvmfs-api.wsgi/$1
-
-<Directory /usr/www/wsgi-scripts>
-    Order allow,deny
-    Allow from all
-</Directory>
 xEOFx
 chkconfig httpd on
 service httpd start
