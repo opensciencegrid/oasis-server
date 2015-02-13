@@ -25,6 +25,7 @@ libexec_files = ['libexec/%s' %file for file in os.listdir('libexec') if os.path
 utils_files = ['misc/generate_adduser',
                'misc/generate_condormap',
                'misc/generate_gridmap',
+               'misc/generate_replicas',
               ]
 
 initd_files = ['etc/oasisd']
@@ -84,7 +85,6 @@ setup(
                'bin/resign_osg_whitelist',
                'bin/set_repository_property',
                'bin/unblank_osg_repository',
-               'bin/generate_replicas',
 
                # =============================
                #  wrappers to the probes
