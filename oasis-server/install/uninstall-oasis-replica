@@ -20,6 +20,8 @@ wget -N http://repo.grid.iu.edu/osg/3.1/$OSGREL
 rpm -iv $OSGREL
 rm -f $OSGREL
 service httpd stop
+rpm -e cvmfs-release
+rpm -e gpg-pubkey-8ae45ce7-4f5f0b8a
 yum -y remove httpd fuse fuse-libs cvmfs-config gdb
 sed -i '/nofile.*16384/d' /etc/security/limits.conf
 rm /etc/cvmfs/keys/egi.eu.pub /etc/cvmfs/keys/opensciencegrid.org.pub
