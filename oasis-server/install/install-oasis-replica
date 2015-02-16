@@ -152,6 +152,13 @@ yum -y install $OASISRPM
 rm $OASISRPM
 
 # add cvmfs replicas
+SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
+if [ ! -d $SRVDIR ]; then
+    mkdir $SRVDIR
+    setfacl -b $SRVDIR
+    chmod 755 $SRVDIR
+    mkdir $SRVDIR/cvmfs
+fi
 ln -s /net/nas01/srv/`uname -n|cut -d. -f1`/cvmfs /srv
 # need nfslock for the repos to be on NFS
 chkconfig nfslock on
