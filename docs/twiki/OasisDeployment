@@ -120,6 +120,8 @@ The instructions in the next sections applies to both the user login host and th
 
 No configuration is needed for the replica host. 
 
+*VERY IMPORTANT: with current version of OASIS, the directory where the content being distributed by the VOs is placed MUST be in a shared filesystem.*
+
 ---## Configuration files
 
 The same configuration must be identical in the user login host and the server host. No configuration is needed for the replica host. 
@@ -380,7 +382,9 @@ Once the configuration files have been properly setup, and the projects have bee
 %UCL_PROMPT_ROOT_OASIS% service oasisd start
 </pre>
 
----# Users
+---# Validation
+
+To validate an OASIS 2 installation has been done properly, you can do it by loging into the login host as a regular user, and publish a dummy file. 
 
 Users who log into the login host to update content should run two commands. 
 First command is to ensure no orphan file has been left in the user scratch space from previous failed updates.
@@ -390,8 +394,8 @@ First command is to ensure no orphan file has been left in the user scratch spac
 </pre>
 
 Then the user can run any compile or build command in their home directory. 
-New content to be distributed should then be place in the user area: %OSG_APP/&lt;VO&gt;/.../
-The VO should have communicated previously with the OASIS administrators to ensure the user area is properly setup in the config variables =repository_src_dir= and =project_src_dir=.
+New content to be distributed should then be place in the user area. The user area path is composed as =/repository_src_dir/project_src_dir/=
+where the config variables =repository_src_dir= and =project_src_dir= must be properly setup in the OASIS configuration files. 
 Then the user can publish:
 
 <pre class="screen">
@@ -422,8 +426,7 @@ oasis-user-publish:
 %UCL_PROMPT_USER_LOGIN% oasis-user-publish 
 </pre>
 
-
+If everything worked fine, after a while the new dummy file should be at the server host underneath directory /cvmfs/.../
 
 
 -- Main.JoseCaballero - 08 Oct 2014
-
