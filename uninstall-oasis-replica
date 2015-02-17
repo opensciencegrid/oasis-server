@@ -12,6 +12,8 @@ for REPO in `ls /etc/cvmfs/repositories.d`; do
 done
 rm /etc/cron.d/cvmfs
 rm -rf /var/log/cvmfs
+rm /opt/etc/osupdate.d/aufs.postupdate
+rmdir /opt/etc/osupdate.d
 rm -rf /usr/src/redhat/*/aufs* /usr/src/redhat/RPMS/*/*aufs*
 rmdir /usr/src/redhat/RPMS/* /usr/src/redhat/* /usr/src/redhat
 yum -y remove elfutils-libs xz-libs kernel-devel gcc aufs kernel-module-aufs

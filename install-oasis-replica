@@ -29,6 +29,10 @@ yum install -y rpm-build kernel-devel-`uname -r` gcc
 rpmbuild -ba --target $ARCH --define "kernel `uname -r`" /usr/src/redhat/SPECS/aufs.spec
 rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
 
+# install aufs postupdate script so it will get rebuilt when kernel is rebuilt
+mkdir -p /opt/etc/osupdate.d
+cp `dirname $0`/aufs.postupdate /opt/etc/osupdate.d
+
 # install cvmfs
 wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
 rpm -i $CVMFSRELRPM
