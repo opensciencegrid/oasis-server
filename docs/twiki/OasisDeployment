@@ -17,6 +17,7 @@
    * Set UCL_PROMPT_ROOT_CLIENT = [root@client ~]$
    * Set UCL_PROMPT_USER_LOGIN = [user@login ~]$
    * Set UCL_PROMPT_USER_CLIENT = [user@client ~]$
+   * Set UCL_PROMPT_ROOT_HOST = [root@host ~]$
    * Set VERSION = 2.0.1
 -->
 
@@ -342,6 +343,19 @@ level = abort
 Each Project requires a dedicated configuration file for the specific probes that only apply to that project. It can be left blank if no probes are needed, but the file must exists. The filename is the value of the variable =projectprobesconf= from the =oasisprojects.conf= file.
 The format is the same than =oasisprobes.conf= 
 
+---## Batch oriented configuration
+
+If there is no interactive login host, and instead of that VO users interact with OASIS via grid jobs, then a gatekeeper need to be deployed, and the local batch worker nodes act as a login host. 
+Assuming the batch system is condor, an extra configuration variable is needed. A typical file would look like this:
+
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_HOST% cat /etc/condor/config.d/condor_oasis.conf
+USER_JOB_WRAPPER = /usr/libexec/oasis_job_wrapper.sh
+</pre>
+
+Also, the CE must add to the jobs environment the variable =$OSG_APP= with a proper value, in such a way the path =$OSG_APP/&lt;VO&gt;/...= corresponds with path =/repository_src_dir/projectr_src_dir/= 
+
+
 ---# Creating the project
 
 After the configuration files have been properly setup, each repository and project has to be created. 
@@ -430,3 +444,4 @@ If everything worked fine, after a while the new dummy file should be at the ser
 
 
 -- Main.JoseCaballero - 08 Oct 2014
+
