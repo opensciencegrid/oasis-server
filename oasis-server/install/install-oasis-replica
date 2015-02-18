@@ -206,4 +206,4 @@ done
 
 set +x
 echo 
-echo "Installation of `uname -n` completed successfully at `date`"
+echo "Installation of `uname -n|cut -d. -f1` completed successfully at `date`"
