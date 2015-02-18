@@ -203,3 +203,7 @@ for URL in $REPOURLS; do
 	cvmfs_server snapshot $REPO
     fi
 done
+
+set +x
+echo 
+echo "Installation of `uname -n` completed successfully at `date`"
