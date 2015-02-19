@@ -19,4 +19,4 @@
 
 # =========================================================================== 
 
-USER_JOB_WRAPPER = /usr/libexec/oasis_job_wrapper.sh
+USER_JOB_WRAPPER = /usr/libexec/oasis/oasis_job_wrapper.sh
