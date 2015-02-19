@@ -43,7 +43,7 @@ sbin_files = ['sbin/oasis-admin-projectadd',
 
 # -----------------------------------------------------------
 
-rpm_data_files=[('/usr/libexec', libexec_files),
+rpm_data_files=[('/usr/libexec/oasis', libexec_files),
                 ('/usr/share/oasis', utils_files),
                 ('/etc/init.d', initd_files),
                 ('/usr/sbin', sbin_files),
