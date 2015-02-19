@@ -134,8 +134,9 @@ f_restart_daemon $1
 %dir %attr(1777, root, root)  %{_var}/run/oasis
 
 %config(noreplace) %{_sysconfdir}/oasis/oasis.conf
-%config(noreplace) %{_sysconfdir}/oasis/oasisprojects.conf
-%config(noreplace) %{_sysconfdir}/oasis/oasisprobes.conf
+%config(noreplace) %{_sysconfdir}/oasis/projects.conf
+%config(noreplace) %{_sysconfdir}/oasis/repositories.conf
+%config(noreplace) %{_sysconfdir}/oasis/probes.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/oasis
 %config(noreplace) %{_sysconfdir}/logrotate.d/oasis
 # ensure the /etc/oasis is created
