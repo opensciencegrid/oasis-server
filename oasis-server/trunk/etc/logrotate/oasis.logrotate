@@ -7,12 +7,8 @@
   rotate 10
   nocompress
 
-  prerotate
-    [ -e /etc/init.d/oasisd ] && /etc/init.d/oasisd stop >/dev/null 2>&1 || true
-  endscript
-
   postrotate
-    [ -e /etc/init.d/oasisd ] && /etc/init.d/oasisd start >/dev/null 2>&1 || true
+    [ -f /var/run/oasisd.pid ] && /etc/init.d/oasisd restart >/dev/null 2>&1 || true
   endscript
 }
 
