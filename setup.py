@@ -39,7 +39,7 @@ etc_files = ['etc/oasis.conf',
 
 sysconfig_files = ['etc/sysconfig/oasis']
 
-logrotateconfig_files = ['etc/logrotate/oasis']
+logrotate_files = ['etc/logrotate/oasis']
 
 # =============================
 #    admin tools 
