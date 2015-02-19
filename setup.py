@@ -31,6 +31,16 @@ utils_files = ['misc/generate_adduser',
 
 initd_files = ['etc/oasisd']
 
+etc_files = ['etc/oasis.conf',
+             'etc/projects.conf',
+             'etc/repositories.conf',
+             'etc/probes.conf',
+            ]
+
+sysconfig_files = ['etc/sysconfig/oasis']
+
+logrotateconfig_files = ['etc/logrotate/oasis']
+
 # =============================
 #    admin tools 
 # =============================
@@ -46,6 +56,9 @@ sbin_files = ['sbin/oasis-admin-projectadd',
 rpm_data_files=[('/usr/libexec/oasis', libexec_files),
                 ('/usr/share/oasis', utils_files),
                 ('/etc/init.d', initd_files),
+                ('/etc/oasis', etc_files),
+                ('/etc/sysconfig', sysconfig_files),
+                ('/etc/logrotate.d', logrotate_files),
                 ('/usr/sbin', sbin_files),
                ]
 
