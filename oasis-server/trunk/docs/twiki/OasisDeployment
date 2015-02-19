@@ -18,7 +18,7 @@
    * Set UCL_PROMPT_USER_LOGIN = [user@login ~]$
    * Set UCL_PROMPT_USER_CLIENT = [user@client ~]$
    * Set UCL_PROMPT_ROOT_HOST = [root@host ~]$
-   * Set VERSION = 2.0.1
+   * Set VERSION = 2.0.5-2
 -->
 
 
@@ -46,6 +46,9 @@ The applicable software versions for this document are OASIS %VERSION% and, as r
 These instructions apply to the 3 hosts, if needed: the server host, the user login host, and the replica host. 
 In the case of the server host and the replica host, CVMFS need to be installed first. 
 Instructions to install CVMFS can be found here [[https://twiki.grid.iu.edu/bin/view/Documentation/Release3/InstallCvmfsStratum1][here]]
+There are no special requirement for the login host in terms of OS. 
+
+*IMPORTANT: with OASIS version %version% the login host and the server host MUST share a filesystem. The directory with the VO content files and the directory with the OASIS flag files must be in a shared filesystem.*
 
 Install the OASIS RPM on RHEL 5:
 <pre class="rootscreen">
@@ -91,6 +94,7 @@ as the RPM is not yet available in the OSG repo, meanwhile it can be installed f
 
 ---# Configuration
 
+<!--
 ---## OASIS architecture
 *WARNING: This section probably does not make sense in a deployment wiki. Maybe it should be moved to the generic wiki for OASIS project*
 
@@ -111,8 +115,8 @@ The users must be able to find that place by using the old fashion =$OSG_APP/&lt
 Each Project is associated to one unique UNIX ID. This UNIX ID is the username of the users logged into the OASIS login host, and also the identity under which the OASIS daemon runs some tasks.
 This unique UNIX ID is the owner of the user scratch space.
 
-
 Repositories and Projects are set up in the corresponding =repositories.conf= and =projects.conf= configuration files.
+-->
 
 
 ---## Hosts configuration
@@ -125,10 +129,11 @@ No configuration is needed for the replica host.
 
 ---## Configuration files
 
-The same configuration must be identical in the user login host and the server host. No configuration is needed for the replica host. 
+The same configuration must be identical in the user login host and the server host, except for variable =services=. No configuration is needed for the replica host. 
 
-There are at least 3 configuration files: the oasis.conf, the oasisprojects.conf, the oasisprobes.conf.
-Then, for each project (typically a VO, but not necessarily), there is a dedicated {project}probes.conf.
+<!--There are at least 3 configuration files: the oasis.conf, the oasisprojects.conf, the oasisprobes.conf.
+Then, for each project (typically a VO, but not necessarily), there is a dedicated {project}probes.conf. 
+-->
 
 The format of the configuration files is similar to the Microsoft INI files. 
 The configuration file consists of sections, led by a =[section]= header and followed by =name: value= entries, with continuations in the style of [[http://tools.ietf.org/html/rfc822.html][RFC 822]] (see section 3.1.1, “LONG HEADER FIELDS”); =name=value= is also accepted. Note that leading whitespace is removed from values. The optional values can contain format strings which refer to other values in the same section, or values in a special =[DEFAULT]= section. Additional defaults can be provided on initialization and retrieval. Lines beginning with '#' or ';' are ignored and may be used to provide comments.
@@ -141,6 +146,7 @@ As the python package !ConfigParser is being used to digest the configuration fi
 
 ---### Location of the configuration files
 
+<!--
 After installing OASIS 2 from RPM, examples of the configuration files are located under directory =/usr/share/doc/oasis-2.x.y/=.
 They need to be copied to the real destination. At least =oasis.conf= *must* be placed under =/etc/oasis/=. Therefore, it is a good practice, for consistency, to place all of them at the same path. 
 
@@ -164,6 +170,41 @@ In the case of the server host:
 %UCL_PROMPT_ROOT_OASIS% cp /usr/share/doc/oasis-%VERSION%/sysconfig/oasis.sysconfig-example /etc/sysconfig/oasis
 %UCL_PROMPT_ROOT_OASIS% cp /usr/share/doc/oasis-%VERSION%/logrotate/oasis.logrotate-server-example /etc/logrotate.d/oasis
 </pre>
+-->
+
+After installing OASIS 2 from RPM, the configuration files are located under directory =/etc/oasis/=.
+There are 4 configuration files created by the RPM:
+
+<pre class="rootscreen">
+%UCL_PROMPT_ROOT_OASIS% ls /etc/oasis/
+oasis.conf  probes.conf  projects.conf  repositories.conf
+</pre>
+
+These files, as they are created by the RPM, have basically no content. 
+Next sections explain how to set them up properly. 
+
+Also the sysconfig file (=/etc/sysconfig/oasis=) and the logrotate file (=/etc/logrotated.d/oasis=) have been created with some functional content. 
+
+---### Architecture of OASIS 2, needed to understand how to set the configuration files
+
+OASIS 2 is built around two key concepts:
+
+   * *Repositories*. A Repository is a single content management unit. That means, the whole amount of content to be distributed together. 
+
+   * *Projects*. A Project is a single administrative management unit. In other words, refers to the data being managed by a given unique UNIX ID.
+
+A Project must belong to a Repository, and only one. A Repository can have one or more Projects.
+
+A Repository is composed by its source directory, its destination directory, and the particular underlying technology to distribute content. Currently the only technology being used by OASIS is CVMFS, both 2.0.x and 2.1.x versions. 
+A Project is composed by its source directory (relative to the source directory of the repository it belongs to) and its destination directory (relative to the destination directory of the repository it belongs to). 
+
+The user scratch area is, therefore, composed as =&lt;REPOSITORY_SOURCE_DIRECTORY&gt;/&lt;PROJECT_SOURCE_DIRECTORY&gt;=
+The users must be able to find that place by using the old fashion =$OSG_APP/&lt;VO&gt;/=
+
+Each Project is associated to one unique UNIX ID. This UNIX ID is the username of the users logged into the OASIS login host, and also the identity under which the OASIS daemon runs some tasks.
+This unique UNIX ID is the owner of the user scratch space.
+
+Repositories and Projects are set up in the corresponding =repositories.conf= and =projects.conf= configuration files.
 
 
 ---### Configuring /etc/oasis/oasis.conf
@@ -309,7 +350,7 @@ projectprobesconf = /etc/oasis/proj2probes.conf
 
 
 
----### Configuring /etc/oasis/oasisprobes.conf
+---### Configuring /etc/oasis/probes.conf
 
 It is the configuration file with generic probes for all projects. It can be left blank if no probes are needed, but the file must exists. The filename is the value of the variable =probesconf= from the =oasis.conf= file.
 
@@ -444,4 +485,3 @@ If everything worked fine, after a while the new dummy file should be at the ser
 
 
 -- Main.JoseCaballero - 08 Oct 2014
-
