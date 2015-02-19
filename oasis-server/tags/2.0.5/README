@@ -1,0 +1,55 @@
+-------------------------------------------------------------------------------
+        OASIS README
+-------------------------------------------------------------------------------
+
+
+INTRO
+
+OASIS is a high level end-to-end software to manage grid-based file distribution.
+
+
+INSTALLATION
+
+Once installed, there are two components:
+
+
+    -- the client:
+       the user client is placed in /usr/bin/oasis
+       It can be called directly from the command line,
+       or it is automatically called by the condor wrapper
+       in case of jobs submitted via a gatekeeper.
+       If called from the command line, 
+       the path to the installation job and arguments are passed. 
+       Users do not run the installation jobs by themselves. 
+
+            $ /usr/bin/oasis <path_to_job> <job_args>
+
+
+    -- the daemon:
+       The service  /etc/init.d/oasis needs to be started
+       in order to allow OASIS to complete the distribution process:
+       passing the sanity checks -or probes- on the new user content,
+       transferring the new content to final distribution tree,
+       and triggering the file distribution.
+       An example of sysconfig file is deployed as
+       /etc/oasis/oasisd.sysconfig-example
+       A copy of that example file should be placed in the final destination:
+       /etc/sysconfig/oasisd
+       
+
+    -- configuration files:
+       examples of configuration files are deployed underneath /etc/oasis/
+       They are called *.conf-example, so a copy without the suffix -example is needed.
+       The only one whose path is hardcoded in the clients -for the time being- is /etc/oasis/oasis.conf
+       The paths to the others config files are indeed variables in oasis.conf
+
+
+DEVELOPERS
+
+Lead developers:
+    Jose Caballero <jcaballero@bnl.gov>      
+Contributor:
+    Dave Dykstra <dwd@fnal.gov>
+    John Hover <jhover@bnl.gov>
+    Scott Teige <steige@iu.edu>
+
