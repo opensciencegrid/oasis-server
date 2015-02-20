@@ -94,8 +94,7 @@ as the RPM is not yet available in the OSG repo, meanwhile it can be installed f
 
 ---# Configuration
 
-<!--
----## OASIS architecture
+<!-- ---## OASIS architecture
 *WARNING: This section probably does not make sense in a deployment wiki. Maybe it should be moved to the generic wiki for OASIS project*
 
 OASIS 2 is built around two key concepts:
