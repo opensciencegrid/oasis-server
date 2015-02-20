@@ -48,8 +48,6 @@ In the case of the server host and the replica host, CVMFS need to be installed 
 Instructions to install CVMFS can be found here [[https://twiki.grid.iu.edu/bin/view/Documentation/Release3/InstallCvmfsStratum1][here]]
 There are no special requirement for the login host in terms of OS. 
 
-*IMPORTANT: with OASIS version %VERSION% the login host and the server host MUST share a filesystem. The directory with the VO content files and the directory with the OASIS flag files must be in a shared filesystem.*
-
 Install the OASIS RPM on RHEL 5:
 <pre class="rootscreen">
 %UCL_PROMPT_ROOT_OASIS% rpm -Uhv http://repo.grid.iu.edu/osg/3.2/osg-3.2-el5-release-latest.rpm
