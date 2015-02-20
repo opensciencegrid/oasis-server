@@ -280,11 +280,11 @@ repository_dest_dir = mis.opensciencegrid.org
 repository_src_owner = ouser.mis
 repository_dest_owner = oasis
 
-[PROJECTS]
-repositoryname = projects.opensciencegrid.org
-repository_src_dir = $(OSG_APP)s/projects
-repository_dest_dir = projects.opensciencegrid.org
-repository_src_owner = ouser.projects
+[MyVO]
+repositoryname = myvo.opensciencegrid.org
+repository_src_dir = $(OSG_APP)s/myvo
+repository_dest_dir = myvo.opensciencegrid.org
+repository_src_owner = ouser.myvo
 repository_dest_owner = oasis
 </pre>
 
@@ -328,24 +328,24 @@ project_src_owner = ouser.mis
 project_dest_owner = oasis
 projectprobesconf = /etc/oasis/mis.conf
 
-[PROJECT1]
-repositorysection = PROJECTS 
-projectname = project1 
+[MyVO_project1]
+repositorysection = MyVO 
+projectname = myvo_project1 
 project_src_dir = srddir1
 project_dest_dir = destdir1
-project_src_owner = ouser.project1
+project_src_owner = ouser.myvo_project1
 project_dest_owner = oasis
-projectprobesconf = /etc/oasis/proj1probes.conf
+projectprobesconf = /etc/oasis/myvo_project1probes.conf
 
 
-[PROJECT2]
-repositorysection = PROJECTS 
-projectname = project2 
+[MyVO_project2]
+repositorysection = MyVO 
+projectname = myvo_project2 
 project_src_dir = srddir2
 project_dest_dir = destdir2
-project_src_owner = ouser.project2
+project_src_owner = ouser.myvo_project2
 project_dest_owner = oasis
-projectprobesconf = /etc/oasis/proj2probes.conf
+projectprobesconf = /etc/oasis/myvo_project2probes.conf
 </pre>
 
 
