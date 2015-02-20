@@ -426,10 +426,14 @@ USER_JOB_WRAPPER = /usr/libexec/oasis/oasis_job_wrapper.sh
 Also, the CE must add to the jobs environment the variable =$OSG_APP= with a proper value, in such a way the path =$OSG_APP/&lt;VO&gt;/...= corresponds with path =/repository_src_dir/projectr_src_dir/= 
 
 
----# Creating the project
+---# Set up for the projects and repositories
 
 After the configuration files have been properly setup, each repository and project has to be created. 
-Command =oasis-admin-projectadd= facilitates that task. 
+This implies created the source directories -where the users place their files to be distributed- and the destination directories -where the underlying technology finds those files to be distributed-, 
+as it has been explained in the previous sections. 
+The corresponding UNIX accounts also need to be created, and the source directories must have proper right permissions. 
+
+Command =oasis-admin-projectadd= facilitates that task, even it is not mandatory using it. 
 For each project, it creates the corresponding source and destination paths: =project_src_dir= and =project_dest_dir=, and the UNIX IDs owning those directories: =project_src_owner= and =project_dest_owner=. 
 It also creates, if needed, same paths and UNIX IDs for the repository that the project belongs to: =repository_src_dir=, =repository_dest_owner=, =repository_src_owner=, and =repository_dest_owner=.
 In the case of the =project_dest_dir=, it creates the CVMFS repository properly, so the admin does *not* need to run command =cvmfs_server mkfs= by hand.
@@ -456,7 +460,10 @@ oasis-admin-projectadd:
      --verbose | -v      Enters in DEBUG mode for the logging
      --project &lt;name&gt;    Name of the project being created
 
-%UCL_PROMPT_ROOT_OASIS% oasis-admin-projectadd --project &lt;projectname&gt; </pre>
+%UCL_PROMPT_ROOT_OASIS% oasis-admin-projectadd --project &lt;projectname&gt; 
+
+%UCL_PROMPT_ROOT_LOGIN% oasis-admin-projectadd --project &lt;projectname&gt; 
+</pre>
 
 ---# Start
 
