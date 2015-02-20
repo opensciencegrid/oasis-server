@@ -426,7 +426,7 @@ USER_JOB_WRAPPER = /usr/libexec/oasis/oasis_job_wrapper.sh
 Also, the CE must add to the jobs environment the variable =$OSG_APP= with a proper value, in such a way the path =$OSG_APP/&lt;VO&gt;/...= corresponds with path =/repository_src_dir/projectr_src_dir/= 
 
 
----# Set up for the projects and repositories
+---# Setup for the projects and repositories
 
 After the configuration files have been properly setup, each repository and project has to be created. 
 This implies created the source directories -where the users place their files to be distributed- and the destination directories -where the underlying technology finds those files to be distributed-, 
