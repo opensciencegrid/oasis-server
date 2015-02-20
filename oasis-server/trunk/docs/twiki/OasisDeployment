@@ -420,7 +420,7 @@ Assuming the batch system is condor, an extra configuration variable is needed. 
 
 <pre class="rootscreen">
 %UCL_PROMPT_ROOT_HOST% cat /etc/condor/config.d/condor_oasis.conf
-USER_JOB_WRAPPER = /usr/libexec/oasis_job_wrapper.sh
+USER_JOB_WRAPPER = /usr/libexec/oasis/oasis_job_wrapper.sh
 </pre>
 
 Also, the CE must add to the jobs environment the variable =$OSG_APP= with a proper value, in such a way the path =$OSG_APP/&lt;VO&gt;/...= corresponds with path =/repository_src_dir/projectr_src_dir/= 
