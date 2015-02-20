@@ -118,13 +118,38 @@ Repositories and Projects are set up in the corresponding =repositories.conf= an
 -->
 
 
----## Hosts configuration
+<!-- ---## Hosts configuration
 
 The instructions in the next sections applies to both the user login host and the server host, if they are separate hosts. The content of the OASIS configuration files in both hosts *must be identical*, except the =services= variable.
 
 No configuration is needed for the replica host. 
 
 *VERY IMPORTANT: with current version of OASIS, the directory where the content being distributed by the VOs is placed MUST be in a shared filesystem.*
+--> 
+
+---## Architecture of OASIS 2
+
+OASIS 2 is built around two key concepts:
+
+   * *Repositories*. A Repository is a single content management unit. That means, the whole amount of content to be distributed together. 
+
+   * *Projects*. A Project is a single administrative management unit. In other words, refers to the data being managed by a given unique UNIX ID.
+
+A Project must belong to a Repository, and only one. A Repository can have one or more Projects.
+
+A Repository is composed by its source directory, its destination directory, and the particular underlying technology to distribute content. Currently the only technology being used by OASIS is CVMFS, both 2.0.x and 2.1.x versions. 
+A Project is composed by its source directory (relative to the source directory of the repository it belongs to) and its destination directory (relative to the destination directory of the repository it belongs to). 
+
+The user scratch area is, therefore, composed as =&lt;REPOSITORY_SOURCE_DIRECTORY&gt;/&lt;PROJECT_SOURCE_DIRECTORY&gt;=
+The users must be able to find that place by using the old fashion =$OSG_APP/&lt;VO&gt;/=
+The meaning of those configuration variables will be explained in the following sections.
+
+Each Project is associated to one unique UNIX ID. This UNIX ID is the username of the users logged into the OASIS login host, and also the identity under which the OASIS daemon runs some tasks.
+This unique UNIX ID is the owner of the user scratch space.
+
+Repositories and Projects are set up in the corresponding =repositories.conf= and =projects.conf= configuration files, as it is explained in the next sections.
+
+
 
 ---## Configuration files
 
@@ -142,6 +167,15 @@ Configuration files may include comments, prefixed by specific characters (# and
 It supports interpolation. This means values can contain format strings which refer to other values in the same section, or values in a special =[DEFAULT]= section. Additional defaults can be provided on initialization.
 
 As the python package !ConfigParser is being used to digest the configuration files, a wider explanation and examples can be found in the [[https://docs.python.org/2/library/configparser.html][python documentation page]].
+
+---## Configuration of the server host
+
+The so called server host is the one where the underlying content distribution tool runs its service. 
+For example, in the case of CVMFS, it is the place where the CVMFS commands for content distribution are issued. 
+It is, therefore, the most important host in OASIS 2, and we will start explaining the hosts configuration by this one. 
+
+If the underlying technology is CVMFS, instructions to install it first can be found [[https://twiki.grid.iu.edu/bin/view/Documentation/Release3/InstallCvmfsStratum1][here]]
+After that, the OASIS RPM can be deployed as it was explained in section [[https://twiki.grid.iu.edu/bin/view/Documentation/Release3/OasisDeployment#4_Install_Instructions][Install]]
 
 ---### Location of the configuration files
 
@@ -184,27 +218,6 @@ Next sections explain how to set them up properly.
 
 Also the sysconfig file (=/etc/sysconfig/oasis=) and the logrotate file (=/etc/logrotated.d/oasis=) have been created with some functional content. 
 
----### Architecture of OASIS 2, needed to understand how to set the configuration files
-
-OASIS 2 is built around two key concepts:
-
-   * *Repositories*. A Repository is a single content management unit. That means, the whole amount of content to be distributed together. 
-
-   * *Projects*. A Project is a single administrative management unit. In other words, refers to the data being managed by a given unique UNIX ID.
-
-A Project must belong to a Repository, and only one. A Repository can have one or more Projects.
-
-A Repository is composed by its source directory, its destination directory, and the particular underlying technology to distribute content. Currently the only technology being used by OASIS is CVMFS, both 2.0.x and 2.1.x versions. 
-A Project is composed by its source directory (relative to the source directory of the repository it belongs to) and its destination directory (relative to the destination directory of the repository it belongs to). 
-
-The user scratch area is, therefore, composed as =&lt;REPOSITORY_SOURCE_DIRECTORY&gt;/&lt;PROJECT_SOURCE_DIRECTORY&gt;=
-The users must be able to find that place by using the old fashion =$OSG_APP/&lt;VO&gt;/=
-
-Each Project is associated to one unique UNIX ID. This UNIX ID is the username of the users logged into the OASIS login host, and also the identity under which the OASIS daemon runs some tasks.
-This unique UNIX ID is the owner of the user scratch space.
-
-Repositories and Projects are set up in the corresponding =repositories.conf= and =projects.conf= configuration files.
-
 
 ---### Configuring /etc/oasis/oasis.conf
 
@@ -223,18 +236,6 @@ It has a single section, called *[OASIS]*. This head section name can not change
 | =flagfilebasedir= | path to the flagfiles. <BR> *WARNING*: in the case where the user login host is a different machine than the server hosts, this path *must* be in a shared filesystem. <BR> Default: =/var/run/oasis/= | OPTIONAL |
 
 A typical configuration file looks like this:
-
-<pre class="file">
-[OASIS]
-
-services = login
-sleep = 100 
-email = neo@matrix.net
-SMTPServer = server
-repositoriesconf = /etc/oasis/repositories.conf
-projectsconf = /etc/oasis/projects.conf
-probesconf = /etc/oasis/probes.conf
-</pre>
 
 
 <pre class="file">
@@ -382,6 +383,35 @@ level = abort
 
 Each Project requires a dedicated configuration file for the specific probes that only apply to that project. It can be left blank if no probes are needed, but the file must exists. The filename is the value of the variable =projectprobesconf= from the =oasisprojects.conf= file.
 The format is the same than =oasisprobes.conf= 
+
+---## Configuration of the login host
+
+In case the users interact with OASIS via an interface host where they can ssh and run interactively the oasis command, a new host need to be configured. 
+For safety reasons, this host should always be a separate host than the server one. 
+There are no specific requirements for this host in terms of Operative System needs, as it does not run any underlying technology. 
+
+*IMPORTANT: with OASIS version %VERSION% the login host and the server host MUST share a filesystem. The directory with the VO content files and the directory with the OASIS flag files must be in a shared filesystem.*
+
+All configuration files explained for the server host should be copied to the login host. They must be identical, except for the variable =services= in the primary configuration file =/etc/oasis/oasis.conf=. 
+Therefore, a typical file looks like 
+
+<pre class="file">
+[OASIS]
+
+services = login
+sleep = 100 
+email = neo@matrix.net
+SMTPServer = server
+repositoriesconf = /etc/oasis/repositories.conf
+projectsconf = /etc/oasis/projects.conf
+probesconf = /etc/oasis/probes.conf
+</pre>
+
+
+---## Configuration of the replica host
+
+For OASIS version %VERSION% no configuration files are needed at the replica host. 
+
 
 ---## Batch oriented configuration
 
