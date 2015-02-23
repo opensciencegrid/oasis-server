@@ -1,4 +1,5 @@
-
+* added script misc/generate_config_projects.
+  Added it to setup.py
 
 -----------------------------------------------------------------------------
 2.0.6
