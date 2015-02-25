@@ -153,6 +153,10 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Tue Feb 24 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.7
+- Bumped to 2.0.7
+- added script generate_config_projects
+
 * Thu Feb 19 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.5-2
 - Bumped to 2.0.5-2
 - config files, including sysconfig and logrotate, placed directly into
