@@ -1,0 +1,96 @@
+#!/usr/bin/python
+
+import urllib2
+import libxml2
+import sys
+import os
+import time
+
+default_add_repo_command = 'add_osg_repository %u'
+default_undo_command = 'cvmfs_server rmfs -f %r'
+
+def usage():
+    sys.stderr.write('Usage: generate_replicas ["add_repo_command" ["undo_command"]]\n')
+    sys.stderr.write('  Adds missing CVMFS replicas registered in OIM using add_repo_command.\n')
+    sys.stderr.write('  If add_repo_command provided, it must contain %u or %r and\n')
+    sys.stderr.write('    must both add the replica and download the first snapshot.\n')
+    sys.stderr.write('    %u - full url from OIM\n')
+    sys.stderr.write('    %r - repository name\n')
+    sys.stderr.write('  Default add_repo_command is "' + default_add_repo_command + '".\n')
+    sys.stderr.write('  undo_command is used if add_repo_command fails.\n')
+    sys.stderr.write('  If undo_command provided, it must contain %r.\n')
+    sys.stderr.write('  Default undo command is "' + default_undo_command + '".\n')
+    sys.stderr.write('  If replica exists but has wrong URL, and add_repo_command contains %u,\n')
+    sys.stderr.write('     the URL will be changed to the new value.\n')
+    sys.exit(1)
+
+if len(sys.argv) > 3:
+    usage()
+
+add_repo_command = default_add_repo_command
+if len(sys.argv) > 1:
+    add_repo_command = sys.argv[1]
+    if add_repo_command[0] == '-':
+	sys.stderr.write('unrecognized option ' + sys.argv[1] + '\n')
+	usage()
+    if (add_repo_command.find('%u') == -1) and (add_repo_command.find('%r') == -1):
+	sys.stderr.write('bad add_repo_command\n')
+	usage()
+
+undo_command = default_undo_command
+if len(sys.argv) > 2:
+    undo_command = sys.argv[2]
+    if undo_command[0] == '-':
+	sys.stderr.write('unrecognized option ' + sys.argv[1] + '\n')
+	usage()
+    if undo_command.find('%r') == -1:
+	sys.stderr.write('bad undo_command\n')
+	usage()
+
+def logmsg(msg):
+    print time.asctime(time.localtime(time.time())) + ' ' + msg
+    sys.stdout.flush()
+
+logmsg('Starting')
+
+#download oasis vosummary
+response = urllib2.urlopen("http://myosg.grid.iu.edu/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name")
+xml = response.read()
+doc = libxml2.parseDoc(xml)
+
+#parse out OASISRepoURLs
+for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
+    url = urlfield.content
+    repo = url[url.rfind('/')+1:]
+    serverconf = '/etc/cvmfs/repositories.d/' + repo + '/server.conf'
+    replicaconf = '/etc/cvmfs/repositories.d/' + repo + '/replica.conf'
+    if os.path.exists(serverconf):
+	# Repo exists.  If there's no replica.conf, it may
+	#   be blanked so skip that.
+	# If add command using the full url and it doesn't
+	#   match what is in server.conf, edit server.conf.
+	if os.path.exists(replicaconf) and (add_repo_command.find('%u') >= 0):
+	    contents = open(serverconf).read()
+	    if ('CVMFS_STRATUM0=' + url) not in contents:
+		start = contents.find('CVMFS_STRATUM0=')
+		if start > 0:
+		    start += len('CVMFS_STRATUM0=')
+		    end = contents.find('\n',start)
+		    if (end > 0):
+			contents = contents[:start] + url + contents[end:]
+			logmsg('Setting new url for ' + repo + ': ' + url)
+			open(serverconf, 'w').write(contents)
+    else:
+	# repo does not exist.  add it.
+	cmd = add_repo_command.replace('%u',url).replace('%r',repo)
+	logmsg('Running ' + cmd)
+	code = os.system(cmd)
+	if code != 0:
+	    logmsg('Add failed with exit code ' + hex(code))
+	    cmd = undo_command.replace('%r',repo)
+	    logmsg('Running ' + cmd)
+	    code = os.system(cmd)
+	    if code != 0:
+		logmsg('Undo failed with exit code ' + hex(code))
+
+logmsg('Finished')
