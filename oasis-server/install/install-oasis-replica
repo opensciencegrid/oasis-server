@@ -11,13 +11,15 @@ CVMFSVER=2.1.20
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
+FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
-OASISRPM=oasis-2.0.5-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.8-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
-# remove non-mirrored repos
+# import OSG key but remove its yum repo because it isn't mirrored
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
 rpm -e osg-release
 
 # download, build, and install aufs
@@ -25,6 +27,8 @@ wget -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
 mkdir -p /usr/src/redhat/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 rpm -i $AUFSRPM
 rm $AUFSRPM
+# note: the kernel-devel install may not be needed; it's not removed in
+#  uninstall but try to install it because it's not guaranteed to be there
 yum install -y rpm-build kernel-devel-`uname -r` gcc
 rpmbuild -ba --target $ARCH --define "kernel `uname -r`" /usr/src/redhat/SPECS/aufs.spec
 rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
@@ -95,10 +99,14 @@ chkconfig httpd on
 service httpd start
 
 # install frontier-squid & frontier-awstats
+wget -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$FRONTIERRELRPM
+rpm -i $FRONTIERRELRPM
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-cern-frontier
+rpm -e frontier-release
 wget -N http://frontier.cern.ch/dist/rpms/RPMS/$ARCH/$SQUIDRPM
 wget -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$AWSTATSRPM
 yum -y install $SQUIDRPM $AWSTATSRPM
-rm $SQUIDRPM $AWSTATSRPM
+rm $FRONTIERRELRPM $SQUIDRPM $AWSTATSRPM
 cat >/etc/squid/customize.sh <<"xEOFx"
 #!/bin/bash
 
@@ -138,11 +146,17 @@ cat >/etc/iptables.d/60-local-cvmfs <<"xEOFx"
 $ITNAPRE4 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 8000
 $ITNAO4 -o lo -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 8000
 
-# open port 80 and port 8000
+# open tcp port 80 and port 8000
 $ITFAI -p tcp --dport 80 -j ACCEPT
 $ITFAI -p tcp --dport 8000 -j ACCEPT
 $ITFAI4 -p tcp --dport 80 -j ACCEPT
 $ITFAI4 -p tcp --dport 8000 -j ACCEPT
+
+# open udp port 3401
+$ITFAI -p udp --dport 3401 -j ACCEPT
+$ITFAI4 -p udp --dport 3401 -j ACCEPT
+
+#
 xEOFx
 chmod +x /etc/iptables.d/60-local-cvmfs
 service gociptables restart
@@ -151,7 +165,9 @@ service frontier-squid start
 mkdir -p /srv
 
 # install oasis
-wget -N http://repo.grid.iu.edu/osg/3.2/el5/development/$ARCH/$OASISRPM
+OASISVER="`echo $OASISRPM|cut -d- -f2`"
+OASISSUBVER="`echo $OASISRPM|cut -d- -f3|cut -d. -f1-3`"
+wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
 yum -y install $OASISRPM
 rm $OASISRPM
 
