@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.9
+%define version 2.0.10
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,10 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Sat Feb 28 2015 Jose Caballero <jcaballero@bnl.gvo> - 2.0.9
+- Bumped to 2.0.9
+- Added some variables to the output created by script generate_config_projects
+
 * Wed Feb 25 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.8
 - Bumped to 2.0.8
 - Added bin/print_osg_repos to setup.py
