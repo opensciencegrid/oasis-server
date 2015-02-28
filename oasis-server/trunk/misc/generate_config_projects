@@ -25,6 +25,10 @@ for vo in doc.xpathEval("//VO"):
     projectname = voname
     section = projectname.upper()
     print("[%s]" %section)
+    print("sleep = 300")
+    print("starttimeout = 600")
+    print("finishtimeout = 3600")
+    print("enabled = True")
     print("repositorysection = OASIS")  # For GOC, at the time being, only one repository
     print("projectname = %s" %projectname)
     print("project_src_dir = %s" %projectname )
