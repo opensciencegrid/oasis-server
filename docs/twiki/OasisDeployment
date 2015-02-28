@@ -1,5 +1,3 @@
-*WORK IN PROGRESS!!!*
-
 <!--
 *DO WE NEED TO FILL THE REQUIREMENTS SECTION???*
 
@@ -39,7 +37,7 @@ This document describes how to install and configure OASIS 2 in a server host, a
 The applicable software versions for this document are OASIS %VERSION% and, as requirements, CVMFS server 2.0.x and 2.1.x.
 
 ---# Requirements
-*QUESTION: Do we need an specific requirement section, or they are already explained in other twikies (CVMFS, ...) and can be linked???*
+<!--*QUESTION: Do we need an specific requirement section, or they are already explained in other twikies (CVMFS, ...) and can be linked???* -->
 
 ---# Install Instructions
 
