@@ -1,0 +1,15 @@
+#!/bin/bash
+
+## A cron job will detect that this file exists
+touch /net/nas01/Public/oasis_update_lock
+
+## Assure the cron job has started
+sleep 62
+
+## don't return until the update is complete
+while [ -f /net/nas01/Public/oasis_update_in_progress ]; do
+    sleep 10
+done
+
+exit 0
+

@@ -1,0 +1,5 @@
+# Run Puppet every 30 minutes
+# This rule written by Puppet
+# Note that the timeframe was generated randomly so Puppet accesses are staggered
+
+20,50 * * * * root if [ -e /usr/bin/puppet ]; then /usr/bin/puppet agent --no-daemonize --onetime ; elif [ -e /usr/sbin/puppetd ]; then /usr/sbin/puppetd --no-daemonize --onetime ; fi >& /dev/null
