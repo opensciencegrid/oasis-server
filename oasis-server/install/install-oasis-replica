@@ -98,6 +98,15 @@ xEOFx
 chkconfig httpd on
 service httpd start
 
+# create srv directory if it isn't there yet
+SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
+if [ ! -d $SRVDIR ]; then
+    mkdir $SRVDIR
+    setfacl -b $SRVDIR
+    chmod 755 $SRVDIR
+    mkdir $SRVDIR/cvmfs
+fi
+
 # install frontier-squid & frontier-awstats
 wget -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$FRONTIERRELRPM
 rpm -i $FRONTIERRELRPM
@@ -162,7 +171,25 @@ chmod +x /etc/iptables.d/60-local-cvmfs
 service gociptables restart
 chkconfig frontier-squid on
 service frontier-squid start
-mkdir -p /srv
+
+# install frontier-awstats password if available
+APWFILE=$SRVDIR/etc/awstats/password-file
+if [ ! -f $APWFILE ]; then
+    case $SRVDIR in
+	*-itb)
+	    # make a copy from production
+	    SRCAPWFILE="`echo $SRVDIR|sed 's/-itb//'`/etc/awstats/password-file"
+	    if [ -f $SRCAPWFILE ]; then
+		mkdir -p `dirname $APWFILE`
+		cp $SRCAPWFILE $APWFILE
+	    fi
+	    ;;
+    esac
+fi
+if [ -f $APWFILE ]; then
+    cp $APWFILE /etc/awstats
+    chown squid:squid /etc/awstats/password-file
+fi
 
 # install oasis
 OASISVER="`echo $OASISRPM|cut -d- -f2`"
@@ -172,14 +199,8 @@ yum -y install $OASISRPM
 rm $OASISRPM
 
 # add cvmfs replicas
-SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
-if [ ! -d $SRVDIR ]; then
-    mkdir $SRVDIR
-    setfacl -b $SRVDIR
-    chmod 755 $SRVDIR
-    mkdir $SRVDIR/cvmfs
-fi
-ln -s /net/nas01/srv/`uname -n|cut -d. -f1`/cvmfs /srv
+mkdir -p /srv
+ln -s $SRVDIR/cvmfs /srv
 # need nfslock for the repos to be on NFS
 chkconfig nfslock on
 service nfslock start
