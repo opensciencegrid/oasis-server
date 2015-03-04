@@ -5,6 +5,8 @@
 
 * Added bin/print_oasis_vonames script to print out list of VOs
   for the oasis repository that are registered in OIM
+* Added misc/oasis_status_stamp to generate /var/www/html/stamp
+  on the oasis machine
 
 -----------------------------------------------------------------------------
 2.0.9
