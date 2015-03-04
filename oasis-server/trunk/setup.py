@@ -22,7 +22,8 @@ from distutils.command.install_data import install_data as install_data_org
 
 libexec_files = ['libexec/%s' %file for file in os.listdir('libexec') if os.path.isfile('libexec/%s' %file)]
 
-utils_files = ['misc/generate_adduser',
+utils_files = ['misc/do_oasis_update',
+               'misc/generate_adduser',
                'misc/generate_condormap',
                'misc/generate_gridmap',
                'misc/generate_replicas',
