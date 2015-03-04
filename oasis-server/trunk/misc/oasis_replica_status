@@ -15,14 +15,6 @@ need_httpd=4
 overall_status=0
 
 ## determine snapshot age
-#snapdate=`ls -latr /srv/cvmfs/oasis/pub/catalogs* | awk -F- '{print $3}'`
-#y=`echo $snapdate | colrm 5 100`
-#m=`echo $snapdate | colrm 1 4 | colrm 3 100`
-#d=`echo $snapdate | colrm 1 6 | colrm 3 100`
-#h=`echo $snapdate | colrm 1 8 | colrm 3 100`
-#mi=`echo $snapdate | colrm 1 10 | colrm 3 100`
-#s=`echo $snapdate | colrm 1 12 | colrm 3 100`
-#snapped=`date -d "$y-$m-$d $h:$mi:$s" +%s`
 
 snapdate=`cat /srv/cvmfs/oasis.opensciencegrid.org/.cvmfs_last_snapshot`
 snapped=`date -d "$snapdate" +%s`
