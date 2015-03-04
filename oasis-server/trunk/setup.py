@@ -27,9 +27,10 @@ utils_files = ['misc/do_oasis_update',
                'misc/generate_condormap',
                'misc/generate_gridmap',
                'misc/generate_replicas',
+               'misc/generate_config_projects',
     	       'misc/oasis_replica_status',
     	       'misc/oasis_status_stamp',
-               'misc/generate_config_projects',
+    	       'misc/request_oasis_update',
               ]
 
 initd_files = ['etc/oasisd']
