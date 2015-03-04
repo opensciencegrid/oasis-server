@@ -7,6 +7,7 @@
   for the oasis repository that are registered in OIM
 * Added misc/oasis_status_stamp to generate /var/www/html/stamp
   on the oasis machine
+* Moved bin/do_oasis_update to misc
 
 -----------------------------------------------------------------------------
 2.0.9
