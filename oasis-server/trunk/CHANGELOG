@@ -9,6 +9,9 @@
   on the oasis machine
 * Moved bin/do_oasis_update to misc
 
+* added first version of sbin/oasis-admin-inspectrepository
+  to print info from the catalogs using the python bindings
+
 -----------------------------------------------------------------------------
 2.0.9
 -----------------------------------------------------------------------------
