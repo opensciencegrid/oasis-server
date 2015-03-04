@@ -30,6 +30,7 @@ utils_files = ['misc/do_oasis_update',
                'misc/generate_config_projects',
     	       'misc/oasis_replica_status',
     	       'misc/oasis_status_stamp',
+               'misc/print_oasis_vonames',
     	       'misc/request_oasis_update',
               ]
 
@@ -100,7 +101,6 @@ setup(
                'bin/oasis_replica_status.sh',
                'bin/oasis_status.sh',
                'bin/osg-oasis-update',
-               'bin/print_oasis_vonames',
                'bin/print_osg_repos',
                'bin/resign_osg_whitelist',
                'bin/set_repository_property',
