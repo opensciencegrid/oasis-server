@@ -97,6 +97,7 @@ setup(
                'bin/oasis_replica_status.sh',
                'bin/oasis_status.sh',
                'bin/osg-oasis-update',
+               'bin/print_oasis_vonames',
                'bin/print_osg_repos',
                'bin/resign_osg_whitelist',
                'bin/set_repository_property',
