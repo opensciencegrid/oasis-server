@@ -33,7 +33,7 @@ for name; do
 
     # much of the following was copied from cvmfs_server's 
     #   create_whitelist() function
-    whitelist="/srv/cvmfs/$name/pub/catalogs/.cvmfswhitelist"
+    whitelist="/srv/cvmfs/$name/.cvmfswhitelist"
 
     echo -n "Signing 30-day whitelist of $name with master key... "
     echo `date -u "+%Y%m%d%H%M%S"` > ${whitelist}.unsigned

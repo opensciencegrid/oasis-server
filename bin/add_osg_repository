@@ -50,8 +50,8 @@ if [ -f $MASTERKEY ]; then
 	echo "$ME: no repository name found in $1/.cvmfswhitelist" >&2
 	exit 1
     fi
-    CATDIR="/srv/cvmfs/$REPONAME/pub/catalogs"
-    su cvmfs -c "mkdir -p $CATDIR && cp $TMPFILE $CATDIR/.cvmfswhitelist"
+    REPODIR="/srv/cvmfs/$REPONAME"
+    su cvmfs -c "mkdir -p $REPODIR && cp $TMPFILE $REPODIR/.cvmfswhitelist"
     $MYDIR/resign_osg_whitelist "$REPONAME"
 elif [ -f /etc/cvmfs/repositories.d/$STRATUM0/replica.conf ]; then
     PUBKEY="/etc/cvmfs/keys/${REPONAME#*.}.pub"
