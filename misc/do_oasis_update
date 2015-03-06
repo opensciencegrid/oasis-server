@@ -38,7 +38,7 @@ if [ -f ${LOCKPFX}oasis_update_lock ]; then
 	    done
 	done
 
-	$runuser "rsync -aW --stats --exclude .cvmfscatalog --delete --force /net/nas01/Public/ouser.$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
+	$runuser "rsync -aW --stats --exclude .cvmfscatalog --delete --force --ignore-errors /net/nas01/Public/ouser.$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
 
 	echo "$now starting cvmfs_server publish"
 	# increase the maximum number of open files because cvmfs_server
