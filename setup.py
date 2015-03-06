@@ -99,7 +99,6 @@ setup(
                'bin/add_osg_repository',
                'bin/blank_osg_repository',
                'bin/oasis_replica_status.sh',
-               'bin/oasis_status.sh',
                'bin/osg-oasis-update',
                'bin/print_osg_repos',
                'bin/resign_osg_whitelist',
