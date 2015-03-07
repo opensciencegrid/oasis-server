@@ -51,7 +51,8 @@ if [ -f $MASTERKEY ]; then
 	exit 1
     fi
     REPODIR="/srv/cvmfs/$REPONAME"
-    su cvmfs -c "mkdir -p $REPODIR && cp $TMPFILE $REPODIR/.cvmfswhitelist"
+    mkdir -p $REPODIR
+    cp $TMPFILE $REPODIR/.cvmfswhitelist
     $MYDIR/resign_osg_whitelist "$REPONAME"
 elif [ -f /etc/cvmfs/repositories.d/$STRATUM0/replica.conf ]; then
     PUBKEY="/etc/cvmfs/keys/${REPONAME#*.}.pub"
