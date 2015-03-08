@@ -153,7 +153,21 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
-* Sat Feb 28 2015 Jose Caballero <jcaballero@bnl.gvo> - 2.0.9
+* Sun Mar 8 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.10
+- Bumped to 2.0.10
+- Added misc/print_oasis_vonames script to print out list of VOs
+  for the oasis repository that are registered in OIM
+- Added misc/oasis_status_stamp to generate /var/www/html/stamp
+  on the oasis machine, and removed bin/oasis_status.sh.
+- Removed bin/oasis_replica_status.sh.
+- Moved bin/do_oasis_update to misc and updated it for cvmfs 2.1
+- Moved bin/request_oasis_update to misc and made it work for both
+  itb and production
+- Updated add_osg_repository and resign_osg_whitelist for cvmfs 2.1.
+- Added first version of sbin/oasis-admin-inspectrepository
+  to print info from the catalogs using the python bindings
+
+* Sat Feb 28 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.9
 - Bumped to 2.0.9
 - Added some variables to the output created by script generate_config_projects
 
