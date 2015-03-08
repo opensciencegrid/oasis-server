@@ -31,7 +31,7 @@ fi
 
 set -e
 
-REVISION="`cat -v /srv/cvmfs/$REPO/.cvmfspublished|sed -n 's/^S//p'`"
+REVISION="`cat -v /srv/cvmfs/$REPO/.cvmfspublished|sed -n '/^S/{s/^S//p;q;}'`"
 let REVISION+=5
 echo "Blank $REPO revision will be set to $REVISION"
 # subtract 1 because we will be doing an extra publish

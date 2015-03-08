@@ -53,7 +53,7 @@ fi
 
 set -e
 
-BLANKREVISION="`cat -v /srv/cvmfs/$REPO/.cvmfspublished|sed -n 's/^S//p'`"
+BLANKREVISION="`cat -v /srv/cvmfs/$REPO/.cvmfspublished|sed -n '/^S/{s/^S//p;q;}'`"
 
 echo "Restoring .$REPO.$STAMP to $REPO"
 
