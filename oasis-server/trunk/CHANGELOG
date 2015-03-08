@@ -6,12 +6,13 @@
 * Added misc/print_oasis_vonames script to print out list of VOs
   for the oasis repository that are registered in OIM
 * Added misc/oasis_status_stamp to generate /var/www/html/stamp
-  on the oasis machine
+  on the oasis machine, and removed bin/oasis_status.sh.
+* Removed bin/oasis_replica_status.sh.
 * Moved bin/do_oasis_update to misc and updated it for cvmfs 2.1
 * Moved bin/request_oasis_update to misc and made it work for both
   itb and production
-
-* added first version of sbin/oasis-admin-inspectrepository
+* Updated add_osg_repository and resign_osg_whitelist for cvmfs 2.1.
+* Added first version of sbin/oasis-admin-inspectrepository
   to print info from the catalogs using the python bindings
 
 -----------------------------------------------------------------------------
