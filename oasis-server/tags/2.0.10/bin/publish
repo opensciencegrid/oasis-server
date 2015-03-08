@@ -1,0 +1,42 @@
+#!/usr/bin/python
+
+#####################################################################
+#                                                                   #
+#                   FIXME                                           #
+#                                                                   #
+#  this is just for development, not to be used really              #
+#                                                                   #
+#  the functionalities of this script will be included              #
+#  in /usr/bin/oasis                                                #
+#                                                                   #
+#  the point of this script is to trigger publishing                #
+#                                                                   #
+#####################################################################
+
+import getopt
+import os
+import sys
+import time
+
+from oasispackage.oasisAPI import oasisCLI, FlagFile
+
+
+def main():
+
+    oasis = oasisCLI()
+
+    projectname = oasis.project.projectname
+
+    flag = FlagFile(projectname)
+    flag.create()
+    # this will create a flagfile in the regular place
+    # then the daemon will see it and finish
+    oasis._loop() # we wait until the daemon is done
+
+
+    return rc
+
+
+if __name__ == '__main__':
+    rc = main()
+    sys.exit(rc)
