@@ -1,0 +1,44 @@
+#!/bin/bash
+## was an update requested?
+if [ -f /net/nas01/Public/oasis_update_lock ]; then
+## update was requested
+## is an update in progress?
+    if [ -f /net/nas01/Public/oasis_update_in_progress ]; then
+	exit 0
+    fi
+    if [ -f /net/nas01/Public/vo_update_requested ]; then
+##      updating a single VO
+	touch /net/nas01/Public/oasis_update_in_progress
+	vo=`cat /net/nas01/Public/vo_update_requested`
+	now=`date`
+	echo "$now starting vo update for $vo" >>/var/log/oasis/oasis_update.stdout
+	rsync -a -l --delete /net/nas01/Public/ouser.$vo/ /cvmfs/oasis.opensciencegrid.org/$vo
+##  update requested, none in progress
+	now=`date`
+	echo "$now starting cvmfs-sync" >>/var/log/oasis/oasis_update.stdout
+	/usr/bin/cvmfs-sync 1>>/var/log/oasis_update.stdout 2>>/var/log/oasis/oasis_update.stderr
+	stat=$?
+	now=`date`
+	if [ $stat -eq 0 ]; then
+	    echo "$now finished cvmfs-sync" >>/var/log/oasis/oasis_update.stdout
+	else
+	    echo "$now cvmfs-sync returned $stat" >>/var/log/oasis/oasis_update.stderr
+	    echo "$now failed cvmfs-sync">>/var/log/oasis/oasis_update.stderr
+	fi
+	echo "$now starting cvmfs_server publish" >>/var/log/oasis/oasis_update.stdout
+	/usr/bin/cvmfs_server publish 1>>/var/log/oasis_update.stdout 2>>/var/log/oasis/oasis_update.stderr
+	stat=$?
+	now=`date`
+	if [ $stat -eq 0 ]; then
+	    echo "$now finished cvmfs_server publish" >>/var/log/oasis/oasis_update.stdout
+	else
+	    echo "$now cvmfs-server publish returned $stat" >>/var/log/oasis/oasis_update.stderr
+	    echo "$now finished cvmfs_server publish">>/var/log/oasis/oasis_update.stderr
+	fi
+	rm -f /net/nas01/Public/oasis_update_in_progress
+	rm -f /net/nas01/Public/oasis_update_lock
+	/usr/local/oasis/bin/oasis_status.sh
+    fi
+fi
+exit 0
+
