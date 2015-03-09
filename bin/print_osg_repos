@@ -17,6 +17,9 @@ doc = libxml2.parseDoc(xml)
 repos = []
 for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
     url = urlfield.content
+    if url[-1] == '/':
+      # remove a trailing slash
+      url = url[:-1]
     if printurls:
       repos.append(url)
     else:
