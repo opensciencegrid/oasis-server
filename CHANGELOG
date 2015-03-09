@@ -2,7 +2,7 @@
 2.0.11
 -----------------------------------------------------------------------------
 
-* Prevent blank_osg_repository and and unblank_osg_repository from
+* Prevent blank_osg_repository and and unblank_osg_repository from being
   confused by a .cvmfspublished signature that happens to start with 'S'
 * Update bin/print_osg_replicas and misc/generate_replicas to accept URLs
   from OIM with a trailing slash
