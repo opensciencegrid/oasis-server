@@ -11,6 +11,9 @@ rm /srv/cvmfs
 cvmfs_server rmfs -f oasis.opensciencegrid.org # removes partially
 umount /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
 cvmfs_server rmfs -f oasis.opensciencegrid.org # finishes the remove
+rm /var/spool/cvmfs
+rm -rf /usr/spool/cvmfs
+rmdir /usr/spool
 sed -i -e '/added by install-oasis/d' /etc/fstab
 rm -rf /var/spool/cvmfs/*
 rm /etc/cron.d/oasis
@@ -19,10 +22,6 @@ rm /opt/etc/osupdate.d/aufs.postupdate
 rm -rf /usr/src/redhat/*/aufs* /usr/src/redhat/RPMS/*/*aufs*
 rmdir /usr/src/redhat/RPMS/* /usr/src/redhat/* /usr/src/redhat
 yum -y remove elfutils-libs xz-libs gcc aufs kernel-module-aufs
-OSGREL=osg-3.1-el5-release-latest.rpm
-wget -N http://repo.grid.iu.edu/osg/3.1/$OSGREL
-rpm -iv $OSGREL
-rm -f $OSGREL
 service httpd stop
 rm -f /var/www/html/stamp
 rpm -e cvmfs-release
