@@ -61,6 +61,9 @@ doc = libxml2.parseDoc(xml)
 #parse out OASISRepoURLs
 for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
     url = urlfield.content
+    if url[-1] == '/':
+      # remove a trailing slash
+      url = url[:-1]
     repo = url[url.rfind('/')+1:]
     serverconf = '/etc/cvmfs/repositories.d/' + repo + '/server.conf'
     replicaconf = '/etc/cvmfs/repositories.d/' + repo + '/replica.conf'
