@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install and configure all application software on oasis
+# Install and configure all application software on oasis or oasis-itb
 # Written by Dave Dykstra 2-26-2015
 
 set -ex
@@ -11,13 +11,12 @@ CVMFSVER=2.1.20
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
-OASISRPM=oasis-2.0.8-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.11-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
-# import OSG key but remove its yum repo because it isn't mirrored
+# import OSG key because we'll be directly downloading oasis rpm
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
-rpm -e osg-release
 
 # download, build, and install aufs
 wget -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
@@ -47,6 +46,11 @@ CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
 yum -y install $CVRPMS
 rm $CVRPMS
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
+# move /var/spool/cvmfs to /usr/spool because /var is too small for cache & tmp
+rm -rf /usr/spool/cvmfs
+mkdir -p /usr/spool
+mv /var/spool/cvmfs /usr/spool
+ln -s /usr/spool/cvmfs /var/spool
 
 echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
@@ -129,7 +133,7 @@ RUNUSER="runuser -s /bin/bash oasis -c"
 if [ -d /srv/cvmfs.save ]; then
     # update the old .cvmfspublished with new certificate hash
     REPONAME=oasis.opensciencegrid.org
-    CERTHASH="`cat -v /srv/cvmfs.save/$REPONAME/.cvmfspublished|sed -n 's/^X//p'`"
+    CERTHASH="`cat -v /srv/cvmfs.save/$REPONAME/.cvmfspublished|sed -n '/^X/{s/^X//p;q}'`"
     $RUNUSER "cd /srv/cvmfs/$REPONAME; cat -v .cvmfspublished | \
 	    sed 's/^X.*/X'$CERTHASH'/;/^--/q' > .cvmfspublished.unsigned"
     CERTPATH="`echo $CERTHASH|sed 's,^\(..\),\1/,'`X"
@@ -208,5 +212,34 @@ for VO in `/usr/share/oasis/print_oasis_vonames`; do
     /usr/share/oasis/request_oasis_update
 done
 
-echo 
+set -x
+
+# update the publication revision to be greater than the previous revision
+REVISION="`wget -qO- http://oasis-replica.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|cat -v|sed -n '/^S/{s/^S//p;q;}'`"
+let REVISION+=100
+
+$RUNUSER "cvmfs_server transaction"
+$RUNUSER "cvmfs_server publish -n $REVISION"
+
+# remove the temporary masterkey and install official public key
+rm /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
+cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/oasis.opensciencegrid.org.pub
+
+set +x
+
+# add the signed external repositories whitelists
+# this is safer than reading from the original sources, in case one is down
+for REPO in `print_osg_repos`; do
+    if [ ! -f /srv/cvmfs/$REPO/.cvmfswhitelist ]; then
+	URL=http://oasis-replica.opensciencegrid.org:8000/cvmfs/$REPO/.cvmfswhitelist"
+	echo "Adding whitelist from $URL"
+	mkdir -p /srv/cvmfs/$REPO
+	wget -O/srv/cvmfs/$REPO/.cvmfswhitelist $URL
+    fi
+done
+
+echo
 echo "Installation of `uname -n|cut -d. -f1` completed successfully at `date`"
+echo
+echo "Now temporarily install /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey"
+echo "   and run resign_osg_whitelist"
