@@ -153,6 +153,12 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Mon Mar 9 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.11
+- Prevent blank_osg_repository and and unblank_osg_repository from being
+  confused by a .cvmfspublished signature that happens to start with 'S'
+- Update bin/print_osg_replicas and misc/generate_replicas to accept URLs
+  from OIM with a trailing slash
+
 * Sun Mar 8 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.10
 - Bumped to 2.0.10
 - Added misc/print_oasis_vonames script to print out list of VOs
