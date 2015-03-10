@@ -29,6 +29,7 @@ for r in `rpm -qa|grep gpg-pubkey|sed 's/\.(none)//'|sort -u`; do
     rpm --allmatches -e $r
 done
 yum -y remove httpd fuse fuse-libs cvmfs-config gdb
+yum clean all
 sed -i '/nofile.*16384/d' /etc/security/limits.conf
 rm /etc/cvmfs/keys/opensciencegrid.org.pub
 rm /etc/logrotate.d/oasis
