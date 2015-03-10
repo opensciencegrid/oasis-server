@@ -103,6 +103,7 @@ fi
 CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
 echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
+echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 
 # move scratch dir and /srv/cvmfs to attached storage
 umount /cvmfs/oasis.opensciencegrid.org
@@ -179,7 +180,7 @@ if [ ! -L /cvmfs/oasis.opensciencegrid.org/osg-software/osg-wn-client ]; then
     $RUNUSER "ln -s /cvmfs/oasis.opensciencegrid.org/mis/osg-wn-client /cvmfs/oasis.opensciencegrid.org/osg-software/osg-wn-client"
 fi
 
-sleep 2 # cvmfs-2.1.20 complains if two publishes done in the same second
+sleep 2 # when auto tagging is on, cvmfs-2.1.20 complains if two publishes done in the same second
 $RUNUSER "cvmfs_server publish"
 
 # add cron entries
@@ -214,12 +215,15 @@ done
 
 set -x
 
-# update the publication revision to be greater than the previous revision
-REVISION="`wget -qO- http://oasis-replica.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|cat -v|sed -n '/^S/{s/^S//p;q;}'`"
-let REVISION+=100
+# update the publication revision to be 100 greater than the previous revision
+PREVREVISION="`wget -qO- http://oasis-replica.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|cat -v|sed -n '/^S/{s/^S//p;q;}'`"
+let PREVREVISION+=100
+CURREVISION="`cat -v /cvmfs/oasis.opensciencegrid.org/.cvmfspublished|sed -n '/^S/{s/^S//p;q;}'`"
 
-$RUNUSER "cvmfs_server transaction"
-$RUNUSER "cvmfs_server publish -n $REVISION"
+if [ $PREVREVISION -gt $CURREVISION ]; then
+    $RUNUSER "cvmfs_server transaction"
+    $RUNUSER "cvmfs_server publish -n $PREVREVISION"
+fi
 
 # remove the temporary masterkey and install official public key
 rm /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
