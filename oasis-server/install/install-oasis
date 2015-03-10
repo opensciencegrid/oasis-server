@@ -246,4 +246,4 @@ echo
 echo "Installation of `uname -n|cut -d. -f1` completed successfully at `date`"
 echo
 echo "Now temporarily install /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey"
-echo "   and run resign_osg_whitelist"
+echo "   and run cvmfs_server resign"
