@@ -218,9 +218,9 @@ set -x
 # update the publication revision to be 100 greater than the previous revision
 PREVREVISION="`wget -qO- http://oasis-replica.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|cat -v|sed -n '/^S/{s/^S//p;q;}'`"
 let PREVREVISION+=100
-CURREVISION="`cat -v /cvmfs/oasis.opensciencegrid.org/.cvmfspublished|sed -n '/^S/{s/^S//p;q;}'`"
+CURREVISION="`cat -v /srv/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|sed -n '/^S/{s/^S//p;q;}'`"
 
-if [ $PREVREVISION -gt $CURREVISION ]; then
+if [ "$PREVREVISION" -gt "$CURREVISION" ]; then
     $RUNUSER "cvmfs_server transaction"
     $RUNUSER "cvmfs_server publish -n $PREVREVISION"
 fi
@@ -235,7 +235,7 @@ set +x
 # this is safer than reading from the original sources, in case one is down
 for REPO in `print_osg_repos`; do
     if [ ! -f /srv/cvmfs/$REPO/.cvmfswhitelist ]; then
-	URL=http://oasis-replica.opensciencegrid.org:8000/cvmfs/$REPO/.cvmfswhitelist"
+	URL="http://oasis-replica.opensciencegrid.org:8000/cvmfs/$REPO/.cvmfswhitelist"
 	echo "Adding whitelist from $URL"
 	mkdir -p /srv/cvmfs/$REPO
 	wget -O/srv/cvmfs/$REPO/.cvmfswhitelist $URL
