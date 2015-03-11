@@ -2,7 +2,9 @@
 2.0.12
 -----------------------------------------------------------------------------
 
-* small bug fixed in GOC script  generate_config_projects
+* Small bug fixed in GOC script generate_config_projects
+* Update GOC script do_oasis_update to add copying in of .cvmfsdirtab from
+  network attached storage
 
 -----------------------------------------------------------------------------
 2.0.11
