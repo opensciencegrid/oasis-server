@@ -31,7 +31,7 @@ for vo in doc.xpathEval("//VO"):
     print("enabled = True")
     print("repositorysection = OASIS")  # For GOC, at the time being, only one repository
     print("projectname = %s" %projectname)
-    print("project_src_dir = %s" %projectname )
+    print("project_src_dir = %s" %username)
     print("project_dest_dir = %s" %projectname)
     print("project_src_owner = %s" %username)
     print("project_dest_owner = oasis")
