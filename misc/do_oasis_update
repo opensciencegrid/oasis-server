@@ -1,7 +1,9 @@
 #!/bin/bash
 LOCKPFX="/net/nas01/Public/"
+SRVDIR="/net/nas01/srv/oasis"
 if [ "`uname -n|cut -d. -f1`" != oasis ]; then
     LOCKPFX=${LOCKPFX}itb_
+    SRVDIR=${SRVDIR}-itb
 fi
 ## was an update requested?
 if [ -f ${LOCKPFX}oasis_update_lock ]; then
@@ -25,10 +27,20 @@ if [ -f ${LOCKPFX}oasis_update_lock ]; then
 	echo "$now starting vo update for $vo"
 	$runuser "cvmfs_server transaction oasis.opensciencegrid.org"
 
+	# first see if .cvmfsdirtab needs to be updated
+	SRCDIRTAB=$SRVDIR/etc/repo/.cvmfsdirtab
+	DSTDIRTAB=/cvmfs/oasis.opensciencegrid.org/.cvmfsdirtab
+	if cmp $SRCDIRTAB $DSTDIRTAB >/dev/null 2>&1; then
+	    : no change
+	else
+	    echo "updating .cvmfsdirtab from $SRCDIRTAB"
+	    $runuser "cp $SRCDIRTAB $DSTDIRTAB"
+	fi
+
 	# Remove .cvmfscatalog files in target directories that have been
 	#   removed from the source.  Without this, rsync can't remove
 	#   directories that contain catalogs.
-	grep "^/$vo/" /cvmfs/oasis.opensciencegrid.org/.cvmfsdirtab|while read pat; do
+	grep "^/$vo/" $DSTDIRTAB|while read pat; do
 	    for dir in `echo /cvmfs/oasis.opensciencegrid.org$pat 2>/dev/null`; do
 		srcdir="`echo $dir|sed 's,/cvmfs/oasis.opensciencegrid.org/,,'`"
 		if [ ! -d "/net/nas01/Public/ouser.$srcdir" ] && [ -f "$dir/.cvmfscatalog" ]; then
