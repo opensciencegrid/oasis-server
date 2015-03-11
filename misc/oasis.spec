@@ -153,13 +153,18 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
-* Mon Mar 9 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.11
+* Wed Mar 11 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.12-1
+- Small bug fixed in GOC script generate_config_projects
+- Update GOC script do_oasis_update to add copying in of .cvmfsdirtab from
+  network attached storage
+
+* Mon Mar 9 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.11-1
 - Prevent blank_osg_repository and and unblank_osg_repository from being
   confused by a .cvmfspublished signature that happens to start with 'S'
 - Update bin/print_osg_replicas and misc/generate_replicas to accept URLs
   from OIM with a trailing slash
 
-* Sun Mar 8 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.10
+* Sun Mar 8 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.10-1
 - Bumped to 2.0.10
 - Added misc/print_oasis_vonames script to print out list of VOs
   for the oasis repository that are registered in OIM
@@ -173,15 +178,15 @@ f_restart_daemon $1
 - Added first version of sbin/oasis-admin-inspectrepository
   to print info from the catalogs using the python bindings
 
-* Sat Feb 28 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.9
+* Sat Feb 28 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.9-1
 - Bumped to 2.0.9
 - Added some variables to the output created by script generate_config_projects
 
-* Wed Feb 25 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.8
+* Wed Feb 25 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.8-1
 - Bumped to 2.0.8
 - Added bin/print_osg_repos to setup.py
 
-* Tue Feb 24 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.7
+* Tue Feb 24 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.7-1
 - Bumped to 2.0.7
 - added script generate_config_projects
 
