@@ -193,9 +193,9 @@ mkdir -p /var/log/oasis
 # ----- BEGIN CHANGES BY J. CABALLERO ----- 
 
 # ----- copy from repo (SVN @ BNL, temporarily) the config files
-wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/configs/oasis.conf  --output-file /etc/oasis/oasis.conf
-wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/configs/projects.conf  --output-file /etc/oasis/projects.conf
-wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/configs/repositories.conf --output-file /etc/oasis/repositories.conf
+wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/etc/oasis/oasis.conf  --output-file /etc/oasis/oasis.conf
+wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/etc/oasis/projects.conf  --output-file /etc/oasis/projects.conf
+wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/etc/oasis/repositories.conf --output-file /etc/oasis/repositories.conf
 touch /etc/oasis/probes.conf
 touch /etc/oasis/no_vo_probes.conf
 
