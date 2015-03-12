@@ -2,6 +2,13 @@
 # Install and configure all application software on oasis or oasis-itb
 # Written by Dave Dykstra 2-26-2015
 
+case "`uname -n`" in
+    oasis.*|oasis-itb.*);;
+    *)  echo "Only run this on oasis or oasis-itb"
+	exit 2
+	;;
+esac
+
 set -ex
 
 ARCH=`arch`
@@ -11,7 +18,7 @@ CVMFSVER=2.1.20
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
-OASISRPM=oasis-2.0.11-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.12-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -19,7 +26,7 @@ PATH="$PATH:/sbin"
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
 
 # download, build, and install aufs
-wget -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
+wget -q -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
 mkdir -p /usr/src/redhat/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 rpm -i $AUFSRPM
 rm $AUFSRPM
@@ -34,14 +41,14 @@ mkdir -p /opt/etc/osupdate.d
 cp `dirname $0`/aufs.postupdate /opt/etc/osupdate.d
 
 # install cvmfs
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
+wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
 rpm -i $CVMFSRELRPM
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
 rpm -e cvmfs-release
 rm $CVMFSRELRPM
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
+wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
+wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
 CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
 yum -y install $CVRPMS
 rm $CVRPMS
@@ -83,7 +90,7 @@ mkdir -p /srv
 # install oasis
 OASISVER="`echo $OASISRPM|cut -d- -f2`"
 OASISSUBVER="`echo $OASISRPM|cut -d- -f3|cut -d. -f1-3`"
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
+wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
 yum -y install $OASISRPM
 rm $OASISRPM
 
@@ -159,13 +166,20 @@ if [ -f /cvmfs/oasis.opensciencegrid.org/new_repository ]; then
     rm /cvmfs/oasis.opensciencegrid.org/new_repository
 fi
 
+# make sure there's a .cvmfsdirtab
+DIRTAB=$SRVDIR/etc/repo/.cvmfsdirtab
+if [ ! -f $DIRTAB ]; then
+    case $SRVDIR in
+	*-itb)
+	    # make a copy from production
+	    SRCDIRTAB="`echo $DIRTAB|sed 's/-itb//'`"
+	    mkdir -p `dirname $DIRTAB`
+	    cp $SRCDIRTAB $DIRTAB
+	    ;;
+    esac
+fi
 if [ ! -f /cvmfs/oasis.opensciencegrid.org/.cvmfsdirtab ]; then
-    # read in .cvmfsdirtab from subversion
-    cd /cvmfs/oasis.opensciencegrid.org
-    # svn checkout only works as root, do chown afterward
-    svn checkout https://osg-svn.rtinfo.indiana.edu/goc-internal/install/oasis/files/oasis-repo .
-    chown -R oasis:oasis .svn .cvmfsdirtab
-    cd
+    $RUNUSER cp $DIRTAB /cvmfs/oasis.opensciencegrid.org
 fi
 
 if [ ! -L /cvmfs/oasis.opensciencegrid.org/cmssoft/cms ]; then
@@ -203,7 +217,7 @@ for VO in `/usr/share/oasis/print_oasis_vonames`; do
 	# skip because it hasn't been published yet
 	continue
     fi
-    if cmp /net/nas01/Public/ouser.$VO/cvmfs/oasis.opensciencegrid.org/$VO/update.details 2>/dev/null; then
+    if cmp /net/nas01/Public/ouser.$VO/update.details /cvmfs/oasis.opensciencegrid.org/$VO/update.details >/dev/null 2>&1; then
 	# already up to date, nothing to do
 	continue
     fi
@@ -238,7 +252,7 @@ for REPO in `print_osg_repos`; do
 	URL="http://oasis-replica.opensciencegrid.org:8000/cvmfs/$REPO/.cvmfswhitelist"
 	echo "Adding whitelist from $URL"
 	mkdir -p /srv/cvmfs/$REPO
-	wget -O/srv/cvmfs/$REPO/.cvmfswhitelist $URL
+	wget -q -O/srv/cvmfs/$REPO/.cvmfswhitelist $URL
     fi
 done
 
