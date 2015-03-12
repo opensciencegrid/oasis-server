@@ -5,6 +5,7 @@
 * Small changes in GOC script generate_config_projects: 
    -- only one empty <vo> probes config file
    -- more reasonable time values
+   -- all repeated values into [DEFAULT] section
 
 
 -----------------------------------------------------------------------------
