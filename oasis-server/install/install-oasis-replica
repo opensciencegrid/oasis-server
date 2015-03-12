@@ -2,6 +2,13 @@
 # Install and configure all application software on oasis-replica
 # Written by Dave Dykstra 2-4-2015
 
+case "`uname -n`" in
+    oasis-replica.*|oasis-replica-itb.*);;
+    *)  echo "Only run this on oasis-replica or oasis-replica-itb"
+	exit 2
+	;;
+esac
+
 set -ex
 
 ARCH=`arch`
@@ -14,7 +21,7 @@ CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
-OASISRPM=oasis-2.0.8-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.11-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -23,7 +30,7 @@ rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
 rpm -e osg-release
 
 # download, build, and install aufs
-wget -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
+wget -q -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
 mkdir -p /usr/src/redhat/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 rpm -i $AUFSRPM
 rm $AUFSRPM
@@ -38,15 +45,15 @@ mkdir -p /opt/etc/osupdate.d
 cp `dirname $0`/aufs.postupdate /opt/etc/osupdate.d
 
 # install cvmfs
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
+wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
 rpm -i $CVMFSRELRPM
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
 rpm -e cvmfs-release
 rm $CVMFSRELRPM
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
-wget -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
 CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
+wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
+wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
 yum -y install $CVRPMS
 rm $CVRPMS
 cp /etc/cvmfs/keys/egi.eu/egi.eu.pub /etc/cvmfs/keys
@@ -108,12 +115,12 @@ if [ ! -d $SRVDIR ]; then
 fi
 
 # install frontier-squid & frontier-awstats
-wget -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$FRONTIERRELRPM
+wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$FRONTIERRELRPM
 rpm -i $FRONTIERRELRPM
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-cern-frontier
 rpm -e frontier-release
-wget -N http://frontier.cern.ch/dist/rpms/RPMS/$ARCH/$SQUIDRPM
-wget -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$AWSTATSRPM
+wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/$ARCH/$SQUIDRPM
+wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$AWSTATSRPM
 yum -y install $SQUIDRPM $AWSTATSRPM
 rm $FRONTIERRELRPM $SQUIDRPM $AWSTATSRPM
 cat >/etc/squid/customize.sh <<"xEOFx"
@@ -194,7 +201,7 @@ fi
 # install oasis
 OASISVER="`echo $OASISRPM|cut -d- -f2`"
 OASISSUBVER="`echo $OASISRPM|cut -d- -f3|cut -d. -f1-3`"
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
+wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
 yum -y install $OASISRPM
 rm $OASISRPM
 
@@ -224,6 +231,14 @@ for URL in $REPOURLS; do
     fi
 done
 
+# do initial snapshots for those repos that need it
+for URL in $REPOURLS; do
+    REPO="`basename $URL`"
+    if [ ! -f /srv/cvmfs/$REPO/.cvmfspublished ]; then
+	cvmfs_server snapshot $REPO
+    fi
+done
+
 # add cron entries
 mkdir -p /var/log/cvmfs
 cat >>/etc/cron.d/cvmfs <<'xEOFx'
@@ -232,14 +247,6 @@ cat >>/etc/cron.d/cvmfs <<'xEOFx'
 */3 * * * * root   /usr/share/oasis/oasis_replica_status
 0 9 * * * root     find /srv/cvmfs/*.*/data/txn -name "*.*" -mtime +2 2>/dev/null|xargs rm -f
 xEOFx
-
-# do initial snapshots for those repos that need it
-for URL in $REPOURLS; do
-    REPO="`basename $URL`"
-    if [ ! -f /srv/cvmfs/$REPO/.cvmfspublished ]; then
-	cvmfs_server snapshot $REPO
-    fi
-done
 
 set +x
 echo 
