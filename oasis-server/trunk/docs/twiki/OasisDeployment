@@ -223,7 +223,7 @@ It has a single section, called *[OASIS]*. This head section name can not change
 
 | *Variable* | *Description* | *Mandatory* |
 | =services= | list of OASIS services, split by comma, provided by OASIS on a particular host. <BR> Current valid values are =login=, =server=, =replica=.| MANDATORY |
-| =sleep= | it is the time between cycles for the daemon, waiting to see if all threads, one per Project, need to be shutdown Time is expressed in seconds.  | MANDATORY |
+| =sleep= | it is the time between cycles for the daemon, waiting to see if all threads, one per Project, need to be shutdown because the daemon has been stopped. Time is expressed in seconds.  | MANDATORY |
 | =email= | email address to notify CRITICAL events | OPTIONAL |
 | =SMTPServer= | SMTP server to be used to send email notifications | OPTIONAL |
 | =projectsconf= | path to the Projects configuration file | MANDATORY |
