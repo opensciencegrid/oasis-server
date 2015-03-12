@@ -25,9 +25,9 @@ for vo in doc.xpathEval("//VO"):
     projectname = voname
     section = projectname.upper()
     print("[%s]" %section)
-    print("sleep = 300")
-    print("starttimeout = 600")
-    print("finishtimeout = 3600")
+    print("sleep = 300")   # 5 minutes
+    print("starttimeout = 3600")   # 1 hour
+    print("finishtimeout = 36000")   # 10 hours
     print("enabled = True")
     print("repositorysection = OASIS")  # For GOC, at the time being, only one repository
     print("projectname = %s" %projectname)
@@ -35,8 +35,9 @@ for vo in doc.xpathEval("//VO"):
     print("project_dest_dir = %s" %projectname)
     print("project_src_owner = %s" %username)
     print("project_dest_owner = oasis")
-    print("projectprobesconf = /etc/oasis/%s.conf" %projectname)
+    print("projectprobesconf = /etc/oasis/no_vo_probes.conf") #for the time being, just point to a generic empty probes config file
 
     # FIXME. Just a temporary solution
-    commands.getoutput('touch /etc/oasis/%s.conf' %projectname)
+    #commands.getoutput('touch /etc/oasis/%s.conf' %projectname)
+    commands.getoutput('touch /etc/oasis/no_vo_probes.conf')
 
