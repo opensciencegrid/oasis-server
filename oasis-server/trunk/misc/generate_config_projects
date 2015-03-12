@@ -17,6 +17,15 @@ response = urllib2.urlopen("https://myosg.grid.iu.edu/vosummary/xml?summary_attr
 xml = response.read()
 doc = libxml2.parseDoc(xml)
 
+print('[DEFAULT]')
+print('sleep = 300')  # 5 minutes
+print('starttimeout = 3600')  # 1 hour
+print('finishtimeout = 36000')  # 10 hours
+print('enabled = True')
+print("repositorysection = OASIS")  # For GOC, at the time being, only one repository
+print('project_dest_owner = oasis')
+print("projectprobesconf = /etc/oasis/no_vo_probes.conf") #for the time being, just point to a generic empty probes config file
+
 for vo in doc.xpathEval("//VO"):
     voname = vo.xpathEval("Name")[0].content
     voname = re.sub(r'[^/a-z0-9]+', '', voname.lower())
@@ -25,17 +34,12 @@ for vo in doc.xpathEval("//VO"):
     projectname = voname
     section = projectname.upper()
     print("[%s]" %section)
-    print("sleep = 300")   # 5 minutes
-    print("starttimeout = 3600")   # 1 hour
-    print("finishtimeout = 36000")   # 10 hours
-    print("enabled = True")
-    print("repositorysection = OASIS")  # For GOC, at the time being, only one repository
     print("projectname = %s" %projectname)
     print("project_src_dir = %s" %username)
     print("project_dest_dir = %s" %projectname)
     print("project_src_owner = %s" %username)
     print("project_dest_owner = oasis")
-    print("projectprobesconf = /etc/oasis/no_vo_probes.conf") #for the time being, just point to a generic empty probes config file
+    print
 
     # FIXME. Just a temporary solution
     #commands.getoutput('touch /etc/oasis/%s.conf' %projectname)
