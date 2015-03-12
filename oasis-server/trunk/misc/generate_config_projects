@@ -38,7 +38,6 @@ for vo in doc.xpathEval("//VO"):
     print("project_src_dir = %s" %username)
     print("project_dest_dir = %s" %projectname)
     print("project_src_owner = %s" %username)
-    print("project_dest_owner = oasis")
     print
 
     # FIXME. Just a temporary solution
