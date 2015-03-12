@@ -38,5 +38,6 @@ rmdir /etc/squid
 rm /etc/iptables.d/60-local-cvmfs
 service gociptables restart
 yum -y remove oasis
+yum clean all
 service nfslock stop
 chkconfig nfslock off
