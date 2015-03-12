@@ -25,6 +25,7 @@ print('enabled = True')
 print("repositorysection = OASIS")  # For GOC, at the time being, only one repository
 print('project_dest_owner = oasis')
 print("projectprobesconf = /etc/oasis/no_vo_probes.conf") #for the time being, just point to a generic empty probes config file
+print
 
 for vo in doc.xpathEval("//VO"):
     voname = vo.xpathEval("Name")[0].content
