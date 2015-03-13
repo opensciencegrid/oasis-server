@@ -1,0 +1,65 @@
+# ----------------------------------------------------------------------------------------------------------------
+# Next is coming from http://svn.usatlas.bnl.gov/svn/griddev/provisioning-templates/files/condor/50cloud_condor.config
+# ----------------------------------------------------------------------------------------------------------------
+
+
+# Pool and worker setup
+CONDOR_HOST = grid39.racf.bnl.gov
+COLLECTOR_NAME = Condor for OASIS ITB at $(FULL_HOSTNAME)
+START = TRUE
+SUSPEND = FALSE
+PREEMPT = FALSE
+KILL = FALSE
+RANK = 0
+CLAIM_WORKLIFE = 3600
+JOB_RENICE_INCREMENT=0
+GSI_DELEGATION_KEYBITS = 1024
+
+DAEMON_LIST = MASTER, STARTD
+UID_DOMAIN = grid41.racf.bnl.gov
+
+
+# Debug settings
+#ALL_DEBUG = D_FULLDEBUG, D_COMMAND, D_SECURITY, D_NETWORK
+#STARTD_DEBUG = D_PID D_COMMAND D_JOB D_MACHINE
+
+
+# -------------------------------------------------------
+#           W R A P P E R 
+# -------------------------------------------------------
+#USER_JOB_WRAPPER = /usr/libexec/jobwrapper.sh
+# -------------------------------------------------------
+
+
+
+# Network setup. Use shared port. 
+COLLECTOR_HOST=$(CONDOR_HOST):29618
+UPDATE_COLLECTOR_WITH_TCP = True
+UPDATE_INTERVAL = 30
+PRIVATE_NETWORK_NAME = localdomain
+HIGHPORT = 30000 
+LOWPORT = 20000
+USE_SHARED_PORT = FALSE
+
+
+# Security
+# Use password security.
+
+ALLOW_WRITE = condor_pool@*
+SEC_DEFAULT_AUTHENTICATION = REQUIRED
+SEC_DEFAULT_AUTHENTICATION_METHODS = PASSWORD, FS
+SEC_PASSWORD_FILE = /etc/condor/password_file
+#  command to create password is  condor_store_cred
+SEC_DEFAULT_ENCRYPTION = REQUIRED
+SEC_DEFAULT_INTEGRITY = REQUIRED
+
+SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION  = True
+ALLOW_WRITE = $(ALLOW_WRITE), submit-side@matchsession/*
+ALLOW_ADMINISTRATOR = condor_pool@*/*
+
+
+# Job environment config
+NUM_SLOTS = 1
+EXECUTE = /home/condor/execute
+
+

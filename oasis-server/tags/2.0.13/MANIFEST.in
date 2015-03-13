@@ -1,0 +1,10 @@
+include CHANGELOG LICENSE README
+include etc/*
+include etc/logrotate/*
+include etc/sysconfig/*
+include libexec/*
+include bin/*
+include sbin/*
+include misc/*
+include src/*
+#recursive-include oasispackage *.py *.pyc *.pyo
