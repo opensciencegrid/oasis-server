@@ -153,6 +153,18 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Fri Mar 13 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.13-1
+- Small changes in GOC script generate_config_projects: 
+   -- only one empty <vo> probes config file
+   -- more reasonable time values
+   -- all repeated values into [DEFAULT] section
+- Added some input options to the rsync command in plugin cvmfs21
+- Update misc/generate_gridmap to the latest version that was installed on
+  oasis-login
+- Added misc/oasis_login_status
+- Added bin/osg-oasis-batch and its worker bin/osg-batch-worker, and
+  changed bin/osg-oasis-update to call it
+
 * Wed Mar 11 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.12-1
 - Small bug fixed in GOC script generate_config_projects
 - Update GOC script do_oasis_update to add copying in of .cvmfsdirtab from
