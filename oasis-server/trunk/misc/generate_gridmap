@@ -10,7 +10,7 @@ response = urllib2.urlopen("https://myosg.grid.iu.edu/vosummary/xml?summary_attr
 xml = response.read()
 doc = libxml2.parseDoc(xml)
 
-dncount = 0
+dns = {}
 #parse out the VO names
 for vo in doc.xpathEval("//VO"):
 
@@ -21,9 +21,8 @@ for vo in doc.xpathEval("//VO"):
         username = "ouser."+voname
         groupname = "cvmfs"
 
-        for manager in vo.xpathEval("OASIS/Managers/Manager"):
-                #username = manager.xpathEval("Name")[0].content
-                dn = manager.xpathEval("DN")[0].content
+        for dn in vo.xpathEval("OASIS/Managers/Manager/DNs/DN"):
+		dn = dn.content
                 original_dn = dn
 
                 #sanitize dn
@@ -37,10 +36,19 @@ for vo in doc.xpathEval("//VO"):
                 dn = re.sub(r'["]+', '\\\"', dn)
                 
                 #print voname,username,dn
-                print "\""+dn+"\"",username
-                dncount+=1
-if dncount < 3:
-    print >> sys.stderr, "dncount too small:",dncount
+		if dn in dns:
+			usernames = dns[dn]
+			usernames.append(username)
+		else:
+			dns[dn] = [username]
+	
+
+for dn in dns:
+	usernames = dns[dn]
+	print "\""+dn+"\"",",".join(usernames)
+
+if len(dns) < 10:
+    print >> sys.stderr, "dn count is too small:",len(dns)
     sys.exit(2)
 
 sys.exit(0)
