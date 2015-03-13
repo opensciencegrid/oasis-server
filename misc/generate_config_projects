@@ -19,7 +19,7 @@ doc = libxml2.parseDoc(xml)
 
 print('[DEFAULT]')
 print('sleep = 300')  # 5 minutes
-print('starttimeout = 3600')  # 1 hour
+print('starttimeout = 36000')  # 10 hour
 print('finishtimeout = 36000')  # 10 hours
 print('enabled = True')
 print("repositorysection = OASIS")  # For GOC, at the time being, only one repository
