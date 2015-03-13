@@ -6,8 +6,12 @@
    -- only one empty <vo> probes config file
    -- more reasonable time values
    -- all repeated values into [DEFAULT] section
-
-* added some input options to the rsync command in plugin cvmfs21
+* Added some input options to the rsync command in plugin cvmfs21
+* Update misc/generate_gridmap to the latest version that was installed on
+  oasis-login
+* Added misc/oasis_login_status
+* Added bin/osg-oasis-batch and its worker bin/osg-batch-worker, and
+  changed bin/osg-oasis-update to call it
 
 -----------------------------------------------------------------------------
 2.0.12
