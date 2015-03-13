@@ -18,6 +18,7 @@ sed -i -e '/added by install-oasis/d' /etc/fstab
 rm -rf /var/spool/cvmfs/*
 
 # ----- BEGIN CHANGES BY J. CABALLERO -----
+rm -f /etc/oasis/*conf
 
 # no cronjob, daemon
 #rm /etc/cron.d/oasis
