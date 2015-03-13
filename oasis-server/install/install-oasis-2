@@ -84,6 +84,17 @@ wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSU
 yum -y install $OASISRPM
 rm $OASISRPM
 
+# ----- BEGIN CHANGES BY J. CABALLERO ----- 
+# ----- copy from repo (SVN @ BNL, temporarily) the config files
+wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/etc/oasis/oasis.conf  --output-file /etc/oasis/oasis.conf
+wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/etc/oasis/repositories.conf --output-file /etc/oasis/repositories.conf
+#wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/etc/oasis/projects.conf  --output-file /etc/oasis/projects.conf
+python /usr/share/oasis/generate_config_projects > /etc/oasis/projects.conf
+touch /etc/oasis/probes.conf
+touch /etc/oasis/no_vo_probes.conf
+# ----- END CHANGES BY J. CABALLERO ----- 
+
+
 # need nfslock for the repos to be on NFS
 chkconfig nfslock on
 service nfslock start
@@ -191,17 +202,7 @@ $RUNUSER "cvmfs_server publish"
 mkdir -p /var/log/oasis
 
 # ----- BEGIN CHANGES BY J. CABALLERO ----- 
-
-# ----- copy from repo (SVN @ BNL, temporarily) the config files
-wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/etc/oasis/oasis.conf  --output-file /etc/oasis/oasis.conf
-wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/etc/oasis/repositories.conf --output-file /etc/oasis/repositories.conf
-#wget http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/install/etc/oasis/projects.conf  --output-file /etc/oasis/projects.conf
-python /usr/share/oasis/generate_config_projects > /etc/oasis/projects.conf
-touch /etc/oasis/probes.conf
-touch /etc/oasis/no_vo_probes.conf
-
 # ----- no cronjob, start a daemon
-
 #cat >>/etc/cron.d/oasis <<'xEOFx'
 #* * * * *   root   /usr/share/oasis/do_oasis_update
 #*/3 * * * * root   /usr/share/oasis/oasis_status_stamp
