@@ -100,6 +100,7 @@ setup(
                # =============================
                'bin/add_osg_repository',
                'bin/blank_osg_repository',
+               'bin/osg-batch-update',
                'bin/osg-oasis-update',
                'bin/print_osg_repos',
                'bin/resign_osg_whitelist',
