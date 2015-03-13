@@ -43,5 +43,5 @@ for vo in doc.xpathEval("//VO"):
 
     # FIXME. Just a temporary solution
     #commands.getoutput('touch /etc/oasis/%s.conf' %projectname)
-    commands.getoutput('touch /etc/oasis/no_vo_probes.conf')
+    #commands.getoutput('touch /etc/oasis/no_vo_probes.conf')
 
