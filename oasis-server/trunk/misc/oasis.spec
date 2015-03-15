@@ -153,6 +153,10 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Sat Mar 14 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.14-1
+- Change misc/generate_adduser (used on oasis-login) to also create the
+  ouser directory on /net/nas01/Public
+
 * Fri Mar 13 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.13-1
 - Small changes in GOC script generate_config_projects: 
    -- only one empty <vo> probes config file
