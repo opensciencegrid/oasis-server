@@ -62,6 +62,7 @@ ln -s /usr/spool/cvmfs /var/spool
 echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
 cat >/etc/logrotate.d/oasis <<xEOFx
+# Created by install script.  Will be recreated next reinstall.
 /var/log/oasis/*.log {
     weekly
     missingok
@@ -69,13 +70,17 @@ cat >/etc/logrotate.d/oasis <<xEOFx
 }
 xEOFx
 cat >/etc/httpd/conf.d/cvmfs.conf <<"xEOFx"
+# Created by install script.  Will be recreated next reinstall.
 Listen 8000
 KeepAlive On
+MaxClients 64
+ListenBackLog 1024
 xEOFx
 chkconfig httpd on
 service httpd start
 
-cat >/etc/iptables.d/60-local-cvmfs <<"xEOFx"
+cat >/etc/iptables.d/60-local-oasis <<"xEOFx"
+# Created by install script.  Will be recreated next reinstall.
 . /etc/iptables.d/setup
 # open tcp port 80 and port 8000
 $ITFAI -p tcp --dport 80 -j ACCEPT
@@ -83,7 +88,7 @@ $ITFAI -p tcp --dport 8000 -j ACCEPT
 $ITFAI4 -p tcp --dport 80 -j ACCEPT
 $ITFAI4 -p tcp --dport 8000 -j ACCEPT
 xEOFx
-chmod +x /etc/iptables.d/60-local-cvmfs
+chmod +x /etc/iptables.d/60-local-oasis
 service gociptables restart
 mkdir -p /srv
 
@@ -200,6 +205,7 @@ $RUNUSER "cvmfs_server publish"
 # add cron entries
 mkdir -p /var/log/oasis
 cat >>/etc/cron.d/oasis <<'xEOFx'
+# Created by install script.  Will be recreated next reinstall.
 * * * * *   root   /usr/share/oasis/do_oasis_update
 */3 * * * * root   /usr/share/oasis/oasis_status_stamp
 xEOFx
