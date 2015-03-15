@@ -1,0 +1,17 @@
+universe = grid
+grid_resource = condor grid39.racf.bnl.gov grid39.racf.bnl.gov:9619
+
+log = oasis.$(Cluster).$(Process).log
+error = oasis.$(Cluster).$(Process).err
+output = oasis.$(Cluster).$(Process).out
+
+executable = oasistest.sh
+transfer_executable = True
+
++Nonessential = True
+copy_to_spool = True
+
+x509userproxy = /tmp/x509up_u12345
+
+queue 1
+

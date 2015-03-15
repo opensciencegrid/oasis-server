@@ -1,0 +1,8 @@
+# Run the security-test script once an hour
+# This rule placed here by Puppet
+# Do not edit by hand
+
+MAILTO=thomlee@iu.edu
+
+43 4 * * * root /opt/sbin/security-test
+
