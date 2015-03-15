@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.14
+%define version 2.0.15
 %define release 1
 
 Summary: OASIS package
