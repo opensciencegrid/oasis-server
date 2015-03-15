@@ -18,5 +18,6 @@ for vo in doc.xpathEval("//VO"):
         voname = re.sub(r'[^/a-z0-9]+', '', voname.lower())
 
         username = "ouser."+voname
+	nasdir="/net/nas01/Public/"+username
 
-        print "id -u",username,"&>/dev/null || (/usr/sbin/useradd",username,"-G","cvmfs","-p","`/usr/bin/pwgen 24 -y -n -s` && gpasswd -a",username,"cvmfs)"
+        print "id -u",username,"&>/dev/null || (/usr/sbin/useradd",username,"-G","cvmfs","-p","`pwgen 24 -y -n -s` && gpasswd -a",username,"cvmfs && [ -d",nasdir,"] || (mkdir",nasdir,"&& setfacl -b",nasdir,"&& chown",username,nasdir,"&& chgrp",username,nasdir,"&& chmod 755",nasdir,"))"
