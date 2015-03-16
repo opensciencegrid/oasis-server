@@ -141,6 +141,22 @@ ln -s $SRVDIR/cvmfs /srv
 mount /var/spool/cvmfs/oasis.opensciencegrid.org/rdonly
 mount /cvmfs/oasis.opensciencegrid.org
 
+# on itb install the saved itb pub & master key
+case $SRVDIR in
+    *-itb)
+	if [ ! -f $SRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.pub ]; then
+	    # make a copy from production srv directory of itb pub and masterkey
+	    PRODSRVDIR="`echo $SRVDIR|sed 's/-itb//'`"
+	    mkdir -p $SRVDIR/etc/cvmfs
+	    cp $PRODSRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.* $SRVDIR/etc/cvmfs
+	fi
+	for KEY in pub masterkey; do
+	    cp $SRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/oasis.opensciencegrid.org.$KEY
+	done
+	cvmfs_server resign
+	;;
+esac
+
 RUNUSER="runuser -s /bin/bash oasis -c"
 
 if [ -d /srv/cvmfs.save ]; then
@@ -212,7 +228,7 @@ xEOFx
 
 set +x
 
-# request updates on all vos
+# request updates on all vos that have changed
 
 LOCKPFX=/net/nas01/Public/
 case "`uname -n|cut -d. -f1`" in
@@ -245,9 +261,52 @@ if [ "$PREVREVISION" -gt "$CURREVISION" ]; then
     $RUNUSER "cvmfs_server publish -n $PREVREVISION"
 fi
 
-# remove the temporary masterkey and install official public key
-rm /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
-cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/oasis.opensciencegrid.org.pub
+# -------- BEGIN OASIS-2 SECTION ---------
+# install OASIS-2 configuration
+# not yet enabled by default, just installed
+
+cat >/etc/oasis/oasis.conf <<xEOFx
+# Created by install script.  Will be recreated next reinstall.
+[OASIS]
+
+services = server
+sleep = 100
+
+#email = 
+#SMTPServer
+
+projectsconf = /etc/oasis/projects.conf
+repositoriesconf = /etc/oasis/repositories.conf
+
+probesconf = /etc/oasis/probes.conf
+
+flagfilebasedir = /net/nas01/Public/
+
+xEOFx
+
+cat >/etc/oasis/repositories.conf <<xEOFx
+# Created by install script.  Will be recreated next reinstall.
+[OASIS]
+
+repositoryname = oasis.opensciencegrid.org
+distributiontool = cvmfs21
+OSG_APP = /net/nas01/Public/
+repository_src_dir = %(OSG_APP)s
+repository_dest_dir = oasis.opensciencegrid.org
+repository_src_owner = root
+repository_dest_owner = oasis
+xEOFx
+
+# these two are empty for now
+touch /etc/oasis/probes.conf
+touch /etc/oasis/no_vo_probes.conf
+
+# generate projects.conf now and from cron
+python /usr/share/oasis/generate_config_projects > /etc/oasis/projects.conf
+cat >>/etc/cron.d/oasis <<xEOFx
+2-59/5 * * * * root cd /etc/oasis;if /usr/share/oasis/generate_config_projects > projects.conf.tmp; then if cmp -s projects.conf.tmp projects.conf; then rm projects.conf.tmp; else mv -f projects.conf.tmp projects.conf; /sbin/service oasisd condrestart; fi; fi
+xEOFx
+# -------- END OASIS-2 SECTION ---------
 
 set +x
 
@@ -265,5 +324,11 @@ done
 echo
 echo "Installation of `uname -n|cut -d. -f1` completed successfully at `date`"
 echo
-echo "Now temporarily install /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey"
-echo "   and run cvmfs_server resign"
+case $SRVDIR in
+    *-itb);;
+    *)  # on prod remove the temporary masterkey and install official public key
+	rm /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
+	cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/oasis.opensciencegrid.org.pub
+	echo "Now temporarily install /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey"
+	echo "   and run cvmfs_server resign"
+esac
