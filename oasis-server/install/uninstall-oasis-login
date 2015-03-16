@@ -20,7 +20,6 @@ chkconfig sshd on
 for r in `rpm -qa|grep gpg-pubkey|sed 's/\.(none)//'|sort -u`; do
     rpm --allmatches -e $r
 done
-rm /etc/cron.d/oasis-login
 grep "^ouser\." /etc/passwd|cut -d: -f1|while read OUSER; do
     userdel -r $OUSER
 done
@@ -35,6 +34,7 @@ rmdir /etc/gsissh
 # reverse yum install condor
 yum -y remove blahp condor-classads perl-DateManip perl-XML-Simple globus-io globus-rsl gsoap voms globus-gssapi-error
 yum -y remove oasis
+rm -rf /etc/oasis
 rm /etc/iptables.d/60-local-oasis-login
 service gociptables restart
 service httpd stop
