@@ -217,7 +217,18 @@ ln -s $SRVDIR/cvmfs /srv
 # need nfslock for the repos to be on NFS
 chkconfig nfslock on
 service nfslock start
-REPOURLS="http://oasis.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org"
+# on itb install also the oasis-itb pub key and read from oasis-itb
+OASISPUBKEYS=/etc/cvmfs/opensciencegrid.org.pub
+case $SRVDIR in
+    *-itb)
+	cp /net/nas01/srv/oasis/etc/cvmfs/oasis-itb.opensciencegrid.org.pub /etc/cvmfs/keys
+	OASISPUBKEYS="$OASISPUBKEYS:/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub"
+	REPOURLS="http://oasis-itb.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org"
+	;;
+    *)
+	REPOURLS="http://oasis.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org"
+	;;
+esac
 REPOURLS="$REPOURLS http://cvmfs-stratum0.gridpp.rl.ac.uk:8000/cvmfs/config-egi.egi.eu"
 REPOURLS="$REPOURLS `print_osg_repos -u`"
 for URL in $REPOURLS; do
@@ -226,7 +237,7 @@ for URL in $REPOURLS; do
 	mv /srv/cvmfs/$REPO /srv/cvmfs/.$REPO.ins
     fi
     if [ "$REPO" = "oasis.opensciencegrid.org" ]; then
-	cvmfs_server add-replica -o root $URL /etc/cvmfs/keys/opensciencegrid.org.pub
+	cvmfs_server add-replica -o root $URL $OASISPUBKEYS
 	rm /etc/httpd/conf.d/cvmfs.$REPO.conf
     else
 	add_osg_repository -a "$URL"
@@ -249,7 +260,7 @@ done
 mkdir -p /var/log/cvmfs
 cat >>/etc/cron.d/cvmfs <<'xEOFx'
 # Created by install script.  Will be recreated next reinstall.
-0,15,30,45 * * * * root (test -d /srv/cvmfs || exit;for r in `cd /srv/cvmfs;echo *.*`; do echo; if [ -f /srv/cvmfs/$r/.cvmfspublished ]; then echo "Starting $r at `date`";if ! cvmfs_server snapshot $r;then echo "ERROR from cvmfs_server!"; fi;echo "Finished $r at `date`";fi;done) >>/var/log/cvmfs/updates.log 2>&1
+0,15,30,45 * * * * root test -d /srv/cvmfs||exit;TMPFILE=/tmp/cvmfscron.$$.log;LOGFILE=/var/log/cvmfs/updates.log;echo "Cron log in $TMPFILE starting at `date`" >>$LOGFILE;(for r in `cd /srv/cvmfs;echo *.*`; do echo; if [ -f /srv/cvmfs/$r/.cvmfspublished ]; then echo "Starting $r at `date`";if ! cvmfs_server snapshot -t $r;then echo "ERROR from cvmfs_server!"; fi;echo "Finished $r at `date`";fi;done) >$TMPFILE 2>&1;cat $TMPFILE >>$LOGFILE;rm -f $TMPFILE
 5,20,35,50 * * * * root     PATH=$PATH:/usr/sbin /usr/share/oasis/generate_replicas >>/var/log/cvmfs/generate_replicas.log 2>&1
 */3 * * * * root   /usr/share/oasis/oasis_replica_status
 0 9 * * * root     find /srv/cvmfs/*.*/data/txn -name "*.*" -mtime +2 2>/dev/null|xargs rm -f
