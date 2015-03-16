@@ -117,9 +117,55 @@ rm $TMPF.1
 cat >>/etc/cron.d/oasis-login <<'xEOFx'
 # Created by install script.  Will be recreated next reinstall.
 */5 * * * * root /usr/share/oasis/generate_adduser | bash
-1-59/5 * * * * root /usr/share/oasis/generate_gridmap > /tmp/grid-mapfile.tmp; if [ $? -eq 0 ]; then mv -f /tmp/grid-mapfile.tmp /etc/grid-security/grid-mapfile; fi
+1-59/5 * * * * root cd /etc/grid-security; if /usr/share/oasis/generate_gridmap > grid-mapfile.tmp; then mv -f grid-mapfile.tmp grid-mapfile; fi
 4,19,34,49 * * * * root   /usr/share/oasis/oasis_login_status
 xEOFx
+
+# -------- BEGIN OASIS-2 SECTION ---------
+# install OASIS-2 configuration
+
+cat >/etc/oasis/oasis.conf <<xEOFx
+# Created by install script.  Will be recreated next reinstall.
+[OASIS]
+
+services = server
+sleep = 100
+
+#email = 
+#SMTPServer
+
+projectsconf = /etc/oasis/projects.conf
+repositoriesconf = /etc/oasis/repositories.conf
+
+probesconf = /etc/oasis/probes.conf
+
+flagfilebasedir = /net/nas01/Public/
+
+xEOFx
+
+cat >/etc/oasis/repositories.conf <<xEOFx
+# Created by install script.  Will be recreated next reinstall.
+[OASIS]
+
+repositoryname = oasis.opensciencegrid.org
+distributiontool = cvmfs21
+OSG_APP = /net/nas01/Public/
+repository_src_dir = %(OSG_APP)s
+repository_dest_dir = oasis.opensciencegrid.org
+repository_src_owner = root
+repository_dest_owner = oasis
+xEOFx
+
+# these two are empty for now
+touch /etc/oasis/probes.conf
+touch /etc/oasis/no_vo_probes.conf
+
+# generate projects.conf now and from cron
+python /usr/share/oasis/generate_config_projects > /etc/oasis/projects.conf
+cat >>/etc/cron.d/oasis-login <<xEOFx
+3-59/5 * * * * root cd /etc/oasis;if /usr/share/oasis/generate_config_projects > projects.conf.tmp; then if cmp -s projects.conf.tmp projects.conf; then rm projects.conf.tmp; else mv -f projects.conf.tmp projects.conf; fi; fi
+xEOFx
+# -------- END OASIS-2 SECTION ---------
 
 set +x
 
