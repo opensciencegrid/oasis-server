@@ -153,6 +153,10 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Tue Mar 17 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.15-1
+- checking if repo_src_dir is the same of project_src_dir or not before vetoing root ownership
+- checking for oasisd.pid file in condrestart
+
 * Sat Mar 14 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.14-1
 - Change misc/generate_adduser (used on oasis-login) to also create the
   ouser directory on /net/nas01/Public
