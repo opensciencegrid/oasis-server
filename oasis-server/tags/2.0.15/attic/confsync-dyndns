@@ -1,0 +1,1 @@
+*/5 * * * * root /opt/sbin/confsync-dyndns > /dev/null
