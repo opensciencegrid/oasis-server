@@ -147,7 +147,10 @@ class ProjectBasicConfig(object):
             self.repository_src_owner = self.repositoriesconf.get(self.repositorysection, 'repository_src_owner')
             self.log.debug('variable repository_src_owner has value %s' %self.repository_src_owner)
             if self.repository_src_owner == 'root':
-                raise Exception('repository_src_owner cannot be root')
+                # FIXME: is this the best way to do this?
+                if self.project_src_dir == "":
+                    # that means that the project source dir and the repository source dir are the same
+                    raise Exception('repository_src_owner cannot be root')
 
             self.repository_dest_owner = self.repositoriesconf.get(self.repositorysection, 'repository_dest_owner')
             self.log.debug('variable repository_dest_owner has value %s' %self.repository_dest_owner)
