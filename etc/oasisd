@@ -196,7 +196,8 @@ restart)
 	RETVAL=$?
 	;;
 condrestart)
-	if [ -f /var/lock/subsys/oasisd ]; then
+	#if [ -f /var/lock/subsys/oasisd ]; then
+	if [ -f /var/run/oasisd.pid ]; then
 	    restart
 	fi
 	RETVAL=$?
