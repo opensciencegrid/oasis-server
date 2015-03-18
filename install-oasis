@@ -61,14 +61,17 @@ ln -s /usr/spool/cvmfs /var/spool
 
 echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
-cat >/etc/logrotate.d/oasis <<xEOFx
-# Created by install script.  Will be recreated next reinstall.
-/var/log/oasis/*.log {
-    weekly
-    missingok
-    notifempty
-}
-xEOFx
+
+# The log rotate file is installed by the RPM
+#cat >/etc/logrotate.d/oasis <<xEOFx
+## Created by install script.  Will be recreated next reinstall.
+#/var/log/oasis/*.log {
+#    weekly
+#    missingok
+#    notifempty
+#}
+#xEOFx
+
 cat >/etc/httpd/conf.d/cvmfs.conf <<"xEOFx"
 # Created by install script.  Will be recreated next reinstall.
 Listen 8000
