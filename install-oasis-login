@@ -13,7 +13,7 @@ esac
 set -ex
 
 ARCH=`arch`
-OASISRPM=oasis-2.0.14-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.15-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin:/usr/sbin"
 
