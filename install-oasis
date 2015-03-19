@@ -2,6 +2,8 @@
 # Install and configure all application software on oasis or oasis-itb
 # Written by Dave Dykstra 2-26-2015
 
+cd
+
 case "`uname -n`" in
     oasis.*|oasis-itb.*);;
     *)  echo "Only run this on oasis or oasis-itb"

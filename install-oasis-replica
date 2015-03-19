@@ -2,6 +2,8 @@
 # Install and configure all application software on oasis-replica
 # Written by Dave Dykstra 2-4-2015
 
+cd
+
 case "`uname -n`" in
     oasis-replica.*|oasis-replica-itb.*);;
     *)  echo "Only run this on oasis-replica or oasis-replica-itb"
