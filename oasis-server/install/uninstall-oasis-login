@@ -3,6 +3,8 @@
 #  testing install-oasis-login without creating a new VM from scratch
 # Written by Dave Dykstra 3-11-2015
 
+cd
+
 case "`uname -n`" in
     oasis-login.*|oasis-login-itb.*);;
     *)  echo "Only run this on oasis-login or oasis-login-itb"
