@@ -153,6 +153,9 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Fri Mar 20 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.16-1
+- Change misc/do_oasis_update to temporarily exclude /nova/data/flux
+
 * Tue Mar 17 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.15-1
 - checking if repo_src_dir is the same of project_src_dir or not before vetoing root ownership
 - checking for oasisd.pid file in condrestart
