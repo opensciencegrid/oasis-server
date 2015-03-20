@@ -140,7 +140,10 @@ class cvmfs21(cvmfs):
             self.log.critical('publishing failed.')
             self.log.critical('RC = %s' %st)
             self.log.critical('output = %s' %out)
-        return st, out
+        # FIXME: this is a temporary solution, during the OASIS 2 testing/deployment steps
+        #        for now, we ignore RC from rsync, and keep moving
+        #return st, out
+        return 0, out
     
     # --------------------------------------------------------------------
     #       abort
