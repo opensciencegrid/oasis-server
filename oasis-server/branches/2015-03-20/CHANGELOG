@@ -3,6 +3,8 @@
 
 * temporarily, we ignore the RC from rsync when publishing
 
+* including the output of rsync command in the message for the users
+
 -----------------------------------------------------------------------------
 2.0.15
 -----------------------------------------------------------------------------
