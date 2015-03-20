@@ -657,7 +657,7 @@ class oasisCLI(object):
         # parsing the XML related transfer files
         dicts = parser._parseoutput(content, 'transfer')
         for i in dicts:
-            line = 'file trasfers started at %s and run for %s seconds with RC=%s' %(i['inittime'], i['elapsedtime'], i['rc'])
+            line = 'file trasfers started at %s and run for %s seconds with RC=%s and output=%s' %(i['inittime'], i['elapsedtime'], i['rc'], i['out'])
             out.append(line)
 
         # parsing the XML related publishing 
