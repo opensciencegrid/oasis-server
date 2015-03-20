@@ -143,6 +143,29 @@ class cvmfs21(cvmfs):
         return st, out
     
     # --------------------------------------------------------------------
+    #       abort
+    # --------------------------------------------------------------------
+
+    def abort(self):
+        """
+        leave things as they were before in case
+        we need to abort publishing
+        """
+
+        self.log.info('abort publishing CVMFS for repository %s' %self.project.repositoryname)
+
+        cmd = 'sudo -u %s cvmfs_server abort %s' %(self.project.repository_dest_owner, self.project.repositoryname)
+        self.log.info('command = %s' %cmd)
+
+        st, out = commands.getstatusoutput(cmd)
+        if st:
+            self.log.critical('aborting failed.')
+            self.log.critical('RC = %s' %st)
+            self.log.critical('output = %s' %out)
+        return st, out
+
+
+    # --------------------------------------------------------------------
     #       adminstrative methods
     # --------------------------------------------------------------------
 
