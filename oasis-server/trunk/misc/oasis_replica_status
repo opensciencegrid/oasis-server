@@ -16,17 +16,20 @@ overall_status=0
 
 ## determine snapshot age
 
-snapdate=`cat /srv/cvmfs/oasis.opensciencegrid.org/.cvmfs_last_snapshot`
-snapped=`date -d "$snapdate" +%s`
+snapdate=`cat /srv/cvmfs/oasis.opensciencegrid.org/.cvmfs_last_snapshot 2>/dev/null`
+if [ -n "$snapdate" ]; then
+    snapped=`date -d "$snapdate" +%s`
+    now=`date +%s`
+    snap_age=`expr $now - $snapped`
+else
+    snap_age=99999
+fi
 
-now=`date +%s`
-snap_age=`expr $now - $snapped`
 
 if [ $snap_age -ge $max_snap_age ] ; then
 ## go to critical
    overall_status=2
-fi
-if [ $snap_age -ge $warn_snap_age ] ; then
+elif [ $snap_age -ge $warn_snap_age ] ; then
 ## go to warning, can snapshot here if that is a good idea
    overall_status=1
 fi
