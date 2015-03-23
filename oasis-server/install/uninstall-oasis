@@ -35,6 +35,8 @@ yum -y remove elfutils-libs xz-libs gcc aufs kernel-module-aufs
 rm -rf /var/log/oasis
 rm /etc/logrotate.d/oasis
 service httpd stop
+sed -i -e '/Added by install/d' -e '/^net.core.somaxconn/d' /etc/sysctl.conf
+sysctl -w net.core.somaxconn=128
 rm -f /var/www/html/stamp
 rpm -e cvmfs-release
 for r in `rpm -qa|grep gpg-pubkey|sed 's/\.(none)//'|sort -u`; do
