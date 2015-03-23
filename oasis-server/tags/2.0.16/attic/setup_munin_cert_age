@@ -1,0 +1,4 @@
+# Run /opt/sbin/setup_munin_cert_age.sh once per day
+# This rule written by Puppet
+
+7 23 * * * root /opt/sbin/setup_munin_cert_age.sh > /dev/null
