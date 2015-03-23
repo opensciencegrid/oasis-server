@@ -2,8 +2,6 @@
 # Install and configure all application software on oasis or oasis-itb
 # Written by Dave Dykstra 2-26-2015
 
-cd
-
 case "`uname -n`" in
     oasis.*|oasis-itb.*);;
     *)  echo "Only run this on oasis or oasis-itb"
@@ -13,6 +11,12 @@ esac
 
 set -ex
 
+SCRIPTDIR="`dirname $0`"
+if [ "$SCRIPTDIR" = "." ]; then
+    SCRIPTDIR="`pwd`"
+fi
+cd
+
 ARCH=`arch`
 AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
 CVMFSRELRPM=cvmfs-release-2-4.el5.noarch.rpm
@@ -20,7 +24,7 @@ CVMFSVER=2.1.20
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
-OASISRPM=oasis-2.0.15-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.16-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -40,7 +44,7 @@ rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
 
 # install aufs postupdate script so it will get rebuilt when kernel is rebuilt
 mkdir -p /opt/etc/osupdate.d
-cp `dirname $0`/aufs.postupdate /opt/etc/osupdate.d
+cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
 
 # install cvmfs
 wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
@@ -83,6 +87,12 @@ ListenBackLog 1024
 xEOFx
 chkconfig httpd on
 service httpd start
+
+cat >>/etc/sysctl.conf <<xEOFx
+# Controls maximum listen() backlog for apache.  Added by install script.
+net.core.somaxconn = 1024
+xEOFx
+sysctl -w net.core.somaxconn=1024
 
 cat >/etc/iptables.d/60-local-oasis <<"xEOFx"
 # Created by install script.  Will be recreated next reinstall.
@@ -205,7 +215,7 @@ if [ ! -f $DIRTAB ]; then
     esac
 fi
 if [ ! -f /cvmfs/oasis.opensciencegrid.org/.cvmfsdirtab ]; then
-    $RUNUSER cp $DIRTAB /cvmfs/oasis.opensciencegrid.org
+    $RUNUSER "cp $DIRTAB /cvmfs/oasis.opensciencegrid.org"
 fi
 
 if [ ! -L /cvmfs/oasis.opensciencegrid.org/cmssoft/cms ]; then
