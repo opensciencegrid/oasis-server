@@ -2,6 +2,10 @@
 2.0.17
 -----------------------------------------------------------------------------
 
+* Change misc/oasis_replica_status to not send anything to stderr if
+  .cvmfs_last_snapshot in the oasis repo does not exist, to avoid
+  spewing email every 3 minutes
+
 -----------------------------------------------------------------------------
 2.0.16
 -----------------------------------------------------------------------------
