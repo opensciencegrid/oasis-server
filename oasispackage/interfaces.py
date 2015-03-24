@@ -93,6 +93,16 @@ class BaseDistribution(object):
         '''
         raise NotImplementedError
 
+    def abort(self)
+        '''
+        Does whatever is needed to leave things back as they were 
+        in case of need to abort
+
+        To be implemented by the transfer plugin.
+        '''
+        raise NotImplementedError
+        
+
     def resign(self):
         '''
         when makes sense (maybe not always)
