@@ -154,6 +154,10 @@ f_restart_daemon $1
 #-------------------------------------------------------------------------------
 %changelog
 
+* Mon Mar 23 2015 Jose Caballero <jcaballero@bnl.gvo> - 2.0.18-1
+
+- typo fixed
+
 * Mon Mar 23 2015 Jose Caballero <jcaballero@bnl.gvo> - 2.0.17-1
 
 - Change misc/oasis_replica_status to not send anything to stderr if .cvmfs_last_snapshot in the oasis repo does not exist, to avoid spewing email every 3 minutes (Dave Dykstra)
