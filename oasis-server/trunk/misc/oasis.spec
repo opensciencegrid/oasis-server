@@ -153,6 +153,14 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+
+* Mon Mar 23 2015 Jose Caballero <jcaballero@bnl.gvo> - 2.0.17-1
+
+- Change misc/oasis_replica_status to not send anything to stderr if .cvmfs_last_snapshot in the oasis repo does not exist, to avoid spewing email every 3 minutes (Dave Dykstra)
+- implemented method abort() in cvmfs21, but not been used yet.
+- temporarily, we ignore the RC from rsync when publishing
+- including the output of rsync command in the message for the users
+
 * Fri Mar 20 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.16-1
 - Change misc/do_oasis_update to temporarily exclude /nova/data/flux
 

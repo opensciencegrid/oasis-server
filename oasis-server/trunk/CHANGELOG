@@ -6,6 +6,13 @@
   .cvmfs_last_snapshot in the oasis repo does not exist, to avoid
   spewing email every 3 minutes
 
+* implemented method abort() in cvmfs21, but not been used yet.
+
+* temporarily, we ignore the RC from rsync when publishing
+
+* including the output of rsync command in the message for the users
+
+
 -----------------------------------------------------------------------------
 2.0.16
 -----------------------------------------------------------------------------
