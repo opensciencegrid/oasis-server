@@ -1,0 +1,323 @@
+ipconfig already setup in GLPI
+
+[root@grid41 ~]# rpm -Uhv http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/5/x86_64/cvmfs-release-2-4.el5.noarch.rpm
+Retrieving http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/5/x86_64/cvmfs-release-2-4.el5.noarch.rpm
+warning: /var/tmp/rpm-xfer.P47F2i: Header V4 DSA signature: NOKEY, key ID 8ae45ce7
+Preparing...                ########################################### [100%]
+   1:cvmfs-release          ########################################### [100%]
+
+
+Fixed  baseurl in /etc/yum.repos.d/cernvn.repo
+
+
+
+[root@grid41 tmp]# cd /tmp/
+
+[root@grid41 tmp]# wget http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/5/x86_64/cvmfs-server-2.0.8-1.x86_64.rpm
+
+[root@grid41 tmp]# yum install cvmfs-server-2.0.8-1.x86_64.rpm cvmfs-keys httpd redirfs kmod-redirfs cvmfsflt kmod-cvmfsflt
+Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+This system is receiving updates from RHN Classic or RHN Satellite.
+1024 packages excluded due to repository priority protections
+Setting up Install Process
+Examining cvmfs-server-2.0.8-1.x86_64.rpm: cvmfs-server-2.0.8-1.x86_64
+Marking cvmfs-server-2.0.8-1.x86_64.rpm to be installed
+Resolving Dependencies
+--> Running transaction check
+---> Package cvmfs-keys.noarch 0:1.4-1 set to be updated
+---> Package cvmfs-server.x86_64 0:2.0.8-1 set to be updated
+---> Package cvmfsflt.x86_64 0:2.0.7-1 set to be updated
+---> Package httpd.x86_64 0:2.2.3-85.el5_10 set to be updated
+--> Processing Dependency: libaprutil-1.so.0()(64bit) for package: httpd
+---> Package kmod-cvmfsflt.x86_64 0:2.0.7-1 set to be installed
+---> Package kmod-redirfs.x86_64 0:0.10-0.1.20101209svn671p1 set to be installed
+---> Package redirfs.x86_64 0:0.10-0.1.20101209svn671p1 set to be updated
+--> Running transaction check
+---> Package apr-util.x86_64 0:1.2.7-11.el5_5.2 set to be updated
+--> Processing Dependency: libpq.so.4()(64bit) for package: apr-util
+--> Running transaction check
+---> Package postgresql-libs.x86_64 0:8.1.23-10.el5_10 set to be updated
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=======================================================================================================================================================================================================
+ Package                                     Arch                               Version                                                 Repository                                                Size
+=======================================================================================================================================================================================================
+Installing:
+ cvmfs-keys                                  noarch                             1.4-1                                                   cernvm                                                   4.0 k
+ cvmfs-server                                x86_64                             2.0.8-1                                                 /cvmfs-server-2.0.8-1.x86_64                              12 M
+ cvmfsflt                                    x86_64                             2.0.7-1                                                 cernvm                                                   2.4 k
+ httpd                                       x86_64                             2.2.3-85.el5_10                                         rhel-x86_64-client-5                                     1.3 M
+ kmod-cvmfsflt                               x86_64                             2.0.7-1                                                 cernvm                                                   122 k
+ kmod-redirfs                                x86_64                             0.10-0.1.20101209svn671p1                               cernvm                                                   384 k
+ redirfs                                     x86_64                             0.10-0.1.20101209svn671p1                               cernvm                                                   3.6 k
+Installing for dependencies:
+ apr-util                                    x86_64                             1.2.7-11.el5_5.2                                        rhel-x86_64-client-5                                      79 k
+ postgresql-libs                             x86_64                             8.1.23-10.el5_10                                        rhel-x86_64-client-5                                     197 k
+
+Transaction Summary
+=======================================================================================================================================================================================================
+Install       9 Package(s)
+Upgrade       0 Package(s)
+
+Total size: 14 M
+Total download size: 2.0 M
+Is this ok [y/N]: y
+Downloading Packages:
+(1/8): cvmfsflt-2.0.7-1.x86_64.rpm                                                                                                                                              | 2.4 kB     00:00     
+(2/8): redirfs-0.10-0.1.20101209svn671p1.x86_64.rpm                                                                                                                             | 3.6 kB     00:00     
+(3/8): cvmfs-keys-1.4-1.noarch.rpm                                                                                                                                              | 4.0 kB     00:00     
+(4/8): apr-util-1.2.7-11.el5_5.2.x86_64.rpm                                                                                                                                     |  79 kB     00:00     
+(5/8): kmod-cvmfsflt-2.0.7-1.x86_64.rpm                                                                                                                                         | 122 kB     00:06     
+(6/8): postgresql-libs-8.1.23-10.el5_10.x86_64.rpm                                                                                                                              | 197 kB     00:00     
+(7/8): kmod-redirfs-0.10-0.1.20101209svn671p1.x86_64.rpm                                                                                                                        | 384 kB     00:30     
+(8/8): httpd-2.2.3-85.el5_10.x86_64.rpm                                                                                                                                         | 1.3 MB     00:00     
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                                                   40 kB/s | 2.0 MB     00:51     
+warning: rpmts_HdrFromFdno: Header V3 DSA signature: NOKEY, key ID 8ae45ce7
+cernvm/gpgkey                                                                                                                                                                   | 1.7 kB     00:00     
+Importing GPG key 0x8AE45CE7 "CernVM Administrator (cvmadmin) <cernvm.administrator@cern.ch>" from /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
+Is this ok [y/N]: y
+Running rpm_check_debug
+Running Transaction Test
+Finished Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Installing     : postgresql-libs                                                                                                                                                                 1/9 
+  Installing     : apr-util                                                                                                                                                                        2/9 
+  Installing     : httpd                                                                                                                                                                           3/9 
+  Installing     : cvmfs-keys                                                                                                                                                                      4/9 
+  Installing     : cvmfs-server                                                                                                                                                                    5/9 
+  Installing     : kmod-redirfs                                                                                                                                                                    6/9 
+  Installing     : redirfs                                                                                                                                                                         7/9 
+  Installing     : kmod-cvmfsflt                                                                                                                                                                   8/9 
+  Installing     : cvmfsflt                                                                                                                                                                        9/9 
+
+Installed:
+  cvmfs-keys.noarch 0:1.4-1                          cvmfs-server.x86_64 0:2.0.8-1                 cvmfsflt.x86_64 0:2.0.7-1    httpd.x86_64 0:2.2.3-85.el5_10    kmod-cvmfsflt.x86_64 0:2.0.7-1   
+  kmod-redirfs.x86_64 0:0.10-0.1.20101209svn671p1    redirfs.x86_64 0:0.10-0.1.20101209svn671p1   
+
+Dependency Installed:
+  apr-util.x86_64 0:1.2.7-11.el5_5.2                                                             postgresql-libs.x86_64 0:8.1.23-10.el5_10                                                            
+
+Complete!
+
+
+
+
+test it. No output means a successful test
+
+[root@grid41 tmp]# modprobe redirfs && modprobe cvmfsflt
+[root@grid41 tmp]# 
+
+
+
+[root@grid41 tmp]# rm -f /etc/cvmfs/replica.conf 
+
+
+[root@grid41 tmp]# cvmfs_server mkfs oasis.opensciencegrid.org
+Checking for cvmfs user... done
+Creating configuration files... done
+Creating CernVM-FS master key for oasis.opensciencegrid.org in /etc/cvmfs/keys/oasis.opensciencegrid.org.pub... done
+Creating self-signed certificate for oasis.opensciencegrid.org in /etc/cvmfs/keys/oasis.opensciencegrid.org.crt... done
+Create CernVM-FS Storage... done
+Signing 30 day whitelist with master key... done
+Starting services... done
+Reloading Apache... done
+
+Install your software in /cvmfs/oasis.opensciencegrid.org as user cvmfs.
+Once you're happy, publish using 'cvmfs_server publish'
+For client configuration, have a look at 'cvmfs_server info'
+
+If you go for production, backup you software signing keys in /etc/cvmfs/keys/!
+
+
+Copy the new public key to the Stratum-1
+
+
+
+[root@grid41 keys]#  touch /srv/cvmfs/oasis.opensciencegrid.org/pub/catalogs/.cvmfs_master_replica
+
+
+
+
+[root@grid41 keys]# rm -f /cvmfs/oasis.opensciencegrid.org/empty 
+[root@grid41 keys]# sudo -u cvmfs touch /cvmfs/oasis.opensciencegrid.org/test
+[root@grid41 keys]# ls /cvmfs/oasis.opensciencegrid.org/
+test
+[root@grid41 keys]# cvmfs_server publish
+Locking down /cvmfs/oasis.opensciencegrid.org              [  OK  ]
+
+Waiting for pending operations on /cvmfs/oasis.openscienceg[  OK  ]
+
+Waiting for pending messages in call buffer                [  OK  ]
+
+Stopping journal writer                                    [  OK  ]
+
+Attaching /srv/cvmfs/oasis.opensciencegrid.org/pub/catalogs/.cvmfscatalog.working
+Parsing file system change log... 6 lines
+Loading required file catalogs...
+Post-processing file system change log...
+Step 1 - Deleting obsolete file and directory entries (1 entries): .
+Step 2 - Inserting new directories and symlinks (0 entries): 
+Step 3 - Updating touched directories (0 entries): 
+Step 4 - Building file list (1 entries): .
+Step 5 - Compressing and calculating content hashes using 16 threads (1 files): .
+Step 6 - Updating file catalogs (1 files): .
+Commit changes to catalogs...
+Creating catalog snapshot at /cvmfs/oasis.opensciencegrid.org
+Flushing file system change log                            [  OK  ]
+
+Resuming journal writer                                    [  OK  ]
+
+Open up /cvmfs/oasis.opensciencegrid.org                   [  OK  ]
+
+Signing /srv/cvmfs/oasis.opensciencegrid.org/pub/catalogs/.cvmfscatalog
+
+
+
+
+[root@grid41 keys]# service cvmfsd start
+CernVM-FS daemon is running
+[root@grid41 keys]# 
+[root@grid41 keys]# service httpd start
+Starting httpd:                                            [  OK  ]
+
+
+
+
+
+[root@grid41]# cd /etc/yum.repos.d
+[root@grid41 yum.repos.d]# wget http://research.cs.wisc.edu/htcondor/yum/repo.d/htcondor-stable-rhel5.repo
+
+[root@grid41 yum.repos.d]# yum install condor.x86_64
+Loaded plugins: priorities, product-id, rhnplugin, security, subscription-manager
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+This system is receiving updates from RHN Classic or RHN Satellite.
+htcondor-stable                                                                                                                                                                 |  951 B     00:00     
+htcondor-stable/primary                                                                                                                                                         |  37 kB     00:00     
+htcondor-stable                                                                                                                                                                                  52/52
+1024 packages excluded due to repository priority protections
+Setting up Install Process
+Resolving Dependencies
+--> Running transaction check
+---> Package condor.x86_64 0:8.0.7-250355 set to be updated
+--> Processing Dependency: perl(XML::Simple) for package: condor
+--> Processing Dependency: perl(Date::Manip) for package: condor
+--> Processing Dependency: libvirt.so.0(LIBVIRT_0.1.0)(64bit) for package: condor
+--> Processing Dependency: libvirt.so.0(LIBVIRT_0.5.0)(64bit) for package: condor
+--> Processing Dependency: libvirt.so.0(LIBVIRT_0.0.3)(64bit) for package: condor
+--> Processing Dependency: libvirt.so.0()(64bit) for package: condor
+--> Processing Dependency: libltdl.so.3()(64bit) for package: condor
+--> Running transaction check
+---> Package libtool-ltdl.x86_64 0:1.5.22-7.el5_4 set to be updated
+---> Package libvirt.x86_64 0:0.6.3-33.el5_5 set to be updated
+--> Processing Dependency: /usr/bin/qemu-img for package: libvirt
+--> Processing Dependency: cyrus-sasl-md5 for package: libvirt
+--> Processing Dependency: bridge-utils for package: libvirt
+--> Processing Dependency: libxenstore.so.3.0()(64bit) for package: libvirt
+---> Package perl-DateManip.noarch 0:5.44-1.2.1 set to be updated
+---> Package perl-XML-Simple.noarch 0:2.18-4.rhel5 set to be updated
+--> Processing Dependency: perl(XML::Parser) for package: perl-XML-Simple
+--> Running transaction check
+---> Package bridge-utils.x86_64 0:1.1-3.el5 set to be updated
+---> Package cyrus-sasl-md5.x86_64 0:2.1.22-7.el5_8.1 set to be updated
+---> Package perl-XML-Parser.x86_64 0:2.36-1 set to be updated
+---> Package qemu-img.x86_64 2:0.10.5-1.el5.2 set to be updated
+---> Package xen-libs.x86_64 0:3.0.3-142.el5_9.3 set to be updated
+--> Processing Dependency: liblzma.so.0()(64bit) for package: xen-libs
+--> Processing Dependency: libext4fs.so.2()(64bit) for package: xen-libs
+--> Running transaction check
+---> Package e4fsprogs-libs.x86_64 0:1.41.12-4.el5_10 set to be updated
+---> Package xz-libs.x86_64 0:4.999.9-0.3.beta.20091007git.el5 set to be updated
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=======================================================================================================================================================================================================
+ Package                                     Arch                               Version                                                         Repository                                        Size
+=======================================================================================================================================================================================================
+Installing:
+ condor                                      x86_64                             8.0.7-250355                                                    htcondor-stable                                   25 M
+Installing for dependencies:
+ bridge-utils                                x86_64                             1.1-3.el5                                                       rhel-x86_64-client-5                              30 k
+ cyrus-sasl-md5                              x86_64                             2.1.22-7.el5_8.1                                                rhel-x86_64-client-5                              47 k
+ e4fsprogs-libs                              x86_64                             1.41.12-4.el5_10                                                rhel-x86_64-client-5                             105 k
+ libtool-ltdl                                x86_64                             1.5.22-7.el5_4                                                  rhel-x86_64-client-5                              38 k
+ libvirt                                     x86_64                             0.6.3-33.el5_5                                                  base                                             2.7 M
+ perl-DateManip                              noarch                             5.44-1.2.1                                                      rhel-x86_64-client-5                             143 k
+ perl-XML-Parser                             x86_64                             2.36-1                                                          base                                             254 k
+ perl-XML-Simple                             noarch                             2.18-4.rhel5                                                    base                                              73 k
+ qemu-img                                    x86_64                             2:0.10.5-1.el5.2                                                epel                                              96 k
+ xen-libs                                    x86_64                             3.0.3-142.el5_9.3                                               rhel-x86_64-client-5                             175 k
+ xz-libs                                     x86_64                             4.999.9-0.3.beta.20091007git.el5                                rhel-x86_64-client-5                              95 k
+
+Transaction Summary
+=======================================================================================================================================================================================================
+Install      12 Package(s)
+Upgrade       0 Package(s)
+
+Total download size: 29 M
+Is this ok [y/N]: y
+Downloading Packages:
+(1/12): bridge-utils-1.1-3.el5.x86_64.rpm                                                                                                                                       |  30 kB     00:00     
+(2/12): libtool-ltdl-1.5.22-7.el5_4.x86_64.rpm                                                                                                                                  |  38 kB     00:00     
+(3/12): cyrus-sasl-md5-2.1.22-7.el5_8.1.x86_64.rpm                                                                                                                              |  47 kB     00:00     
+(4/12): perl-XML-Simple-2.18-4.rhel5.noarch.rpm                                                                                                                                 |  73 kB     00:00     
+(5/12): xz-libs-4.999.9-0.3.beta.20091007git.el5.x86_64.rpm                                                                                                                     |  95 kB     00:00     
+(6/12): qemu-img-0.10.5-1.el5.2.x86_64.rpm                                                                                                                                      |  96 kB     00:00     
+(7/12): e4fsprogs-libs-1.41.12-4.el5_10.x86_64.rpm                                                                                                                              | 105 kB     00:00     
+(8/12): perl-DateManip-5.44-1.2.1.noarch.rpm                                                                                                                                    | 143 kB     00:00     
+(9/12): xen-libs-3.0.3-142.el5_9.3.x86_64.rpm                                                                                                                                   | 175 kB     00:00     
+(10/12): perl-XML-Parser-2.36-1.x86_64.rpm                                                                                                                                      | 254 kB     00:00     
+(11/12): libvirt-0.6.3-33.el5_5.x86_64.rpm                                                                                                                                      | 2.7 MB     00:00     
+(12/12): condor-8.0.7-250355.rhel5.10.x86_64.rpm                                                                                                                                |  25 MB     00:24     
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                                                  1.1 MB/s |  29 MB     00:25     
+warning: rpmts_HdrFromFdno: Header V3 DSA signature: NOKEY, key ID 217521f6
+epel/gpgkey                                                                                                                                                                     | 1.7 kB     00:00     
+Importing GPG key 0x217521F6 "Fedora EPEL <epel@fedoraproject.org>" from /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-5
+Is this ok [y/N]: y
+Running rpm_check_debug
+Running Transaction Test
+Finished Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Installing     : e4fsprogs-libs                                                                                                                                                                 1/12 
+  Installing     : libtool-ltdl                                                                                                                                                                   2/12 
+  Installing     : cyrus-sasl-md5                                                                                                                                                                 3/12 
+  Installing     : bridge-utils                                                                                                                                                                   4/12 
+  Installing     : xz-libs                                                                                                                                                                        5/12 
+  Installing     : xen-libs                                                                                                                                                                       6/12 
+  Installing     : qemu-img                                                                                                                                                                       7/12 
+  Installing     : libvirt                                                                                                                                                                        8/12 
+  Installing     : perl-XML-Parser                                                                                                                                                                9/12 
+  Installing     : perl-XML-Simple                                                                                                                                                               10/12 
+  Installing     : perl-DateManip                                                                                                                                                                11/12 
+  Installing     : condor                                                                                                                                                                        12/12 
+
+Installed:
+  condor.x86_64 0:8.0.7-250355                                                                                                                                                                         
+
+Dependency Installed:
+  bridge-utils.x86_64 0:1.1-3.el5           cyrus-sasl-md5.x86_64 0:2.1.22-7.el5_8.1          e4fsprogs-libs.x86_64 0:1.41.12-4.el5_10                   libtool-ltdl.x86_64 0:1.5.22-7.el5_4          
+  libvirt.x86_64 0:0.6.3-33.el5_5           perl-DateManip.noarch 0:5.44-1.2.1                perl-XML-Parser.x86_64 0:2.36-1                            perl-XML-Simple.noarch 0:2.18-4.rhel5         
+  qemu-img.x86_64 2:0.10.5-1.el5.2          xen-libs.x86_64 0:3.0.3-142.el5_9.3               xz-libs.x86_64 0:4.999.9-0.3.beta.20091007git.el5         
+
+Complete!
+
+
+
+changed HOME DIRECTORY in /etc/password  from /var/lib/condor to  /home/condor
+Also
+[root@grid41]# mkdir /home/condor
+[root@grid41]# chown condor:condor /home/condor/
+
+and now
+
+[root@grid41]# condor_config_val -dump | grep  TILDE
+TILDE = /home/condor
+
+
