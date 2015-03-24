@@ -93,7 +93,7 @@ class BaseDistribution(object):
         '''
         raise NotImplementedError
 
-    def abort(self)
+    def abort(self):
         '''
         Does whatever is needed to leave things back as they were 
         in case of need to abort
