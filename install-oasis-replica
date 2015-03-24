@@ -2,8 +2,6 @@
 # Install and configure all application software on oasis-replica
 # Written by Dave Dykstra 2-4-2015
 
-cd
-
 case "`uname -n`" in
     oasis-replica.*|oasis-replica-itb.*);;
     *)  echo "Only run this on oasis-replica or oasis-replica-itb"
@@ -12,6 +10,12 @@ case "`uname -n`" in
 esac
 
 set -ex
+
+SCRIPTDIR="`dirname $0`"
+if [ "$SCRIPTDIR" = "." ]; then
+    SCRIPTDIR="`pwd`"
+fi
+cd
 
 ARCH=`arch`
 AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
@@ -23,7 +27,7 @@ CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
-OASISRPM=oasis-2.0.11-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.18-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -44,7 +48,7 @@ rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
 
 # install aufs postupdate script so it will get rebuilt when kernel is rebuilt
 mkdir -p /opt/etc/osupdate.d
-cp `dirname $0`/aufs.postupdate /opt/etc/osupdate.d
+cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
 
 # install cvmfs
 wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
@@ -110,6 +114,12 @@ WSGIScriptAliasMatch /cvmfs/([^/]+)/api /var/www/wsgi-scripts/cvmfs-api.wsgi/$1
 xEOFx
 chkconfig httpd on
 service httpd start
+
+cat >>/etc/sysctl.conf <<xEOFx
+# Controls maximum listen() backlog for apache.  Added by install script.
+net.core.somaxconn = 1024
+xEOFx
+sysctl -w net.core.somaxconn=1024
 
 # create srv directory if it isn't there yet
 SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
@@ -220,7 +230,7 @@ ln -s $SRVDIR/cvmfs /srv
 chkconfig nfslock on
 service nfslock start
 # on itb install also the oasis-itb pub key and read from oasis-itb
-OASISPUBKEYS=/etc/cvmfs/opensciencegrid.org.pub
+OASISPUBKEYS=/etc/cvmfs/keys/opensciencegrid.org.pub
 case $SRVDIR in
     *-itb)
 	cp /net/nas01/srv/oasis/etc/cvmfs/oasis-itb.opensciencegrid.org.pub /etc/cvmfs/keys
