@@ -1,3 +1,10 @@
+-----------------------------------------------------------------------------
+2.0.19
+-----------------------------------------------------------------------------
+
+* Add misc/update_oasis_vos which publishes all vos that have been
+  updated since their last publish, for use in install-oasis and on
+  the oasis-itb machine 
 
 -----------------------------------------------------------------------------
 2.0.18
