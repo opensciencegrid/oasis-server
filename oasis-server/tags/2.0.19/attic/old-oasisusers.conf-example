@@ -1,0 +1,44 @@
+#
+# QUESTION:
+#       makes sense to allow more than one user per VO?
+#       Could it happen that one user can not work on what another one did before?
+#       (or rsync in the preinstall step would fix that?)
+#
+
+
+[DEFAULT]
+
+VO = ${VO_FROM_X509}
+#OSG_APP = /home/oasis
+OSG_APP = ${OSG_APP_FROM_ENV} 
+
+[ouser.atlas]
+VO = atlas
+
+[usatlas1]
+VO = atlas
+
+[caballer]
+VO = atlas
+OSG_APP = /home/caballer/src
+
+
+##   Another potential approach could be
+## 
+##       * users.conf
+## 
+##             [USERS]
+##             usatlas1 = atlas
+##             cmssoft = cms
+##             ...
+## 
+##       * vo.conf
+## 
+##             [atlas]
+##             src =
+##             dest =
+##             OSG_APP =
+## 
+##             [cms]
+##             ...
+## 
