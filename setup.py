@@ -34,6 +34,7 @@ utils_files = ['misc/do_oasis_update',
     	       'misc/oasis_status_stamp',
                'misc/print_oasis_vonames',
     	       'misc/request_oasis_update',
+    	       'misc/update_oasis_vos',
               ]
 
 initd_files = ['etc/oasisd']
