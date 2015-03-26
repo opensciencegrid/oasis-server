@@ -19,8 +19,8 @@ doc = libxml2.parseDoc(xml)
 
 print('[DEFAULT]')
 print('sleep = 300')  # 5 minutes
-print('starttimeout = 3600000')  # 1000 hour (~infinite)
-print('finishtimeout = 3600000')  # 1000 hours (~infinite)
+print('starttimeout = 86400')  # 1 day (~infinite)
+print('finishtimeout = 86400')  # 1 day (~infinite)
 print('enabled = True')
 print("repositorysection = OASIS")  # For GOC, at the time being, only one repository
 print('project_dest_owner = oasis')
