@@ -24,7 +24,7 @@ CVMFSVER=2.1.20
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
-OASISRPM=oasis-2.0.18-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.19-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -235,13 +235,11 @@ $RUNUSER "cvmfs_server publish"
 
 # add cron entries
 mkdir -p /var/log/oasis
-cat >>/etc/cron.d/oasis <<'xEOFx'
+cat >/etc/cron.d/oasis <<'xEOFx'
 # Created by install script.  Will be recreated next reinstall.
 * * * * *   root   /usr/share/oasis/do_oasis_update
 */3 * * * * root   /usr/share/oasis/oasis_status_stamp
 xEOFx
-
-set +x
 
 # request updates on all vos that have changed
 
@@ -249,22 +247,17 @@ LOCKPFX=/net/nas01/Public/
 case "`uname -n|cut -d. -f1`" in
     *-itb) LOCKPFX=${LOCKPFX}itb_;;
 esac
-for VO in `/usr/share/oasis/print_oasis_vonames`; do
-    if [ ! -f /net/nas01/Public/ouser.$VO/update.details ]; then
-	# skip because it hasn't been published yet
-	continue
-    fi
-    if cmp /net/nas01/Public/ouser.$VO/update.details /cvmfs/oasis.opensciencegrid.org/$VO/update.details >/dev/null 2>&1; then
-	# already up to date, nothing to do
-	continue
-    fi
-    echo "Requesting update for $VO at `date`"
-    echo $VO >${LOCKPFX}vo_update_requested
-    # this waits for the request to complete
-    /usr/share/oasis/request_oasis_update
-done
+rm -f ${LOCKPFX}vo_update_requested # sometimes this doesn't get cleaned up
+/usr/share/oasis/update_oasis_vos
 
-set -x
+case "`uname -n|cut -d. -f1`" in
+    *-itb) 
+	# on itb also update the vos once an hour if they have changed
+	cat >>/etc/cron.d/oasis <<xEOFx
+1 * * * *   root   /usr/share/oasis/update_oasis_vos >>/var/log/oasis/voupdates.log 2>&1
+xEOFx
+	;;
+esac
 
 # update the publication revision to be 100 greater than the previous revision
 PREVREVISION="`wget -qO- http://oasis-replica.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|cat -v|sed -n '/^S/{s/^S//p;q;}'`"
