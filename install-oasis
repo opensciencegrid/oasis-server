@@ -94,6 +94,12 @@ net.core.somaxconn = 1024
 xEOFx
 sysctl -w net.core.somaxconn=1024
 
+# add robots.txt
+cat >/var/www/html/robots.txt <<xEOFx
+User-agent: *
+Disallow: /
+xEOFx
+
 cat >/etc/iptables.d/60-local-oasis <<"xEOFx"
 # Created by install script.  Will be recreated next reinstall.
 . /etc/iptables.d/setup

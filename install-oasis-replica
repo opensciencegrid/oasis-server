@@ -121,6 +121,12 @@ net.core.somaxconn = 1024
 xEOFx
 sysctl -w net.core.somaxconn=1024
 
+# add robots.txt
+cat >/var/www/html/robots.txt <<xEOFx
+User-agent: *
+Disallow: /
+xEOFx
+
 # create srv directory if it isn't there yet
 SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
 if [ ! -d $SRVDIR ]; then
