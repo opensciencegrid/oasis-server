@@ -1,0 +1,738 @@
+#!/usr/bin/env python   
+
+#
+#   NOTE : temporary name
+#
+
+import datetime
+import getpass
+import logging
+import logging.handlers
+import os
+import pwd
+import subprocess
+import string
+import sys
+import time
+import threading
+
+from ConfigParser import SafeConfigParser
+
+major, minor, release, st, num = sys.version_info
+
+
+class oasisCLI(object):
+
+    def __init__(self):
+
+        self.probes_rc = 0
+
+        self._setuplogging()
+
+        try:
+            self.username = self._getusername()
+            self.oasisconf = self._getbasicconfig()
+            self.oasisprojectsconf = self._getprojectconfig()
+            self.project = self._getproject()
+            self.oasisprobesconf = self._getprobesconfig()
+            self.oasisprojectprobesconf = self._getprojectprobesconfig()
+            self.vo = self._getvo()
+            self.osg_app = self._getosgapp()
+
+        except:
+            self.log.critical('Configuration cannot be read. Aborting.')
+            sys.exit(1)
+
+        self._changelogformat()
+
+
+    # --------------------------------------------------------------
+    #      P R E L I M I N A R I E S
+    # --------------------------------------------------------------
+
+    def _setuplogging(self):
+        
+        self.log = logging.getLogger()
+
+        # set the messages format
+        if major == 2 and minor == 4:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d : %(message)s'
+            STDOUT_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s : %(message)s'
+        else:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d %(funcName)s(): %(message)s'
+            STDOUT_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s : %(message)s'
+        logfile_formatter = logging.Formatter(LOGFILE_FORMAT)
+        stdout_formatter = logging.Formatter(STDOUT_FORMAT)
+        logfile_formatter.converter = time.gmtime  # to convert timestamps to UTC
+        stdout_formatter.converter = time.gmtime  # to convert timestamps to UTC
+        
+        ### adding a handler for a /var/log/ file
+        logStream = logging.FileHandler('/var/log/oasis/oasis.log')
+        logStream.setFormatter(logfile_formatter)
+        self.log.addHandler(logStream)
+        self.log.setLevel(logging.DEBUG)  # default
+        
+        ### adding a handler for stdout (to be read by the users)
+        logStdout = logging.StreamHandler(sys.stdout)
+        logStdout.setFormatter(stdout_formatter)
+        logStdout.setLevel(logging.INFO) # a more restrictive level for this handler
+        self.log.addHandler(logStdout)
+        
+
+    def _changelogformat(self):
+        """
+        adding the username and VO to the logfile messages
+        """
+
+        if major == 2 and minor == 4:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] <${user}:${project}> %(name)s %(filename)s:%(lineno)d : %(message)s'
+        else:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] <${user}:${project}> %(name)s %(filename)s:%(lineno)d %(funcName)s(): %(message)s'
+
+        LOGFILE_FORMAT = string.Template(LOGFILE_FORMAT)
+        LOGFILE_FORMAT = LOGFILE_FORMAT.substitute(user=self.username, project=self.project)
+        logfile_formatter = logging.Formatter(LOGFILE_FORMAT)
+        logfile_formatter.converter = time.gmtime  # to convert timestamps to UTC
+        
+        for h in self.log.handlers:
+            if isinstance(h, logging.FileHandler):
+                h.setFormatter(logfile_formatter)
+        
+    # --------------------------------------------------------------
+
+    def _getusername(self):
+        '''
+        get the username of whoever is calling this API
+        '''
+
+        username = getpass.getuser()
+        # ??? maybe I should use   pwd.getpwuid(os.getuid()).pw_name   ???
+        return username
+
+    def _getbasicconfig(self):
+
+        # get the generic OASIS configuration 
+        oasisconf = SafeConfigParser()
+        oasisconf.readfp(open("/etc/oasis/oasis.conf"))
+        return oasisconf
+
+    def _getprojectconfig(self):
+
+        # get the OASIS projects configuration
+        oasisprojectsconffilename = self.oasisconf.get('PROJECTS', 'projectsconf')
+        oasisprojectsconf = SafeConfigParser()
+        oasisprojectsconf.readfp(open(oasisprojectsconffilename))
+        return oasisprojectsconf
+
+    def _getproject(self):
+
+        project = self.__getprojectfromuser(self.oasisprojectsconf, self.username)
+        if project:
+            return project
+        else:
+            raise Exception
+
+    def _getprobesconfig(self):
+
+        # get the OASIS probes configurations
+        oasisprobesconffilename = self.oasisconf.get('PROBES', 'oasisconf')
+        oasisprobesconf = SafeConfigParser()
+        oasisprobesconf.readfp(open(oasisprobesconffilename))
+        return oasisprobesconf
+
+    def _getprojectprobesconfig(self):
+
+        # get the OASIS project probes configurations
+        oasisconfigdir = self.oasisconf.get('PROBES', 'directoryconf')
+        oasisprojectprobesconffilename = self.oasisprojectsconf.get(self.project, 'projectprobes')
+        oasisprojectprobesconf = SafeConfigParser()
+        oasisprojectprobesconf.readfp(open('%s/%s' %(oasisconfigdir, oasisprojectprobesconffilename)))
+        return oasisprojectprobesconf
+
+    def _getvo(self):
+        
+        vo = self.oasisprojectsconf.get(self.project, 'VO')
+        # try to get VO from x509, and interpolate just in case
+        #try:    
+        #    st, vo = commands.getstatusoutput('voms-proxy-info -vo')
+        #    if st == 0:
+        #        vo_temp = string.Template(self.vo)
+        #        vo = vo_temp.substitute(VO_FROM_X509, vo) 
+        #except:
+        #    pass
+
+        return vo
+
+    def _getosgapp(self):
+
+        osg_app = self.oasisprojectsconf.get(self.project, "OSG_APP")
+        # if needed, interpolate
+        osg_app_env = os.environ.get("OSG_APP", None)
+        if osg_app_env:
+            osg_app_temp = string.Template(self.osg_app)
+            osg_app = osg_app_temp.substitute(OSG_APP_FROM_ENV=osg_app_env)
+
+        return osg_app
+
+
+    def __getprojectfromuser(self, conf, username):
+        '''
+        the private method just search for which section in a config object
+        contains the spcified username, and returns the project variable.
+        oasisprojects.conf looks like this
+
+                [PROJ1]
+                foo = bar
+                user = blah
+                project = PROJ1
+
+                [PROJ2]
+                foo2 = barz
+                user = bloh
+                project = proj2
+
+        We need to find out the <section> given the user.
+        Only reason the section name is not the username itself is just aesthetic,
+        so we need to do this reverse lookup, at least for the time being.
+        '''
+
+        for section in conf.sections():
+            if conf.get(section, 'user') == username:
+                return conf.get(section, 'project') 
+        return None
+
+
+    # ===========================================================================
+    #                   A C T I O N S 
+    # ===========================================================================
+
+    def preinstall(self):
+        """
+        things to be done before running the user payload
+        """
+
+        self._syncronize_back()
+
+    def _syncronize_back(self):
+        """
+        ensure the user scratch area has a perfect copy of what 
+        is currently in the repo
+        """
+
+        pass
+
+    # ===========================================================================
+
+    def runpayload(self, payload):
+        '''
+        payload is the result of sys.argv[1:]
+        For example:
+           ['/var/lib/condor/execute/dir_15018/condor_exec.exe', 'a', 'b', 'c', '1', '2', '3'] 
+        '''
+       
+        self.payload = payload
+        cmd = ' '.join(self.payload)
+
+        self.log.info('Running installation job %s' %cmd)
+
+        # temporary solution
+        st, out = commands.getstatusoutput(cmd)
+
+        if st == 0:
+            self.log.info('Installation job finished OK')
+        else:
+            self.log.error('Installation job failed with RC=%s' %st)
+
+        return st
+
+    # ===========================================================================
+
+    def postinstall(self):
+        """
+        things to be done just after running the user payload
+        """
+
+        self._prepareflag()
+
+    def _prepareflag(self):
+        """
+        prepare flag to let the daemon to know publishing is requested
+        Flag files can be, for example:
+
+            /var/log/oasis/<vo>/job.XYZ.request
+            /var/log/oasis/<vo>/job.XYZ.running            
+            /var/log/oasis/<vo>/job.XYZ.done
+
+        Comments:
+
+            -- does that mean that the <vo> subdirectory already exists?
+               If not, how creates it? Note that I am allowing multiple users per VO...
+
+            -- the UNIX ID of the file owner 
+               (the daemon needs to know that to drop privileges before running probes) 
+               can be found with 
+
+                    pwd.getpwuid( os.stat( <filename> ).st_uid ).pw_name
+
+               or probes are run in a sub-shell with 'su'
+
+            -- Maybe it does not make sense more than one user per VO. 
+               One could not be able to modify what another one wrote... 
+               (or rsync would fix that?)
+
+        """
+
+        flagfile = '/var/log/oasis/%s/job.request' %self.vo
+        # create that flagfile, like 'touch'
+        open(flagfile, 'w').close()
+
+    # ===========================================================================
+
+    def transferfiles(self):
+        pass
+
+    def publish(self):
+        """
+        first it calls to runprobes()
+        If all probes run fine, then publish.
+
+        Publishing is done by an specific plugin.
+        """
+
+
+        self._getdistributionplugin()
+        rc = self.distribution_obj.publish() 
+        if rc == 0:
+            self.log.info('publishing done OK')
+        else:
+            self.log.critical('publishing failed')
+
+        return rc
+
+    def _getdistributionplugin(self):
+        '''
+        get the plugin for a given distribution tool, 
+        i.e. cvmfs
+        '''
+
+        tool = self.oasisconf.get("DISTRIBUTION", "tool")
+        distribution_plugin = __import__('oasispackage.distributionplugins.%s' %tool,
+                                         globals(),
+                                         locals(),
+                                         ['%s' %tool])
+
+        distribution_cls_name = tool
+        distribution_cls = getattr(distribution_plugin, distribution_cls_name)
+        self.distribution_obj = distribution_cls(self)
+
+    # ===========================================================================
+
+    def runthreads(self):
+        """
+        creates an object ProjectThreadMgr and enters main loop
+        This method is intended to be called by the daemon.
+        """
+
+        # FIXME !!   the daemon is not implemented yet
+
+        try: 
+            self.log.info('creating Oasis object and entering main loop')
+            self.projectthreadmgr = ProjectThreadMgr(self)
+            self.projectthreadmgr.mainLoop()
+        except KeyboardInterrupt:
+            self.log.info('Caught keyboard interrupt - exitting')
+            sys.exit(0)
+        #except ImportError, errorMsg:
+        #    self.log.error('Failed to import necessary python module: %s' % errorMsg)
+        #    sys.exit(0)
+        except:
+            self.log.error('Unexpected exception')
+            self.log.error(traceback.format_exc(None))
+            raise
+
+
+    # FIXME ??? need to pass flagfile or not ???
+    #def runprobes(self, flagfile):
+    def runprobes(self):
+        """
+        probes config files, for each VO, looks like this 
+
+              [probe1]
+
+              enabled = True 
+              probetype = nodelete
+              directory = /blah/
+              level = abort
+
+              [probe2]
+
+              enabled = True 
+              probetype = test
+              foo = bar
+        """
+
+        #
+        #   FIXME  temporary implementation !!!
+        #
+
+        # ---------------------------------------------------------------------
+        # 1st run the default OASIS probes
+        # ---------------------------------------------------------------------
+
+        # FIXME, this has been already calculated, but not stored in an attributed. 
+        oasisprobesconffilename = self.oasisconf.get('PROBES', 'oasisconf')
+        self.log.debug('running probes from config file %s' %oasisprobesconffilename)
+        rc = self._runprobes(self.oasisprobesconf)
+        if rc != 0:
+            self.probes_rc = rc
+            return rc
+
+        # ---------------------------------------------------------------------
+        # 2nd run the specific VO probes
+        # ---------------------------------------------------------------------
+
+        # FIXME, this has been already calculated, but not stored in an attributed. 
+        oasisconfigdir = self.oasisconf.get('PROBES', 'directoryconf')
+        oasisprojectprobesconffilename = self.oasisprojectsconf.get(self.project, 'projectprobes')
+        oasisprojectprobesconffilename = '%s/%s' %(oasisconfigdir, oasisprojectprobesconffilename)
+
+        self.log.debug('running probes from config file %s' %oasisprojectprobesconffilename)
+        rc = self._runprobes(self.oasisprojectprobesconf)
+        if rc != 0:
+            self.probes_rc = rc
+            return rc
+
+        # if everything went OK... 
+        self.log.info('all probes passed OK')
+        return 0
+
+    def _runprobes(self, conffile):
+
+        try:
+            probesconf = SafeConfigParser()
+            probesconf.readfp(open(conffile))
+        except:
+            self.log.error('can not read probes configuration file')
+            return 1
+    
+        # get list of probes
+        list_probes = probesconf.sections()
+
+        # get plugins for probes and run them 
+        for conf_probe_name in list_probes:
+            enabled = probesconf.getboolean(conf_probe_name, "enabled")
+            if enabled:
+                probe_type = probesconf.get(conf_probe_name, 'probetype')
+                
+                # get plugin for that probe
+                probe_plugin = __import__('oasispackage.probesplugins.%s' %probe_type, 
+                                          globals(),
+                                          locals(),
+                                          ['%s' %probe_type])
+                probe_class_name = probe_type # name of class == name of plugin
+                probe_class = getattr(probe_plugin, probe_class_name)        
+   
+                # get the object from the class
+                probe_obj = probe_class(self, probesconf, conf_probe_name)
+    
+                # run the plugin
+                #self.log.info('calling probe <%s>' %probe_type)
+                rc = probe_obj.run()
+   
+                if rc == 0:
+                    self.log.info('probe <%s> passed OK' %probe_type)  # ?? should it be conf_probe_name ??
+                else:
+                    # if RC != 0, abort
+                    self.log.critical('probe <%s> failed. Aborting.' %probe_type) # ?? should it be conf_probe_name ??
+                    return rc
+    
+        # if all probes passed fine...
+        self.log.debug('All probes from config file %s passed OK' %os.path.basename(conffile))
+        return 0
+
+
+class ProjectThreadMgr(object):
+
+    def __init__(self, oasiscli):
+        """
+        oasiscli is a reference to the class OasisCLI
+        which contains all config objects
+        """
+
+        self.log = logging.getLogger('main.oasis')
+        self.log.info('Creating object Oasis')
+
+        self.oasiscli = oasiscli
+
+        self.threads = {}
+        # to host all threads
+        # key = project name (section name in oasisprojects conf file
+        # value = the Thread object
+
+        self.log.info("Oasis: object initialized.")
+
+
+    def mainLoop(self):
+        '''
+        Main functional loop. 
+          1. Creates all threads and starts them.
+          2. Wait for a termination signal, and
+             stops all threads when that happens.
+        '''
+        
+        self.log.debug("Starting.")
+        self.log.info("Starting all threads...")
+        
+        self.start()
+       
+        try:
+            while True:
+                mainsleep = 30   # FIXME : This should be a config variable 
+                time.sleep(mainsleep)
+                self.log.debug('Checking for interrupt.')
+        
+        except (KeyboardInterrupt):
+            logging.info("Shutdown via Ctrl-C or -INT signal.")
+            self.shutdown()
+            raise
+        
+        self.log.debug("Leaving.")
+
+    def start(self):
+        '''
+        method to start all threads.
+        '''
+
+        listprojects = self.oasiscli.oasisprojectsconf.keys()
+        for project in listprojects:
+            enabled = self.oasiscli.oasisprojectsconf.getboolean(project,'enabled')
+            if enabled:
+                self.log.info('Project %s enabled. Creating thread' %project)
+                try:
+                    thread = ProjectThread(self.oasiscli, project)
+                    self.threads[project] = thread
+                    thread.start()
+                    self.log.info('Thread for project %s started.' %project)
+                except Exception, ex:
+                    self.log.error('Exception captured when initializing thread for project %s.' %project)
+                    self.log.debug("Exception: %s" % traceback.format_exc())
+                    
+            else:
+                self.log.info('Project %s not enabled.' %project)
+
+
+    def shutdown(self):
+        '''
+        Method to cleanly shut down all activity, joining threads, etc. 
+        '''
+    
+        logging.debug(" Shutting down all threads...")
+        self.log.info("Joining all threads...")
+
+        for thread in self.threads.values():
+            thread.join()
+
+        self.log.info("All threads joined.")
+        
+
+class ProjectThread(threading.Thread):
+
+    def __init__(self, oasiscli, project):
+        '''
+        oasiscli is a reference to class OasisCLI, 
+        which contains all config object
+
+        project is the name of the section in oasisprojects conf file
+        '''
+
+        threading.Thread.__init__(self) # init the thread
+
+        self.log = logging.getLogger('main.projectthread[%s]' %project)
+        self.log.info('Starting thread for project %s' project)
+ 
+        self.stopevent = threading.Event()
+
+        self.oasiscli = oasiscli
+        self.project = project
+
+        try:
+            # read the configuration for this project. Example:
+            # 
+            #     [PROJECT1]
+            #     enabled = True
+            #     VO = OSG
+            #     project = project1
+            #     user = osgproject1
+            #     OASIS_VO_SRC_DIRECTORY = ${OSG_APP}/${VO}/project1/
+            #     OASIS_VO_DEST_DIRECTORY = /cvmfs/${project}.opensciencegrid.org 
+            #     distributiontool = cvmfs21
+
+            self.enabled = self.oasiscli.oasisprojectsconf.getboolean(project, 'enabled')
+
+            self.OSG_APP = os.environ['OSG_APP'])
+
+            self.VO = self.oasiscli.oasisproject.get(project,'VO') 
+
+            try:
+                self.project = self.oasiscli.oasisproject.get(project,'project') 
+            except:
+                # project is not mandatory
+                self.project = None
+
+            self.user = self.oasiscli.oasisproject.get(project,'user') 
+
+            self.OASIS_VO_SRC_DIRECTORY = self.oasiscli.oasisproject.get(project,'OASIS_VO_SRC_DIRECTORY') 
+            # Template substitution, in case it is needed
+            self.OASIS_VO_SRC_DIRECTORY = string.Template(self.OASIS_VO_SRC_DIRECTORY) 
+            self.OASIS_VO_SRC_DIRECTORY = self.OASIS_VO_SRC_DIRECTORY.substitute(OSG_APP=self.OSG_APP, VO=self.VO, project=self.project)
+
+            self.OASIS_VO_DEST_DIRECTORY = self.oasiscli.oasisproject.get(project,'OASIS_VO_DEST_DIRECTORY')
+            # Template substitution, in case it is needed
+            self.OASIS_VO_DEST_DIRECTORY = string.Template(self.OASIS_VO_DEST_DIRECTORY) 
+            self.OASIS_VO_DEST_DIRECTORY = self.OASIS_VO_DEST_DIRECTORY.substitute(OSG_APP=self.OSG_APP, VO=self.VO, project=self.project)
+
+            self.distributiontool = self.oasiscli.oasisproject.get(project,'distributiontool')
+
+        except Exception, ex:
+            self.log.error('ProjectThread: exception captured while reading configuration variables to create the object.')
+            self.log.debug("Exception: %s" % traceback.format_exc())
+            raise ex
+
+
+        # recording moment the object was created
+        #self.inittime = datetime.datetime.now()
+
+        self.log.info('Thread for project %s initialized' project)
+
+
+    # -------------------------------------------------------------------------
+    #  threading methods
+    # -------------------------------------------------------------------------
+
+    def run(self):
+        '''
+        Method called by thread.start()
+        Main functional loop of this ProjectThread. 
+            1. look for its own flag file. 
+               i.e. /var/log/oasis/<project>/job.XYZ.request or similar
+            2. run probes
+            3. publish
+        '''
+
+        while not self.stopevent.isSet():
+            self.log.debug("Beginning cycle in thread for Project %s" %self.project)
+            try:
+                # look for the flag file    
+                flagfile = self._checkflagfile()
+                if flagfile: 
+                    # if flagfile exists for this project, do stuffs 
+                    out, rc = self.runprobes(flagfile)
+
+                    if rc == 0:
+                        self.log.info('probes ran OK, publishing')
+                        self.transferfiles()
+                        self.publish()
+                    else:
+                        self.log.critical('probes failed with rc=%s and out=%s, aborting installation' %(rc, out))
+                
+ 
+            except Exception, e:
+                ms = str(e)
+                self.log.error(ms)
+                self.log.debug(traceback.format_exc())
+            time.sleep(10)
+        
+
+    def join(self,timeout=None):
+        '''
+        Stop the thread. 
+        Overriding this method required to handle Ctrl-C from console.
+        '''
+    
+        self.stopevent.set()
+        self.log.debug('Stopping thread for Project %s...' %self.project)
+        threading.Thread.join(self, timeout)
+    
+
+    # -------------------------------------------------------------------------
+    #  specific methods 
+    # -------------------------------------------------------------------------
+
+    def _checkflagfile(self):
+        '''
+        checks if flagfile exists for this project
+        '''
+
+        import re
+
+        RE = re.compile(r"flag.(\d{4})-(\d{2})-(\d{2}).request?$")
+
+        dir = "/var/log/oasis/%s/" %self.project
+        files = os.listdir(dir)
+        for file in files:
+            if RE.match(file) is not None:
+                # as soon as I find the flag, I return it. 
+                flag = '%s%s' %(dir, file) 
+                self.log.info('Found a flag file for project %s' %self.project)
+                return flag
+        # no flag file found
+        return None
+
+
+    def runprobes(self, flagfile):
+        """
+        invokes the code to run the probes in a subshell
+
+        flagfile is the path to the flag file triggering action.
+        It is used for two different purposes:
+            - to get the ID of the user requesting actions
+            - the flag file itself contains relevant info. For example, the RC from the probes.
+        """
+
+        # we need to change ID
+        user = pwd.getpwuid( os.stat(flagfile).st_uid ).pw_name
+        # Alternative is to get the username from  oasisprojects.conf
+        
+        runuid = pwd.getpwnam(user).pw_uid
+        rungid = pwd.getpwnam(user).pw_gid
+        
+        pid = os.fork()
+        if pid == 0:
+            # child
+            os.setgid(rungid)
+            os.setuid(runuid)
+            os.seteuid(runuid)
+            os.setegid(rungid)
+            #print os.getuid(), pwd.getpwuid( os.getuid())[0]
+
+            cmd = "/usr/bin/oasis-run-probes"  # ???? or something like that
+                                               # ???? maybe  "su <username>; /usr/bin/oasis-run-probes"
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            out = None
+            (out, err) = p.communicate()
+            delta = time.time() - before
+            log.debug('It took %s seconds to run the probes' %delta)
+            if p.returncode == 0:
+                log.debug('Leaving with OK return code.')
+            else:
+                log.warning('Leaving with bad return code. rc=%s err=%s out=%s' %(p.returncode, err, out ))
+                out = None
+            #return (out, p.returncode)
+
+            os._exit(0)
+        
+        os.wait()
+
+        # !!!  FIXME  !!!
+        # ??? how do I return something ???
+    
+    
+
+
+
+    def transferfiles(self):
+        self.oasiscli.transferfiles() 
+    
+    def publish(self):
+        self.oasiscli.publish() 
+
