@@ -153,6 +153,10 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+
+* Sun Mar 29 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.20-1
+- changed the timeout values in the script generate_config_projects
+
 * Wed Mar 25 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.19-1
 - Add misc/update_oasis_vos which publishes all vos that have been
   updated since their last publish, for use in install-oasis and on
