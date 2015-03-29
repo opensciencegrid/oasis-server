@@ -1,0 +1,178 @@
+
+#####################################################################################################
+#                                                                                                   #
+#        I N S T A L L      A N D      C O N F I G U R E        O A S I S                           #
+#                                                                                                   #
+#####################################################################################################
+
+NOTE:  this recipe is meant to become a twiki when OASIS 2.0.0 is confirmed to work
+
+
+
+#####################################################################################################
+#                                                                                                   #
+#        I N S T A L L                                                                              #
+#                                                                                                   #
+#####################################################################################################
+
+NOTE: this recipe assumes CVMFS server has already been installed. 
+      See notes  install_stratum-0_rhel5 on how to install CVMFS server.
+
+
+NOTE: the installation must be done in the 3 hosts:
+
+    -- oasis interactive login host
+    -- cvmfs server
+    -- cvmfs stratum-1
+
+INSTALL FROM SVN:
+
+-- check out code from SVN
+
+        [root@matrix ~]# pwd
+        /root
+
+        [root@matrix ~]# mkdir src
+
+        [root@matrix ~]# cd src/
+
+        [root@matrix src]# svn co  http://svn.usatlas.bnl.gov/svn/oasis/oasis-server/trunk/ .
+
+-- create the RPM with distutils
+
+        [root@matrix src]# python setup.py bdist_rpm
+
+   NOTE: if the previous command failed with error messages similar to these
+
+                building RPMs
+                rpm -ba --define _topdir /root/src/build/bdist.linux-x86_64/rpm --clean build/bdist.linux-x86_64/rpm/SPECS/oasis.spec
+                -ba: unknown option
+                error: command 'rpm' failed with exit status 1
+
+         then install rpm-build and try it again
+
+
+        [root@matrix src]# yum install rpm-build
+
+        [root@matrix src]# python setup.py bdist_rpm
+
+
+#####################################################################################################
+#                                                                                                   #
+#        C O N F I G U R A T I O N                                                                  #
+#                                                                                                   #
+#####################################################################################################
+
+NOTE: the same configuration applies to these two hosts:
+
+    -- oasis interactive login host
+    -- cvmfs server
+ 
+
+NOTE: the configuration files use the standard python configuration format. 
+      It is important to understand it to know how the [DEFAULT] sections, or the mechanism of interpolation. 
+      Documentation can be found here:
+
+            https://docs.python.org/2/library/configparser.html
+
+
+-- BASIC CONFIGURATION
+
+    -- sysconfig
+
+       copy /etc/oasis/oasisd.sysconfig-example  to  /etc/sysconfig/oasisd
+
+        [root@matrix src]# cp /etc/oasis/oasisd.sysconfig-example /etc/sysconfig/oasisd        
+        
+       and edit it to change the default configuration, if desired.
+
+    -- configuration files
+
+       make a copy of every configuration file to remove the -example from the filename 
+        
+        [root@matrix src]# cd /etc/oasis/
+        [root@matrix oasis]# cp oasis.conf-example oasis.conf
+        [root@matrix oasis]# cp oasisprojects.conf-example oasisprojects.conf
+        [root@matrix oasis]# cp oasisprobes.conf-example oasisprobes.conf
+
+       and edit then to set up the proper configuration.
+
+    -- condor config file
+
+       This step is only needed when users interact with OASIS via job submission thru a gatekeeper instead of interactively.
+       Otherwise, this step can be skipped. 
+       If HTCondor is going to be used, then this file needs to be placed as part of the HTCondor configuration:
+
+        [root@matrix oasis]# cp condor_oasis.conf-example /etc/condor/config.d/condor_oasis.conf
+
+       It assumes HTCondor has already been deployed, so the directory /etc/condor/config.d/ actually exists. 
+
+-- CONFIGURATION VO BY VO
+
+Let's use as example the VO "MIS". 
+
+    -- add a section into oasisprojects.conf for MIS similar to this
+
+       [MIS]
+        
+       VO = MIS
+       project = MIS
+       user = ouser.mis
+       projectprobes = mis.conf
+
+    -- create the corresponding probes config file for MIS. 
+       It can be left empty, but it must exist.
+
+-- CONFIRMING CONFIGURATION WORKS, AND GETTING READY
+
+The best way to confirm the config files, in both hosts, are OK is to prepare the infrastructure for project MIS:
+
+    -- UNIX ID
+    -- home directory
+    -- source and destination directories
+
+        [root@matrix ~]# /usr/bin/oasis-admin-projectadd --project MIS
+
+
+#####################################################################################################
+#                                                                                                   #
+#        R U N                                                                                      #
+#                                                                                                   #
+#####################################################################################################
+
+this step only applies to the host with the cvmfs server
+
+
+        [root@matrix ~]# service oasisd start
+
+
+#####################################################################################################
+#                                                                                                   #
+#        U S A G E                                                                                  #
+#                                                                                                   #
+#####################################################################################################
+
+on the interactive host, users do
+
+        [ouser.mis@matrix ~]$ cd /home/oasis/MIS 
+
+   assuming the user scratch are is /home/oasis/MIS
+
+-- prepare user scratch are, just in case there are old orphan files from the past
+
+        [ouser.mis@matrix MIS]$ oasis-user-preinstall
+
+-- add new content to the user scratch area. 
+
+-- publish new content, either using the new program
+
+        [ouser.mis@matrix MIS]$ oasis-user-publish
+
+   or the old one
+
+        [ouser.mis@matrix MIS]$ osg-oasis-update
+
+
+
+
+       
