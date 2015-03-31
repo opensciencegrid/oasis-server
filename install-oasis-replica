@@ -186,11 +186,15 @@ cat >/etc/iptables.d/60-local-cvmfs <<"xEOFx"
 $ITNAPRE4 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 8000
 $ITNAO4 -o lo -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 8000
 
-# open tcp port 80 and port 8000
+# open tcp port 80 and port 8000 for squid
 $ITFAI -p tcp --dport 80 -j ACCEPT
 $ITFAI -p tcp --dport 8000 -j ACCEPT
 $ITFAI4 -p tcp --dport 80 -j ACCEPT
 $ITFAI4 -p tcp --dport 8000 -j ACCEPT
+
+# open tcp port 8080 for httpd
+$ITFAI -p tcp --dport 8080 -j ACCEPT
+$ITFAI4 -p tcp --dport 8080 -j ACCEPT
 
 # open udp port 3401
 $ITFAI -p udp --dport 3401 -j ACCEPT
