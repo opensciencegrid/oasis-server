@@ -78,7 +78,9 @@ cat >/etc/logrotate.d/cvmfs <<xEOFx
 xEOFx
 cat >/etc/httpd/conf.d/cvmfs.conf <<"xEOFx"
 # Created by install script.  Will be recreated next reinstall.
+# 8080 is used for other stratum 1s and 8081 is used for squid
 Listen 8080
+Listen 8081
 KeepAlive On
 MaxClients 64
 ListenBackLog 1024
@@ -156,8 +158,8 @@ insertline("^http_access deny all", "acl CVMFSAPI urlpath_regex ^/cvmfs/[^/]*/ap
 insertline("^http_access deny all", "cache deny !CVMFSAPI")
 
 # port 80 is also supported, through an iptables redirect
-setoption("http_port", "8000 accel defaultsite=localhost:8080")
-insertline("^http_port", "cache_peer localhost parent 8080 0 no-query originserver")
+setoption("http_port", "8000 accel defaultsite=localhost:8081")
+insertline("^http_port", "cache_peer localhost parent 8081 0 no-query originserver")
 
 # allow incoming http accesses from anywhere
 # all requests will be forwarded to the originserver
