@@ -1,3 +1,7 @@
+2.0.21
+
+* removing -l from rsync commands, it is redundant
+
 2.0.20
 
 * changed the timeout values in the script generate_config_projects
