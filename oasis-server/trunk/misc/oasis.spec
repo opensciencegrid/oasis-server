@@ -153,6 +153,9 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Wed Apr 01 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.21-1
+- removing -l from rsync commands, it is redundant
+- replaced using sudo by runuser
 
 * Sun Mar 29 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.20-1
 - changed the timeout values in the script generate_config_projects
