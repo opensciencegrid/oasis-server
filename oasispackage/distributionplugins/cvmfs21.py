@@ -100,7 +100,7 @@ class cvmfs21(cvmfs):
         #       total size is 0  speedup is 0.00
         #       
 
-        cmd = 'sudo -u %s rsync --stats -aW -l --exclude .cvmfscatalog --delete --force --ignore-errors %s/ %s' %(self.project.project_dest_owner, self.src, self.dest)
+        cmd = 'sudo -u %s rsync --stats -aW --exclude .cvmfscatalog --delete --force --ignore-errors %s/ %s' %(self.project.project_dest_owner, self.src, self.dest)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
