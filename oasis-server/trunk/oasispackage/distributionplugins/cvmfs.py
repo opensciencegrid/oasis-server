@@ -49,7 +49,7 @@ class cvmfs(BaseDistribution):
         #       for example, to allow easier sync from remote host
         #
 
-        cmd = 'rsync --stats -a -l --delete %s/ %s/' %(self.dest, self.src)
+        cmd = 'rsync --stats -a --delete %s/ %s/' %(self.dest, self.src)
         self.log.debug('synchronization cmd = %s' %cmd)
 
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
