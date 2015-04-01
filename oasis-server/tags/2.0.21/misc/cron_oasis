@@ -1,0 +1,2 @@
+#* * * * * root /usr/libexec/do_oasis_update
+#*/15 * * * * root /usr/libexec/asis_status.sh

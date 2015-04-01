@@ -1,0 +1,42 @@
+\providecommand{\newblock}{}
+\begin{thebibliography}{1}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{{\tt #1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+% Bibliography created with iopart-num v2.0
+% /biblio/bibtex/contrib/iopart-num
+
+
+
+\bibitem{osg}
+Pordes R e~a 2007 {\em J. Phys.: Conf. Ser.\/} {\bf 78}
+
+\bibitem{cvmfs} 
+Blomer J, Aguado-Sanchez C, Buncic P and Harutyunyan A 2011 Distributing LHC application software and conditions databases using the CernVM file system
+      {\em J. Phys.: Conf. Series} {\bf 331} 
+
+
+\bibitem{ssh}
+Ylonen T e~a, 2006  The Secure Shell (SSH) Authentication Protocol {\em Network Working Group RFC 4252\/}
+
+\bibitem{gsi}
+\urlprefix\url{http://www.globus.org/security/overview.html}
+
+\bibitem{voms}
+\urlprefix\url{http://www.globus.org/grid\_software/security/voms.php}
+
+\bibitem{condor}
+Thain D, Tannenbaum T and Livny M 2005 Distributed Computing in Practice: The Condor Experience 
+      {\em Concurrency and Computation: Practice and Experience} {\bf 17, No. 2-4} 323-56
+
+\bibitem{x509}
+Adams C and Farrell S, 1999  Internet X.509 Public Key Infrastructure: Certificate Management Protocols 
+{\em Network Working Group RFC 2510\/}
+
+\bibitem{squid}
+\urlprefix\url{http://www.squid-cache.org/}
+
+
+
+\end{thebibliography}

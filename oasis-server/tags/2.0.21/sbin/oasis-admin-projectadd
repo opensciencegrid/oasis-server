@@ -1,0 +1,333 @@
+#!/bin/env python
+
+import commands
+import getopt
+import logging
+import os
+import sys
+import time
+import pwd
+
+from ConfigParser import SafeConfigParser
+
+from oasispackage.projects import Project, ProjectBasicConfig, ProjectFactory
+from oasispackage.oasisAPI import oasisCLI
+import oasispackage.utils
+
+major, minor, release, st, num = sys.version_info
+
+"""
+OASIS admin tool to add a new project to the server
+Steps:
+
+    -- create an UNIX ID
+
+    -- if needed, add the UNIX ID to a dedicated OASIS group (for example the group included in sudoers)
+
+    -- Maybe, create an empty user scratch are for that UNIX ID.
+
+    -- create a CVMFS repo
+
+    -- if possible, creates a template for oasisprojects.conf  ????
+
+Everything being done is logged to  /var/log/oasis/oasis.log
+
+The username and the name of the repo 
+are read from the oasisprojects.conf configuration file
+So it must be written before calling this tool
+(maybe unless I pass the arguments from command line)
+
+"""
+
+# FIXME
+# should this tool also create the cron for step 6 in 
+#   https://twiki.grid.iu.edu/bin/view/Documentation/Release3/OasisExternalRepositories#Procedure_to_add_an_externally_h
+# ?
+
+# FIXME should the functionalities included in class oasisAPI::Project()
+#       in the same way some of them are in the distributionplugin 
+#       ???
+
+# FIXME write the logging 
+
+# FIXME --allproject does not work at this point, I think
+
+
+
+def usage():
+
+    print 'oasis-admin-projectadd:'
+    print ''
+    print ' Syntax:'
+    print '     oasis-admin-projectadd [--help|-h] [--verbose|-v] [--project <name>]'
+    print ''
+    print ' Description:'
+    print '     prepares everything to start working with a new project.'
+    print '     Creates, if needed, the UNIX user account,'
+    print '     the scratch directory and destination directory.'
+    print '     For the destination directory, a new repository in CVMFS is created if needed.'
+    print '     All the needed information to create the project is read' 
+    print '     from the "projects" and "repositories" configuration files.'
+    print '     The value of input option --project must match the value'
+    print '     of variable "projectname" in configuration file projects.conf'
+    print ''
+    print ' Options:'               
+    print '     --help | -h         Displays usage and exits' 
+    print '     --verbose | -v      Enters in DEBUG mode for the logging'
+    print '     --project <name>    Name of the project being created'
+    print ''
+    sys.exit()
+
+
+class ProjectHandler(object):
+    # In the future, if makes sense, 
+    # it could be inherited 
+    # from an Interface class generic
+    # for all oasis-admin- tools
+    # For example, setting the logger is going to be the same
+    # for all admin tools...
+    # QUESTION: ?? where the base class would be placed ?? underneath site-packages/ ??
+
+    def __init__(self, projectname, loglevel):
+        # FIXME!! if projectname is None, it should abort !!
+
+        self.projectname = projectname
+        self.loglevel = loglevel
+
+        self._setuplogging()
+        # do we still need to setup logging if I get a Project class?
+
+        # create an object Project(), 
+        # which includes an attribute self.distributionplugin
+        
+        try:        
+            self.oasis = oasisCLI(projectname=self.projectname)
+            self.project = self.oasis.project 
+        except Exception, ex:
+            self.log.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
+            self.console.critical('object Project cannot be created. Error message = "%s". Aborting.' %ex)
+            raise ex
+
+    def _setuplogging(self):
+        
+        #self.log = logging.getLogger('admin-addproject')
+        self.log = logging.getLogger('logfile')   #FIXME !! Fix the mess with logger hierarchy
+        self.console = logging.getLogger('console')   #FIXME !! Fix the mess with logger hierarchy
+ 
+        # set the messages format
+        if major == 2 and minor == 4:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d : %(message)s'
+            STDOUT_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s : %(message)s'
+        else:
+            LOGFILE_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d %(funcName)s(): %(message)s'
+            STDOUT_FORMAT='%(asctime)s (UTC) - OASIS [ %(levelname)s ] %(name)s : %(message)s'
+
+        logfile_formatter = logging.Formatter(LOGFILE_FORMAT)
+        stdout_formatter = logging.Formatter(STDOUT_FORMAT)
+
+        logfile_formatter.converter = time.gmtime  # to convert timestamps to UTC
+        stdout_formatter.converter = time.gmtime  # to convert timestamps to UTC
+
+        logStream = logging.FileHandler('/var/log/oasis/oasis.log')
+        logStream.setFormatter(logfile_formatter)
+        self.log.addHandler(logStream)
+        #self.log.setLevel(self.loglevel)   #FIXME
+        self.log.setLevel(logging.DEBUG)
+
+        logStdout = logging.StreamHandler(sys.stdout)
+        logStdout.setFormatter(stdout_formatter)
+        self.console.addHandler(logStdout)
+        self.console.setLevel(self.loglevel)   #FIXME
+        #self.console.setLevel(logging.DEBUG)
+
+
+    def run(self):
+        '''
+        main method performing all checks, running commands, etc.
+        '''
+
+        rc = self.addrepositoryuser()
+        if rc:
+            return rc 
+        rc = self.addprojectuser()
+        if rc:
+            return rc 
+        rc = self.createprojectsrcdir()
+        if rc:
+            return rc 
+        rc = self.createproject()
+        return rc
+
+
+
+    # FIXME !!
+    # I am creating here the project_src_dir and the repository_src_dir
+    # the repository_src_dir should be done in a different method. 
+    # Or even in a different tool: oasis-admin-repositoryadd
+
+    def addrepositoryuser(self):
+        '''
+        creates the UNIX ID
+        '''
+        return oasispackage.utils.adduser(self.project.repository_src_owner)
+
+
+    def addprojectuser(self):
+        '''
+        creates the UNIX ID
+        '''
+        return oasispackage.utils.adduser(self.project.project_src_owner)
+        
+
+    def createprojectsrcdir(self):
+        '''
+        creates the source directory
+        '''
+
+        if 'login' not in self.oasis.services:
+            self.log.info('Not a login host: no need to create src directory')
+            self.console.info('Not a login host: no need to create src directory')
+            return 0
+            
+
+        project_user = self.project.project_src_owner
+        project_uid = pwd.getpwnam(project_user).pw_uid
+        project_gid = pwd.getpwnam(project_user).pw_gid
+
+        repository_user = self.project.repository_src_owner
+        repository_uid = pwd.getpwnam(repository_user).pw_uid
+        repository_gid = pwd.getpwnam(repository_user).pw_gid
+
+
+        # checks if OSG_APP is defined, and make sure everyone can write
+        osg_app = self.project.osg_app
+        if osg_app:
+            # FIXME
+            # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
+            commands.getoutput('chmod 1777 %s' %osg_app) 
+       
+
+        # FIXME !!
+        # I am creating here the project_src_dir and the repository_src_dir
+        # the repository_src_dir should be done in a different method. 
+        # Or even in a different tool: oasis-admin-repositoryadd
+ 
+        if not os.path.isdir(self.project.repository_src_dir):
+            try:
+                os.makedirs(self.project.repository_src_dir)
+                os.chown(self.project.repository_src_dir, repository_uid, repository_gid)
+                # FIXME
+                # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
+                #commands.getoutput('chmod o=g,o-w %s' %self.project.repository_src_dir)
+                self.log.debug('directory %s created' %self.project.repository_src_dir)
+                self.console.debug('directory %s created' %self.project.repository_src_dir)
+            except Exception, ex:
+                self.log.critical('directory %s could not be created. Exception %s was raised' %(self.project.repository_src_dir, ex))
+                self.console.critical('directory %s could not be created. Exception %s was raised' %(self.project.repository_src_dir, ex))
+                return 1
+        else:
+            self.log.warning('directory %s already existed' %self.project.repository_src_dir)
+            self.console.warning('directory %s already existed' %self.project.repository_src_dir)
+
+
+        if self.project.project_src_dir != "":
+
+            srcdir = '%s/%s' %(self.project.repository_src_dir, self.project.project_src_dir)
+
+            if not os.path.isdir(srcdir):
+                try:
+                    os.makedirs(srcdir)
+                    os.chown(srcdir, project_uid , project_gid)
+
+                    # FIXME
+                    # this is a temporary solution until I figure out how to do it with os.chmod( ) and os.stat( )
+                    commands.getoutput('chmod o=g,o-w %s' %srcdir)
+
+                    self.log.debug('directory %s created' %srcdir)
+                    self.console.debug('directory %s created' %srcdir)
+                except Exception, ex:
+                    self.log.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                    self.console.critical('directory %s could not be created. Exception %s was raised' %(srcdir, ex))
+                    return 1
+            else:
+                self.log.warning('directory %s already existed' %srcdir)
+                self.console.warning('directory %s already existed' %srcdir)
+
+        return 0
+
+
+    def createproject(self):
+        '''
+        uses the distribution plugin included in the Project() object,
+        and calls the method createproject() 
+        '''
+
+        if 'server' not in self.oasis.services:
+            self.log.info('Not a server host: no need to create dest directory')
+            self.console.info('Not a server host: no need to create dest directory')
+            return 0
+        
+
+        # FIXME
+        # at this step, if it is the first repo being created, 
+        # the file /srv/cvmfs/.cvmfs_master_replica  has to be created
+   
+        try: 
+            rc = self.project.distributionplugin.createproject()
+    
+            if rc:
+                self.log.critical('destination repository could not be created.')
+                self.console.critical('destination repository could not be created.')
+            else:
+                self.log.debug('destination repository created.')
+                self.console.debug('destination repository created.')
+    
+            return rc
+        except Exception, ex:
+            self.log.critical('Exception received when trying to create destination project directory: %s' %ex)
+            self.console.critical('Exception received when trying to create destination project directory: %s' %ex)
+            # FIXME
+            return 1
+            
+
+# ================================================================
+
+def main(options):
+
+    # FIXME
+    # if the section in projects.conf is not defined, it should abort. 
+    # and print out an error message in console and log file
+
+    # defaults
+    level = logging.WARNING
+
+    # parse input options
+    opts, args = getopt.getopt(options, 
+                               'hv', 
+                               ['help', 'verbose', 'project='])
+                               #['verbose', 'project=', 'allprojects'])
+
+    project = None
+    for o,a in opts:
+        if o == '--project':
+            project = a
+        if o == '-h' or o == '--help':
+            usage() 
+        if o == '-v' or o == '--verbose':
+            level = logging.DEBUG
+        
+    if not project:
+        usage()
+
+    # run the processes
+    try:
+        obj = ProjectHandler(project, level)
+        rc = obj.run()
+        return rc
+    except Exception, ex:
+        return 1
+
+
+if __name__ == '__main__':
+    rc = main(sys.argv[1:])
+    sys.exit(rc)
