@@ -817,7 +817,8 @@ class Project(ProjectBasicConfig):
         #       call the probes normally 
 
         if os.getuid() == 0:
-            cmd = 'sudo -u %s %s %s' %(username, probepath, options)
+            ###cmd = 'sudo -u %s %s %s' %(username, probepath, options)
+            cmd = 'runuser -s /bin/bash %s -c "%s %s"' %(username, probepath, options)
         else:
             cmd = '%s %s' %(probepath, options)
         self.log.info('command to run probe is "%s"' %cmd)

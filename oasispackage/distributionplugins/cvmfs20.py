@@ -42,7 +42,8 @@ class cvmfs20(cvmfs):
         
         self.log.info('transfering files from %s to %s' %(self.src, self.dest))
         
-        cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.project_dest_owner, self.src, self.dest)
+        ###cmd = 'sudo -u %s rsync --stats -a -l --delete %s/ %s' %(self.project.project_dest_owner, self.src, self.dest)
+        cmd = 'runuser -s /bin/bash %s -c "rsync --stats -a -l --delete %s/ %s"' %(self.project.project_dest_owner, self.src, self.dest)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)

@@ -67,7 +67,8 @@ class cvmfs21(cvmfs):
        
     def _starttransaction(self): 
 
-        cmd = 'sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname)
+        #cmd = 'sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname)
+        cmd = 'runuser -s /bin/bash %s -c "cvmfs_server transaction %s"' %(self.project.repository_dest_owner, self.project.repositoryname)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
@@ -100,7 +101,8 @@ class cvmfs21(cvmfs):
         #       total size is 0  speedup is 0.00
         #       
 
-        cmd = 'sudo -u %s rsync --stats -aW --exclude .cvmfscatalog --delete --force --ignore-errors %s/ %s' %(self.project.project_dest_owner, self.src, self.dest)
+        #cmd = 'sudo -u %s rsync --stats -aW --exclude .cvmfscatalog --delete --force --ignore-errors %s/ %s' %(self.project.project_dest_owner, self.src, self.dest)
+        cmd = 'runuser -s /bin/bash %s -c "rsync --stats -aW --exclude .cvmfscatalog --delete --force --ignore-errors %s/ %s"' %(self.project.project_dest_owner, self.src, self.dest)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
@@ -135,7 +137,8 @@ class cvmfs21(cvmfs):
 
         self.log.info('publishing CVMFS for repository %s' %self.project.repositoryname)
 
-        cmd = 'sudo -u %s cvmfs_server publish %s' %(self.project.repository_dest_owner, self.project.repositoryname)
+        #cmd = 'sudo -u %s cvmfs_server publish %s' %(self.project.repository_dest_owner, self.project.repositoryname)
+        cmd = 'runuser -s /bin/bash %s -c "cvmfs_server publish %s"' %(self.project.repository_dest_owner, self.project.repositoryname)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
@@ -157,7 +160,8 @@ class cvmfs21(cvmfs):
 
         self.log.info('abort publishing CVMFS for repository %s' %self.project.repositoryname)
 
-        cmd = 'sudo -u %s cvmfs_server abort %s' %(self.project.repository_dest_owner, self.project.repositoryname)
+        ###cmd = 'sudo -u %s cvmfs_server abort %s' %(self.project.repository_dest_owner, self.project.repositoryname)
+        cmd = 'runuser -s /bin/bash %s -c "cvmfs_server abort %s"' %(self.project.repository_dest_owner, self.project.repositoryname)
         self.log.info('command = %s' %cmd)
 
         st, out = commands.getstatusoutput(cmd)
@@ -315,7 +319,8 @@ class cvmfs21(cvmfs):
                 self.log.info('the project destination directory is the same that the repository destination directory. Nothing to do')
                 return 0
             else:
-                rc, out = commands.getstatusoutput('sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname))
+                ###rc, out = commands.getstatusoutput('sudo -u %s cvmfs_server transaction %s' %(self.project.repository_dest_owner, self.project.repositoryname))
+                rc, out = commands.getstatusoutput('runuser -s /bin/bash %s -c "cvmfs_server transaction %s"' %(self.project.repository_dest_owner, self.project.repositoryname))
                 rc, out = commands.getstatusoutput('mkdir %s; chown %s:%s %s'  %(self.dest, self.project.project_dest_owner, self.project.project_dest_owner, self.dest))
                 self._publish()
                 return rc
