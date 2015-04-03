@@ -50,5 +50,6 @@ rm /etc/iptables.d/60-local-cvmfs
 service gociptables restart
 yum -y remove oasis
 yum clean all
+yum clean expire-cache  # temporarily until yum is updated
 service nfslock stop
 chkconfig nfslock off
