@@ -337,6 +337,8 @@ class cvmfs21(cvmfs):
     def shouldlock(self, listflagfiles):
         '''
         it should lock only if any of the flagfiles belongs to the same repository
+        and their timestamp is older that current one
+
         listflagfiles is a list of flagfiles as paths 
         '''
         # FIXME: should I pay attention to the <status> field???
@@ -349,7 +351,11 @@ class cvmfs21(cvmfs):
             # check if flagfile_projectname belongs to the same repo
             # that current projectname
             if self.project.repository(flagfile_projectname) == self.project.repository():
-                return True
+                # now check if that flagfile is older 
+                timestamp = self.project.flagfile.split('.')[1]
+                candidate_timestamp = flagfile_projectname.split('.')[1]
+                if candidate_timestamp < timestamp: 
+                    return True
 
         return False
 
