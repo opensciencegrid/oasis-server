@@ -1,0 +1,109 @@
+#!/bin/bash
+# Restore a repository that was previously blanked with blank_osg_repository
+
+ME="`basename $0`"
+MYDIR="`dirname $0`"
+STRATUM0=oasis.opensciencegrid.org
+
+usage()
+{
+    echo "Usage: $ME repositoryname [dateandtimestamp]" >&2
+    exit 1
+}
+
+if [ $# != 1 ] && [ $# != 2 ]; then
+    usage
+fi
+
+REPO="$1"
+
+if [ ! -f /srv/cvmfs/$REPO/.cvmfspublished ]; then
+    echo "/srv/cvmfs/$REPO/.cvmfspublished does not exist" >&2
+    usage
+fi
+
+if [ $# = 2 ]; then
+    STAMP="$2"
+else
+    PATHS="`ls -d /srv/cvmfs/.$REPO.??????????????`"
+    if [ -z "$PATHS" ]; then
+	echo "$ME: no saved repository found at /srv/cvmfs/.$REPO.*" >&2
+	usage
+    fi
+    if [ `echo "$PATHS"|wc -l` != 1 ]; then
+	echo "$ME: too many saved repositories found at /srv/cvmfs/.$REPO.*" >&2
+	echo "Either delete all but one or specify which one you want." >&2
+	usage
+    fi
+    STAMP="`echo $PATHS|sed "s,^/srv/cvmfs/.$REPO\.,,"`"
+fi
+
+REPODIRS="/srv/cvmfs /etc/cvmfs/repositories.d /var/spool/cvmfs"
+for D in $REPODIRS; do
+    if [ ! -d "$D/.$REPO.$STAMP" ]; then
+	echo "$ME: $D/.$REPO.$STAMP not found" >&2
+	exit 1
+    fi
+done
+
+if [ ! -f /cvmfs/$REPO/intentionally_blank ]; then
+    echo "$ME: use only on repositories created with blank_osg_repository" >&2
+    exit 1
+fi
+
+set -e
+
+BLANKREVISION="`cat -v /srv/cvmfs/$REPO/.cvmfspublished|sed -n '/^S/{s/^S//p;q;}'`"
+
+echo "Restoring .$REPO.$STAMP to $REPO"
+
+if [ -d /etc/cvmfs/repositories.d/$REPO ]; then
+    cvmfs_server rmfs -f $REPO
+fi
+
+for D in $REPODIRS; do
+    if [ -d $D/$REPO ]; then
+	echo "$ME: $D/$REPO still exists" 2>&1
+	exit 1
+    fi
+done
+
+for D in $REPODIRS; do
+    echo "Renaming $D/.$REPO.$STAMP to $D/$REPO"
+    mv $D/.$REPO.$STAMP $D/$REPO
+done
+
+REPOURL="`sed -n 's/^CVMFS_STRATUM0=//p' /etc/cvmfs/repositories.d/$REPO/server.conf`"
+REPOREVISION="`wget -qO- $REPOURL/.cvmfspublished|sed -n 's/^S//p'`"
+
+if [ -z "$REPOREVISION" ]; then
+    echo "$ME: Unable to read revision from $REPOURL" 2>&1
+    echo "  so cannot tell revision number.  It must be greater than $BLANKREVISION." 2>&1
+elif [ "$REPOREVISION" -le "$BLANKREVISION" ]; then
+    echo "NOTICE: notify repository owner to do publish commands until revision is" 2>&1
+    echo "  greater than $BLANKREVISION.  The current revision number is $REPOREVISION." 2>&1
+else
+    echo "$REPOURL revision $REPOREVISION is OK"
+fi
+
+if [ "${REPO#*.}" = "opensciencegrid.org" ]; then
+    echo "Attempting to restore $REPO on $STRATUM0"
+    OASISCMD="$MYDIR/add_osg_repository $REPOURL"
+    if ! ssh $STRATUM0 $OASISCMD; then
+	echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
+	echo "  $OASISCMD" 2>&1
+	echo "and then notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
+    else
+	echo "Succeeded"
+	echo "Notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
+    fi
+else
+    echo "Attempting to clean up $REPO on $STRATUM0"
+    OASISCMD="rm -rf /srv/cvmfs/$REPO"
+    if ! ssh $STRATUM0 $OASISCMD; then
+	echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
+	echo "  $OASISCMD" 2>&1
+    else
+	echo "Succeeded"
+    fi
+fi
