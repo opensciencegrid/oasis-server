@@ -49,5 +49,6 @@ rm /etc/httpd/conf.d/cvmfs.conf
 rm /etc/iptables.d/60-local-oasis
 service gociptables restart
 yum clean all
+yum clean expire-cache  # temporarily until yum is updated
 service nfslock stop
 chkconfig nfslock off

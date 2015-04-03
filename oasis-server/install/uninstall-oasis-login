@@ -44,3 +44,4 @@ rm -f /var/www/html/stamp
 yum -y remove httpd
 yum -y remove pwgen
 yum clean all
+yum clean expire-cache  # temporarily until yum is updated
