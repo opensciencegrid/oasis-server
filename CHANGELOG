@@ -1,3 +1,8 @@
+2.0.22
+
+* Giving content to variable FlagFile.timestamp, even it was not really needed though.
+* Compare the timestamp of the flagifles to decide if lock or not, and not only if they belong to the same project. 
+
 2.0.21
 
 * removing -l from rsync commands, it is redundant
