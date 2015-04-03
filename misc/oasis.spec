@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.22
+%define version 2.0.23
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,9 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Fri Apr 03 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.23-1
+- reverting to 2.0.21. Changes in 2.0.22 are not correct.
+
 * Fri Apr 03 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.22-1
 - Giving content to variable FlagFile.timestamp, even it was not really needed though.
 - Compare the timestamp of the flagifles to decide if lock or not, and not only if they belong to the same project.
