@@ -549,7 +549,9 @@ class oasisCLI(object):
             # that can be reused
             #
                
-            if self.project.flagfile.search('done'):
+            self.flagfile.update()
+
+            if self.project.flagfile.tag == 'done':
 
                 self.log.debug('content of flagfile \n%s' %self.project.flagfile.read())
 
@@ -561,7 +563,7 @@ class oasisCLI(object):
                 self.project.flagfile.clean()
                 return 0
 
-            if self.project.flagfile.search('failed'):
+            if self.project.flagfile.tag == 'failed':
 
                 self.log.error('content of flagfile \n%s' %self.project.flagfile.read())
 
@@ -588,12 +590,7 @@ class oasisCLI(object):
             else:
                 self.log.error('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
                 self.console.error('timeout (%s) while waiting for OASIS to transfer and publish new content. Aborting.' %self.project.finishtimeout)
-                ### BEGIN TEST ###
-                #flagfile.search('request')  # FIXME I need to search for 'request' to change internal attribute path. 
-                #flagfile.clean() 
-                self.project.flagfile.search('request')  # FIXME I need to search for 'request' to change internal attribute path. 
                 self.project.flagfile.clean() 
-                ### END TEST ###
                 return 1
 
         # loop is done 
