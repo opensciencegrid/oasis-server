@@ -10,6 +10,7 @@
 * FlagFile.search() call FlagFileManager.search()
 * calling now new FlagFile.search() from Project._checkflagfiles()
 * renamed directory distributionplugins/ -> plugins/distribution/
+* created method FlagFile.update() 
 
 
 2.0.23
