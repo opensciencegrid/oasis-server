@@ -521,8 +521,8 @@ class oasisCLI(object):
         returns a list of FlagFile objects
         '''
 
-        mgnr = FlagFileManager(self.project.flagfilebasedir) 
-        listflagfiles = mgnr.search()
+        ffm = FlagFileManager(self.project.flagfilebasedir) 
+        listflagfiles = ffm.search()
         return listflagfiles
 
 
