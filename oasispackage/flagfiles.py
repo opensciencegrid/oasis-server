@@ -195,7 +195,7 @@ class FlagFile(object):
         if list_flagfiles == []:
             self.log.info('No flagfile found.')
         else:
-            self.log.info('Found %s flagfiles.' %len(list_flagfiles))
+            self.log.info('Found %s flagfile(s).' %len(list_flagfiles))
             
         return list_flagfiles
 
@@ -302,6 +302,9 @@ class FlagFileManager(object):
 
         if list_flagfiles == []:
             self.log.info('No flagfile found. Leaving.')
+        else:
+            self.log.info('Found %s flagfile(s).' %len(list_flagfiles))
+
 
         return list_flagfiles 
 
