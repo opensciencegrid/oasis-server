@@ -323,7 +323,7 @@ class FlagFileManager(object):
                 self.log.debug('Candidate file %s matches pattern' %candidate)
                 path = os.path.join(self.basedir, candidate) 
                 self.log.info('Found flag file %s' %path)
-                flagfile = FlagFile(path)
+                flagfile = FlagFile(filename=path)
                 list_flagfiles.append(flagfile)
 
         if list_flagfiles == []:
