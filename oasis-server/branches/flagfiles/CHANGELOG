@@ -1,3 +1,10 @@
+
+* creating flagfile file in _wait() method, and deleting it in case of timeout
+* adding variable FlagFile.created to prevent the same flagfile from being created twice in the filesystem
+* improvements in FlagFile.__init__() to allow creating an object for a file that already exists
+* modifying self.tag in each set method
+
+
 2.0.23
 
 * reverting to 2.0.21. Changes in 2.0.22 are not correct.
