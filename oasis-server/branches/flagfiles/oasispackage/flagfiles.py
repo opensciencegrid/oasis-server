@@ -184,6 +184,7 @@ class FlagFile(object):
         flagfiles = ffm.search(projectname=self.projectname)
         if flagfiles:
             self.tag = flagfiles[0].tag # we assume only 1 flagfile per project
+            self.filename = '%s.%s.%s' %(self.projectname, self.timestamp, self.tag)
 
 
     def search(self, tag):
