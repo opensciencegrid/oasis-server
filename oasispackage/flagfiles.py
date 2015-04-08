@@ -67,7 +67,7 @@ class FlagFile(object):
     
     '''
 
-    def __init__(self, projectname, basedir=None):
+    def __init__(self, projectname, basedir=None, timestamp=None, tag=None):
         '''
         '''
         # FIXME ?? should I pass a Project() object ??
@@ -89,10 +89,16 @@ class FlagFile(object):
             self.basedir = basedir
         else:
             self.basedir = '/var/run/oasis' 
+        self.timestamp = timestamp
+        self.tag = tag 
 
-        self.timestamp = None
-        self.flagfile = None
-        self.created = False  # says it the actual file in the filesystem has been created already or not
+        if timestamp and tag:
+            # this flagfile already exists:
+            self.flagfile = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, self.tag))
+            self.created = True # says it the actual file in the filesystem has been created already or not
+        else:
+            self.flagfile = None
+            self.created = False  # says it the actual file in the filesystem has been created already or not
 
         self.log.debug('Object created')
 
