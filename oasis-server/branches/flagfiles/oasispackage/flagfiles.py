@@ -179,12 +179,7 @@ class FlagFile(object):
         '''
         searches in the filesystem for a flagfile with that particular <tag>
         '''
-        # !! FIXME !!
-        # make it more generic, without requiring and input
-
-        # !! FIXME !!
-        # For the time being, it returns the first found file.
-        # There could be more than one, from previous unfinished processes.
+        # FIXME There could be more than one, from previous unfinished processes.
         # We need to figure out how to deal with that situation
 
         self.log.debug('Starting with tag=%s' %tag)
