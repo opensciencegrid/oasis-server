@@ -3,6 +3,7 @@
 * adding variable FlagFile.created to prevent the same flagfile from being created twice in the filesystem
 * improvements in FlagFile.__init__() to allow creating an object for a file that already exists
 * improvements in __init__(), and only one settag() method
+* calling now new method flagfile.set()
 * deleting non used code
 * FlagFileManager.search() returns a list of FlagFile objects
 
