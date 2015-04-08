@@ -633,19 +633,27 @@ class Project(ProjectBasicConfig):
     def _checkflagfile(self):
         '''
         checks if a flagfile exists for this project
+        and if its tag is request
         '''
-        # FIXME 
-        #  self.flagfile = FlagFile() is done twice in this class. 
-        #  maybe it should be done in the __init__()
 
         self.log.debug('Starting.')
-        flags = self.flagfile.search('request')
-        if flags == []:
-           self.log.debug('No flagfile found') 
+
+        ffm = FlagFileManager(self.flagfilebasedir) 
+        flagfiles = ffm.search(projectname=self.projectname)
+
+        if flagfiles == []:
+            self.log.debug('No flagfile found') 
+            return False
         else:
             # we assume there is only 1 flagfile per project at a time
-            self.log.debug('Found flagfile' %flags[0].filename)
-        return flags
+            self.log.debug('Found flagfile %s' %flagfiles[0].filename)
+            if flagfiles[0].tag == 'request':
+                self.log.debug('tag for found flagfile is "request". Return True')
+                return True
+            else:
+                self.log.debug('tag for found flagfile is not "request". Return False')
+                return False 
+
 
     def runprobes(self):
         '''
@@ -1207,9 +1215,8 @@ class ProjectThread(threading.Thread):
             self.log.debug("Beginning cycle in thread for Project %s" %self.project)
             try:
                 # look for the flag file    
-                flagfile = self.project._checkflagfile()
-                if flagfile: 
-                    # if flagfile exists for this project, do stuffs 
+                if self.project._checkflagfile()
+                    # if flagfile exists for this project, and its tag is "request", do stuffs 
 
                     #
                     # !!! FIXME  !!!
