@@ -8,6 +8,7 @@
 * deleting non used code
 * FlagFileManager.search() returns a list of FlagFile objects
 * FlagFile.search() call FlagFileManager.search()
+* calling now new FlagFile.search() from Project._checkflagfiles()
 * renamed directory distributionplugins/ -> plugins/distribution/
 
 
