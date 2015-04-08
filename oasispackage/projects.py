@@ -639,10 +639,13 @@ class Project(ProjectBasicConfig):
         #  maybe it should be done in the __init__()
 
         self.log.debug('Starting.')
-        ###self.flagfile = FlagFile(self.projectname)
-        flag = self.flagfile.search('request')
-        self.log.debug('Found flagfile %s' %flag)
-        return flag
+        flags = self.flagfile.search('request')
+        if flags == []:
+           self.log.debug('No flagfile found') 
+        else:
+            # we assume there is only 1 flagfile per project at a time
+            self.log.debug('Found flagfile' %flags[0].filename)
+        return flags
 
     def runprobes(self):
         '''
