@@ -392,31 +392,6 @@ class oasisCLI(object):
         return rc
 
 
-
-    ###def _checknoflagfile(self):
-    ###    '''
-    ###    checks if there is already a flagfile for this project
-    ###    '''
-    ###
-    ###    flagfile = FlagFile(self.project.projectname)
-    ###
-    ###    # in the future, we may return different RC, depending on the status,
-    ###    # and react differently
-    ###    # For example, a flagfile in "done" or "failed" should disappear quite soon
-    ###    # so it would make sense to wait. 
-    ###    if flagfile.search('request'):
-    ###        return 1
-    ###    if flagfile.search('probes'):
-    ###        return 1
-    ###    if flagfile.search('done'):
-    ###        return 1
-    ###    if flagfile.search('failed'):
-    ###        return 1
-    ###
-    ###    # no flagfile
-    ###    return 0
-
-
     def publish(self):
         '''
         runs both, postinstall() and _loop() methods
