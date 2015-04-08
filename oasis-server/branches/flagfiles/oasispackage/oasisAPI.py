@@ -492,6 +492,9 @@ class oasisCLI(object):
                     else:
                         # block == True means process does retain prompt and waits in a loop
 
+                        # create the flagfile
+                        self.project._prepareflag()
+
                         elapsed = time.time() - inittime
                         if elapsed < self.project.starttimeout:
                             if elapsed >= nextmessagein: 
@@ -503,6 +506,7 @@ class oasisCLI(object):
                         else:
                             self.log.critical('Timeout reached and previous flagfile still there. Aborting.')
                             self.console.critical('Timeout reached and previous flagfile still there. Aborting.')
+                            self.project.flagfile.clean()
                             return 1
 
             time.sleep(30)  # FIXME why 30?? should be a config variable?
