@@ -23,7 +23,7 @@ import time
 
 
 from oasispackage.interfaces import BaseDistribution
-from oasispackage.distributionplugins.cvmfs import cvmfs
+from oasispackage.plugins.distribution.cvmfs import cvmfs
 import  oasispackage.utils
 
 class cvmfs21(cvmfs):

@@ -270,7 +270,7 @@ class ProjectBasicConfig(object):
 
         #tool = self.projectsconf.get(self.projectsection, "distributiontool")
         tool = self.distributiontool
-        distribution_plugin = __import__('oasispackage.distributionplugins.%s' %tool,
+        distribution_plugin = __import__('oasispackage.plugins.distribution.%s' %tool,
                                          globals(),
                                          locals(),
                                          ['%s' %tool])
@@ -482,7 +482,7 @@ class Project(ProjectBasicConfig):
 
         #tool = self.projectsconf.get(self.projectsection, "distributiontool")
         tool = self.distributiontool
-        distribution_plugin = __import__('oasispackage.distributionplugins.%s' %tool,
+        distribution_plugin = __import__('oasispackage.plugins.distribution.%s' %tool,
                                          globals(),
                                          locals(),
                                          ['%s' %tool])
