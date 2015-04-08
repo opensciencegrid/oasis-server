@@ -54,9 +54,9 @@ class FlagFile(object):
 
     The format of the flagfile is like
 
-        yyyy-mm-dd:hh-mm-ss.<project>.<status>
+        yyyy-mm-dd:hh-mm-ss.<project>.<tag>
    
-    where status can be:
+    where tag can be:
 
             - request
             - probes
@@ -175,9 +175,9 @@ class FlagFile(object):
         self.log.debug('Leaving.')
 
 
-    def search(self, status):
+    def search(self, tag):
         '''
-        searches in the filesystem for a flagfile with that particular <status>
+        searches in the filesystem for a flagfile with that particular <tag>
         '''
         # !! FIXME !!
         # make it more generic, without requiring and input
@@ -187,10 +187,10 @@ class FlagFile(object):
         # There could be more than one, from previous unfinished processes.
         # We need to figure out how to deal with that situation
 
-        self.log.debug('Starting with status=%s' %status)
+        self.log.debug('Starting with tag=%s' %tag)
 
-        RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s?$" %(self.projectname, status))
-        # remember, the filename format is  <project>.yyyy-mm-dd:hh:mm:ss.<status>
+        RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s?$" %(self.projectname, tag))
+        # remember, the filename format is  <project>.yyyy-mm-dd:hh:mm:ss.<tag>
 
         # FIXME: use this RE
         #       RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" )
@@ -278,26 +278,26 @@ class FlagFileManager(object):
 
     def __init__(self, basedir=None):
 
+        self.basedir = '/var/run/oasis' 
         if basedir:
             self.basedir = basedir
-        else:
-            self.basedir = '/var/run/oasis' 
+
         self.log = logging.getLogger('logfile.flagfilemanager')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
 
-    def search(self, status=None):
+    def search(self, tag=None):
         '''
         searches in the filesystem for any flagfile
-        if status is not None, it searches for flagfiles with that value
+        if tag is not None, it searches for flagfiles with that value
         '''
 
         self.log.debug('Starting.')
 
-        # remember, the flagfile filename format is  <project>.yyyy-mm-dd:hh-mm-ss.<status>
-        if not status: 
+        # remember, the flagfile filename format is  <project>.yyyy-mm-dd:hh-mm-ss.<tag>
+        if not tag: 
             RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" )
         else:
-            RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s$" %status)
+            RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s$" %tag)
 
         list_flagfiles = []
 
