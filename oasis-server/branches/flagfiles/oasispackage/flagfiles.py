@@ -175,7 +175,7 @@ class FlagFile(object):
         self.log.debug('Leaving.')
 
 
-    def update(self):
+    def refresh(self):
         """
         update the tag value for this flagfile
         """
