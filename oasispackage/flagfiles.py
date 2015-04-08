@@ -230,8 +230,10 @@ class FlagFile(object):
         '''
         delete the flagfile
         '''
+
         self.log.debug('Starting.')
-        os.remove(self.flagfile)
+        path = os.path.join(self.basedir, self.filename)
+        os.remove(path)
         self.created = False
         self.log.debug('Leaving.')
 
@@ -240,23 +242,29 @@ class FlagFile(object):
         '''
         adds content to the flagfile
         '''
+        # FIXME !! put the writing part in a try-except block, in case something goes wrong
 
         self.log.debug('Starting.')
-        # FIXME !! put the writing part in a try-except block, in case something goes wrong
-        flagfile = open(self.flagfile, 'a')
+
+        path = os.path.join(self.basedir, self.filename)
+        flagfile = open(path, 'a')
         print >> flagfile, str
         flagfile.close()
+
         self.log.debug('Leaving.')
 
     def read(self):
         '''
         returns the content of the flagfile
         '''
+        # FIXME !! put the read part in a try-except block, in case something goes wrong
         
         self.log.debug('Starting.')
-        # FIXME !! put the read part in a try-except block, in case something goes wrong
-        flagfile = open(self.flagfile, 'r')
+
+        path = os.path.join(self.basedir, self.filename)
+        flagfile = open(path, 'r')
         content = flagfile.read()
+
         self.log.debug('Leaving returning flagfile content.')
         return content
 
