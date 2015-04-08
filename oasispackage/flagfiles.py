@@ -285,19 +285,34 @@ class FlagFileManager(object):
         self.log = logging.getLogger('logfile.flagfilemanager')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
 
-    def search(self, tag=None):
+    def search(self, projectname=None, tag=None):
         '''
         searches in the filesystem for any flagfile
+        if projectname is not None, it searches for flagfiles with that value
         if tag is not None, it searches for flagfiles with that value
+
+        returns a list of FlagFile objects
         '''
 
         self.log.debug('Starting.')
 
-        # remember, the flagfile filename format is  <project>.yyyy-mm-dd:hh-mm-ss.<tag>
-        if not tag: 
-            RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" )
-        else:
-            RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s$" %tag)
+        # remember, the flagfile filename format is  <project>.yyyy-mm-dd:hh:mm:ss.<tag>
+        # we search for filenames with that format
+        # depending if projectname and/or tag has values, the regexp expression can be one of these
+        #   (\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$
+        #   <projectname>.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$ 
+        #   (\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).<tag>$
+        #   <projectname>.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).<tag>$ 
+
+        projstr = '(\S+)'
+        if projectname:
+            projstr = projectname
+
+        tagstr = '(\S+)'
+        if tag:
+            tagstr = tag
+
+        RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s$" %(projstr, tagstr))
 
         list_flagfiles = []
 
@@ -306,8 +321,9 @@ class FlagFileManager(object):
             self.log.debug('Analyzing candidate file %s' %candidate)
             if RE.match(candidate) is not None:
                 self.log.debug('Candidate file %s matches pattern' %candidate)
-                flagfile = os.path.join(self.basedir, candidate) 
-                self.log.info('Found flag file %s' %flagfile)
+                path = os.path.join(self.basedir, candidate) 
+                self.log.info('Found flag file %s' %path)
+                flagfile = FlagFile(path)
                 list_flagfiles.append(flagfile)
 
         if list_flagfiles == []:
