@@ -190,7 +190,7 @@ class FlagFile(object):
         self.log.debug('Starting with tag=%s' %tag)
 
         ffm = FlagFileManager(basedir=self.basedir)
-        list_flagfiles = ffm.search(tag=tag)
+        list_flagfiles = ffm.search(projectname=self.projectname, tag=tag)
 
         if list_flagfiles == []:
             self.log.info('No flagfile found.')
