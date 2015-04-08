@@ -1236,7 +1236,7 @@ class ProjectThread(threading.Thread):
                         #
                         #
                         self.project.flagfile.write('</data>')
-                        self.project.flagfile.setfailed()
+                        self.project.flagfile.settag('failed')
                     else:
                         self.log.info('probes ran OK')
                         #self.console.info('probes ran OK')
@@ -1262,7 +1262,7 @@ class ProjectThread(threading.Thread):
                             # we should use a python library to handle XML.
                             #
                             self.project.flagfile.write('</data>')
-                            self.project.flagfile.setfailed()
+                            self.project.flagfile.settag('failed')
                         else:
                             self.log.info('files transferred OK')
                             #self.console.info('files transferred OK')
@@ -1288,7 +1288,7 @@ class ProjectThread(threading.Thread):
                                 # we should use a python library to handle XML.
                                 #
                                 self.project.flagfile.write('</data>')
-                                self.project.flagfile.setdone()
+                                self.project.flagfile.settag('done')
                             else:
                                 self.log.critical('publishing failed with rc=%s, aborting installation' %rc)
                                 #self.console.critical('publishing failed with rc=%s, aborting installation and stopping thread' %rc)
@@ -1304,7 +1304,7 @@ class ProjectThread(threading.Thread):
                                 # we should use a python library to handle XML.
                                 #
                                 self.project.flagfile.write('</data>')
-                                self.project.flagfile.setfailed()
+                                self.project.flagfile.settag('failed')
 
  
             except Exception, e:
