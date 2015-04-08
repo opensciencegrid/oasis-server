@@ -93,7 +93,7 @@ class FlagFile(object):
         self.tag = None 
 
         # check if there is already a flagfile in the filesystem for this project
-        RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" %self.projectname
+        RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" %self.projectname)
         files = os.listdir(self.basedir)
         for candidate in files:
             if RE.match(candidate) is not None:
