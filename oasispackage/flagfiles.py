@@ -97,9 +97,10 @@ class FlagFile(object):
         files = os.listdir(self.basedir)
         for candidate in files:
             if RE.match(candidate) is not None:
-                self.craeted = True
+                self.created = True
                 self.timestamp = candidate.split('.')[-2]
                 self.tag = candidate.split('.')[-1]
+                break  # we assume only one flagfile can be created per project
         else:
             self.flagfile = None
             self.created = False  # says it the actual file in the filesystem has been created already or not
