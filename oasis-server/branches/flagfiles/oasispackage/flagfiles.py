@@ -128,6 +128,8 @@ class FlagFile(object):
         # FIXME !! put the open in a try-except block in case something bad happens when creating the file
         open(self.flagfile, 'w').close() 
         self.log.debug('File %s created.' %self.flagfile)
+        self.timestamp = timestr
+        self.tag = 'request'
         self.created = True
 
         self.log.debug('Leaving.')
@@ -142,6 +144,7 @@ class FlagFile(object):
         new = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, 'probes'))
         os.rename(self.flagfile, new) 
         self.flagfile = new
+        self.tag = 'probes'
         self.log.debug('Flagfile renamed to %s.' %self.flagfile)
         self.log.debug('Leaving.')
 
@@ -155,6 +158,7 @@ class FlagFile(object):
         new = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, 'done'))
         os.rename(self.flagfile, new) 
         self.flagfile = new
+        self.tag = 'done'
         self.log.debug('Flagfile renamed to %s.' %self.flagfile)
         self.log.debug('Leaving.')
 
@@ -168,6 +172,7 @@ class FlagFile(object):
         new = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, 'failed'))
         os.rename(self.flagfile, new) 
         self.flagfile = new
+        self.tag = 'failed'
         self.log.debug('Flagfile renamed to %s.' %self.flagfile)
         self.log.debug('Leaving.')
 
