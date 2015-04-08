@@ -515,11 +515,6 @@ class oasisCLI(object):
         return 0
 
 
-
-
-
-
-
     def _searchflagfiles(self):
         '''
         searches for all flagfiles 
