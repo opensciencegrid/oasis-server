@@ -189,42 +189,16 @@ class FlagFile(object):
 
         self.log.debug('Starting with tag=%s' %tag)
 
-        RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).%s?$" %(self.projectname, tag))
-        # remember, the filename format is  <project>.yyyy-mm-dd:hh:mm:ss.<tag>
+        ffm = FlagFileManager(basedir=self.basedir)
+        list_flagfiles ffm.search(tag=tag)
 
-        # FIXME: use this RE
-        #       RE = re.compile(r"(\S+).(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" )
+        if list_flagfiles == []:
+            self.log.info('No flagfile found.')
+        else:
+            self.log.info('Found %s flagfiles.' %len(list_flagfiles))
+            
+        return list_flagfiles
 
-        files = os.listdir(self.basedir)
-        for candidate in files:
-            self.log.debug('Analyzing candidate file %s' %candidate)
-            if RE.match(candidate) is not None:
-                self.log.debug('Candidate file %s matches pattern' %candidate)
-                # as soon as I find a flag, I return it. 
-                self.timestamp = candidate.split('.')[1]
-                self.flagfile = os.path.join(self.basedir, candidate) 
-                self.log.info('Found flag file %s' %self.flagfile)
-                return self.flagfile
-
-        # ----------------------------------------------
-        #  for the future
-        #  instead of just returning the first flagfile
-        #  found, keep of all them 
-        #  (in case there is more than one)
-        #  to decide what to do with them
-        # ----------------------------------------------
-        # list_flagfiles = []
-        # files = os.listdir(self.basedir)
-        # for candidate in files:
-        #     if RE.match(candidate) is not None:
-        #         flagfile = os.path.join(self.basedir, candidate) 
-        #         list_flagfiles.append(flagfile)
-        # ----------------------------------------------
-
-
-        # if no flagfile was found...
-        self.log.info('No flagfile found. Leaving.')
-        return None
 
     def clean(self):
         '''
