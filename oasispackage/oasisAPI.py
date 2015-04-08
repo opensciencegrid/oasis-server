@@ -551,56 +551,29 @@ class oasisCLI(object):
             # or maybe self.project has a FlagFile object 
             # that can be reused
             #
-            ### BEGIN TEST ###
-            #flagfile = FlagFile(projectname)
-            ### END TEST ###
                
-            ### BEGIN TEST ###
-            #flagfilepath = flagfile.search('done')
-            flagfilepath = self.project.flagfile.search('done')
-            ### END TEST ###
-            if flagfilepath:
-                ### BEGIN TEST ###
-                #self.log.debug('content of flagfile \n%s' %flagfile.read())
+            if self.project.flagfile.search('done'):
+
                 self.log.debug('content of flagfile \n%s' %self.project.flagfile.read())
-                ### END TEST ###
 
                 self.console.debug('output from the OASIS daemon:')
-                ### BEGIN TEST ###
-                #out = self._parse_flagfile(flagfile)
                 out = self._parse_flagfile(self.project.flagfile)
-                ### END TEST ###
                 for line in out:
                     self.console.debug(line)
 
-                ### BEGIN TEST ###
-                #flagfile.clean()
                 self.project.flagfile.clean()
-                ### END TEST ###
                 return 0
 
-            ### BEGIN TEST ###
-            #flagfilepath = flagfile.search('failed')
-            flagfilepath = self.project.flagfile.search('failed')
-            ### END TEST ###
-            if flagfilepath:
-                ### BEGIN TEST ###
-                #self.log.error('content of flagfile \n%s' %flagfile.read())
+            if self.project.flagfile.search('failed'):
+
                 self.log.error('content of flagfile \n%s' %self.project.flagfile.read())
-                ### END TEST ###
 
                 self.console.error('output from the OASIS daemon:')
-                ### BEGIN TEST ###
-                #out = self._parse_flagfile(flagfile)
                 out = self._parse_flagfile(self.project.flagfile)
-                ### END TEST ###
                 for line in out:
                     self.console.error(line)
                     
-                ### BEGIN TEST ###
-                #flagfile.clean()
                 self.project.flagfile.clean()
-                ### END TEST ###
                 return 1
 
             # checking for timeout
