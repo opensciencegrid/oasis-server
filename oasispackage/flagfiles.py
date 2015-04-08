@@ -92,6 +92,7 @@ class FlagFile(object):
 
         self.timestamp = None
         self.flagfile = None
+        self.created = False  # says it the actual file in the filesystem has been created already or not
 
         self.log.debug('Object created')
 
@@ -106,6 +107,10 @@ class FlagFile(object):
 
         self.log.debug('Starting.')
 
+        if self.created:
+            self.log.warning('flagfile already craeted. Leaving.')
+            return
+
         now = time.gmtime() # gmtime() is like localtime() but in UTC
         timestr = "%04d-%02d-%02d:%02d:%02d:%02d" % (now[0], now[1], now[2], now[3], now[4], now[5])
         self.flagfile = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, timestr,  'request'))
@@ -113,6 +118,7 @@ class FlagFile(object):
         # FIXME !! put the open in a try-except block in case something bad happens when creating the file
         open(self.flagfile, 'w').close() 
         self.log.debug('File %s created.' %self.flagfile)
+        self.created = True
 
         self.log.debug('Leaving.')
 
@@ -212,6 +218,7 @@ class FlagFile(object):
         '''
         self.log.debug('Starting.')
         os.remove(self.flagfile)
+        self.created = False
         self.log.debug('Leaving.')
 
     def setstatus(self, status):
