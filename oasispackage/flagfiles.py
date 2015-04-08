@@ -67,54 +67,70 @@ class FlagFile(object):
     
     '''
 
-    def __init__(self, projectname, basedir=None):
+    def __init__(self, projectname=None, basedir=None, filename=None):
         '''
+        basedir is the path of the flagfile.
+        if basedir is None, then use the default /var/run/oasis
+
+        filename can be the absolute path (basedir + filename)
+        or just the actual file name
         '''
-        # FIXME ?? should I pass a Project() object ??
-        # FIXME ?? should I make it without requiring any input related Projects at all ?? 
-        #          For example, for FlagFileManager::search() to return a list of FlagFile objects
-        #          it should be enough to pass the path to the __init__()
-        
-        # basedir is the path of the flagfile.
-        # if basedir is None, then use the default /var/run/oasis
 
         self.log = logging.getLogger('logfile.flagfile')  # FIXME. The Loggers hierarchy needs to be fixed !!
 
-        self.projectname = projectname
         # !! FIXME !!
         # Maybe read basedir from oasis.conf
         # which requires passing parent object as reference 
         # 
+        self.projectname = projectname
+        self.basedir = '/var/run/oasis'  #default
         if basedir:
             self.basedir = basedir
-        else:
-            self.basedir = '/var/run/oasis' 
         self.timestamp = None 
+        self.filename = None
         self.tag = None 
+        self.created = False  # says it the actual file in the filesystem has been created already or not
 
-        # check if there is already a flagfile in the filesystem for this project
-        RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" %self.projectname)
-        files = os.listdir(self.basedir)
-        for candidate in files:
-            if RE.match(candidate) is not None:
+        # if projectname is already set, check if there is already a flagfile in the filesystem for it
+        if self.projectname:
+            RE = re.compile(r"%s.(\d{4})-(\d{2})-(\d{2}):(\d{2}):(\d{2}):(\d{2}).(\S+)$" %self.projectname)
+            files = os.listdir(self.basedir)
+            for candidate in files:
+                if RE.match(candidate) is not None:
+                    self.created = True
+                    self.filename = candidate
+                    self.timestamp = self.filename.split('.')[1]
+                    self.tag = self.filename.split('.')[2]
+                    break  # we assume only one flagfile can be created per project
+
+        # if filename is passed, check if it exists in the filesystem
+        if filename:
+            if os.path.isabs(filename):
+                self.basedir = '/'.join(filename.split('/')[:-1])
+                self.filename = filename.split('/')[-1]
+            else:
+                self.filename = filename
+        
+            self.projectname = self.filename.split('.')[0] 
+            self.timestamp = self.filename.split('.')[1] 
+            self.tag = self.filename.split('.')[2]
+
+            if os.path.isfile(os.path.join(self.basedir, self.filename)):
                 self.created = True
-                self.timestamp = candidate.split('.')[-2]
-                self.tag = candidate.split('.')[-1]
-                break  # we assume only one flagfile can be created per project
-        else:
-            self.flagfile = None
-            self.created = False  # says it the actual file in the filesystem has been created already or not
 
         self.log.debug('Object created')
+
 
     def create(self):
         '''
         creates the actual file in the filesystem.
-        It is created with <status> "request" as last field of the filename
+        It is created with tag "request" as last field of the filename
 
-        The method also gives initial value to attribute self.flagfile
-        with the whole path in the filesystem to the flagfile
+        We assume self.projectname has a value
         '''
+        # FIXME: ? should we verify that self.projectname has really a value ?
+        # FIXME: ? should we verify that this FlagFile has self.created = False ?
+        # FIXME !! put the open in a try-except block in case something bad happens when creating the file
 
         self.log.debug('Starting.')
 
@@ -123,59 +139,41 @@ class FlagFile(object):
             return
 
         now = time.gmtime() # gmtime() is like localtime() but in UTC
-        timestr = "%04d-%02d-%02d:%02d:%02d:%02d" % (now[0], now[1], now[2], now[3], now[4], now[5])
-        self.flagfile = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, timestr,  'request'))
+        timestamp = "%04d-%02d-%02d:%02d:%02d:%02d" % (now[0], now[1], now[2], now[3], now[4], now[5])
+        filename = '%s.%s.%s' %(self.projectname, timestamp,  'request')
 
-        # FIXME !! put the open in a try-except block in case something bad happens when creating the file
-        open(self.flagfile, 'w').close() 
-        self.log.debug('File %s created.' %self.flagfile)
-        self.timestamp = timestr
+        path = os.path.join(self.basedir, filename)
+        open(path, 'w').close() 
+        self.log.debug('File %s created.' %path)
+
+        self.filename = filename
+        self.timestamp = timestamp
         self.tag = 'request'
         self.created = True
 
         self.log.debug('Leaving.')
 
-    def setprobes(self):
+
+    def settag(self, tag):
         '''
-        modifies the <status> field to 'probes'.
-        Updates the self.flagfile attribute
+        modifies the tag field 
+        tag values = 'probes', 'done', 'failed'
+        Updates the self.filename  attribute
         '''
+        # FIXME: ? should we verify that this FlagFile has self.created = True ?
 
         self.log.debug('Starting.')
-        new = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, 'probes'))
-        os.rename(self.flagfile, new) 
-        self.flagfile = new
-        self.tag = 'probes'
-        self.log.debug('Flagfile renamed to %s.' %self.flagfile)
+
+        newfilename = '%s.%s.%s' %(self.projectname, self.timestamp, tag)
+        newpath = os.path.join(self.basedir, newfilename)
+        oldpath = os.path.join(self.basedir, self.filename)
+        os.rename(oldpath, newpath) 
+        self.filename = newfilename
+        self.tag = tag 
+
+        self.log.debug('Flagfile renamed to %s.' %self.filename)
         self.log.debug('Leaving.')
 
-    def setdone(self):
-        '''
-        modifies the <status> field to 'done'.
-        Updates the self.flagfile attribute
-        '''
-
-        self.log.debug('Starting.')
-        new = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, 'done'))
-        os.rename(self.flagfile, new) 
-        self.flagfile = new
-        self.tag = 'done'
-        self.log.debug('Flagfile renamed to %s.' %self.flagfile)
-        self.log.debug('Leaving.')
-
-    def setfailed(self):
-        '''
-        modifies the <status> field to 'failed'.
-        Updates the self.flagfile attribute
-        '''
-
-        self.log.debug('Starting.')
-        new = os.path.join(self.basedir, '%s.%s.%s' %(self.projectname, self.timestamp, 'failed'))
-        os.rename(self.flagfile, new) 
-        self.flagfile = new
-        self.tag = 'failed'
-        self.log.debug('Flagfile renamed to %s.' %self.flagfile)
-        self.log.debug('Leaving.')
 
     def search(self, status):
         '''
