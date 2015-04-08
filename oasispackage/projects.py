@@ -356,7 +356,7 @@ class Project(ProjectBasicConfig):
             #        Maybe a solution could be a hierarchy of classes, 'a la java'
             self.oasisprojectprobesconf = self._getprojectprobesconfig()
 
-            self.flagfile = FlagFile(self.projectname, self.flagfilebasedir)
+            self.flagfile = FlagFile(projectname=self.projectname, basedir=self.flagfilebasedir)
 
             self.log.debug('variable oasisprojectprobesconf has value %s', self.oasisprojectprobesconf)
 
