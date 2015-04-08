@@ -236,24 +236,6 @@ class FlagFile(object):
         self.log.debug('Leaving.')
 
 
-    def status(self):
-        '''
-        returns the <status> field of the flagfile
-        '''
-        # FIXME
-        # if the class FlagFile had an attribute self.status,
-        # this method would not be needed
-       
-        self.log.debug('Starting.')
-        if self.flagfile:
-            status = self.flagfile.split('.')[-1]
-            self.log.debug('Returning status %s' %status)
-            return status
-        else:
-            self.log.debug('Returning None')
-            return None
- 
-   
     def write(self, str):
         '''
         adds content to the flagfile
