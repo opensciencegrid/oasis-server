@@ -6,6 +6,7 @@
 * calling now new method flagfile.set()
 * deleting non used code
 * FlagFileManager.search() returns a list of FlagFile objects
+* FlagFile.search() call FlagFileManager.search()
 
 
 2.0.23
