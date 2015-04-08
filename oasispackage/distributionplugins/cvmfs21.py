@@ -351,6 +351,7 @@ class cvmfs21(cvmfs):
             if self.project.repository(flagfile_projectname) == self.project.repository():
                 return True
 
+
         return False
 
 
