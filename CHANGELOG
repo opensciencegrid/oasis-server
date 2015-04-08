@@ -11,6 +11,7 @@
 * better code for Project._checkflagfiles(). Calling now new FlagFileManager.search() and checking FlagFile.tag
 * renamed directory distributionplugins/ -> plugins/distribution/
 * created method FlagFile.update() 
+* new cvmfs21.shouldlock() code takes into account that search() methods return now FlagFile objects
 
 
 2.0.23
