@@ -235,11 +235,6 @@ class FlagFile(object):
         self.created = False
         self.log.debug('Leaving.')
 
-    def setstatus(self, status):
-        # it would be a generic method, instead of 
-        # having  setdone(), setfailed()...
-        # FIXME !! TO BE IMPLEMENTED 
-        pass
 
     def status(self):
         '''
