@@ -187,25 +187,22 @@ class FlagFile(object):
             self.filename = '%s.%s.%s' %(self.projectname, self.timestamp, self.tag)
 
 
-    def search(self, tag):
-        # FIXME This method does not make too much sense!!
-        '''
-        searches in the filesystem for a flagfile with that particular <tag>
-        '''
-        # FIXME There could be more than one, from previous unfinished processes.
-        # We need to figure out how to deal with that situation
-
-        self.log.debug('Starting with tag=%s' %tag)
-
-        ffm = FlagFileManager(basedir=self.basedir)
-        list_flagfiles = ffm.search(projectname=self.projectname, tag=tag)
-
-        if list_flagfiles == []:
-            self.log.info('No flagfile found.')
-        else:
-            self.log.info('Found %s flagfile(s).' %len(list_flagfiles))
-            
-        return list_flagfiles
+    ###def search(self, tag):
+    ###    # FIXME This method does not make too much sense!!
+    ###    '''
+    ###    searches in the filesystem for a flagfile with that particular <tag>
+    ###    '''
+    ###    # FIXME There could be more than one, from previous unfinished processes.
+    ###    # We need to figure out how to deal with that situation
+    ###    self.log.debug('Starting with tag=%s' %tag)
+    ###    ffm = FlagFileManager(basedir=self.basedir)
+    ###    list_flagfiles = ffm.search(projectname=self.projectname, tag=tag)
+    ###    if list_flagfiles == []:
+    ###        self.log.info('No flagfile found.')
+    ###    else:
+    ###        self.log.info('Found %s flagfile(s).' %len(list_flagfiles))
+    ###        
+    ###    return list_flagfiles
 
 
     def clean(self):
