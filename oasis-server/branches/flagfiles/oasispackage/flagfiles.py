@@ -175,7 +175,19 @@ class FlagFile(object):
         self.log.debug('Leaving.')
 
 
+    def update(self):
+        """
+        update the tag value for this flagfile
+        """
+        
+        ffm = FlagFileManager(basedir=self.basedir)
+        flagfiles = ffm.search(projectname=self.projectname)
+        if flagfiles:
+            self.tag = flagfiles[0].tag # we assume only 1 flagfile per project
+
+
     def search(self, tag):
+        # FIXME This method does not make too much sense!!
         '''
         searches in the filesystem for a flagfile with that particular <tag>
         '''
