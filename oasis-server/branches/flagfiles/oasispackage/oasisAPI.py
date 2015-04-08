@@ -523,7 +523,9 @@ class oasisCLI(object):
     def _searchflagfiles(self):
         '''
         searches for all flagfiles 
+        returns a list of FlagFile objects
         '''
+
         mgnr = FlagFileManager(self.project.flagfilebasedir) 
         listflagfiles = mgnr.search()
         return listflagfiles
