@@ -326,7 +326,7 @@ set +x
 
 # add the signed external repositories whitelists
 # this is safer than reading from the original sources, in case one is down
-for REPO in `print_osg_repos`; do
+for REPO in `print_osg_repos|grep opensciencegrid.org`; do
     if [ ! -f /srv/cvmfs/$REPO/.cvmfswhitelist ]; then
 	URL="http://oasis-replica.opensciencegrid.org:8000/cvmfs/$REPO/.cvmfswhitelist"
 	echo "Adding whitelist from $URL"
