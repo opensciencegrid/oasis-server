@@ -344,5 +344,5 @@ case $SRVDIR in
 	rm /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
 	cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/oasis.opensciencegrid.org.pub
 	echo "Now temporarily install /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey"
-	echo "   and run cvmfs_server resign"
+	echo "   and run resign_osg_whitelist"
 esac
