@@ -337,6 +337,8 @@ class cvmfs21(cvmfs):
     def shouldlock(self, listflagfiles):
         '''
         it should lock only if any of the flagfiles belongs to the same repository
+        and its timestamp is older that current project flagfile
+
         listflagfiles is a list of FlagFile objects
 
         '''
@@ -344,11 +346,19 @@ class cvmfs21(cvmfs):
 
         for flagfile in listflagfiles:
 
-            flagfile_projectname = flagfile.projectname
-            # check if flagfile_projectname belongs to the same repo
-            # that current projectname
-            if self.project.repository(projectname) == self.project.repository():
-                return True
+            # note that listflagfiles is the entire list of flagfiles in the filesystem
+            # including the flagfile for the current project.
+            # the current project flagfile cannot be used
+            if flagfile.projectname == self.project.projectname:
+                continue
+
+            # check if the project associated to that flagfile 
+            # belongs to the same repo that current projectname
+            if self.project.repository(flagfile.projectname) == self.project.repository():
+                # now check the timestamps:
+                if self.project.flagfile.timestamp > flagfile.timestamp:
+                    # that flagfile was created before current one. So current project has to wait...
+                    return True
 
         # no flagfile belongs to the same repository
         return False
