@@ -467,9 +467,6 @@ class oasisCLI(object):
                     else:
                         # block == True means process does retain prompt and waits in a loop
 
-                        # create the flagfile
-                        self.project._prepareflag()
-
                         elapsed = time.time() - inittime
                         if elapsed < self.project.starttimeout:
                             if elapsed >= nextmessagein: 
@@ -626,10 +623,10 @@ class oasisCLI(object):
         return rc
 
     def postinstall(self):
-        rc = self._wait()
+        rc = self.project.postinstall()
         if rc != 0:
             return rc
-        rc = self.project.postinstall()
+        rc = self._wait()
         return rc
 
 
