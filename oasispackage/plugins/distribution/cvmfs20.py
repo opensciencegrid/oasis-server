@@ -135,13 +135,13 @@ class cvmfs20(cvmfs):
 
     def shouldlock(self, listflagfiles):
         '''
-        CVMFS 2.0 should lock if there is any flagfile
+        CVMFS 2.0 should lock if there is any flagfile other than the one for current project
         '''
         #FIXME
         # Maybe it should take into account if the server host is the same or not.
         # If there are more than one, then we only need to lock for projects on the same server.
     
-        if listflagfiles != []:
+        if len(listflagfiles) > 1:
             return True
         else:
             return False
