@@ -13,8 +13,9 @@
 * created method FlagFile.refresh() 
 * calling now FlagFile.refresh() and checking tag value in method oasisCLI._loop()
 * new cvmfs21.shouldlock() code takes into account that search() methods return now FlagFile objects
-* checking the timestamps in cvmfs21.shouldlock()
 * creating the flagfile at the very beginning of the request process, not after waiting for timeout
+* checking the timestamps in cvmfs21.shouldlock()
+* cvmfs20.shouldlock() returns True if list of flagfiles has more than one item (any other than the flagfile for current project)
 
 
 
