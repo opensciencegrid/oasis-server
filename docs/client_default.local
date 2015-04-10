@@ -1,8 +1,0 @@
-CVMFS_REPOSITORIES=oasis.opensciencegrid.org
-CVMFS_HTTP_PROXY="DIRECT"
-CVMFS_CACHE_BASE=/var/cvmfs
-CVMFS_QUOTA_LIMIT=50000
-# r/w client fix for EL 6 kernel:
-CVMFS_MOUNT_RW=yes
-# restrict client mounts to known repos/domains:
-CVMFS_STRICT_MOUNT=yes

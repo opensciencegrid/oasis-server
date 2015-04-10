@@ -1,9 +1,8 @@
-#!/bin/env python
+#!/usr/bin/env python
 
 import cvmfs
 import sys
 
-# FIXME: should be an input variable
 repo = cvmfs.open_repository('http://oasis.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org')
 
 class Stats:
@@ -68,25 +67,34 @@ def get_stat_from_hash(repo, catalog_hash):
     return stats
 
 
-# FIXME: should be input variables
-first_revision = 40
-last_revision = 50
-
 root_catalog = repo.retrieve_root_catalog()
-
-#FIXME: fix the logic to accept no min or max, just min, just max, min and max
 while True:
-
-    revision = root_catalog.revision
-    if int(revision) < first_revision:
-        break
-    elif int(revision) > last_revision:
-        pass
-    else:
-        stats = compute_stat(repo, root_catalog)
-        print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
-
+    stats = compute_stat(repo, root_catalog)
+    print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
     new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
     repo.close_catalog(root_catalog)
     root_catalog = new_root_catalog
-        
+
+
+
+#    some modifications on my own to the script from Rene
+#
+#
+#        first_revision = 40
+#        last_revision = 50
+#        
+#        while True:
+#        
+#            revision = root_catalog.revision
+#            if int(revision) < first_revision:
+#                break
+#            elif int(revision) > last_revision:
+#                pass
+#            else:
+#                stats = compute_stat(repo, root_catalog)
+#                print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
+#
+#            new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
+#            repo.close_catalog(root_catalog)
+#            root_catalog = new_root_catalog
+#        
