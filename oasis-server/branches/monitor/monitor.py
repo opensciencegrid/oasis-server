@@ -102,7 +102,7 @@ class RepositoryHandler(object):
         
         if last_revision == -1: 
 
-        if last_n_revisions == -1: 
+        if last_n_revisions == -1:   # NOTE: last_n_revisions == 1 means the latest revision
 
 
         while True:
