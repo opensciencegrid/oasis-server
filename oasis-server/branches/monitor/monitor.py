@@ -7,6 +7,7 @@
 #
 
 import getopt
+import sys
 
 import cvmfs
 import sys
@@ -100,8 +101,10 @@ def main(options):
 
     # DEFAULTS #
     port = '8000'
+    first_revision = 0
+    last_revision = 0
 
-    opts, args = getopt.getopt(options, '', ['url=', 'port=', 'repositoryname='])
+    opts, args = getopt.getopt(options, '', ['url=', 'port=', 'repositoryname=', 'first_revision=', 'last_revision='])
     
     for k,v in opts:
         if k == '--url':
@@ -110,6 +113,10 @@ def main(options):
             port = v
         if k == '--repositoryname':
             repositoryname = v
+        if k == '--first_revision':
+            first_revision = v
+        if k == '--last_revision':
+            last_revision = v
 
     repository = Repository(url, port, repositoryname)
 
