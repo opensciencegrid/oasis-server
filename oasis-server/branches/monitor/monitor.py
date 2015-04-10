@@ -21,6 +21,8 @@ class Stats:
         self.data_volume   = self._count_data_volume(catalog)
         self.nested_clgs   = catalog.nested_count()
 
+        self.stat_cache_ = {}
+
     def __str__(self):
         return "Regular:      " + str(self.regular_files) + "\n" + \
                "Directories:  " + str(self.directories)   + "\n" + \
@@ -54,7 +56,7 @@ class Stats:
 
     def compute_stat(self, repo, catalog):  # FIXME
         print >> sys.stderr, "computing statistics for" , catalog.revision , catalog.hash , catalog.root_prefix
-        stats = Stats(catalog)
+        stats = Stats(catalog)  # FIXME
         for nested in catalog.list_nested():
             nested_stats = self.get_stat_from_hash(repo, nested.hash)
             stats.add(nested_stats)
@@ -62,14 +64,13 @@ class Stats:
 
 
     def get_stat_from_hash(self, repo, catalog_hash):  # FIXME
-        stat_cache_ = {}
-        if catalog_hash in stat_cache_:
+        if catalog_hash in self.stat_cache_:
             print >> sys.stderr, "cache hit for" , catalog_hash
-            return stat_cache_[catalog_hash]
+            return self.stat_cache_[catalog_hash]
     
         catalog = repo.retrieve_catalog(catalog_hash)
-        stats = Stats().compute_stat(repo, catalog)   # FIXME
-        stat_cache_[catalog_hash] = stats
+        stats = self.compute_stat(repo, catalog)  
+        self.stat_cache_[catalog_hash] = stats
         repo.close_catalog(catalog)
     
         return stats
@@ -88,6 +89,7 @@ class RepositoryHandler(object):
 
         self.repository = cvmfs.open_repository(self.repositoryURI)
 
+        self.stats = Stats()  #FIXME
 
 
     def get(self, first_revision=-1, last_revision=-1, last_n_revisions=-1):
@@ -111,7 +113,7 @@ class RepositoryHandler(object):
             elif int(revision) > last_revision:
                 pass
             else:
-                stats = Stats().compute_stat(repo, root_catalog)  # FIXME
+                stats = self.stats.compute_stat(repo, root_catalog) 
                 print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
 
             new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
