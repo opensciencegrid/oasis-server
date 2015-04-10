@@ -88,15 +88,19 @@ class RepositoryHandler(object):
 
         self.repository = cvmfs.open_repository(self.repositoryURI)
 
-    def get(self, first_revision, last_revision):
+
+
+    def get(self, first_revision=0, last_revision=0, last_n_revisions=0):
 
         root_catalog = repo.retrieve_root_catalog()
 
-        if first_revision == 0: 
 
+
+        if first_revision == 0: 
         
         if last_revision == 0: 
 
+        if last_n_revisions == 0: 
 
 
         while True:
@@ -122,8 +126,9 @@ def main(options):
     port = '8000'
     first_revision = 0
     last_revision = 0
+    last_n_revisions = 0
 
-    opts, args = getopt.getopt(options, '', ['url=', 'port=', 'repositoryname=', 'first_revision=', 'last_revision='])
+    opts, args = getopt.getopt(options, '', ['url=', 'port=', 'repositoryname=', 'first_revision=', 'last_revision=', 'last_n_revisions=='])
     
     for k,v in opts:
         if k == '--url':
@@ -136,9 +141,11 @@ def main(options):
             first_revision = int(v)
         if k == '--last_revision':
             last_revision = int(v)
+        if k == '--last_n_revisions':
+            last_n_revisions = int(v)
 
     repositoryhandler = RepositoryHander(url, port, repositoryname)
-    repositoryhandler.get(first_revision, last_revision)
+    repositoryhandler.get(first_revision, last_revision, last_n_revisions)
 
 
 if __name__ == '__main__':
