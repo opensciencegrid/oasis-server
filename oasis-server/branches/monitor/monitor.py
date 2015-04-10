@@ -90,17 +90,17 @@ class RepositoryHandler(object):
 
 
 
-    def get(self, first_revision=0, last_revision=0, last_n_revisions=0):
+    def get(self, first_revision=-1, last_revision=-1, last_n_revisions=-1):
 
         root_catalog = repo.retrieve_root_catalog()
 
 
 
-        if first_revision == 0: 
+        if first_revision == -1: 
         
-        if last_revision == 0: 
+        if last_revision == -1: 
 
-        if last_n_revisions == 0: 
+        if last_n_revisions == -1: 
 
 
         while True:
@@ -124,9 +124,9 @@ def main(options):
 
     # DEFAULTS #
     port = '8000'
-    first_revision = 0
-    last_revision = 0
-    last_n_revisions = 0
+    first_revision = -1
+    last_revision = -1
+    last_n_revisions = -1
 
     opts, args = getopt.getopt(options, '', ['url=', 'port=', 'repositoryname=', 'first_revision=', 'last_revision=', 'last_n_revisions=='])
     
