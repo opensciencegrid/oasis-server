@@ -6,6 +6,7 @@
 # with some modifications from Jose Caballero (jcaballero@bnl.gov)
 #
 
+import getopt
 
 import cvmfs
 import sys
@@ -81,6 +82,42 @@ while True:
     new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
     repo.close_catalog(root_catalog)
     root_catalog = new_root_catalog
+
+
+class Repository(object):
+
+    def __init__(self, url, port, repositoryname):
+
+        self.url = url
+        self.port = port
+        self.repositoryname = repositoryname
+        self.repository = '%s:%s/cvmfs/%s' %(self.url, self.port, self.repositoryname)
+
+        repo = cvmfs.open_repository('http://oasis.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org')
+
+
+
+def main(options):
+
+    # DEFAULTS #
+    port = '8000'
+
+    opts, args = getopt.getopt(options, '', ['url=', 'port=', 'repositoryname='])
+    
+    for k,v in opts:
+        if k == '--url':
+            url = v
+        if k == '--port':
+            port = v
+        if k == '--repositoryname':
+            repositoryname = v
+
+    repository = Repository(url, port, repositoryname)
+
+
+if __name__ == '__main__':
+    rc = main(sys.argv[1:])
+    sys.exit(rc)
 
 
 
