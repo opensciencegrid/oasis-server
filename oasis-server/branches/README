@@ -3,4 +3,4 @@
 
 flagfiles: Entire new management of the flagfiles. Need to be tested.
 
-
+monitor: to work on a remote monitor using the python bindings (based on the script by Rene)
