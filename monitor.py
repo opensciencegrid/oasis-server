@@ -75,13 +75,6 @@ def get_stat_from_hash(repo, catalog_hash):
     return stats
 
 
-root_catalog = repo.retrieve_root_catalog()
-while True:
-    stats = compute_stat(repo, root_catalog)
-    print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
-    new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
-    repo.close_catalog(root_catalog)
-    root_catalog = new_root_catalog
 
 
 class RepositoryHandler(object):
@@ -95,6 +88,32 @@ class RepositoryHandler(object):
 
         self.repository = cvmfs.open_repository(self.repositoryURI)
 
+    def get(self, first_revision, last_revision):
+
+        root_catalog = repo.retrieve_root_catalog()
+
+        if first_revision == 0: 
+
+        
+        if last_revision == 0: 
+
+
+
+        while True:
+        
+            revision = root_catalog.revision
+            if int(revision) < first_revision:
+                break
+            elif int(revision) > last_revision:
+                pass
+            else:
+                stats = compute_stat(repo, root_catalog)
+                print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
+
+            new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
+            repo.close_catalog(root_catalog)
+            root_catalog = new_root_catalog
+        
 
 
 def main(options):
@@ -114,11 +133,12 @@ def main(options):
         if k == '--repositoryname':
             repositoryname = v
         if k == '--first_revision':
-            first_revision = v
+            first_revision = int(v)
         if k == '--last_revision':
-            last_revision = v
+            last_revision = int(v)
 
     repositoryhandler = RepositoryHander(url, port, repositoryname)
+    repositoryhandler.get(first_revision, last_revision)
 
 
 if __name__ == '__main__':
@@ -127,24 +147,3 @@ if __name__ == '__main__':
 
 
 
-#    some modifications on my own to the script from Rene
-#
-#
-#        first_revision = 40
-#        last_revision = 50
-#        
-#        while True:
-#        
-#            revision = root_catalog.revision
-#            if int(revision) < first_revision:
-#                break
-#            elif int(revision) > last_revision:
-#                pass
-#            else:
-#                stats = compute_stat(repo, root_catalog)
-#                print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
-#
-#            new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
-#            repo.close_catalog(root_catalog)
-#            root_catalog = new_root_catalog
-#        
