@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+#
+# tool to inspect a remote CVMFS DB
+# original code is from Rene Meusel (rene.meusel@cern.ch)
+# with some modifications from Jose Caballero (jcaballero@bnl.gov)
+#
+
+
 import cvmfs
 import sys
 
