@@ -84,7 +84,7 @@ while True:
     root_catalog = new_root_catalog
 
 
-class Repository(object):
+class RepositoryHandler(object):
 
     def __init__(self, url, port, repositoryname):
 
@@ -118,7 +118,7 @@ def main(options):
         if k == '--last_revision':
             last_revision = v
 
-    repository = Repository(url, port, repositoryname)
+    repositoryhandler = RepositoryHander(url, port, repositoryname)
 
 
 if __name__ == '__main__':
