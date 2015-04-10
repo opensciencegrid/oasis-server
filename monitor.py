@@ -106,7 +106,9 @@ class RepositoryHandler(object):
 
 
         while True:
-        
+       
+            # FIXME:  put the corresponding code in a try-except block
+ 
             revision = root_catalog.revision
             if int(revision) < first_revision:
                 break
