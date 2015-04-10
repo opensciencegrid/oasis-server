@@ -11,7 +11,6 @@ import getopt
 import cvmfs
 import sys
 
-repo = cvmfs.open_repository('http://oasis.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org')
 
 class Stats:
     def __init__(self, catalog):
@@ -91,9 +90,9 @@ class Repository(object):
         self.url = url
         self.port = port
         self.repositoryname = repositoryname
-        self.repository = '%s:%s/cvmfs/%s' %(self.url, self.port, self.repositoryname)
+        self.repositoryURI = '%s:%s/cvmfs/%s' %(self.url, self.port, self.repositoryname)
 
-        repo = cvmfs.open_repository('http://oasis.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org')
+        self.repository = cvmfs.open_repository(self.repositoryURI)
 
 
 
