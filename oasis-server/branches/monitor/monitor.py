@@ -80,13 +80,16 @@ def get_stat_from_hash(repo, catalog_hash):  # FIXME
 
 class RepositoryHandler(object):
 
-    def __init__(self, url, port, repositoryname):
-        # FIXME : allow inspecting local repo, not only remote
+    def __init__(self, repositoryname, url=None, port=None):
 
         self.url = url
         self.port = port
         self.repositoryname = repositoryname
-        self.repositoryURI = '%s:%s/cvmfs/%s' %(self.url, self.port, self.repositoryname)
+        if self.url and self.port:
+            self.repositoryURI = '%s:%s/cvmfs/%s' %(self.url, self.port, self.repositoryname)
+        else:
+            self.repositoryURI = '/cvmfs/%s' %self.repositoryname
+        
 
         self.repository = cvmfs.open_repository(self.repositoryURI)
 
@@ -139,7 +142,8 @@ class RepositoryHandler(object):
 def main(options):
 
     # DEFAULTS #
-    port = '8000'
+    url = None
+    port = None 
     first_revision = 0
     last_revision = 0
     last_n_revisions = 0
@@ -163,7 +167,7 @@ def main(options):
         if k == '--revision':
             revision = int(v)
 
-    repositoryhandler = RepositoryHander(url, port, repositoryname)
+    repositoryhandler = RepositoryHander(repositoryname, url, port)
     repositoryhandler.get(first_revision, last_revision, last_n_revisions, revision)
 
 
