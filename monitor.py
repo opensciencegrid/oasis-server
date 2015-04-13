@@ -81,6 +81,7 @@ def get_stat_from_hash(repo, catalog_hash):  # FIXME
 class RepositoryHandler(object):
 
     def __init__(self, url, port, repositoryname):
+        # FIXME : allow inspecting local repo, not only remote
 
         self.url = url
         self.port = port
