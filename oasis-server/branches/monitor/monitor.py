@@ -152,11 +152,11 @@ class RepositoryHandler(object):
                 new_root_catalog = self.repository.retrieve_catalog(root_catalog.previous_revision)
                 self.repository.close_catalog(root_catalog)
                 root_catalog = new_root_catalog
-                current_revision = root_catalog.revision
+                current_revision = int(root_catalog.revision)
             except:
                 pass  #FIXME
 
-            return info
+        return info
         
 
 
