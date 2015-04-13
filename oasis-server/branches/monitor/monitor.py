@@ -68,6 +68,8 @@ class Info(object):
         self.data_volume = stats.data_volume
         self.nested_catalogs = stats.nested_clgs
 
+    def __cmp__(self, other):
+        return self.revision.__cmp__(other.revision)   
 
 
 
@@ -135,26 +137,27 @@ class RepositoryHandler(object):
             elif first_revision and last_revision:
                 revisions_range = [first_revision, last_revision + 1]
             else:
-                return 1 
-            
-        while True:
+                revisions_range = [1, current_revision + 1]
+           
+        try: 
+            while True:
 
-            if current_revision > revisions_range[-1]:
-                pass
-            elif current_revision < revisions_range[0]:
-                break
-            else:
+                if current_revision > revisions_range[-1]:
+                    pass
+                elif current_revision < revisions_range[0]:
+                    break
+                else:
 
-                stats = compute_stat(self.repository, root_catalog) 
-                info.append(Info(stats, root_catalog))
+                    stats = compute_stat(self.repository, root_catalog) 
+                    info.append(Info(stats, root_catalog))
 
-            try:
-                new_root_catalog = self.repository.retrieve_catalog(root_catalog.previous_revision)
-                self.repository.close_catalog(root_catalog)
-                root_catalog = new_root_catalog
-                current_revision = int(root_catalog.revision)
-            except:
-                pass  #FIXME
+                try:
+                    new_root_catalog = self.repository.retrieve_catalog(root_catalog.previous_revision)
+                    self.repository.close_catalog(root_catalog)
+                    root_catalog = new_root_catalog
+                    current_revision = int(root_catalog.revision)
+        except:
+            pass  #FIXME
 
         return info
         
