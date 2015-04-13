@@ -92,35 +92,47 @@ class RepositoryHandler(object):
         self.stats = Stats()  #FIXME
 
 
-    def get(self, first_revision=-1, last_revision=-1, last_n_revisions=-1):
+    def get(self, first_revision=0, last_revision=0, last_n_revisions=0, revision=0):
 
         root_catalog = repo.retrieve_root_catalog()
 
 
+        current_revision = int(root_catalog.revision)
 
-        if first_revision == -1: 
+        if revision:
+            revisions_range = [revision]
+        elif last_n_revisions:
+            revisions_range = range(current_revsion - last_n_revisions + 1, current_revision + 1)
+        else:
+            if first_revision and not last_revision:
+                revisions_range = [first_revision, current_revision + 1]
+            elif not first_revision and last_revision:
+                revisions_range = [1, last_revision + 1]
+            elif first_revision and last_revision:
+                revisions_range = [first_revision, last_revision + 1]
+            else:
+                return 1 
+            
         
-        if last_revision == -1: 
-
-        if last_n_revisions == -1:   # NOTE: last_n_revisions == 1 means the latest revision
-
 
         while True:
-       
-            # FIXME:  put the corresponding code in a try-except block
- 
-            revision = root_catalog.revision
-            if int(revision) < first_revision:
-                break
-            elif int(revision) > last_revision:
+
+            if current_revision > revisions_range[-1]:
                 pass
+            elif current_revision < revisions_range[0]:
+                break
             else:
+
                 stats = compute_stat(repo, root_catalog) 
                 print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
 
-            new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
-            repo.close_catalog(root_catalog)
-            root_catalog = new_root_catalog
+            try:
+                new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
+                repo.close_catalog(root_catalog)
+                root_catalog = new_root_catalog
+                revision = root_catalog.revision
+            except:
+                pass  #FIXME
         
 
 
@@ -128,11 +140,12 @@ def main(options):
 
     # DEFAULTS #
     port = '8000'
-    first_revision = -1
-    last_revision = -1
-    last_n_revisions = -1
+    first_revision = 0
+    last_revision = 0
+    last_n_revisions = 0
+    revision = 0
 
-    opts, args = getopt.getopt(options, '', ['url=', 'port=', 'repositoryname=', 'first_revision=', 'last_revision=', 'last_n_revisions=='])
+    opts, args = getopt.getopt(options, '', ['url=', 'port=', 'repositoryname=', 'first_revision=', 'last_revision=', 'last_n_revisions=', 'revision='])
     
     for k,v in opts:
         if k == '--url':
@@ -147,9 +160,11 @@ def main(options):
             last_revision = int(v)
         if k == '--last_n_revisions':
             last_n_revisions = int(v)
+        if k == '--revision':
+            revision = int(v)
 
     repositoryhandler = RepositoryHander(url, port, repositoryname)
-    repositoryhandler.get(first_revision, last_revision, last_n_revisions)
+    repositoryhandler.get(first_revision, last_revision, last_n_revisions, revision)
 
 
 if __name__ == '__main__':
