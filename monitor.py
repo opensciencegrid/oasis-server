@@ -116,8 +116,6 @@ class RepositoryHandler(object):
             else:
                 return 1 
             
-        
-
         while True:
 
             if current_revision > revisions_range[-1]:
@@ -167,7 +165,7 @@ def main(options):
         if k == '--revision':
             revision = int(v)
 
-    repositoryhandler = RepositoryHander(repositoryname, url, port)
+    repositoryhandler = RepositoryHandler(repositoryname, url, port)
     repositoryhandler.get(first_revision, last_revision, last_n_revisions, revision)
 
 
