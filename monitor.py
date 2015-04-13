@@ -112,10 +112,12 @@ class RepositoryHandler(object):
 
         self.repository = cvmfs.open_repository(self.repositoryURI)
 
-        self.stats = Stats()  #FIXME
+        #self.stats = Stats()  #FIXME
 
 
     def get(self, first_revision=0, last_revision=0, last_n_revisions=0, revision=0):
+
+        info = []
 
         root_catalog = self.repository.retrieve_root_catalog()
 
@@ -124,7 +126,7 @@ class RepositoryHandler(object):
         if revision:
             revisions_range = [revision]
         elif last_n_revisions:
-            revisions_range = range(current_revsion - last_n_revisions + 1, current_revision + 1)
+            revisions_range = range(current_revision - last_n_revisions + 1, current_revision + 1)
         else:
             if first_revision and not last_revision:
                 revisions_range = [first_revision, current_revision + 1]
@@ -144,7 +146,7 @@ class RepositoryHandler(object):
             else:
 
                 stats = compute_stat(self.repository, root_catalog) 
-                print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
+                info.append(Info(stats, root_catalog))
 
             try:
                 new_root_catalog = self.repository.retrieve_catalog(root_catalog.previous_revision)
@@ -153,6 +155,8 @@ class RepositoryHandler(object):
                 current_revision = root_catalog.revision
             except:
                 pass  #FIXME
+
+            return info
         
 
 
