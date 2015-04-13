@@ -73,7 +73,7 @@ class Info(object):
 
 
 def compute_stat(repo, catalog):  # FIXME
-    print >> sys.stderr, "computing statistics for" , catalog.revision , catalog.hash , catalog.root_prefix
+    #print >> sys.stderr, "computing statistics for" , catalog.revision , catalog.hash , catalog.root_prefix
     stats = Stats(catalog)  # FIXME
     for nested in catalog.list_nested():
         nested_stats = get_stat_from_hash(repo, nested.hash)
@@ -84,7 +84,7 @@ def compute_stat(repo, catalog):  # FIXME
 stat_cache_ = {}
 def get_stat_from_hash(repo, catalog_hash):  # FIXME
     if catalog_hash in stat_cache_:
-        print >> sys.stderr, "cache hit for" , catalog_hash
+        #print >> sys.stderr, "cache hit for" , catalog_hash
         return stat_cache_[catalog_hash]
 
     catalog = repo.retrieve_catalog(catalog_hash)
