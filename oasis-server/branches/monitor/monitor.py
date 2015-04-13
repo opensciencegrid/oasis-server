@@ -189,7 +189,7 @@ def main(options):
             revision = int(v)
 
     repositoryhandler = RepositoryHandler(repositoryname, url, port)
-    repositoryhandler.get(first_revision, last_revision, last_n_revisions, revision)
+    info = repositoryhandler.get(first_revision, last_revision, last_n_revisions, revision)
 
 
 if __name__ == '__main__':
