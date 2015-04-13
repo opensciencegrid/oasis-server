@@ -77,7 +77,7 @@ def compute_stat(repo, catalog):  # FIXME
     print >> sys.stderr, "computing statistics for" , catalog.revision , catalog.hash , catalog.root_prefix
     stats = Stats(catalog)  # FIXME
     for nested in catalog.list_nested():
-        nested_stats = self.get_stat_from_hash(repo, nested.hash)
+        nested_stats = get_stat_from_hash(repo, nested.hash)
         stats.add(nested_stats)
     return stats
 
