@@ -94,8 +94,7 @@ class RepositoryHandler(object):
 
     def get(self, first_revision=0, last_revision=0, last_n_revisions=0, revision=0):
 
-        root_catalog = repo.retrieve_root_catalog()
-
+        root_catalog = self.repository.retrieve_root_catalog()
 
         current_revision = int(root_catalog.revision)
 
@@ -123,14 +122,14 @@ class RepositoryHandler(object):
                 break
             else:
 
-                stats = compute_stat(repo, root_catalog) 
+                stats = compute_stat(self.repository, root_catalog) 
                 print root_catalog.revision , root_catalog.last_modified , root_catalog.hash , stats.regular_files , stats.directories , stats.symlinks , stats.data_volume , stats.nested_clgs
 
             try:
-                new_root_catalog = repo.retrieve_catalog(root_catalog.previous_revision)
-                repo.close_catalog(root_catalog)
+                new_root_catalog = self.repository.retrieve_catalog(root_catalog.previous_revision)
+                self.repository.close_catalog(root_catalog)
                 root_catalog = new_root_catalog
-                revision = root_catalog.revision
+                current_revision = root_catalog.revision
             except:
                 pass  #FIXME
         
