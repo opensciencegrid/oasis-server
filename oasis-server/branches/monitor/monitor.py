@@ -21,7 +21,6 @@ class Stats:
         self.data_volume   = self._count_data_volume(catalog)
         self.nested_clgs   = catalog.nested_count()
 
-        self.stat_cache_ = {}
 
     def __str__(self):
         return "Regular:      " + str(self.regular_files) + "\n" + \
@@ -82,14 +81,15 @@ def compute_stat(repo, catalog):  # FIXME
     return stats
 
 
+stat_cache_ = {}
 def get_stat_from_hash(repo, catalog_hash):  # FIXME
-    if catalog_hash in self.stat_cache_:
+    if catalog_hash in stat_cache_:
         print >> sys.stderr, "cache hit for" , catalog_hash
-        return self.stat_cache_[catalog_hash]
+        return stat_cache_[catalog_hash]
 
     catalog = repo.retrieve_catalog(catalog_hash)
     stats = compute_stat(repo, catalog)  
-    self.stat_cache_[catalog_hash] = stats
+    stat_cache_[catalog_hash] = stats
     repo.close_catalog(catalog)
 
     return stats
