@@ -54,6 +54,25 @@ class Stats:
         return result[0][0]
 
 
+class Info(object):
+    def __init__(self, stats, catalog):
+        '''
+        pass an Stats object and a catalog object
+        '''
+       
+        self.revision = catalog.revision
+        self.last_modified = catalog.last_modified
+        self.hash = catalog.hash
+        self.regular_files = stats.regular_files
+        self.directories = stats.directories
+        self.symlinks = stats.symlinks
+        self.data_volume = stats.data_volume
+        self.nested_catalogs = stats.nested_clgs
+
+
+
+
+
 def compute_stat(repo, catalog):  # FIXME
     print >> sys.stderr, "computing statistics for" , catalog.revision , catalog.hash , catalog.root_prefix
     stats = Stats(catalog)  # FIXME
