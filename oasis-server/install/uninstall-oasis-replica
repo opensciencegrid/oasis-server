@@ -30,6 +30,8 @@ wget -N http://repo.grid.iu.edu/osg/3.1/$OSGREL
 rpm -iv $OSGREL
 rm -f $OSGREL
 service httpd stop
+chkconfig cvmfslockclean off
+rm /etc/init.d/cvmfslockclean
 sed -i -e '/Added by install/d' -e '/^net.core.somaxconn/d' /etc/sysctl.conf
 sysctl -w net.core.somaxconn=128
 rpm -e cvmfs-release

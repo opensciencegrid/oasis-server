@@ -117,6 +117,18 @@ xEOFx
 chkconfig httpd on
 service httpd start
 
+cat >/etc/init.d/cvmfslockclean <<xEOFx
+#!/bin/bash
+# Created by install script.  Will be recreated next reinstall.
+#chkconfig: - 88 12
+#description: cleans up leftover cvmfs_server snapshot locks, for 2.1.20 only
+if [ "$1" = "start" ]; then
+	rm -rf /var/spool/cvmfs/*/is_snapshotting
+fi
+xEOFx
+chmod +x /etc/init.d/cvmfslockclean
+chkconfig cvmfslockclean on
+
 cat >>/etc/sysctl.conf <<xEOFx
 # Controls maximum listen() backlog for apache.  Added by install script.
 net.core.somaxconn = 1024
