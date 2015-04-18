@@ -151,7 +151,6 @@ class RepositoryHandler(object):
                     stats = compute_stat(self.repository, root_catalog) 
                     info.append(Info(stats, root_catalog))
 
-                try:
                     new_root_catalog = self.repository.retrieve_catalog(root_catalog.previous_revision)
                     self.repository.close_catalog(root_catalog)
                     root_catalog = new_root_catalog
