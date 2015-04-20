@@ -194,9 +194,17 @@ def main(options):
     info = repositoryhandler.get(first_revision, last_revision, last_n_revisions, revision)
 
 
+# code to get the latest revision number at the replica
+f = open("/srv/cvmfs/oasis.opensciencegrid.org/.cvmfspublished")
+lines = f.readlines()
+for l in lines:
+    if l.startswith('S'): 
+            last_revision_at_replica = int(l[1:])
+            break
+
+
 if __name__ == '__main__':
     rc = main(sys.argv[1:])
     sys.exit(rc)
-
 
 
