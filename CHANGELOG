@@ -1,4 +1,4 @@
-
+* addded misc/cvmfs_server_hooks.sh
 * creating flagfile file in _wait() method, and deleting it in case of timeout
 * adding variable FlagFile.created to prevent the same flagfile from being created twice in the filesystem
 * improvements in FlagFile.__init__() to allow creating an object for a file that already exists
