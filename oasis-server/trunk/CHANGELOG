@@ -1,3 +1,5 @@
+* addded misc/cvmfs_server_hooks.sh
+
 2.0.23
 
 * reverting to 2.0.21. Changes in 2.0.22 are not correct.
