@@ -640,6 +640,7 @@ class Project(ProjectBasicConfig):
 
         ffm = FlagFileManager(self.flagfilebasedir) 
         flagfiles = ffm.search(projectname=self.projectname)
+        self.log.debug('found %s flagfiles total' %len(flagfiles))
 
         if flagfiles == []:
             self.log.debug('No flagfile found') 
