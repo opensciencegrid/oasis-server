@@ -521,7 +521,7 @@ class oasisCLI(object):
             # that can be reused
             #
                
-            self.flagfile.refresh()
+            self.project.flagfile.refresh()
 
             if self.project.flagfile.tag == 'done':
 
