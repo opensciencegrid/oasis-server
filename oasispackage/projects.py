@@ -663,6 +663,11 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Starting.')
 
+        flagfiles = ffm.search(projectname=self.projectname)
+        if flagfiles == []:
+            self.log.debug('No flagfile found for this project')
+            return False
+
         ffm = FlagFileManager(self.flagfilebasedir)
         flagfiles = ffm.search(tag='request')
 
