@@ -85,7 +85,8 @@ setup(
     maintainer_email='jcaballero@bnl.gov',
     url='http://www.opensciencegrid.org',
     packages=['oasispackage',
-              'oasispackage.distributionplugins',
+              'oasispackage.plugins',
+              'oasispackage.plugins.distribution',
               'oasispackage.probes',
               ],
     scripts = [# =============================
