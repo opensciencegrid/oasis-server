@@ -344,12 +344,16 @@ class cvmfs21(cvmfs):
         '''
         # FIXME: should I pay attention to the <status> field???
 
+        self.log.debug("start with list of flagfiles %s" %listflagfiles)
+
         for flagfile in listflagfiles:
+            self.log.debug("analyzing flagfile %s" %flagfile.filename)
 
             # note that listflagfiles is the entire list of flagfiles in the filesystem
             # including the flagfile for the current project.
             # the current project flagfile cannot be used
             if flagfile.projectname == self.project.projectname:
+                self.log.debug('flagfile %s belongs to this project' %flagfile.filename)
                 continue
 
             # check if the project associated to that flagfile 
@@ -357,6 +361,7 @@ class cvmfs21(cvmfs):
             if self.project.repository(flagfile.projectname) == self.project.repository():
                 # now check the timestamps:
                 if self.project.flagfile.timestamp > flagfile.timestamp:
+                    self.log.debug('flagfile %s is older than the one for this project' %flagfile.filename)
                     # that flagfile was created before current one. So current project has to wait...
                     return True
 
