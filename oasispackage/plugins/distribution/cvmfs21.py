@@ -363,9 +363,11 @@ class cvmfs21(cvmfs):
                 if self.project.flagfile.timestamp > flagfile.timestamp:
                     self.log.debug('flagfile %s is older than the one for this project' %flagfile.filename)
                     # that flagfile was created before current one. So current project has to wait...
+                    self.log.debug('return True')
                     return True
 
         # no flagfile belongs to the same repository
+        self.log.debug('return False')
         return False
 
 
