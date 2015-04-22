@@ -1215,7 +1215,7 @@ class ProjectThread(threading.Thread):
             self.log.debug("Beginning cycle in thread for Project %s" %self.project)
             try:
                 # look for the flag file    
-                if self.project._checkflagfile()
+                if self.project._checkflagfile():
                     # if flagfile exists for this project, and its tag is "request", do stuffs 
 
                     #
