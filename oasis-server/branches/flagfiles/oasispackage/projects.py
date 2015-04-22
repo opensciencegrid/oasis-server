@@ -630,6 +630,31 @@ class Project(ProjectBasicConfig):
     #                   A C T I O N S    B Y     T H E    D A E M O N
     # =========================================================================
 
+    ## BEGIN TEST ##
+    #def _checkflagfile(self):
+    #    '''
+    #    checks if a flagfile exists for this project
+    #    and if its tag is request
+    #    '''
+    #
+    #    self.log.debug('Starting.')
+    #
+    #    ffm = FlagFileManager(self.flagfilebasedir) 
+    #    flagfiles = ffm.search(projectname=self.projectname)
+    #    self.log.debug('found %s flagfiles total' %len(flagfiles))
+    #
+    #    if flagfiles == []:
+    #        self.log.debug('No flagfile found') 
+    #        return False
+    #    else:
+    #        # we assume there is only 1 flagfile per project at a time
+    #        self.log.debug('Found flagfile %s' %flagfiles[0].filename)
+    #        if flagfiles[0].tag == 'request':
+    #            self.log.debug('tag for found flagfile is "request". Return True')
+    #            return True
+    #        else:
+    #            self.log.debug('tag for found flagfile is not "request". Return False')
+    #            return False 
     def _checkflagfile(self):
         '''
         checks if a flagfile exists for this project
@@ -638,22 +663,21 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Starting.')
 
-        ffm = FlagFileManager(self.flagfilebasedir) 
-        flagfiles = ffm.search(projectname=self.projectname)
+        ffm = FlagFileManager(self.flagfilebasedir)
+        flagfiles = ffm.search(tag='request')
+
         self.log.debug('found %s flagfiles total' %len(flagfiles))
 
         if flagfiles == []:
-            self.log.debug('No flagfile found') 
+            self.log.debug('No flagfile found')
             return False
         else:
-            # we assume there is only 1 flagfile per project at a time
-            self.log.debug('Found flagfile %s' %flagfiles[0].filename)
-            if flagfiles[0].tag == 'request':
-                self.log.debug('tag for found flagfile is "request". Return True')
-                return True
-            else:
-                self.log.debug('tag for found flagfile is not "request". Return False')
-                return False 
+
+            shouldlock = self.distributionplugin.shouldlock(flagfiles)
+            self.log.debug('distribution plugin method shouldlock returned %s' %shouldlock)
+            return not shouldlock
+
+    ## BEGIN TEST ##
 
 
     def runprobes(self):
