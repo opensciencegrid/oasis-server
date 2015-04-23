@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.23
+%define version 2.0.24
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,26 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Thu Apr 23 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.24-1
+- addded misc/cvmfs_server_hooks.sh
+- creating flagfile file in _wait() method, and deleting it in case of timeout
+- adding variable FlagFile.created to prevent the same flagfile from being created twice in the filesystem
+- improvements in FlagFile.__init__() to allow creating an object for a file that already exists
+- improvements in __init__(), and only one settag() method
+- calling now new method flagfile.set()
+- calling now new flagfile.__init__()
+- deleting non used code
+- FlagFileManager.search() returns a list of FlagFile objects
+- FlagFile.search() call FlagFileManager.search()
+- better code for Project._checkflagfiles(). Calling now new FlagFileManager.search() and checking FlagFile.tag
+- renamed directory distributionplugins/ -> plugins/distribution/
+- created method FlagFile.refresh()
+- calling now FlagFile.refresh() and checking tag value in method oasisCLI._loop()
+- new cvmfs21.shouldlock() code takes into account that search() methods return now FlagFile objects
+- creating the flagfile at the very beginning of the request process, not after waiting for timeout
+- checking the timestamps in cvmfs21.shouldlock()
+- cvmfs20.shouldlock() returns True if list of flagfiles has more than one item (any other than the flagfile for current project)
+
 * Fri Apr 03 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.23-1
 - reverting to 2.0.21. Changes in 2.0.22 are not correct.
 
