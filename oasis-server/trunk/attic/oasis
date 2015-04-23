@@ -1,0 +1,19 @@
+#awstat
+*/15 * * * * root /usr/local/awstats/wwwroot/cgi-bin/awstats.pl -update -config=oasis >> /usr/local/awstats/log.txt
+
+#data is now copied via nas01
+#pull content from oasis-login 
+#*/5 * * * root rsync -art rsync://oasis-login.grid.iu.edu/cvmfs /cvmfs/oasis.opensciencegrid.org
+
+*/15 * * * * root /usr/local/oasis/bin/oasis_status.sh
+
+*/5 * * * * root /usr/local/oasis/bin/generate_adduser.py | bash
+*/5 * * * * root /usr/local/oasis/bin/generate_condormap.py > /etc/condor/condor_mapfile
+
+#1 11 * * * root scp -q -r -i /root/.ssh/id_goc.dsa /cvmfs goc@backup.goc:/usr/local/backup/oasis
+ 
+* * * * * root /usr/local/oasis/bin/do_oasis_update
+#11 */2 * * * root /usr/local/oasis/bin/request_oasis_update
+
+#service monitor
+*/15 * * * * root /opt/service-monitor/oasis/test.sh
