@@ -116,8 +116,22 @@ class RepositoryHandler(object):
 
         #self.stats = Stats()  #FIXME
 
+   
+    def getLocalLastRevision(self): 
+        '''
+        code to get the latest revision number at the replica
+        '''
 
-    def get(self, first_revision=0, last_revision=0, last_n_revisions=0, revision=0):
+        f = open("/srv/cvmfs/%s/.cvmfspublished" %self.repositoryname)
+        lines = f.readlines()
+        for l in lines:
+            if l.startswith('S'): 
+                    last_revision = int(l[1:])
+                    return last_revision
+        return None  #FIXME, maybe we need to raise an exception here?
+
+
+    def getRemoteInfo(self, first_revision=0, last_revision=0, last_n_revisions=0, revision=0):
 
         info = []
 
@@ -191,16 +205,9 @@ def main(options):
             revision = int(v)
 
     repositoryhandler = RepositoryHandler(repositoryname, url, port)
-    info = repositoryhandler.get(first_revision, last_revision, last_n_revisions, revision)
+    info = repositoryhandler.getRemoteInfo(first_revision, last_revision, last_n_revisions, revision)
 
 
-# code to get the latest revision number at the replica
-f = open("/srv/cvmfs/oasis.opensciencegrid.org/.cvmfspublished")
-lines = f.readlines()
-for l in lines:
-    if l.startswith('S'): 
-            last_revision_at_replica = int(l[1:])
-            break
 
 
 if __name__ == '__main__':
