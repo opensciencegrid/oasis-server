@@ -630,7 +630,6 @@ class Project(ProjectBasicConfig):
     #                   A C T I O N S    B Y     T H E    D A E M O N
     # =========================================================================
 
-    ## BEGIN TEST ##
     #def _checkflagfile(self):
     #    '''
     #    checks if a flagfile exists for this project
@@ -663,26 +662,21 @@ class Project(ProjectBasicConfig):
 
         self.log.debug('Starting.')
 
+        ffm = FlagFileManager(self.flagfilebasedir)
         flagfiles = ffm.search(projectname=self.projectname)
         if flagfiles == []:
             self.log.debug('No flagfile found for this project')
             return False
 
-        ffm = FlagFileManager(self.flagfilebasedir)
         flagfiles = ffm.search(tag='request')
-
-        self.log.debug('found %s flagfiles total' %len(flagfiles))
-
         if flagfiles == []:
             self.log.debug('No flagfile found')
             return False
         else:
-
+            self.log.debug('found %s flagfiles total' %len(flagfiles))
             shouldlock = self.distributionplugin.shouldlock(flagfiles)
             self.log.debug('distribution plugin method shouldlock returned %s' %shouldlock)
             return not shouldlock
-
-    ## BEGIN TEST ##
 
 
     def runprobes(self):
