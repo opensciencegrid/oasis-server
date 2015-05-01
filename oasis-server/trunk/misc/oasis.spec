@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.24
+%define version 2.0.25
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,9 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Fri May 01 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.25-1
+- Removed the temporary exclude /nova/data/flux from misc/do_oasis_update
+
 * Thu Apr 23 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.24-1
 - addded misc/cvmfs_server_hooks.sh
 - creating flagfile file in _wait() method, and deleting it in case of timeout
