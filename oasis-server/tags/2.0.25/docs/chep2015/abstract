@@ -1,0 +1,25 @@
+TITLE: Evolution of the Open Science Grid Application Software Installation Service (OASIS)
+
+AUTHORS:  J. Caballero, B. Bockelman, J. DeStefano, J. Hover, V. Neal, R. Quick, S. Teige.  
+
+TRACKS: 
+    A08 Middleware and services for production-quality infrastructures
+    T14 Collaborative tools 
+
+REGISTRATION NUMBER: 427  https://indico.cern.ch/event/304944/call-for-abstracts/427/
+
+
+
+The Open Science Grid Application Software Installation Service (OASIS) 
+provides an application installation service for Open Science Grid (OSG) virtual organizations (VOs) built on top of the CERN Virtual Machine File System (CVMFS).  
+This paper provides an overview and progress report of the OASIS service, which has been in production for over 18 months.  
+OASIS can be used either directly, as a service run by OSG Operations, or as a standalone software product.  
+In either use case, the VOs' files feed into a network of Stratum One replication servers, along with other partners within a federation.  
+The OASIS network has the flexibility of providing pure CVMFS repositories, the OSG-run central OASIS repository, or VO-run OASIS repositories.  
+Depending on their needs, VOs can integrate into OASIS at several different points, leading to a more complex trust model than that of the standard CVMFS service.
+
+This paper describes the evolution of usage and implementation of OASIS over the past 18 months, as well as its operational successes, evolutions and issues.  
+Topics such as monitoring and auditing of the distributed content, handling of cryptographic keys, 
+and establishing technical and organizational trust relationships are discussed.  
+Finally, a roadmap for the future is presented.
+
