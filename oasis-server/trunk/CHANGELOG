@@ -1,3 +1,9 @@
+2.0.26
+
+* Changed misc/do_oasis_update so that if a transaction start fails, try
+  aborting and re-starting the transaction.  This can be necessary
+  after a crash and reboot.
+
 2.0.25
 
 * Removed the temporary exclude /nova/data/flux from misc/do_oasis_update

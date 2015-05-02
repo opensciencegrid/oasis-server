@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.25
+%define version 2.0.26
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,11 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Fri May 01 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.26-1
+- Changed misc/do_oasis_update so that if a transaction start fails, try
+  aborting and re-starting the transaction.  This can be necessary
+  after a crash and reboot.
+
 * Fri May 01 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.25-1
 - Removed the temporary exclude /nova/data/flux from misc/do_oasis_update
 
