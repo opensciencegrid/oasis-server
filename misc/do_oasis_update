@@ -25,7 +25,11 @@ if [ -f ${LOCKPFX}oasis_update_lock ]; then
 	vo=`cat ${LOCKPFX}vo_update_requested`
 	now=`date`
 	echo "$now starting vo update for $vo"
-	$runuser "cvmfs_server transaction oasis.opensciencegrid.org"
+	if ! $runuser "cvmfs_server transaction oasis.opensciencegrid.org"; then
+	    echo "transaction failed, trying abort and transaction again"
+	    $runuser "cvmfs_server abort -f oasis.opensciencegrid.org"
+	    $runuser "cvmfs_server transaction oasis.opensciencegrid.org"
+	fi
 
 	# first see if .cvmfsdirtab needs to be updated
 	SRCDIRTAB=$SRVDIR/etc/repo/.cvmfsdirtab
