@@ -10,13 +10,8 @@ if [ -f ${LOCKPFX}oasis_update_lock ]; then
 ## update was requested
 ## is an update in progress?
     if [ -f ${LOCKPFX}oasis_update_in_progress ]; then
-	PID="`cat ${LOCKPFX}oasis_update_in_progress`"
-	if [ -n "$PID" ] && kill -0 $PID 2>/dev/null; then
-	    # process still running, silently exit
-	    exit
-	fi
-	now=`date`
-	echo "$now overriding oasis_update_in_progress lock, pid $PID not running"
+	# another process is running, silently exit
+	exit
     fi
     echo $$ >${LOCKPFX}oasis_update_in_progress
     runuser="/sbin/runuser -s /bin/bash oasis -c"
