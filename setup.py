@@ -37,7 +37,11 @@ utils_files = ['misc/do_oasis_update',
     	       'misc/update_oasis_vos',
               ]
 
-initd_files = ['etc/oasisd']
+initd_files = ['etc/oasisd',
+	       'etc/oasis-initclean',
+	       'etc/oasis-login-initclean',
+	       'etc/oasis-replica-initclean',
+	      ]
 
 etc_files = ['etc/oasis.conf',
              'etc/projects.conf',
