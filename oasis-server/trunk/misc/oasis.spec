@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.27
+%define version 2.0.28
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,9 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Sun May 03 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.28-1
+- Add misc/cvmfs_server_hooks.sh to list of files installed by setup.py
+
 * Sun May 03 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.27-1
 - Add oasis-initclean, oasis-login-initclean, and oasis-replica-initclean
   scripts installed into /etc/init.d, for cleaning up possible leftover
