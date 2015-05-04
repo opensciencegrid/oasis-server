@@ -1,0 +1,11 @@
+#!/bin/bash
+# /etc/rc.d/init.d/oasis-initclean
+#chkconfig: - 88 12
+#description: cleans up any leftover oasis-batch-worker and request_oasis_update locks
+if [ "$1" = "start" ]; then
+    LOCKPFX="/net/nas01/Public/"
+    case "`uname -n|cut -d. -f1`" in
+	*-itb) LOCKPFX=${LOCKPFX}itb_;;
+    esac
+    rm -f ${LOCKPFX}vo_update_requested ${LOCKPFX}oasis_update_in_progress
+fi

@@ -1,0 +1,62 @@
+#!/bin/bash
+
+LOCKPFX="/net/nas01/Public/"
+case "`uname -n|cut -d. -f1`" in
+    *-itb) LOCKPFX=${LOCKPFX}itb_;;
+esac
+
+# calculate status details
+now=`date +%s`
+overall_status=99
+
+## condor process must exist
+condor=`ps -e | grep condor_master | awk '{print $4}'`
+if [ $condor ]; then
+   overall_status=0
+   cstat="yes"
+else
+   cstat="no"
+   overall_status=2
+fi
+
+# test for the existance of any lock file
+lock_exists="no"
+if [ -f ${LOCKPFX}vo_update_requested ]; then
+   lock_exists="yes"
+   overall_status=1
+fi
+if [ -f ${LOCKPFX}oasis_update_in_progress ]; then
+   lock_exists="yes"
+   overall_status=1
+fi
+if [ -f ${LOCKPFX}oasis_update_lock ]; then
+   lock_exists="yes"
+   overall_status=1
+fi
+
+kern=`uname -r`
+utime=` cat /proc/uptime | awk '{ print $1 }'`
+
+# begin output, overall status first. OK, WARNING, CRITICAL or UNKNOWN are allowed values
+if [ $overall_status -eq 99 ]; then
+   echo "UNKNOWN" > /var/www/html/stamp
+fi
+
+if [ $overall_status -eq 0 ]; then
+   echo "OK" > /var/www/html/stamp
+fi
+if [ $overall_status -eq 1 ]; then
+   echo "WARNING" > /var/www/html/stamp
+fi
+
+if [ $overall_status -eq 2 ]; then
+   echo "CRITICAL" > /var/www/html/stamp
+fi
+
+# begin details output, only timestamp is manditory
+
+echo "kernel:$kern"  >> /var/www/html/stamp
+echo "uptime:$utime"  >> /var/www/html/stamp
+echo "condor_running:$cstat" >> /var/www/html/stamp
+echo "lock_exists:$lock_exists" >> /var/www/html/stamp
+echo "timestamp:$now" >> /var/www/html/stamp

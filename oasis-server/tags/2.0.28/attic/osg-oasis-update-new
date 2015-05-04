@@ -1,0 +1,74 @@
+#!/bin/bash
+
+
+###############################################################################
+#              FROM  OASIS 1                                                  #
+###############################################################################
+
+# --------------------------------------------------------
+#   defining lock file
+# --------------------------------------------------------
+VO_UPDATE_REQUEST=${OASIS_VO_SRC_DIRECTORY}/vo_update_requested
+
+
+if [ -f $VO_UPDATE_REQUEST ]; then
+   echo "An update is in progress, please try again later"
+   exit 0
+fi
+
+if [ $vo ]; then
+    ## VO name is not null
+
+    if [ ! -d ${OASIS_USER_WORKING_DIRECTORY}/ouser.$vo ]; then
+        echo "there is no scratch area for vo $vo"
+        exit 1
+    else
+
+        touch $VO_UPDATE_REQUEST
+
+        #
+        # Write a file to track update initiator
+        #
+        
+        user=`whoami`
+        cert=$X509_USER_PROXY
+
+        now=`date`
+        echo "Update initiated: $now">/tmp/update.details
+        now=`date +%s`
+        echo "Update unix time: $now">>/tmp/update.details
+
+        if [ ! -f $cert ] ; then
+                echo "No proxy found for user $user" >>/tmp/update.details
+        else
+                certinfo=`openssl x509 -noout -in $cert -subject`
+                echo "Initiated by: "$user>>/tmp/update.details
+                echo "With proxy  : "$certinfo>>/tmp/update.details
+        fi
+
+        #initIP=`echo $SSH_CLIENT | awk '{print $1}'`
+        #initName=`host $initIP | awk '{print $5}'`
+        #echo "via ssh from: $initName  ($initIP)">>/tmp/update.details
+
+        cp /tmp/update.details ${OASIS_USER_WORKING_DIRECTORY}/ouser.$vo/oasis/update.details
+        rm /tmp/update.details
+        echo "Beginning oasis server update"
+        #. /usr/local/oasis-login/bin/request_oasis_update $vo
+        #. /usr/libexec/request_oasis_update $vo
+        /usr/libexec/request_oasis_update $vo
+        echo "Finished, publish_age here: http://oasis.opensciencegrid.org/stamp should be zero"
+        rm $VO_UPDATE_REQUEST
+        exit 0
+   fi
+else
+
+## no VO name provided
+    youare=`whoami`
+    echo "$youare is not a valid account for requesting an update"
+    echo "Valid accounts are:"
+    list=`ls -1 /home | grep ouser`
+    for vo in $list ; do
+    echo $vo
+    done
+    exit 1
+fi
