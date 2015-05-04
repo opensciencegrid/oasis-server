@@ -7,5 +7,5 @@ if [ "$1" = "start" ]; then
     case "`uname -n|cut -d. -f1`" in
 	*-itb) LOCKPFX=${LOCKPFX}itb_;;
     esac
-    rm -f ${LOCKPFX}vo_update_requested ${LOCKPFX}oasis_update_in_progress
+    rm -f ${LOCKPFX}vo_update_requested ${LOCKPFX}oasis_update_lock
 fi
