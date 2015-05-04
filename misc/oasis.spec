@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.28
+%define version 2.0.29
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,10 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Mon May 04 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.29-1
+- Corrected lock file that oasis-login-initclean cleans up
+- Updated the date in do_oasis_update for the starting publish log message
+
 * Sun May 03 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.28-1
 - Add misc/cvmfs_server_hooks.sh to list of files installed by setup.py
 
