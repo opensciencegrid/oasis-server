@@ -1,8 +1,3 @@
-2.0.29
-
-* Corrected lock file that oasis-login-initclean cleans up
-* Updated the date in do_oasis_update for the starting publish log message
-
 2.0.28
 
 * Add misc/cvmfs_server_hooks.sh to list of files installed by setup.py
