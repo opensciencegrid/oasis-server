@@ -15,7 +15,7 @@ esac
 set -ex
 
 ARCH=`arch`
-OASISRPM=oasis-2.0.21-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.29-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin:/usr/sbin"
 
@@ -77,7 +77,10 @@ OASISSUBVER="`echo $OASISRPM|cut -d- -f3|cut -d. -f1-3`"
 wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
 yum -y install $OASISRPM
 rm $OASISRPM
-
+chkconfig oasis-login-initclean on
+# this is needed for oasis-login-initclean to be able to find the nas01 name
+ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
+ 
 # for the status stamp
 yum -y install httpd
 chkconfig httpd on
