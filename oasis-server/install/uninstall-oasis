@@ -18,8 +18,11 @@ rm /etc/cron.d/oasis
 killall rsync
 killall cvmfs_swissknife
 rm /srv/cvmfs
+chkconfig oasis-initclean off
 yum -y remove oasis
 rm -rf /etc/oasis
+chkconfig netfs off
+rm -f /etc/rc3.d/S24dnsmasq
 cvmfs_server rmfs -f oasis.opensciencegrid.org # removes partially
 umount /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
 cvmfs_server rmfs -f oasis.opensciencegrid.org # finishes the remove
