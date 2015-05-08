@@ -24,7 +24,7 @@ CVMFSVER=2.1.20
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
-OASISRPM=oasis-2.0.21-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.29-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -119,6 +119,10 @@ OASISSUBVER="`echo $OASISRPM|cut -d- -f3|cut -d. -f1-3`"
 wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
 yum -y install $OASISRPM
 rm $OASISRPM
+chkconfig oasis-initclean on
+
+# copy in workaround for cvmfs-server-2.1.20 file leak bug
+cp /usr/share/oasis/cvmfs_server_hooks.sh /etc/cvmfs
 
 # need nfslock for the repos to be on NFS
 chkconfig nfslock on
@@ -144,8 +148,15 @@ rm -rf $SRVDIR/spool/oasis.opensciencegrid.org/scratch
 mkdir -p $SRVDIR/spool/oasis.opensciencegrid.org
 mv /var/spool/cvmfs/oasis.opensciencegrid.org/scratch $SRVDIR/spool/oasis.opensciencegrid.org
 mkdir /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
-sed -i -e "/^cvmfs2#oasis/inas01:`echo $SRVDIR|sed 's,/net/nas01,,'`/spool/oasis.opensciencegrid.org/scratch /var/spool/cvmfs/oasis.opensciencegrid.org/scratch nfs defaults 1 2 # added by install-oasis" /etc/fstab
+sed -i -e "/^cvmfs2#oasis/inas01:`echo $SRVDIR|sed 's,/net/nas01,,'`/spool/oasis.opensciencegrid.org/scratch /var/spool/cvmfs/oasis.opensciencegrid.org/scratch nfs defaults 0 0 # added by install-oasis" /etc/fstab
 mount /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
+
+# this is needed to get the nfs filesystem to mount at boot
+chkconfig netfs on
+# The chkconfig on by itself isn't enough, because /etc/resolv.conf listens
+#  only on 127.0.0.1 and the server doesn't start until late.  This works
+#  around it by starting the local dns caching server earlier.
+ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
 
 umount /var/spool/cvmfs/oasis.opensciencegrid.org/rdonly
 if [ -d $SRVDIR/cvmfs/oasis.opensciencegrid.org ]; then
@@ -265,8 +276,10 @@ xEOFx
 	;;
 esac
 
-# update the publication revision to be 100 greater than the previous revision
-PREVREVISION="`wget -qO- http://oasis-replica.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|cat -v|sed -n '/^S/{s/^S//p;q;}'`"
+# Update the publication revision to be 100 greater than the previous revision.
+# Read it from FNAL stratum 1 because oasis-replica may be down for a common
+#  upgrade.
+PREVREVISION="`wget -qO- http://cvmfs.fnal.gov:8000/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|cat -v|sed -n '/^S/{s/^S//p;q;}'`"
 let PREVREVISION+=100
 CURREVISION="`cat -v /srv/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|sed -n '/^S/{s/^S//p;q;}'`"
 
