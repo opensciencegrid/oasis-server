@@ -27,7 +27,7 @@ CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
-OASISRPM=oasis-2.0.21-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.29-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -116,18 +116,6 @@ WSGIScriptAliasMatch /cvmfs/([^/]+)/api /var/www/wsgi-scripts/cvmfs-api.wsgi/$1
 xEOFx
 chkconfig httpd on
 service httpd start
-
-cat >/etc/init.d/cvmfslockclean <<xEOFx
-#!/bin/bash
-# Created by install script.  Will be recreated next reinstall.
-#chkconfig: - 88 12
-#description: cleans up leftover cvmfs_server snapshot locks, for 2.1.20 only
-if [ "$1" = "start" ]; then
-	rm -rf /var/spool/cvmfs/*/is_snapshotting
-fi
-xEOFx
-chmod +x /etc/init.d/cvmfslockclean
-chkconfig cvmfslockclean on
 
 cat >>/etc/sysctl.conf <<xEOFx
 # Controls maximum listen() backlog for apache.  Added by install script.
@@ -246,6 +234,7 @@ OASISSUBVER="`echo $OASISRPM|cut -d- -f3|cut -d. -f1-3`"
 wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
 yum -y install $OASISRPM
 rm $OASISRPM
+chkconfig oasis-replica-initclean on
 
 # add cvmfs replicas
 mkdir -p /srv
