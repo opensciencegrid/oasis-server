@@ -29,6 +29,7 @@ grep "^ouser\." /etc/group|cut -d: -f1|while read OUSER; do
     groupdel -r $OUSER
 done
 rm /etc/grid-security/grid-mapfile
+yum -y remove gcc
 # reverse yum install gsi-openssh-server gsissh-clients
 yum -y remove globus-common globus-gsi-proxy-ssl libtool-ltdl
 rm /etc/sysconfig/gsisshd /etc/gsissh/*

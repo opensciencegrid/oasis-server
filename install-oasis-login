@@ -120,6 +120,9 @@ rm $TMPF.1
 # add gridmap file
 /usr/share/oasis/generate_gridmap >/etc/grid-security/grid-mapfile
 
+# the user's want gcc to be able to compile
+yum -y install gcc
+
 # add cron entries
 cat >>/etc/cron.d/oasis-login <<'xEOFx'
 # Created by install script.  Will be recreated next reinstall.
