@@ -180,6 +180,8 @@ print
 }'
 xEOFx
 chmod +x /etc/squid/customize.sh
+# maximum space used by logs is roughly 3 times this setting
+echo "export SQUID_MAX_ACCESS_LOG=1G" >/etc/sysconfig/frontier-squid
 cat >/etc/iptables.d/60-local-cvmfs <<"xEOFx"
 # Created by install script.  Will be recreated next reinstall.
 . /etc/iptables.d/setup

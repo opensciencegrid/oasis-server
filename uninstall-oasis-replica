@@ -46,6 +46,7 @@ rm /etc/awstats/password-file
 yum -y remove frontier-squid
 rm /etc/squid/customize.sh.rpmsave
 rmdir /etc/squid
+rm /etc/sysconfig/frontier-squid
 rm /etc/iptables.d/60-local-cvmfs
 service gociptables restart
 chkconfig oasis-replica-initclean off
