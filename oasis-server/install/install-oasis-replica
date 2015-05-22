@@ -31,9 +31,8 @@ OASISRPM=oasis-2.0.29-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
-# import OSG key but remove its yum repo because it isn't mirrored
+# import OSG key because we'll be directly downloading oasis rpm
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
-rpm -e osg-release
 
 # download, build, and install aufs
 wget -q -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
