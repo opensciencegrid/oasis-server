@@ -26,7 +26,7 @@ for vo in doc.xpathEval("//VO"):
                 original_dn = dn
 
                 #sanitize dn
-                dn = re.sub(r'[^/ ()=\.\-a-zA-Z0-9\':]+', '', dn)
+                dn = re.sub(r'[^/ ()=\.\-a-zA-Z0-9\':@]+', '', dn)
 
                 if original_dn != dn:
                     print >> sys.stderr, "invalid character in dn:",original_dn
