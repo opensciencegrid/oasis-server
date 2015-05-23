@@ -1,3 +1,5 @@
+* added @ to the list of valid chars in the DN string in generate_gridmapfile
+
 2.0.29
 
 * Corrected lock file that oasis-login-initclean cleans up
