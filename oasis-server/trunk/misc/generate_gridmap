@@ -22,30 +22,30 @@ for vo in doc.xpathEval("//VO"):
         groupname = "cvmfs"
 
         for dn in vo.xpathEval("OASIS/Managers/Manager/DNs/DN"):
-		dn = dn.content
-                original_dn = dn
+            dn = dn.content
 
-                #sanitize dn
-                dn = re.sub(r'[^/ ()=\.\-a-zA-Z0-9\':@]+', '', dn)
+            ##sanitize dn
+            #original_dn = dn
+            #dn = re.sub(r'[^/ ()=\.\-a-zA-Z0-9\':@]+', '', dn)
+            #
+            #if original_dn != dn:
+            #    print >> sys.stderr, "invalid character in dn:",original_dn
+            #    continue
 
-                if original_dn != dn:
-                    print >> sys.stderr, "invalid character in dn:",original_dn
-                    continue
-
-                #escape
-                dn = re.sub(r'["]+', '\\\"', dn)
-                
-                #print voname,username,dn
-		if dn in dns:
-			usernames = dns[dn]
-			usernames.append(username)
-		else:
-			dns[dn] = [username]
-	
+            #escape
+            dn = re.sub(r'["]+', '\\\"', dn)
+            
+            #print voname,username,dn
+            if dn in dns:
+                usernames = dns[dn]
+                usernames.append(username)
+            else:
+                dns[dn] = [username]
+    
 
 for dn in dns:
-	usernames = dns[dn]
-	print "\""+dn+"\"",",".join(usernames)
+    usernames = dns[dn]
+    print "\""+dn+"\"",",".join(usernames)
 
 if len(dns) < 10:
     print >> sys.stderr, "dn count is too small:",len(dns)
