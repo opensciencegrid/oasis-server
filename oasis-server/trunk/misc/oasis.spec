@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.29
+%define version 2.0.30
 %define release 1
 
 Summary: OASIS package
@@ -152,6 +152,15 @@ f_restart_daemon $1
 #-------------------------------------------------------------------------------
 # Changelog
 #-------------------------------------------------------------------------------
+%changelog
+* Mon Jun 01 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.30-1
+- Added '@' to the list of acceptable characters in a DN in generate_gridmap
+  (which is used on oasis-login machines)
+- Removed cvmfs as a supplementary group on user logins created by
+  generate_adduser on oasis-login machines
+- Fixed blank_osg_repository and unblank_osg_repository for testing on 
+  oasis-replica-itb.  Also added ssh timeouts when connecting to stratum 0.
+
 %changelog
 * Mon May 04 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.29-1
 - Corrected lock file that oasis-login-initclean cleans up
