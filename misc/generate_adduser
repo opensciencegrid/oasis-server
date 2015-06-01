@@ -20,4 +20,4 @@ for vo in doc.xpathEval("//VO"):
         username = "ouser."+voname
         nasdir="/net/nas01/Public/"+username
 
-        print "id -u",username,"&>/dev/null || (/usr/sbin/useradd",username,"-p","`pwgen 24 -y -n -s` && gpasswd -a",username,"cvmfs && [ -d",nasdir,"] || (mkdir",nasdir,"&& setfacl -b",nasdir,"&& chown",username,nasdir,"&& chgrp",username,nasdir,"&& chmod 755",nasdir,"))"
+        print "id -u",username,"&>/dev/null || (/usr/sbin/useradd",username,"-p","`pwgen 24 -y -n -s` && [ -d",nasdir,"] || (mkdir",nasdir,"&& setfacl -b",nasdir,"&& chown",username,nasdir,"&& chgrp",username,nasdir,"&& chmod 755",nasdir,"))"
