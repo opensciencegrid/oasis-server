@@ -84,6 +84,27 @@ Listen 8000
 KeepAlive On
 MaxClients 64
 ListenBackLog 1024
+RewriteEngine On
+RewriteRule ^/cvmfs/(.*)$ /srv/cvmfs/$1
+<Directory "/srv/cvmfs"> 
+    Options -MultiViews FollowSymLinks -Indexes
+    AllowOverride All 
+    Order allow,deny 
+    Allow from all
+
+    EnableMMAP Off 
+    EnableSendFile Off
+
+    AddType application/x-cvmfs .cvmfspublished .cvmfswhitelist
+
+    Header unset Last-Modified
+    FileETag None
+
+    ExpiresActive On
+    ExpiresDefault "access plus 3 days" 
+    ExpiresByType text/html "access plus 15 minutes" 
+    ExpiresByType application/x-cvmfs "access plus 2 minutes"
+</Directory>
 xEOFx
 chkconfig httpd on
 service httpd start
@@ -141,6 +162,7 @@ CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
 echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
+rm -f /etc/httpd/conf.d/cvmfs.oasis.opensciencegrid.org.conf
 
 # move scratch dir and /srv/cvmfs to attached storage
 umount /cvmfs/oasis.opensciencegrid.org
