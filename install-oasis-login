@@ -1,29 +1,44 @@
 #!/bin/bash
 # Install and configure all application software on oasis-login or
-#   oasis-login-itb
+#   oasis-login-itb, or oasis-login-sl6 or oasis-login-sl6-itb
 # Written by Dave Dykstra 3-11-2015
 
 cd
 
 case "`uname -n`" in
-    oasis-login.*|oasis-login-itb.*);;
-    *)  echo "Only run this on oasis-login or oasis-login-itb"
+    oasis-login*);;
+    *)  echo "Only run this on an oasis-login* machine"
 	exit 2
+	;;
+esac
+
+case `lsb_release -a|sed -n 's/Release:[ \t]*\([0-9]\)*.*/\1/p'` in
+    5)  EL=el5
+	GSISSHCLIENTS=gsissh-clients
+	;;
+    6)  EL=el6
+	GSISSHCLIENTS=gsi-openssh-clients
+	;;
+    *)  echo "Not running on el5 or el6"
+        exit 2
 	;;
 esac
 
 set -ex
 
 ARCH=`arch`
-OASISRPM=oasis-2.0.29-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.31-1.osg32.$EL.noarch.rpm
 
 PATH="$PATH:/sbin:/usr/sbin"
 
 # import OSG key because we'll be directly downloading oasis rpm
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
 
+# need yum-priorities to make OSG a higher priority than EPEL
+yum -y install yum-priorities
+
 # install gsisshd and gsissh clients (client needed for gsiscp)
-yum -y install gsi-openssh-server gsissh-clients
+yum -y install gsi-openssh-server $GSISSHCLIENTS
 cat >/etc/sysconfig/gsisshd <<xEOFx
 # Created by install script.  Will be recreated next reinstall.
 export LLGT_LOG_IDENT=gsisshd-lcmaps
@@ -80,7 +95,7 @@ rm $OASISRPM
 chkconfig oasis-login-initclean on
 # this is needed for oasis-login-initclean to be able to find the nas01 name
 ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
- 
+
 # for the status stamp
 yum -y install httpd
 chkconfig httpd on
