@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.30
+%define version 2.0.31
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,10 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Mon Jun 01 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.31-1
+- Removed also the second method used in generate_adduser to add user to
+  cvmfs supplementary group
+
 * Mon Jun 01 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.30-1
 - Added '@' to the list of acceptable characters in a DN in generate_gridmap
   (which is used on oasis-login machines)
