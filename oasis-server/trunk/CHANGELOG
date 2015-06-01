@@ -1,4 +1,11 @@
-* remote checking the spelling in the DN
+2.0.30
+
+* Added '@' to the list of acceptable characters in a DN in generate_gridmap
+  (which is used on oasis-login machines)
+* Removed cvmfs as a supplementary group on user logins created by
+  generate_adduser on oasis-login machines
+* Fixed blank_osg_repository and unblank_osg_repository for testing on 
+  oasis-replica-itb.  Also added ssh timeouts when connecting to stratum 0.
 
 2.0.29
 
