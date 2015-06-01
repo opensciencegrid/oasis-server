@@ -1,0 +1,12 @@
+[DEFAULT]
+
+OASIS_VO_SRC_DIRECTORY = ${OSG_APP}/${VO}
+OASIS_VO_DEST_DIRECTORY = /cvmfs/${VO}.opensciencegrid.org 
+
+[CVMFS20]
+tool = cvmfs20
+
+[CVMFS21]
+tool = cvmfs21
+
+
