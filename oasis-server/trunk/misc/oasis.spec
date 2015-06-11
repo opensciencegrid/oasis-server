@@ -153,6 +153,9 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Thu Jun 11 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.32-1
+- Changed /var/log/oasis logrotate to be weekly instead of size 100M
+
 * Mon Jun 01 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.31-1
 - Removed also the second method used in generate_adduser to add user to
   cvmfs supplementary group
