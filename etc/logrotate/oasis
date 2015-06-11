@@ -1,9 +1,9 @@
 /var/log/oasis/*log {
   create
+  weekly
   missingok
   notifempty
   sharedscripts
-  size 100M
   rotate 10
   nocompress
 
