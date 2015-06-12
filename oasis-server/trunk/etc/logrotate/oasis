@@ -4,7 +4,7 @@
   notifempty
   sharedscripts
   size 20M
-  rotate 50
+  rotate 25 
   nocompress
 
   postrotate
