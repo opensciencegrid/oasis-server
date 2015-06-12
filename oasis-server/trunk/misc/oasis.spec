@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.32
+%define version 2.0.33
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,9 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Fri Jun 12 2015 Jose Caballero <jcaballero@bnl.gov> - 2.0.33-1
+- Back to a log rotate policy based on size instead of time 
+
 * Thu Jun 11 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.32-1
 - Changed /var/log/oasis logrotate to be weekly instead of size 100M
 
