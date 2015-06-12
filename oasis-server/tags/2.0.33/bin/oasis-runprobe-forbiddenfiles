@@ -1,0 +1,16 @@
+#!/bin/bash 
+
+PROBENAME=forbiddenfiles.py
+
+PYVER=`python -V 2>&1 | awk '{ print $2}' | awk -F '.' '{ print $1"."$2 }' `
+RPMEXE=/usr/lib/python$PYVER/site-packages/oasispackage/probes/${PROBENAME}
+HOMEEXE=~/lib/python/oasispackage/probes/${PROBENAME}
+
+if [ -f $RPMEXE ]; then
+    python $RPMEXE $*
+elif [ -f $HOMEEXE ]; then
+    export PYTHONPATH=~/lib/python
+    python $HOMEEXE $*
+else
+    echo "No suitable executable found."
+fi 
