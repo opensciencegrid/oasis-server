@@ -24,7 +24,7 @@ CVMFSVER=2.1.20
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
-OASISRPM=oasis-2.0.29-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.33-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -45,6 +45,23 @@ rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
 # install aufs postupdate script so it will get rebuilt when kernel is rebuilt
 mkdir -p /opt/etc/osupdate.d
 cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
+
+# create srv directory if it isn't there yet
+SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
+if [ ! -d $SRVDIR ]; then
+    mkdir $SRVDIR
+    setfacl -b $SRVDIR
+    chmod 755 $SRVDIR
+    mkdir $SRVDIR/cvmfs
+    mkdir $SRVDIR/spool
+fi
+
+# create symlinks for important log directories out to the NAS
+for LOGD in httpd oasis; do
+    mkdir -p $SRVDIR/log/$LOGD
+    rm -rf /var/log/$LOGD
+    ln -s $SRVDIR/log/$LOGD /var/log
+done
 
 # install cvmfs
 wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
@@ -150,14 +167,6 @@ chkconfig nfslock on
 service nfslock start
 
 # add oasis repo
-SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
-if [ ! -d $SRVDIR ]; then
-    mkdir $SRVDIR
-    setfacl -b $SRVDIR
-    chmod 755 $SRVDIR
-    mkdir $SRVDIR/cvmfs
-    mkdir $SRVDIR/spool
-fi
 CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
 echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf

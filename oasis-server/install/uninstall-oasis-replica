@@ -34,12 +34,14 @@ for r in `rpm -qa|grep gpg-pubkey|sed 's/\.(none)//'|sort -u`; do
     rpm --allmatches -e $r
 done
 yum -y remove httpd fuse fuse-libs cvmfs-config gdb
+rm -rf /var/log/httpd
 rm -rf /etc/cvmfs
 sed -i '/nofile.*16384/d' /etc/security/limits.conf
 rm /etc/logrotate.d/cvmfs
 rm /etc/httpd/conf.d/cvmfs.conf
 rm /etc/awstats/password-file
 yum -y remove frontier-squid
+rm -rf /var/log/squid
 rm /etc/squid/customize.sh.rpmsave
 rmdir /etc/squid
 rm /etc/sysconfig/frontier-squid
