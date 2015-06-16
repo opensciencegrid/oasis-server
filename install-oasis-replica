@@ -49,6 +49,25 @@ rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
 mkdir -p /opt/etc/osupdate.d
 cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
 
+# create srv directory if it isn't there yet
+SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
+if [ ! -d $SRVDIR ]; then
+    mkdir $SRVDIR
+    setfacl -b $SRVDIR
+    chmod 755 $SRVDIR
+    mkdir $SRVDIR/cvmfs
+fi
+
+# create symlinks for important log directories out to the NAS
+for LOGD in httpd squid cvmfs; do
+    mkdir -p $SRVDIR/log/$LOGD
+    rm -rf /var/log/$LOGD
+    ln -s $SRVDIR/log/$LOGD /var/log
+done
+
+# squid log dir has to be owned by squid user id
+chown squid:squid $SRVDIR/log/squid
+
 # install cvmfs
 wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
 rpm -i $CVMFSRELRPM
@@ -127,15 +146,6 @@ cat >/var/www/html/robots.txt <<xEOFx
 User-agent: *
 Disallow: /
 xEOFx
-
-# create srv directory if it isn't there yet
-SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
-if [ ! -d $SRVDIR ]; then
-    mkdir $SRVDIR
-    setfacl -b $SRVDIR
-    chmod 755 $SRVDIR
-    mkdir $SRVDIR/cvmfs
-fi
 
 # install frontier-squid & frontier-awstats
 wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$FRONTIERRELRPM
