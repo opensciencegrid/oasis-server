@@ -1,0 +1,73 @@
+#!/bin/bash
+
+###
+### /var/log/cron must be world readable
+###
+
+LOCKPFX="/net/nas01/Public/"
+case "`uname -n|cut -d. -f1`" in
+    *-itb) LOCKPFX=${LOCKPFX}itb_;;
+esac
+
+while [ -f ${LOCKPFX}vo_update_requested ]
+do
+   sleep 60
+done
+
+## determine the vo requesting the update
+vo=$1
+proxy=$2
+startip=$3
+
+if [ $vo ]; then
+## VO name is not null
+   if [ -d /home/ouser.$vo ]; then
+
+##     home directory for VO exists
+       echo "Found /home/ouser.$vo"
+       echo $vo > ${LOCKPFX}vo_update_requested
+       mkdir -p /net/nas01/Public/ouser.$vo
+
+#
+# Write a file to track update initiator
+#
+       user=`whoami`
+       cert=$proxy
+
+       now=`date`
+       echo "Update initiated: $now">/tmp/update.details
+       now=`date +%s`
+       echo "Update unix time: $now">>/tmp/update.details
+       if [ ! -f $cert ] ; then
+	   echo "No proxy found for user $user" >>/tmp/update.details
+       else
+	   certinfo=`openssl x509 -noout -in $cert -subject`
+	   echo "Initiated by: "$user>>/tmp/update.details
+	   echo "With proxy  : "$certinfo>>/tmp/update.details
+	   initIP=`echo $startip | awk '{print $1}'`
+	   initName=`host $initIP | awk '{print $5}'`
+	   echo "via ssh from: $initName  ($initIP)">>/tmp/update.details
+       fi
+       cp /tmp/update.details /net/nas01/Public/ouser.$vo/update.details
+       rm /tmp/update.details
+       echo "Beginning oasis server update"
+       . /usr/share/oasis/request_oasis_update
+       echo "Finished, publish_age here: http://oasis.opensciencegrid.org/stamp should be zero"
+       rm -f ${LOCKPFX}vo_update_requested
+       exit 0
+   else
+       echo "/home/ouser.$vo does not exist"
+       exit 1
+   fi
+else
+
+## no VO name provided
+    youare=`whoami`
+    echo "$youare is not a valid account for requesting an update"
+    echo "Valid accounts are:"
+    list=`ls -1 /home | grep ouser`
+    for vo in $list ; do
+	echo $vo
+    done
+    exit 1
+fi

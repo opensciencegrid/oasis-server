@@ -1,0 +1,93 @@
+#!/bin/bash
+
+LOCKPFX="/net/nas01/Public/"
+case "`uname -n|cut -d. -f1`" in
+    *-itb) LOCKPFX=${LOCKPFX}itb_;;
+esac
+
+## maximum lock file age (24 hours)
+max_lock_age=86400
+
+## warning for lock file age (6 hours)
+warn_lock_age=21600
+
+## maximum number of total jobs (to check for insane user submit script)
+max_total_jobs=50
+
+# calculate status details
+now=`date +%s`
+overall_status=0
+
+set_status()
+{
+    # do not decrease status level
+    if [ "$1" -gt $overall_status ]; then
+        overall_status=$1
+    fi
+}
+
+## condor process must exist
+condor_ps=`ps -e | grep condor_master | awk '{print $4}'`
+if [ $condor_ps ]; then
+    condor_status="yes"
+else
+    condor_status="no"
+    set_status 2
+fi
+
+# look for old lock file age
+oldest_lock_age=-1
+for lockf in vo_update_requested oasis_update_lock; do
+    if [ -f ${LOCKPFX}$lockf ]; then
+	update_time=`ls -la --time-style +%s ${LOCKPFX}$lockf | awk '{print $6}'`
+	lock_age=`expr $now - $update_time`
+	if [ $lock_age -gt $oldest_lock_age ]; then
+	    oldest_lock_age=$lock_age
+	fi
+    fi
+done
+
+if [ $oldest_lock_age -ge $max_lock_age ] ; then
+## go to critical
+    set_status 2
+elif [ $oldest_lock_age -ge $warn_lock_age ] ; then
+## go to warning
+    set_status 1
+fi
+
+total_jobs="`condor_q 2>/dev/null|sed -n 's/^\([0-9]*\) jobs;.*/\1/p'`"
+if [ -z "$total_jobs" ]; then
+    total_jobs=0
+fi
+if [ $total_jobs -gt $max_total_jobs ]; then
+## go critical if the number is huge
+    set_status 2
+fi
+
+running_jobs="`condor_q 2>/dev/null|sed -n 's/.* jobs;.* \([0-9]*\) running.*/\1/p'`"
+if [ -z "$running_jobs" ]; then
+    running_jobs=0
+fi
+
+# begin output, overall status first. OK, WARNING, CRITICAL are allowed values
+if [ $overall_status -eq 0 ]; then
+    echo "OK" > /var/www/html/stamp.new
+elif [ $overall_status -eq 1 ]; then
+    echo "WARNING" > /var/www/html/stamp.new
+elif [ $overall_status -eq 2 ]; then
+    echo "CRITICAL" > /var/www/html/stamp.new
+fi
+
+kern=`uname -r`
+utime=` cat /proc/uptime | awk '{ print $1 }'`
+
+# begin details output, only timestamp is manditory
+
+echo "kernel:$kern"  >> /var/www/html/stamp.new
+echo "uptime:$utime"  >> /var/www/html/stamp.new
+echo "condor_running:$condor_status" >> /var/www/html/stamp.new
+echo "oldest_lock_age:$oldest_lock_age" >> /var/www/html/stamp.new
+echo "total_jobs:$total_jobs" >> /var/www/html/stamp.new
+echo "running_jobs:$running_jobs" >> /var/www/html/stamp.new
+echo "timestamp:$now" >> /var/www/html/stamp.new
+mv /var/www/html/stamp.new /var/www/html/stamp

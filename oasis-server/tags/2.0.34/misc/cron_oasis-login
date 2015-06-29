@@ -1,0 +1,6 @@
+*/5 * * * * root /usr/local/oasis-login/bin/generate_adduser.py | bash
+1-59/5 * * * * root /usr/local/oasis-login/bin/generate_gridmap.py > /tmp/grid-mapfile.tmp; if [ $? -eq 0 ]; then mv -f /tmp/grid-mapfile.tmp /etc/grid-security/grid-mapfile; fi;
+
+#service monitor
+*/15 * * * * root /opt/service-monitor/oasis-login/test.sh
+
