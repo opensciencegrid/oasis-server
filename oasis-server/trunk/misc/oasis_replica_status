@@ -1,10 +1,7 @@
 #!/bin/bash
 
-## maximum time since a snapshot was made (one day)
-max_snap_age=86400
-
-## warning time since the catalog was signed (15 minutes)
-warn_snap_age=900
+## warning time since any snapshot was successfully completed (6 hours)
+warn_snap_age=21600
 
 ## number of squid processes that must be running
 need_squids=2
@@ -14,33 +11,51 @@ need_httpd=4
 
 overall_status=0
 
+set_status()
+{
+    # do not decrease status level
+    if [ "$1" -gt $overall_status ]; then
+        overall_status=$1
+   fi
+}
+
 ## determine snapshot age
 
-snapdate=`cat /srv/cvmfs/oasis.opensciencegrid.org/.cvmfs_last_snapshot 2>/dev/null`
-if [ -n "$snapdate" ]; then
-    snapped=`date -d "$snapdate" +%s`
-    now=`date +%s`
-    snap_age=`expr $now - $snapped`
-else
-    snap_age=99999
-fi
+oldest_snap_age=0
+warning_repos=""
+for repo in oasis.opensciencegrid.org config-egi.egi.eu `print_osg_repos`; do
+    if grep -q "^$repo$" /etc/oasis/status_exclude_repos.conf 2>/dev/null; then
+        continue
+    fi
+    snapdate=`cat /srv/cvmfs/$repo/.cvmfs_last_snapshot 2>/dev/null`
+    if [ -n "$snapdate" ]; then
+        snapped=`date -d "$snapdate" +%s`
+        now=`date +%s`
+        snap_age=`expr $now - $snapped`
+    else
+        snap_age=99999
+    fi
 
-
-if [ $snap_age -ge $max_snap_age ] ; then
-## go to critical
-   overall_status=2
-elif [ $snap_age -ge $warn_snap_age ] ; then
-## go to warning, can snapshot here if that is a good idea
-   overall_status=1
-fi
+    if [ $snap_age -gt $oldest_snap_age ]; then
+        oldest_snap_age=$snap_age
+    fi
+    if [ $snap_age -ge $warn_snap_age ] ; then
+    ## go to warning
+        set_status 1
+        if [ -n "$warning_repos" ]; then
+            warning_repos="$warning_repos,"
+        fi
+        warning_repos="$warning_repos$repo"
+    fi
+done
 
 ## are the squid processes running?
 squids=`ps -e | grep -c squid`
 
 squid_status="yes"
 if [ $squids -lt $need_squids ] ; then
-   overall_status=2
-   squid_status="no"
+    set_status 2
+    squid_status="no"
 fi
 
 ## are there httpd processes running?
@@ -48,21 +63,28 @@ httpds=`ps -e | grep -c httpd`
 
 httpd_status="yes"
 if [ $httpds -lt $need_httpd ] ; then
-   overall_status=2
-   httpd_status="no"
+    set_status 2
+    httpd_status="no"
 fi
 
+# begin output, overall status first. OK, WARNING, CRITICAL are allowed values
 if [ $overall_status -eq 0 ]; then
-   echo "OK" > /var/www/html/stamp
-fi
-if [ $overall_status -eq 1 ]; then
-   echo "WARNING" > /var/www/html/stamp
-fi
-if [ $overall_status -eq 2 ]; then
-   echo "CRITICAL" > /var/www/html/stamp
+    echo "OK" > /var/www/html/stamp.new
+elif [ $overall_status -eq 1 ]; then
+    echo "WARNING" > /var/www/html/stamp.new
+elif [ $overall_status -eq 2 ]; then
+    echo "CRITICAL" > /var/www/html/stamp.new
 fi
 
-echo "last_snapshot:$snapped" >> /var/www/html/stamp
-echo "snapshot_age:$snap_age" >> /var/www/html/stamp
-echo "squid_running:$squid_status" >> /var/www/html/stamp
-echo "httpd_running:$httpd_status" >> /var/www/html/stamp
+kern=`uname -r`
+utime=` cat /proc/uptime | awk '{ print $1 }'`
+
+# begin details output, only timestamp is manditory
+
+echo "kernel:$kern"  >> /var/www/html/stamp.new
+echo "uptime:$utime"  >> /var/www/html/stamp.new
+echo "warning_repos:$warning_repos" >> /var/www/html/stamp.new
+echo "oldest_snapshot_age:$oldest_snap_age" >> /var/www/html/stamp.new
+echo "squid_running:$squid_status" >> /var/www/html/stamp.new
+echo "httpd_running:$httpd_status" >> /var/www/html/stamp.new
+mv /var/www/html/stamp.new /var/www/html/stamp
