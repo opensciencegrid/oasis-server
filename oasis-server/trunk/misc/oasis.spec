@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.34
+%define version 2.0.35
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,11 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Thu Jul  2 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.35-1
+- Change to not contact OIM for repository list when generating
+  oasis-replica status stamp file
+- Simplify the method used to create the status stamp files
+
 * Mon Jun 29 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.34-1
 - Update the oasis, oasis-replica, and oasis-login status stamp file
   generators for better alarms at the GOC (details in OO-71)
