@@ -23,7 +23,7 @@ set_status()
 
 oldest_snap_age=0
 warning_repos=""
-for repo in oasis.opensciencegrid.org config-egi.egi.eu `print_osg_repos`; do
+for repo in `cd /srv/cvmfs;echo *.*`; do
     if grep -q "^$repo$" /etc/oasis/status_exclude_repos.conf 2>/dev/null; then
         continue
     fi
@@ -67,24 +67,26 @@ if [ $httpds -lt $need_httpd ] ; then
     httpd_status="no"
 fi
 
-# begin output, overall status first. OK, WARNING, CRITICAL are allowed values
-if [ $overall_status -eq 0 ]; then
-    echo "OK" > /var/www/html/stamp.new
-elif [ $overall_status -eq 1 ]; then
-    echo "WARNING" > /var/www/html/stamp.new
-elif [ $overall_status -eq 2 ]; then
-    echo "CRITICAL" > /var/www/html/stamp.new
-fi
-
 kern=`uname -r`
 utime=` cat /proc/uptime | awk '{ print $1 }'`
 
-# begin details output, only timestamp is manditory
+# begin output, overall status first. OK, WARNING, CRITICAL are allowed values
+(
+if [ $overall_status -eq 0 ]; then
+    echo "OK"
+elif [ $overall_status -eq 1 ]; then
+    echo "WARNING"
+elif [ $overall_status -eq 2 ]; then
+    echo "CRITICAL"
+fi
 
-echo "kernel:$kern"  >> /var/www/html/stamp.new
-echo "uptime:$utime"  >> /var/www/html/stamp.new
-echo "warning_repos:$warning_repos" >> /var/www/html/stamp.new
-echo "oldest_snapshot_age:$oldest_snap_age" >> /var/www/html/stamp.new
-echo "squid_running:$squid_status" >> /var/www/html/stamp.new
-echo "httpd_running:$httpd_status" >> /var/www/html/stamp.new
+# begin details output, only timestamp is mandatory
+
+echo "kernel:$kern" 
+echo "uptime:$utime" 
+echo "warning_repos:$warning_repos"
+echo "oldest_snapshot_age:$oldest_snap_age"
+echo "squid_running:$squid_status"
+echo "httpd_running:$httpd_status"
+) > /var/www/html/stamp.new
 mv /var/www/html/stamp.new /var/www/html/stamp
