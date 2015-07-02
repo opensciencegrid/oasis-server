@@ -1,0 +1,153 @@
+#!/bin/bash
+
+LOCKPFX="/net/nas01/Public/"
+if [ "`uname -n|cut -d. -f1`" != oasis ]; then
+    LOCKPFX=${LOCKPFX}itb_
+fi
+
+## maximum time since the catalog was signed (25 days)
+max_sig_age=2160000
+
+## warning time since the catalog was signed (20 days)
+warn_sig_age=1728000
+
+## maximum lock file age (24 hours)
+max_lock_age=86400
+
+## warning lock file age (6 hours)
+warn_lock_age=21600
+
+## warning time since a publish (4 days)
+warn_pub_age=172800
+
+overall_status=0
+
+set_status()
+{
+    # do not decrease status level
+    if [ "$1" -gt $overall_status ]; then
+	overall_status=$1
+    fi
+}
+
+## create a file summarizing oasis status
+
+update_time=`ls -la --time-style +%s /srv/cvmfs/oasis.opensciencegrid.org/.cvmfspublished | awk '{print $6}'`
+now=`date +%s`
+
+pub_age=`expr $now - $update_time`
+
+## was the last update within the allowed age?
+if [ $pub_age -ge $warn_pub_age ] ; then
+    set_status 1
+fi
+
+## check that various processes exist
+
+rsync_ps=`ps -e | grep rsync | awk '{print $4}' | tail -1` 
+if [ -n "$rsync_ps" ]; then
+    rsync_status="yes"
+else
+   # just informational, not a problem if it isn't running
+    rsync_status="no"
+fi
+
+cvmfs_server_ps=`ps -e | grep cvmfs_server | awk '{print $4}' | tail -1` 
+if [ -n "$cvmfs_server_ps" ]; then
+    cvmfs_server_status="yes"
+else
+    # just informational, not a problem if it isn't running
+    cvmfs_server_status="no"
+fi
+
+killall -0 cvmfs2 1>/dev/null 2>/dev/null
+status=$?
+if [ $status -eq 0 ]; then
+    cvmfs_status="yes"
+else
+    cvmfs_status="no"
+    set_status 2
+fi
+
+killall -0 httpd 1>/dev/null 2>/dev/null
+status=$?
+if [ $status -eq 0 ]; then
+    httpd_status="yes"
+else
+    httpd_status="no"
+    set_status 2
+fi
+
+## calculate how long ago the oasis repo whitelist was signed
+## date is in strange format, parse it
+signdate=`head -n 1 /srv/cvmfs/oasis.opensciencegrid.org/.cvmfswhitelist`
+y=`echo $signdate | colrm 5 100`
+m=`echo $signdate | colrm 1 4 | colrm 3 100`
+d=`echo $signdate | colrm 1 6 | colrm 3 100`
+h=`echo $signdate | colrm 1 8 | colrm 3 100`
+mi=`echo $signdate | colrm 1 10 | colrm 3 100`
+s=`echo $signdate | colrm 1 12 | colrm 3 100`
+
+signed=`date -d "$y-$m-$d $h:$mi:$s" +%s`
+now=`date +%s`
+
+sig_age=`expr $now - $signed`
+
+if [ $sig_age -ge $max_sig_age ] ; then
+## go to critical
+    set_status 2
+elif [ $sig_age -ge $warn_sig_age ] ; then
+## go to warning
+    set_status 1
+fi
+
+sig_age=`expr $sig_age / 86400`
+
+# look for old lock file age
+oldest_lock_age=-1
+for lockf in vo_update_requested oasis_update_in_progress oasis_update_lock; do
+    if [ -f ${LOCKPFX}$lockf ]; then
+	update_time=`ls -la --time-style +%s ${LOCKPFX}$lockf | awk '{print $6}'`
+	lock_age=`expr $now - $update_time`
+	if [ $lock_age -gt $oldest_lock_age ]; then
+	    oldest_lock_age=$lock_age
+	fi
+    fi
+done
+
+if [ $oldest_lock_age -ge $max_lock_age ] ; then
+## go to critical
+    set_status 2
+elif [ $oldest_lock_age -ge $warn_lock_age ] ; then
+## go to warning
+    set_status 1
+fi
+
+kern=`uname -r`
+utime=` cat /proc/uptime | awk '{ print $1 }'`
+
+# begin output, overall status first. OK, WARNING, CRITICAL are allowed values
+(
+if [ $overall_status -eq 0 ]; then
+    echo "OK"
+elif [ $overall_status -eq 1 ]; then
+    echo "WARNING"
+elif [ $overall_status -eq 2 ]; then
+    echo "CRITICAL"
+fi
+
+# begin details output, only timestamp is mandatory
+
+echo "kernel:$kern" 
+echo "uptime:$utime" 
+echo "last_published:$update_time"
+echo "publish_age:$pub_age"
+echo "signature_age_days:$sig_age"
+echo "cvmfs2_running:$cvmfs_status"
+echo "httpd_running:$httpd_status"
+echo "oldest_lock_age:$oldest_lock_age"
+echo "rsync_running:$rsync_status"
+echo "cvmfs_server_running:$cvmfs_server_status"
+echo "timestamp:$now"
+) > /var/www/html/stamp.new
+mv /var/www/html/stamp.new /var/www/html/stamp

@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+
+"""
+Very simple wrapper to be executed by init script. 
+It calls the daemon part of OASIS.
+"""
+#
+# FIXME
+# this script is very similar to bin/oasis
+# should they be merged?
+#
+
+from oasispackage.oasisAPI import oasisd
+
+def main():
+
+    oasisdaemon = oasisd()
+    oasisdaemon.runthreads()
+
+
+if __name__ == "__main__":
+    main()
