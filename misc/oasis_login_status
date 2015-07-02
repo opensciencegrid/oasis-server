@@ -69,25 +69,27 @@ if [ -z "$running_jobs" ]; then
     running_jobs=0
 fi
 
-# begin output, overall status first. OK, WARNING, CRITICAL are allowed values
-if [ $overall_status -eq 0 ]; then
-    echo "OK" > /var/www/html/stamp.new
-elif [ $overall_status -eq 1 ]; then
-    echo "WARNING" > /var/www/html/stamp.new
-elif [ $overall_status -eq 2 ]; then
-    echo "CRITICAL" > /var/www/html/stamp.new
-fi
-
 kern=`uname -r`
 utime=` cat /proc/uptime | awk '{ print $1 }'`
 
-# begin details output, only timestamp is manditory
+# begin output, overall status first. OK, WARNING, CRITICAL are allowed values
+(
+if [ $overall_status -eq 0 ]; then
+    echo "OK"
+elif [ $overall_status -eq 1 ]; then
+    echo "WARNING"
+elif [ $overall_status -eq 2 ]; then
+    echo "CRITICAL"
+fi
 
-echo "kernel:$kern"  >> /var/www/html/stamp.new
-echo "uptime:$utime"  >> /var/www/html/stamp.new
-echo "condor_running:$condor_status" >> /var/www/html/stamp.new
-echo "oldest_lock_age:$oldest_lock_age" >> /var/www/html/stamp.new
-echo "total_jobs:$total_jobs" >> /var/www/html/stamp.new
-echo "running_jobs:$running_jobs" >> /var/www/html/stamp.new
-echo "timestamp:$now" >> /var/www/html/stamp.new
+# begin details output, only timestamp is mandatory
+
+echo "kernel:$kern"
+echo "uptime:$utime"
+echo "condor_running:$condor_status"
+echo "oldest_lock_age:$oldest_lock_age"
+echo "total_jobs:$total_jobs"
+echo "running_jobs:$running_jobs"
+echo "timestamp:$now"
+) > /var/www/html/stamp.new
 mv /var/www/html/stamp.new /var/www/html/stamp
