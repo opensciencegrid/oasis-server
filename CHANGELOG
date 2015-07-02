@@ -1,3 +1,9 @@
+2.0.35
+
+* Change to not contact OIM for repository list when generating
+  oasis-replica status stamp file
+* Simplify the method used to create the status stamp files
+
 2.0.34
 
 * Update the oasis, oasis-replica, and oasis-login status stamp file
