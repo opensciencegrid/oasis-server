@@ -27,7 +27,7 @@ esac
 set -ex
 
 ARCH=`arch`
-OASISRPM=oasis-2.0.31-1.osg32.$EL.noarch.rpm
+OASISRPM=oasis-2.0.35-1.osg32.$EL.noarch.rpm
 
 PATH="$PATH:/sbin:/usr/sbin"
 
@@ -143,7 +143,7 @@ cat >>/etc/cron.d/oasis-login <<'xEOFx'
 # Created by install script.  Will be recreated next reinstall.
 */5 * * * * root /usr/share/oasis/generate_adduser | bash
 1-59/5 * * * * root cd /etc/grid-security; if /usr/share/oasis/generate_gridmap > grid-mapfile.tmp; then mv -f grid-mapfile.tmp grid-mapfile; fi
-4,19,34,49 * * * * root   /usr/share/oasis/oasis_login_status
+4,19,34,49 * * * * root   /usr/share/oasis/oasis_login_status >/dev/null 2>&1
 xEOFx
 
 # -------- BEGIN OASIS-2 SECTION ---------
