@@ -24,7 +24,7 @@ CVMFSVER=2.1.20
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
-OASISRPM=oasis-2.0.33-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.35-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -45,6 +45,8 @@ rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
 # install aufs postupdate script so it will get rebuilt when kernel is rebuilt
 mkdir -p /opt/etc/osupdate.d
 cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
+# and run it now in case an osupdate happened before this install
+/opt/etc/osupdate.d/aufs.postupdate
 
 # create srv directory if it isn't there yet
 SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
@@ -57,7 +59,9 @@ if [ ! -d $SRVDIR ]; then
 fi
 
 # create symlinks for important log directories out to the NAS
-for LOGD in httpd oasis; do
+# Note: add httpd when this is moved to shared local disk, but when it was
+#  tried on the NAS we had a case where httpd did not start on boot
+for LOGD in oasis; do
     mkdir -p $SRVDIR/log/$LOGD
     rm -rf /var/log/$LOGD
     ln -s $SRVDIR/log/$LOGD /var/log
@@ -286,7 +290,7 @@ mkdir -p /var/log/oasis
 cat >/etc/cron.d/oasis <<'xEOFx'
 # Created by install script.  Will be recreated next reinstall.
 * * * * *   root   /usr/share/oasis/do_oasis_update
-*/3 * * * * root   /usr/share/oasis/oasis_status_stamp
+*/3 * * * * root   /usr/share/oasis/oasis_status_stamp >/dev/null 2>&1
 xEOFx
 
 # request updates on all vos that have changed
