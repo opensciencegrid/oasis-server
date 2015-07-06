@@ -27,7 +27,7 @@ CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
-OASISRPM=oasis-2.0.31-1.osg32.el5.noarch.rpm
+OASISRPM=oasis-2.0.35-1.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -48,6 +48,8 @@ rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
 # install aufs postupdate script so it will get rebuilt when kernel is rebuilt
 mkdir -p /opt/etc/osupdate.d
 cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
+# and run it now in case an osupdate happened before this install
+/opt/etc/osupdate.d/aufs.postupdate
 
 # create srv directory if it isn't there yet
 SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
@@ -59,14 +61,19 @@ if [ ! -d $SRVDIR ]; then
 fi
 
 # create symlinks for important log directories out to the NAS
-for LOGD in httpd squid cvmfs; do
+# Note: add httpd and sqid when this is moved to shared local disk, but
+#  when it was tried on the NAS we had a case where httpd did not start on
+#  boot on oasis-itb, and squid would reproducibly not start on boot here
+#  (probably because dnsmasq wasn't finished starting yet).
+for LOGD in cvmfs; do
     mkdir -p $SRVDIR/log/$LOGD
     rm -rf /var/log/$LOGD
     ln -s $SRVDIR/log/$LOGD /var/log
 done
 
 # squid log dir has to be owned by squid user id
-chown squid:squid $SRVDIR/log/squid
+# Note: restore this when log is moved to shared storage
+#chown squid:squid $SRVDIR/log/squid
 
 # install cvmfs
 wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
@@ -298,7 +305,7 @@ cat >>/etc/cron.d/cvmfs <<'xEOFx'
 # Created by install script.  Will be recreated next reinstall.
 0,15,30,45 * * * * root test -d /srv/cvmfs||exit;TMPFILE=/tmp/cvmfscron.$$.log;LOGFILE=/var/log/cvmfs/updates.log;echo "Cron log in $TMPFILE starting at `date`" >>$LOGFILE;(for r in `cd /srv/cvmfs;echo *.*`; do echo; if [ -f /srv/cvmfs/$r/.cvmfspublished ]; then echo "Starting $r at `date`";if ! cvmfs_server snapshot -t $r;then echo "ERROR from cvmfs_server!"; fi;echo "Finished $r at `date`";fi;done) >$TMPFILE 2>&1;cat $TMPFILE >>$LOGFILE;rm -f $TMPFILE
 5,20,35,50 * * * * root     PATH=$PATH:/usr/sbin /usr/share/oasis/generate_replicas >>/var/log/cvmfs/generate_replicas.log 2>&1
-*/3 * * * * root   /usr/share/oasis/oasis_replica_status
+*/3 * * * * root   /usr/share/oasis/oasis_replica_status >/dev/null 2>&1
 0 9 * * * root     find /srv/cvmfs/*.*/data/txn -name "*.*" -mtime +2 2>/dev/null|xargs rm -f
 xEOFx
 
