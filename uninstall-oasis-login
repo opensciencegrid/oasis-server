@@ -1,0 +1,65 @@
+#!/bin/bash
+# Uninstall everything installed by install-oasis-login, to facilitate
+#  testing install-oasis-login without creating a new VM from scratch
+# Written by Dave Dykstra 3-11-2015
+
+cd
+
+case "`uname -n`" in
+    oasis-login*);;
+    *)  echo "Only run this on an oasis-login* machine"
+	exit 2
+	;;
+esac
+
+case `lsb_release -a|sed -n 's/Release:[ \t]*\([0-9]\)*.*/\1/p'` in
+    5)  EXTRACONDORPKG=perl-DateManip
+	EXTRAHTTPDPKGS=
+	GCCPKGS=gcc
+	;;
+    6)  EXTRACONDORPKG=
+	EXTRAHTTPDPKGS="apr-util-ldap httpd-tools"
+	GCCPKGS="ppl mpfr"
+	;;
+    *)  echo "Not running on el5 or el6"
+        exit 2
+	;;
+esac
+
+set -x
+PATH="$PATH:/sbin:/usr/sbin"
+rm /etc/cron.d/oasis-login
+service gsisshd stop
+chkconfig gsisshd off
+service sshd start
+chkconfig sshd on
+for r in `rpm -qa|grep gpg-pubkey|sed 's/\.(none)//'|sort -u`; do
+    rpm --allmatches -e $r
+done
+grep "^ouser\." /etc/passwd|cut -d: -f1|while read OUSER; do
+    userdel -r $OUSER
+done
+grep "^ouser\." /etc/group|cut -d: -f1|while read OUSER; do
+    groupdel -r $OUSER
+done
+rm /etc/grid-security/grid-mapfile
+yum -y remove $GCCPKGS
+yum -y remove yum-priorities
+# reverse yum install gsi-openssh-server gsissh-clients
+yum -y remove globus-common globus-gsi-proxy-ssl libtool-ltdl
+rm /etc/sysconfig/gsisshd /etc/gsissh/*
+rmdir /etc/gsissh
+# reverse yum install condor
+yum -y remove blahp condor-classads $EXTRACONDORPKG perl-XML-Simple globus-io globus-rsl gsoap voms globus-gssapi-error
+chkconfig oasis-login-initclean off
+rm -f /etc/rc3.d/S24dnsmasq
+yum -y remove oasis
+rm -rf /etc/oasis
+rm /etc/iptables.d/60-local-oasis-login
+service gociptables restart
+service httpd stop
+rm -f /var/www/html/stamp
+yum -y remove httpd $EXTRAHTTPDPKGS
+yum -y remove pwgen
+yum clean all
+yum clean expire-cache  # temporarily until yum is updated
