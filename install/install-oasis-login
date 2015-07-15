@@ -1,0 +1,199 @@
+#!/bin/bash
+# Install and configure all application software on oasis-login or
+#   oasis-login-itb, or oasis-login-sl6 or oasis-login-sl6-itb
+# Written by Dave Dykstra 3-11-2015
+
+cd
+
+case "`uname -n`" in
+    oasis-login*);;
+    *)  echo "Only run this on an oasis-login* machine"
+	exit 2
+	;;
+esac
+
+case `lsb_release -a|sed -n 's/Release:[ \t]*\([0-9]\)*.*/\1/p'` in
+    5)  EL=el5
+	GSISSHCLIENTS=gsissh-clients
+	;;
+    6)  EL=el6
+	GSISSHCLIENTS=gsi-openssh-clients
+	;;
+    *)  echo "Not running on el5 or el6"
+        exit 2
+	;;
+esac
+
+set -ex
+
+ARCH=`arch`
+OASISRPM=oasis-2.0.35-1.osg32.$EL.noarch.rpm
+
+PATH="$PATH:/sbin:/usr/sbin"
+
+# import OSG key because we'll be directly downloading oasis rpm
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
+
+# need yum-priorities to make OSG a higher priority than EPEL
+yum -y install yum-priorities
+
+# install gsisshd and gsissh clients (client needed for gsiscp)
+yum -y install gsi-openssh-server $GSISSHCLIENTS
+cat >/etc/sysconfig/gsisshd <<xEOFx
+# Created by install script.  Will be recreated next reinstall.
+export LLGT_LOG_IDENT=gsisshd-lcmaps
+export LCMAPS_DB_FILE=/etc/lcmaps.db
+export LCMAPS_POLICY_NAME=authorize_only
+export LLGT_LIFT_PRIVILEGED_PROTECTION=1
+
+# level 0: no messages, 1: errors, 2: also warnings, 3: also notices, 4: also info, 5: maximum debug
+export LCMAPS_DEBUG_LEVEL=2
+
+export X509_USER_CERT=/etc/grid-security/host/cert.pem
+export X509_USER_KEY=/etc/grid-security/host/key.pem
+xEOFx
+
+ln -s /etc/ssh/ssh_host_rsa_key /etc/gsissh/ssh_host_rsa_key
+ln -s /etc/ssh/ssh_host_rsa_key.pub /etc/gsissh/ssh_host_rsa_key.pub
+ln -s /etc/ssh/ssh_host_dsa_key /etc/gsissh/ssh_host_dsa_key
+ln -s /etc/ssh/ssh_host_dsa_key.pub /etc/gsissh/ssh_host_dsa_key.pub
+
+cat >>/etc/gsissh/sshd_config <<xEOFx
+
+## specific options for oasis-login:
+LogLevel DEBUG
+PermitRootLogin no
+PasswordAuthentication no
+GSSAPIAuthentication yes
+GSSAPIDelegateCredentials yes
+GSSAPICleanupCredentials yes
+GSSAPIStrictAcceptorCheck yes
+GSSAPIKeyExchange yes
+TCPKeepAlive no
+ClientAliveInterval 15
+ClientAliveCountMax 240
+HostCertificate /etc/ssh/ssh_host_rsa_key-cert.pub
+TrustedUserCAKeys /etc/ssh/ssh_trusted_user_ca_keys
+xEOFx
+
+service sshd stop
+chkconfig sshd off
+service gsisshd start
+chkconfig gsisshd on
+
+# install condor
+yum -y install condor
+chkconfig condor on
+service condor start
+
+# install oasis
+OASISVER="`echo $OASISRPM|cut -d- -f2`"
+OASISSUBVER="`echo $OASISRPM|cut -d- -f3|cut -d. -f1-3`"
+wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
+yum -y install $OASISRPM
+rm $OASISRPM
+chkconfig oasis-login-initclean on
+# this is needed for oasis-login-initclean to be able to find the nas01 name
+ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
+
+# for the status stamp
+yum -y install httpd
+chkconfig httpd on
+service httpd start
+
+cat >/etc/iptables.d/60-local-oasis-login <<"xEOFx"
+# Created by install script.  Will be recreated next reinstall.
+. /etc/iptables.d/setup
+# open http port 80
+$ITFAI -p tcp --dport 80 -j ACCEPT
+$ITFAI4 -p tcp --dport 80 -j ACCEPT
+$ITFAI -p tcp -s 0/0 --dport 22 -j ACCEPT
+$ITFAI4 -p tcp -s 0/0 --dport 22 -j ACCEPT
+xEOFx
+chmod +x /etc/iptables.d/60-local-oasis-login
+service gociptables restart
+
+# for generate_adduser
+yum -y install pwgen
+
+# add users
+TMPF=/tmp/install-oasis-login-$$
+/usr/share/oasis/generate_adduser >$TMPF.1
+while read CMD; do
+    OUSER="`echo "$CMD"|awk '{print $3}'`"
+    if [ ! -d /net/nas01/Public/$OUSER ]; then
+	# wasn't there before, let the cron create it
+	continue
+    fi
+    uid="`stat -c '%u' /net/nas01/Public/$OUSER`"
+    gid="`stat -c '%g' /net/nas01/Public/$OUSER`"
+    groupadd -g $gid $OUSER
+    eval "`echo "$CMD"|sed "s/useradd/useradd -u $uid -g $gid/"`"
+done <$TMPF.1
+rm $TMPF.1
+
+# add gridmap file
+/usr/share/oasis/generate_gridmap >/etc/grid-security/grid-mapfile
+
+# the user's want gcc to be able to compile
+yum -y install gcc
+
+# add cron entries
+cat >>/etc/cron.d/oasis-login <<'xEOFx'
+# Created by install script.  Will be recreated next reinstall.
+*/5 * * * * root /usr/share/oasis/generate_adduser | bash
+1-59/5 * * * * root cd /etc/grid-security; if /usr/share/oasis/generate_gridmap > grid-mapfile.tmp; then mv -f grid-mapfile.tmp grid-mapfile; fi
+4,19,34,49 * * * * root   /usr/share/oasis/oasis_login_status >/dev/null 2>&1
+xEOFx
+
+# -------- BEGIN OASIS-2 SECTION ---------
+# install OASIS-2 configuration
+
+cat >/etc/oasis/oasis.conf <<xEOFx
+# Created by install script.  Will be recreated next reinstall.
+[OASIS]
+
+services = server
+sleep = 100
+
+#email = 
+#SMTPServer
+
+projectsconf = /etc/oasis/projects.conf
+repositoriesconf = /etc/oasis/repositories.conf
+
+probesconf = /etc/oasis/probes.conf
+
+flagfilebasedir = /net/nas01/Public/
+
+xEOFx
+
+cat >/etc/oasis/repositories.conf <<xEOFx
+# Created by install script.  Will be recreated next reinstall.
+[OASIS]
+
+repositoryname = oasis.opensciencegrid.org
+distributiontool = cvmfs21
+OSG_APP = /net/nas01/Public/
+repository_src_dir = %(OSG_APP)s
+repository_dest_dir = oasis.opensciencegrid.org
+repository_src_owner = root
+repository_dest_owner = oasis
+xEOFx
+
+# these two are empty for now
+touch /etc/oasis/probes.conf
+touch /etc/oasis/no_vo_probes.conf
+
+# generate projects.conf now and from cron
+python /usr/share/oasis/generate_config_projects > /etc/oasis/projects.conf
+cat >>/etc/cron.d/oasis-login <<xEOFx
+3-59/5 * * * * root cd /etc/oasis;if /usr/share/oasis/generate_config_projects > projects.conf.tmp; then if cmp -s projects.conf.tmp projects.conf; then rm projects.conf.tmp; else mv -f projects.conf.tmp projects.conf; fi; fi
+xEOFx
+# -------- END OASIS-2 SECTION ---------
+
+set +x
+
+echo
+echo "Installation of `uname -n|cut -d. -f1` completed successfully at `date`"
+echo
