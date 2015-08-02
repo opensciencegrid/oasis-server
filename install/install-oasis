@@ -2,8 +2,9 @@
 # Install and configure all application software on oasis or oasis-itb
 # Written by Dave Dykstra 2-26-2015
 
-case "`uname -n`" in
-    oasis.*|oasis-itb.*);;
+MYSHORTNAME="`uname -n|cut -d. -f1`"
+case "$MYSHORTNAME" in
+    oasis|oasis-itb);;
     *)  echo "Only run this on oasis or oasis-itb"
 	exit 2
 	;;
@@ -49,22 +50,32 @@ cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
 /opt/etc/osupdate.d/aufs.postupdate
 
 # create srv directory if it isn't there yet
-SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
-if [ ! -d $SRVDIR ]; then
-    mkdir $SRVDIR
-    setfacl -b $SRVDIR
-    chmod 755 $SRVDIR
-    mkdir $SRVDIR/cvmfs
-    mkdir $SRVDIR/spool
+NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
+if [ ! -d $NETSRVDIR ]; then
+    mkdir $NETSRVDIR
+    setfacl -b $NETSRVDIR
+    chmod 755 $NETSRVDIR
 fi
 
+# mount srv directory permanently at /srv
+if ! grep -q "[ \t]/srv[ \t]" /etc/fstab; then
+    echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	defaults 	0 0" >>/etc/fstab
+fi
+mkdir -p /srv
+
+# need netfs to mount NFS at boot
+chkconfig netfs on
+# The chkconfig on by itself isn't enough, because /etc/resolv.conf listens
+#  only on 127.0.0.1 and the server doesn't start until late.  This works
+#  around it by starting the local dns caching server earlier.
+ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
+service netfs start
+
 # create symlinks for important log directories out to the NAS
-# Note: add httpd when this is moved to shared local disk, but when it was
-#  tried on the NAS we had a case where httpd did not start on boot
-for LOGD in oasis; do
-    mkdir -p $SRVDIR/log/$LOGD
+for LOGD in oasis httpd; do
+    mkdir -p /srv/log/$LOGD
     rm -rf /var/log/$LOGD
-    ln -s $SRVDIR/log/$LOGD /var/log
+    ln -s /srv/log/$LOGD /var/log
 done
 
 # install cvmfs
@@ -170,6 +181,12 @@ cp /usr/share/oasis/cvmfs_server_hooks.sh /etc/cvmfs
 chkconfig nfslock on
 service nfslock start
 
+if [ -d /srv/cvmfs/oasis.opensciencegrid.org ]; then
+    # old repository data present.  save it for later
+    mkdir -p /srv/cvmfs.save
+    mv /srv/cvmfs/oasis.opensciencegrid.org /srv/cvmfs.save
+fi
+
 # add oasis repo
 CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
 echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
@@ -177,48 +194,27 @@ echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/oasis.opensc
 echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 rm -f /etc/httpd/conf.d/cvmfs.oasis.opensciencegrid.org.conf
 
-# move scratch dir and /srv/cvmfs to attached storage
+# move scratch dir to attached storage
 umount /cvmfs/oasis.opensciencegrid.org
-rm -rf $SRVDIR/spool/oasis.opensciencegrid.org/scratch
-mkdir -p $SRVDIR/spool/oasis.opensciencegrid.org
-mv /var/spool/cvmfs/oasis.opensciencegrid.org/scratch $SRVDIR/spool/oasis.opensciencegrid.org
+rm -rf /srv/spool/oasis.opensciencegrid.org/scratch
+mkdir -p /srv/spool/oasis.opensciencegrid.org
+mv /var/spool/cvmfs/oasis.opensciencegrid.org/scratch /srv/spool/oasis.opensciencegrid.org
 mkdir /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
-sed -i -e "/^cvmfs2#oasis/inas01:`echo $SRVDIR|sed 's,/net/nas01,,'`/spool/oasis.opensciencegrid.org/scratch /var/spool/cvmfs/oasis.opensciencegrid.org/scratch nfs defaults 0 0 # added by install-oasis" /etc/fstab
+sed -i -e "/^cvmfs2#oasis/i`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'`/spool/oasis.opensciencegrid.org/scratch /var/spool/cvmfs/oasis.opensciencegrid.org/scratch nfs defaults 0 0 # added by install-oasis" /etc/fstab
 mount /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
-
-# this is needed to get the nfs filesystem to mount at boot
-chkconfig netfs on
-# The chkconfig on by itself isn't enough, because /etc/resolv.conf listens
-#  only on 127.0.0.1 and the server doesn't start until late.  This works
-#  around it by starting the local dns caching server earlier.
-ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
-
-umount /var/spool/cvmfs/oasis.opensciencegrid.org/rdonly
-if [ -d $SRVDIR/cvmfs/oasis.opensciencegrid.org ]; then
-    # old repository data present.  save new one for now.
-    rm -rf /srv/cvmfs.save
-    mkdir -p /srv/cvmfs.save
-    rm -rf /srv/cvmfs.save/oasis.opensciencegrid.org
-    mv /srv/cvmfs/oasis.opensciencegrid.org /srv/cvmfs.save
-else
-    mv /srv/cvmfs/oasis.opensciencegrid.org $SRVDIR/cvmfs
-fi
-rmdir /srv/cvmfs
-ln -s $SRVDIR/cvmfs /srv
-mount /var/spool/cvmfs/oasis.opensciencegrid.org/rdonly
 mount /cvmfs/oasis.opensciencegrid.org
 
 # on itb install the saved itb pub & master key
-case $SRVDIR in
+case $MYSHORTNAME in
     *-itb)
-	if [ ! -f $SRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.pub ]; then
+	if [ ! -f /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub ]; then
 	    # make a copy from production srv directory of itb pub and masterkey
-	    PRODSRVDIR="`echo $SRVDIR|sed 's/-itb//'`"
-	    mkdir -p $SRVDIR/etc/cvmfs
-	    cp $PRODSRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.* $SRVDIR/etc/cvmfs
+	    PRODSRVDIR="`echo $NETSRVDIR|sed 's/-itb//'`"
+	    mkdir -p /srv/etc/cvmfs
+	    cp $PRODSRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.* /srv/etc/cvmfs
 	fi
 	for KEY in pub masterkey; do
-	    cp $SRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/oasis.opensciencegrid.org.$KEY
+	    cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/oasis.opensciencegrid.org.$KEY
 	done
 	cvmfs_server resign
 	;;
@@ -227,16 +223,18 @@ esac
 RUNUSER="runuser -s /bin/bash oasis -c"
 
 if [ -d /srv/cvmfs.save ]; then
+    # restore old repository data
     # update the old .cvmfspublished with new certificate hash
     REPONAME=oasis.opensciencegrid.org
-    CERTHASH="`cat -v /srv/cvmfs.save/$REPONAME/.cvmfspublished|sed -n '/^X/{s/^X//p;q}'`"
-    $RUNUSER "cd /srv/cvmfs/$REPONAME; cat -v .cvmfspublished | \
+    CERTHASH="`cat -v /srv/cvmfs/$REPONAME/.cvmfspublished|sed -n '/^X/{s/^X//p;q}'`"
+    $RUNUSER "cd /srv/cvmfs.save/$REPONAME; cat -v .cvmfspublished | \
 	    sed 's/^X.*/X'$CERTHASH'/;/^--/q' > .cvmfspublished.unsigned"
     CERTPATH="`echo $CERTHASH|sed 's,^\(..\),\1/,'`X"
-    $RUNUSER "cp /srv/cvmfs.save/$REPONAME/data/$CERTPATH /srv/cvmfs/$REPONAME/data/$CERTPATH"
+    $RUNUSER "cp /srv/cvmfs/$REPONAME/data/$CERTPATH /srv/cvmfs.save/$REPONAME/data/$CERTPATH"
+    rm -rf /srv/cvmfs
+    mv /srv/cvmfs.save /srv/cvmfs
     UPSTREAM="`sed -n 's/^CVMFS_UPSTREAM_STORAGE=//p' /etc/cvmfs/repositories.d/$REPONAME/server.conf`"
-    $RUNUSER "cd /srv/cvmfs/$REPONAME; cvmfs_swissknife sign -c /etc/cvmfs/keys/$REPONAME.crt -k /etc/cvmfs/keys/$REPONAME.key -n $REPONAME -m .cvmfspublished.unsigned -t /var/spool/cvmfs/$REPONAME/tmp -r $UPSTREAM"
-    rm -rf /srv/cvmfs.save
+    $RUNUSER "cd /srv/cvmfs/$REPONAME; cvmfs_swissknife sign -c /etc/cvmfs/keys/$REPONAME.crt -k /etc/cvmfs/keys/$REPONAME.key -n $REPONAME -m .cvmfspublished.unsigned -t /var/spool/cvmfs/$REPONAME/tmp -r $UPSTREAM; rm -f cvmfspublished.unsigned"
     cvmfs_server resign
 
     # sync up the view in /cvmfs/oasis.opensciencegrid.org with
@@ -255,12 +253,12 @@ if [ -f /cvmfs/oasis.opensciencegrid.org/new_repository ]; then
 fi
 
 # make sure there's a .cvmfsdirtab
-DIRTAB=$SRVDIR/etc/repo/.cvmfsdirtab
+DIRTAB=/srv/etc/repo/.cvmfsdirtab
 if [ ! -f $DIRTAB ]; then
-    case $SRVDIR in
+    case $MYSHORTNAME in
 	*-itb)
 	    # make a copy from production
-	    SRCDIRTAB="`echo $DIRTAB|sed 's/-itb//'`"
+	    SRCDIRTAB="`echo $NETSRVDIR|sed 's/-itb//'``echo $DIRTAB|sed 's,^/srv,,'`"
 	    mkdir -p `dirname $DIRTAB`
 	    cp $SRCDIRTAB $DIRTAB
 	    ;;
@@ -296,13 +294,13 @@ xEOFx
 # request updates on all vos that have changed
 
 LOCKPFX=/net/nas01/Public/
-case "`uname -n|cut -d. -f1`" in
+case "$MYSHORTNAME" in
     *-itb) LOCKPFX=${LOCKPFX}itb_;;
 esac
 rm -f ${LOCKPFX}vo_update_requested # sometimes this doesn't get cleaned up
 /usr/share/oasis/update_oasis_vos
 
-case "`uname -n|cut -d. -f1`" in
+case "$MYSHORTNAME" in
     *-itb) 
 	# on itb also update the vos once an hour if they have changed
 	cat >>/etc/cron.d/oasis <<xEOFx
@@ -384,9 +382,9 @@ for REPO in `print_osg_repos|grep opensciencegrid.org`; do
 done
 
 echo
-echo "Installation of `uname -n|cut -d. -f1` completed successfully at `date`"
+echo "Installation of $MYSHORTNAME completed successfully at `date`"
 echo
-case $SRVDIR in
+case $MYSHORTNAME in
     *-itb);;
     *)  # on prod remove the temporary masterkey and install official public key
 	rm /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
