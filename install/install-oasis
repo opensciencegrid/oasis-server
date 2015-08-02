@@ -1,8 +1,22 @@
 #!/bin/bash
 # Install and configure all application software on oasis or oasis-itb
-# Written by Dave Dykstra 2-26-2015
+#
+# Mounts a directory on a large shared filesystem at /srv, and everything
+#  that needs lots of space or needs to be retained across reinstalls is
+#   put there.  In particular that is:
+#   /srv/cvmfs -- the cvmfs repository data default location
+#   /etc/cvmfs/keys/oasis.opensciencegrid.org.{pub|masterkey} -- the itb
+#       version of these is stored in /srv/etc/cvmfs (the production version
+# 	of the masterkey is stored offline accessible only to GOC staff)
+#   /cvmfs/opensciencegrid.org/.cvmfsdirtab -- copied from /srv/etc/repo
+#   /var/log/httpd -- apache logs, symlinked to /srv/log/httpd
+#   /var/log/oasis -- logs from oasis crons, symlinked to /srv/log/oasis
+#   /var/spool/cvmfs/oasis.opensciencegrid.org/scratch -- place for files prior
+#	to publish, mounted from /srv/spool/oasis.opensciencegrid.org/scratch
+#
+# Initial version written by Dave Dykstra 2-26-2015
 
-MYSHORTNAME="`uname -n|cut -d. -f1`"
+MYSHORTNAME="`hostname -s`"
 case "$MYSHORTNAME" in
     oasis|oasis-itb);;
     *)  echo "Only run this on oasis or oasis-itb"
@@ -59,6 +73,7 @@ fi
 
 # mount srv directory permanently at /srv
 if ! grep -q "[ \t]/srv[ \t]" /etc/fstab; then
+    # the sed changes "/net/vm08" in $NETSRVDIR to "vm08:"
     echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	defaults 	0 0" >>/etc/fstab
 fi
 mkdir -p /srv
@@ -200,6 +215,7 @@ rm -rf /srv/spool/oasis.opensciencegrid.org/scratch
 mkdir -p /srv/spool/oasis.opensciencegrid.org
 mv /var/spool/cvmfs/oasis.opensciencegrid.org/scratch /srv/spool/oasis.opensciencegrid.org
 mkdir /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
+# the second sed changes "/net/hostname" in $NETSRVDIR to "hostname:"
 sed -i -e "/^cvmfs2#oasis/i`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'`/spool/oasis.opensciencegrid.org/scratch /var/spool/cvmfs/oasis.opensciencegrid.org/scratch nfs defaults 0 0 # added by install-oasis" /etc/fstab
 mount /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
 mount /cvmfs/oasis.opensciencegrid.org

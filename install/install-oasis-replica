@@ -1,8 +1,19 @@
 #!/bin/bash
 # Install and configure all application software on oasis-replica
-# Written by Dave Dykstra 2-4-2015
+#
+# Mounts a directory on a large shared filesystem at /srv, and everything
+#  that needs lots of space or needs to be retained across reinstalls is
+#   put there.  In particular that is:
+#   /srv/cvmfs -- the cvmfs replicas data default location
+#   /etc/awstats/password-file -- the password used for uploading squid log
+#	statistics to the WLCG squid monitor, copied from /srv/etc/awstats
+#   /var/log/cvmfs -- logs from cvmfs crons, symlinked to /srv/log/cvmfs
+#   /var/log/httpd -- apache logs, symlinked to /srv/log/httpd
+#   /var/log/squid -- squid logs, symlinked to /srv/log/squid
+#
+# Initial version written by Dave Dykstra 2-4-2015
 
-MYSHORTNAME="`uname -n|cut -d. -f1`"
+MYSHORTNAME="`hostname -s`"
 case "$MYSHORTNAME" in
     oasis-replica|oasis-replica-itb);;
     *)  echo "Only run this on oasis-replica or oasis-replica-itb"
@@ -62,6 +73,7 @@ fi
 
 # mount srv directory permanently at /srv
 if ! grep -q "[ \t]/srv[ \t]" /etc/fstab; then
+    # the sed changes "/net/vm08" in $NETSRVDIR to "vm08:"
     echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	defaults 	0 0" >>/etc/fstab
 fi
 mkdir -p /srv
