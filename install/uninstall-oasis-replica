@@ -15,7 +15,13 @@ esac
 set -x
 PATH="$PATH:/sbin"
 killall cvmfs_swissknife
-rm /srv/cvmfs
+service frontier-squid stop
+service httpd stop
+service netfs stop
+chkconfig netfs off
+rm -f /etc/rc3.d/S24dnsmasq
+sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
+rmdir /srv
 for REPO in `ls /etc/cvmfs/repositories.d`; do
     cvmfs_server rmfs -f $REPO
 done
@@ -25,7 +31,6 @@ rm /opt/etc/osupdate.d/aufs.postupdate
 rm -rf /usr/src/redhat/*/aufs* /usr/src/redhat/RPMS/*/*aufs*
 rmdir /usr/src/redhat/RPMS/* /usr/src/redhat/* /usr/src/redhat
 yum -y remove elfutils-libs xz-libs gcc aufs kernel-module-aufs
-service httpd stop
 sed -i -e '/Added by install/d' -e '/^net.core.somaxconn/d' /etc/sysctl.conf
 sysctl -w net.core.somaxconn=128
 rpm -e cvmfs-release

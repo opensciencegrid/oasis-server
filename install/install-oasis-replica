@@ -1,9 +1,21 @@
 #!/bin/bash
 # Install and configure all application software on oasis-replica
-# Written by Dave Dykstra 2-4-2015
+#
+# Mounts a directory on a large shared filesystem at /srv, and everything
+#  that needs lots of space or needs to be retained across reinstalls is
+#   put there.  In particular that is:
+#   /srv/cvmfs -- the cvmfs replicas data default location
+#   /etc/awstats/password-file -- the password used for uploading squid log
+#	statistics to the WLCG squid monitor, copied from /srv/etc/awstats
+#   /var/log/cvmfs -- logs from cvmfs crons, symlinked to /srv/log/cvmfs
+#   /var/log/httpd -- apache logs, symlinked to /srv/log/httpd
+#   /var/log/squid -- squid logs, symlinked to /srv/log/squid
+#
+# Initial version written by Dave Dykstra 2-4-2015
 
-case "`uname -n`" in
-    oasis-replica.*|oasis-replica-itb.*);;
+MYSHORTNAME="`hostname -s`"
+case "$MYSHORTNAME" in
+    oasis-replica|oasis-replica-itb);;
     *)  echo "Only run this on oasis-replica or oasis-replica-itb"
 	exit 2
 	;;
@@ -52,28 +64,38 @@ cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
 /opt/etc/osupdate.d/aufs.postupdate
 
 # create srv directory if it isn't there yet
-SRVDIR="/net/nas01/srv/`uname -n|cut -d. -f1`"
-if [ ! -d $SRVDIR ]; then
-    mkdir $SRVDIR
-    setfacl -b $SRVDIR
-    chmod 755 $SRVDIR
-    mkdir $SRVDIR/cvmfs
+NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
+if [ ! -d $NETSRVDIR ]; then
+    mkdir $NETSRVDIR
+    setfacl -b $NETSRVDIR
+    chmod 755 $NETSRVDIR
 fi
 
-# create symlinks for important log directories out to the NAS
-# Note: add httpd and sqid when this is moved to shared local disk, but
-#  when it was tried on the NAS we had a case where httpd did not start on
-#  boot on oasis-itb, and squid would reproducibly not start on boot here
-#  (probably because dnsmasq wasn't finished starting yet).
-for LOGD in cvmfs; do
-    mkdir -p $SRVDIR/log/$LOGD
+# mount srv directory permanently at /srv
+if ! grep -q "[ \t]/srv[ \t]" /etc/fstab; then
+    # the sed changes "/net/vm08" in $NETSRVDIR to "vm08:"
+    echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	defaults 	0 0" >>/etc/fstab
+fi
+mkdir -p /srv
+
+# need netfs to mount NFS at boot
+chkconfig netfs on
+# The chkconfig on by itself isn't enough, because /etc/resolv.conf listens
+#  only on 127.0.0.1 and the server doesn't start until late.  This works
+#  around it by starting the local dns caching server earlier.
+ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
+service netfs start
+
+
+# create symlinks for important log directories out to the big disk
+for LOGD in cvmfs httpd squid; do
+    mkdir -p /srv/log/$LOGD
     rm -rf /var/log/$LOGD
-    ln -s $SRVDIR/log/$LOGD /var/log
+    ln -s /srv/log/$LOGD /var/log
 done
 
 # squid log dir has to be owned by squid user id
-# Note: restore this when log is moved to shared storage
-#chown squid:squid $SRVDIR/log/squid
+chown squid:squid /srv/log/squid
 
 # install cvmfs
 wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
@@ -228,12 +250,12 @@ chkconfig frontier-squid on
 service frontier-squid start
 
 # install frontier-awstats password if available
-APWFILE=$SRVDIR/etc/awstats/password-file
+APWFILE=/srv/etc/awstats/password-file
 if [ ! -f $APWFILE ]; then
-    case $SRVDIR in
+    case $MYSHORTNAME in
 	*-itb)
 	    # make a copy from production
-	    SRCAPWFILE="`echo $SRVDIR|sed 's/-itb//'`/etc/awstats/password-file"
+	    SRCAPWFILE="`echo $NETSRVDIR|sed 's/-itb//'`/etc/awstats/password-file"
 	    if [ -f $SRCAPWFILE ]; then
 		mkdir -p `dirname $APWFILE`
 		cp $SRCAPWFILE $APWFILE
@@ -254,17 +276,15 @@ yum -y install $OASISRPM
 rm $OASISRPM
 chkconfig oasis-replica-initclean on
 
-# add cvmfs replicas
-mkdir -p /srv
-ln -s $SRVDIR/cvmfs /srv
 # need nfslock for the repos to be on NFS
 chkconfig nfslock on
 service nfslock start
+
 # on itb install also the oasis-itb pub key and read from oasis-itb
 OASISPUBKEYS=/etc/cvmfs/keys/opensciencegrid.org.pub
-case $SRVDIR in
+case $MYSHORTNAME in
     *-itb)
-	cp /net/nas01/srv/oasis/etc/cvmfs/oasis-itb.opensciencegrid.org.pub /etc/cvmfs/keys
+	cp "`echo $NETSRVDIR|sed 's/-replica-itb//'`"/etc/cvmfs/oasis-itb.opensciencegrid.org.pub /etc/cvmfs/keys
 	OASISPUBKEYS="$OASISPUBKEYS:/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub"
 	REPOURLS="http://oasis-itb.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org"
 	;;
@@ -273,7 +293,8 @@ case $SRVDIR in
 	;;
 esac
 REPOURLS="$REPOURLS http://cvmfs-stratum0.gridpp.rl.ac.uk:8000/cvmfs/config-egi.egi.eu"
-REPOURLS="$REPOURLS `print_osg_repos -u`"
+# usatlast3 is unreliable, let it be added later by generate_replicas
+REPOURLS="$REPOURLS `print_osg_repos -u|grep -v usatlast3`"
 for URL in $REPOURLS; do
     REPO="`basename $URL`"
     if [ -d /srv/cvmfs/$REPO ]; then
@@ -311,4 +332,4 @@ xEOFx
 
 set +x
 echo 
-echo "Installation of `uname -n|cut -d. -f1` completed successfully at `date`"
+echo "Installation of $MYSHORTNAME completed successfully at `date`"
