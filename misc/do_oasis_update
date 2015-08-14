@@ -65,6 +65,9 @@ if [ -f ${LOCKPFX}oasis_update_lock ]; then
 	    echo "$now cvmfs-server publish returned $stat" >&2
 	    echo "$now finished cvmfs_server publish" >&2
 	fi
+    else
+	now=`date`
+	echo "$now no ${LOCKPFX}vo_update_requested found, cleaning up ${LOCKPFX}oasis_update_lock" >&2
     fi
     rm -f ${LOCKPFX}oasis_update_in_progress
     rm -f ${LOCKPFX}oasis_update_lock
