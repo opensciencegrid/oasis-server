@@ -1,3 +1,10 @@
+2.0.36
+
+* Add a check in the oasis_status_stamp for the oasis cvmfs repository being
+  mounted or not.
+* Remove possibility of a publish request from oasis-login to silently
+  exit without publishing.
+
 2.0.35
 
 * Change to not contact OIM for repository list when generating
