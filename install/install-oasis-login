@@ -38,7 +38,7 @@ case "$MYSHORTNAME" in
 esac
 
 ARCH=`arch`
-OASISRPM=oasis-2.0.35-1.osg32.$EL.noarch.rpm
+OASISRPM=oasis-2.0.36-1.osg32.$EL.noarch.rpm
 
 PATH="$PATH:/sbin:/usr/sbin"
 
