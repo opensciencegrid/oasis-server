@@ -78,6 +78,25 @@ else
     set_status 2
 fi
 
+## see if /cvmfs/oasis.opensciencegrid.org is mounted
+oasismounted()
+{
+    mount|awk '{print $3}'|grep -q '^/cvmfs/oasis.opensciencegrid.org$'
+}
+if oasismounted; then
+    mounted_status="yes"
+else
+    # could have been in the middle of a cvmfs_server command that did
+    #  a umount/mount, so check again in a few seconds
+    sleep 5
+    if oasismounted; then
+	mounted_status="yes"
+    else
+	mounted_status="no"
+	set_status 2
+    fi
+fi
+
 ## calculate how long ago the oasis repo whitelist was signed
 ## date is in strange format, parse it
 signdate=`head -n 1 /srv/cvmfs/oasis.opensciencegrid.org/.cvmfswhitelist`
@@ -145,6 +164,7 @@ echo "publish_age:$pub_age"
 echo "signature_age_days:$sig_age"
 echo "cvmfs2_running:$cvmfs_status"
 echo "httpd_running:$httpd_status"
+echo "cvmfs_oasis_mounted:$mounted_status"
 echo "oldest_lock_age:$oldest_lock_age"
 echo "rsync_running:$rsync_status"
 echo "cvmfs_server_running:$cvmfs_server_status"
