@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.35
+%define version 2.0.36
 %define release 1
 
 Summary: OASIS package
@@ -153,6 +153,12 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
+* Fri Aug 14 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.36-1
+- Add a check in the oasis_status_stamp for the oasis cvmfs repository being
+  mounted or not.
+- Remove possibility of a publish request from oasis-login to silently
+  exit without publishing.
+
 * Thu Jul  2 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.35-1
 - Change to not contact OIM for repository list when generating
   oasis-replica status stamp file
