@@ -5,7 +5,8 @@
 
 cd
 
-case "`uname -n`" in
+MYSHORTNAME="`hostname -s`"
+case "$MYSHORTNAME" in
     oasis-login*);;
     *)  echo "Only run this on an oasis-login* machine"
 	exit 2
@@ -26,8 +27,18 @@ esac
 
 set -ex
 
+# puppet sometimes returns error code if it is already running, ignore it
+case "$MYSHORTNAME" in
+    *-itb)
+	puppet agent -t --environment=testing || true
+	;;
+    *)
+	puppet agent -t || true
+	;;
+esac
+
 ARCH=`arch`
-OASISRPM=oasis-2.0.35-1.osg32.$EL.noarch.rpm
+OASISRPM=oasis-2.0.36-1.osg32.$EL.noarch.rpm
 
 PATH="$PATH:/sbin:/usr/sbin"
 
@@ -192,8 +203,10 @@ cat >>/etc/cron.d/oasis-login <<xEOFx
 xEOFx
 # -------- END OASIS-2 SECTION ---------
 
+rm -f /root/show_install_msg.sh
+
 set +x
 
 echo
-echo "Installation of `uname -n|cut -d. -f1` completed successfully at `date`"
+echo "Installation of $MYSHORTNAME completed successfully at `date`"
 echo
