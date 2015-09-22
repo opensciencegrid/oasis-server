@@ -1,9 +1,8 @@
 #!/bin/bash
 LOCKPFX="/net/nas01/Public/"
-SRVDIR="/net/nas01/srv/oasis"
+SRVDIR="/srv"
 if [ "`uname -n|cut -d. -f1`" != oasis ]; then
     LOCKPFX=${LOCKPFX}itb_
-    SRVDIR=${SRVDIR}-itb
 fi
 ## was an update requested?
 if [ -f ${LOCKPFX}oasis_update_lock ]; then
