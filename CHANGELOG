@@ -1,3 +1,7 @@
+2.0.37
+
+* Change do_oasis_update to read .cvmfsdirtab from /srv/etc/repo
+
 2.0.36
 
 * Add a check in the oasis_status_stamp for the oasis cvmfs repository being
