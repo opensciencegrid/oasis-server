@@ -1,0 +1,15 @@
+#!/bin/bash
+OASIS_SERVER="oasis.opensciencegrid.org"
+if [ "`uname -n|cut -d. -f1`" != oasis ]; then
+    OASIS_SERVER="oasis-itb.opensciencegrid.org"
+fi
+
+echo `date` Replicating .cvmfswhitelists
+for repo in `cd /etc/cvmfs/repositories.d;echo *.*`; do
+    repopath=/oasissrv/cvmfs/$repo
+    mkdir -p $repopath
+    wget --timeout=5 -qO- http://$OASIS_SERVER:8000/cvmfs/$repo/.cvmfswhitelist >$repopath/.cvmfswhitelist.new
+    if [ -s $repopath/.cvmfswhitelist.new ]; then
+	mv $repopath/.cvmfswhitelist.new $repopath/.cvmfswhitelist
+    fi
+done
