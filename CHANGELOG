@@ -1,5 +1,10 @@
 2.0.37
 
+* Add misc/replicate_whitelists to copy the .cvmfswhitelist for every
+  repository from oasis to oasis-replica
+* Update misc/oasis_replica_status to warn when any whitelist is more than
+  24 hours old
+* Change bin/add_osg_repository to look for domain keys also in /srv/etc/keys
 * Change do_oasis_update to read .cvmfsdirtab from /srv/etc/repo
 
 2.0.36
