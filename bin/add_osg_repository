@@ -55,12 +55,19 @@ if [ -f $MASTERKEY ]; then
     cp $TMPFILE $REPODIR/.cvmfswhitelist
     $MYDIR/resign_osg_whitelist "$REPONAME"
 elif [ -f /etc/cvmfs/repositories.d/$STRATUM0/replica.conf ]; then
-    PUBKEY="/etc/cvmfs/keys/${REPONAME#*.}.pub"
-    if [ ! -f "$PUBKEY" ]; then
-	echo "$ME: $PUBKEY not found" >&2
-	exit 1
-    fi
     # on stratum 1
+    DOMAIN=${REPONAME#*.}
+    PUBKEY="/etc/cvmfs/keys/$DOMAIN.pub"
+    if [ ! -f "$PUBKEY" ]; then
+	# Also look in a directory that persists between reinstalls for
+	#  keys that are installed by hand, and only mention that
+	#  directory in an error message so they'll be installed there.
+	PUBKEY="/srv/etc/keys/$DOMAIN.pub"
+	if [ ! -f "$PUBKEY" ]; then
+	    echo "$ME: $PUBKEY not found" >&2
+	    exit 1
+	fi
+    fi
     cvmfs_server add-replica -o root $1 $PUBKEY
     rm -f /etc/httpd/conf.d/cvmfs.$REPONAME.conf
     # make this also look like a master because other stratum 1s

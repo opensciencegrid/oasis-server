@@ -1,7 +1,13 @@
 #!/bin/bash
 
+## NOTE: repositories can be excluded from warnings by putting them on a line
+##  in /srv/etc/status_exclude_repos.conf
+
 ## warning time since any snapshot was successfully completed (6 hours)
 warn_snap_age=21600
+
+## warning time since all whitelists were successfully replicated (24 hours)
+warn_white_age=86400
 
 ## number of squid processes that must be running
 need_squids=2
@@ -23,8 +29,10 @@ set_status()
 
 oldest_snap_age=0
 warning_repos=""
-for repo in `cd /srv/cvmfs;echo *.*`; do
-    if grep -q "^$repo$" /etc/oasis/status_exclude_repos.conf 2>/dev/null; then
+oldest_white_age=0
+whitelist_warning_repos=""
+for repo in `cd /etc/cvmfs/repositories.d;echo *.*`; do
+    if grep -q "^$repo$" /srv/etc/status_exclude_repos.conf 2>/dev/null; then
         continue
     fi
     snapdate=`cat /srv/cvmfs/$repo/.cvmfs_last_snapshot 2>/dev/null`
@@ -33,7 +41,7 @@ for repo in `cd /srv/cvmfs;echo *.*`; do
         now=`date +%s`
         snap_age=`expr $now - $snapped`
     else
-        snap_age=99999
+        snap_age=999999
     fi
 
     if [ $snap_age -gt $oldest_snap_age ]; then
@@ -46,6 +54,29 @@ for repo in `cd /srv/cvmfs;echo *.*`; do
             warning_repos="$warning_repos,"
         fi
         warning_repos="$warning_repos$repo"
+    fi
+
+    whitemodded=`stat -c %Y /oasissrv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`
+    if [ -n "$whitemodded" ]; then
+        now=`date +%s`
+        white_age=`expr $now - $whitemodded`
+    else
+        white_age=999999
+    fi
+    if [ $white_age -gt $oldest_white_age ]; then
+        oldest_white_age=$white_age
+    fi
+
+    origfingerprint="`sed -n '/^N/{n;p;q}' /srv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`"
+    oasisfingerprint="`sed -n '/^N/{n;p;q}' /oasissrv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`"
+
+    if [ $white_age -ge $warn_white_age ] || [ "$origfingerprint" != "$oasisfingerprint" ]; then
+    ## go to warning
+        set_status 1
+        if [ -n "$whitelist_warning_repos" ]; then
+            whitelist_warning_repos="$whitelist_warning_repos,"
+        fi
+        whitelist_warning_repos="$whitelist_warning_repos$repo"
     fi
 done
 
@@ -86,6 +117,8 @@ echo "kernel:$kern"
 echo "uptime:$utime" 
 echo "warning_repos:$warning_repos"
 echo "oldest_snapshot_age:$oldest_snap_age"
+echo "whitelist_warning_repos:$whitelist_warning_repos"
+echo "oldest_whitelist_age:$oldest_white_age"
 echo "squid_running:$squid_status"
 echo "httpd_running:$httpd_status"
 ) > /var/www/html/stamp.new

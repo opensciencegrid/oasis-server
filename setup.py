@@ -3,7 +3,7 @@
 # Setup prog for OASIS 
 #
 #
-release_version='2.0.36'
+release_version='2.0.37'
 
 import commands
 import os
@@ -34,6 +34,7 @@ utils_files = ['misc/cvmfs_server_hooks.sh',
     	       'misc/oasis_replica_status',
     	       'misc/oasis_status_stamp',
                'misc/print_oasis_vonames',
+    	       'misc/replicate_whitelists',
     	       'misc/request_oasis_update',
     	       'misc/update_oasis_vos',
               ]
