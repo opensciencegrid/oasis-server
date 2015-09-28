@@ -3,8 +3,6 @@
 #  testing install-oasis-replica without creating a new VM from scratch
 # Written by Dave Dykstra 2-4-2015
 
-cd
-
 case "`uname -n`" in
     oasis-replica.*|oasis-replica-itb.*);;
     *)  echo "Only run this on oasis-replica or oasis-replica-itb"
@@ -13,6 +11,14 @@ case "`uname -n`" in
 esac
 
 set -x
+case $0 in
+    /tmp/*);;
+    *)  # get out of NFS filesystem because netfs stop kills it
+	cp $0 /tmp
+	exec /tmp/uninstall-oasis-replica
+	;;
+esac
+cd
 PATH="$PATH:/sbin"
 killall cvmfs_swissknife
 service frontier-squid stop
@@ -22,6 +28,7 @@ chkconfig netfs off
 rm -f /etc/rc3.d/S24dnsmasq
 sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
 rmdir /srv
+rm -rf /oasissrv
 for REPO in `ls /etc/cvmfs/repositories.d`; do
     cvmfs_server rmfs -f $REPO
 done
