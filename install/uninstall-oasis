@@ -3,7 +3,6 @@
 #  testing install-oasis without creating a new VM from scratch
 # Written by Dave Dykstra 2-26-2015
 
-cd
 
 case "`uname -n`" in
     oasis.*|oasis-itb.*);;
@@ -13,6 +12,14 @@ case "`uname -n`" in
 esac
 
 set -x
+case $0 in
+    /tmp/*);;
+    *)  # get out of NFS filesystem because netfs stop kills it
+	cp $0 /tmp
+	exec /tmp/uninstall-oasis
+	;;
+esac
+cd
 PATH="$PATH:/sbin"
 rm /etc/cron.d/oasis
 killall rsync
