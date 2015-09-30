@@ -9,6 +9,8 @@
 #  install-oasis-replica should be altered to read temporarily from the
 #  production oasis.
 
+set -x
+PATH=/sbin:$PATH
 cd /net/vm08/oasis-share/srv
 if [ ! -d oasis-replica-itb/cvmfs/oasis.opensciencegrid.org ]; then
     echo "$PWD/oasis-replica-itb/oasis-replica-itb/cvmfs/oasis.opensciencegrid.org not found" >&2
@@ -16,4 +18,4 @@ if [ ! -d oasis-replica-itb/cvmfs/oasis.opensciencegrid.org ]; then
 fi
 mkdir -p oasis-itb/cvmfs
 chown oasis:oasis oasis-itb/cvmfs
-runuser -s /bin/bash oasis -c "rsync -a --stats oasis-replica-itb/cvmfs/oasis.opensciencegrid.org oasis-itb/cvmfs; touch oasis-itb/cvmfs/oasis.opensciencegrid.org/.cvmfs_master_replica"
+runuser -s /bin/bash oasis -c "rsync -a --delete --size-only --stats oasis-replica-itb/cvmfs/oasis.opensciencegrid.org oasis-itb/cvmfs; touch oasis-itb/cvmfs/oasis.opensciencegrid.org/.cvmfs_master_replica"
