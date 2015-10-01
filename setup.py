@@ -3,7 +3,7 @@
 # Setup prog for OASIS 
 #
 #
-release_version='2.0.37'
+release_version='2.0.38'
 
 import commands
 import os
@@ -23,6 +23,7 @@ from distutils.command.install_data import install_data as install_data_org
 libexec_files = ['libexec/%s' %file for file in os.listdir('libexec') if os.path.isfile('libexec/%s' %file)]
 
 utils_files = ['misc/cvmfs_server_hooks.sh',
+               'misc/cvmfs_rsync',
                'misc/do_oasis_update',
                'misc/generate_adduser',
                'misc/generate_condormap',

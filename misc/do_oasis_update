@@ -35,20 +35,7 @@ if [ -f ${LOCKPFX}oasis_update_lock ]; then
 	    $runuser "cp $SRCDIRTAB $DSTDIRTAB"
 	fi
 
-	# Remove .cvmfscatalog files in target directories that have been
-	#   removed from the source.  Without this, rsync can't remove
-	#   directories that contain catalogs.
-	grep "^/$vo/" $DSTDIRTAB|while read pat; do
-	    for dir in `echo /cvmfs/oasis.opensciencegrid.org$pat 2>/dev/null`; do
-		srcdir="`echo $dir|sed 's,/cvmfs/oasis.opensciencegrid.org/,,'`"
-		if [ ! -d "/net/nas01/Public/ouser.$srcdir" ] && [ -f "$dir/.cvmfscatalog" ]; then
-		    echo "removing .cvmfscatalog from deleted $srcdir"
-		    rm -f $dir/.cvmfscatalog
-		fi
-	    done
-	done
-
-	$runuser "rsync -aW --stats --exclude .cvmfscatalog --delete --force --ignore-errors /net/nas01/Public/ouser.$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
+	$runuser "/usr/share/oasis/cvmfs_rsync -aW --stats --delete --force --ignore-errors /net/nas01/Public/ouser.$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
 
 	now=`date`
 	echo "$now starting cvmfs_server publish"
