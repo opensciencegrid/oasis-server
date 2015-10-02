@@ -1,5 +1,5 @@
 %define name oasis
-%define version 2.0.37
+%define version 2.0.38
 %define release 1
 
 Summary: OASIS package
@@ -153,7 +153,10 @@ f_restart_daemon $1
 # Changelog
 #-------------------------------------------------------------------------------
 %changelog
-* Wed Sep 22 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.37-1
+* Thu Oct 01 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.38-1
+- Add misc/cvmfs_rsync to the package and use it from misc/do_oasis_update
+
+* Wed Sep 23 2015 Dave Dykstra <dwd@fnal.gov> - 2.0.37-1
 - Add misc/replicate_whitelists to copy the .cvmfswhitelist for every
   repository from oasis to oasis-replica
 - Update misc/oasis_replica_status to warn when any whitelist is more than
