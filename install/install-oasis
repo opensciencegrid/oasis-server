@@ -399,7 +399,7 @@ set +x
 
 # add the signed external repositories whitelists from oasis-replica
 # this is safer than reading from the original sources, in case one is down
-for REPO in `print_osg_repos`; do
+for REPO in config-egi.egi.eu `print_osg_repos`; do
     if [ ! -f /srv/cvmfs/$REPO/.cvmfswhitelist ]; then
 	URL="http://oasis-replica.opensciencegrid.org:8000/cvmfs/$REPO/.cvmfswhitelist"
 	echo "Adding whitelist from $URL"
@@ -407,6 +407,10 @@ for REPO in `print_osg_repos`; do
 	wget -q -O/srv/cvmfs/$REPO/.cvmfswhitelist $URL
     fi
 done
+
+case $MYSHORTNAME in
+    *-itb) resign_osg_whitelist;;
+esac
 
 echo
 echo "Installation of $MYSHORTNAME completed successfully at `date`"
