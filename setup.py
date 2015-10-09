@@ -44,15 +44,23 @@ initd_files = ['etc/oasisd',
 	       'etc/oasis-initclean',
 	       'etc/oasis-login-initclean',
 	       'etc/oasis-replica-initclean',
+
+           'etc/oasisreplicad',
 	      ]
 
 etc_files = ['etc/oasis.conf',
              'etc/projects.conf',
              'etc/repositories.conf',
              'etc/probes.conf',
+
+             'etc/oasisreplica.conf',
+             'etc/oasisreplicarepositories.conf',
             ]
 
-sysconfig_files = ['etc/sysconfig/oasis']
+sysconfig_files = ['etc/sysconfig/oasis',
+
+                   'etc/sysconfig/oasisreplica',
+                  ]
 
 logrotate_files = ['etc/logrotate/oasis']
 
