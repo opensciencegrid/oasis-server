@@ -83,8 +83,8 @@ rpm_data_files=[('/usr/libexec/oasis', libexec_files),
                 # before they are managed by puppet
                 ('/etc/cron.d', ['etc/configs/oasis/cron_oasis']),
                 ('/etc/httpd/conf.d', ['etc/configs/oasis/httpd_cvmfs.conf']),
-                ('/etc/iptables.d', ['etc/configs/oasis/iptables_oasis']),
-                ('/etc/cron.d', ['etc/configs/oasis/cron_oasis']),
+                ('/etc/iptables.d', ['etc/configs/oasis/60-local-iptables-oasis']),
+                ('/var/www/html', ['etc/configs/oasis/robots.txt']),
             
 
                ]
