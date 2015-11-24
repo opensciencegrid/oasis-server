@@ -1,0 +1,7 @@
+# Created by install script.  Will be recreated next reinstall.
+. /etc/iptables.d/setup
+# open tcp port 80 and port 8000
+$ITFAI -p tcp --dport 80 -j ACCEPT
+$ITFAI -p tcp --dport 8000 -j ACCEPT
+$ITFAI4 -p tcp --dport 80 -j ACCEPT
+$ITFAI4 -p tcp --dport 8000 -j ACCEPT
