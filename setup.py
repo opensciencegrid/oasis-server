@@ -86,6 +86,14 @@ rpm_data_files=[('/usr/libexec/oasis', libexec_files),
                 ('/etc/iptables.d', ['etc/configs/oasis/60-local-iptables-oasis']),
                 ('/var/www/html', ['etc/configs/oasis/robots.txt']),
             
+                ('/etc/iptables.d', ['etc/configs/oasis-replica/60-local-iptables-cvmfs']),
+                ('/etc/httpd/conf.d', ['etc/configs/oasis-replica/httpd_cvmfs.conf']),
+                ('/etc/logrotate.d', ['etc/configs/oasis-replica/logrotate_cvmfs']),
+                ('/var/www/html', ['etc/configs/oasis-replica/robots.txt']),
+                ('/etc/squid', ['etc/configs/oasis-replica/squid_customize.sh']),
+
+                ('/', ['etc/configs/oasis-login/']),
+                ('/', ['etc/configs/oasis-login/']),
 
                ]
 

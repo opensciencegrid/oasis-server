@@ -3,6 +3,8 @@ include etc/*
 include etc/logrotate/*
 include etc/sysconfig/*
 include etc/configs/oasis/*
+include etc/configs/oasis-replica/*
+include etc/configs/oasis-login/*
 include libexec/*
 include bin/*
 include sbin/*
