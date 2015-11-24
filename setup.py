@@ -76,6 +76,17 @@ rpm_data_files=[('/usr/libexec/oasis', libexec_files),
                 ('/etc/sysconfig', sysconfig_files),
                 ('/etc/logrotate.d', logrotate_files),
                 ('/usr/sbin', sbin_files),
+
+                # custom GOC-only config files, 
+                # to be added to 3 extra RPMs, 
+                # as a temporary solution 
+                # before they are managed by puppet
+                ('/etc/cron.d', ['etc/configs/oasis/cron_oasis']),
+                ('/etc/httpd/conf.d', ['etc/configs/oasis/httpd_cvmfs.conf']),
+                ('/etc/iptables.d', ['etc/configs/oasis/iptables_oasis']),
+                ('/etc/cron.d', ['etc/configs/oasis/cron_oasis']),
+            
+
                ]
 
 # ===========================================================
