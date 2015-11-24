@@ -92,8 +92,8 @@ rpm_data_files=[('/usr/libexec/oasis', libexec_files),
                 ('/var/www/html', ['etc/configs/oasis-replica/robots.txt']),
                 ('/etc/squid', ['etc/configs/oasis-replica/squid_customize.sh']),
 
-                ('/', ['etc/configs/oasis-login/']),
-                ('/', ['etc/configs/oasis-login/']),
+                ('/etc/iptables.d', ['etc/configs/oasis-login/60-local-iptables-oasis-login']),
+                ('/etc/sysconfig', ['etc/configs/oasis-login/gsisshd']),
 
                ]
 
