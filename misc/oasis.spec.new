@@ -314,36 +314,36 @@ This package contains oasis server
 
 #################################################################################
 
-%package -n oasis-config
+%package -n oasis-goc-config
 Summary: oasis config
 Group: Development/Libraries
-%description -n oasis-config
+%description -n oasis-goc-config
 This package contains oasis config 
 
-%files -n oasis-config -f INSTALLED_FILES_CONFIG_OASIS
+%files -n oasis-goc-config -f INSTALLED_FILES_CONFIG_OASIS
 %defattr(-,root,root)
 
 
 #################################################################################
 
-%package -n oasis-config-replica
+%package -n oasis-goc-config-replica
 Summary: oasis config replica
 Group: Development/Libraries
-%description -n oasis-config-replica
+%description -n oasis-goc-config-replica
 This package contains oasis config replica
 
-%files -n oasis-config-replica -f INSTALLED_FILES_CONFIG_OASIS_REPLICA
+%files -n oasis-goc-config-replica -f INSTALLED_FILES_CONFIG_OASIS_REPLICA
 %defattr(-,root,root)
 
 #################################################################################
 
-%package -n oasis-config-login
+%package -n oasis-goc-config-login
 Summary: oasis config login
 Group: Development/Libraries
-%description -n oasis-config-login
+%description -n oasis-goc-config-login
 This package contains oasis config login
 
-%files -n oasis-config-login -f INSTALLED_FILES_CONFIG_OASIS_LOGIN
+%files -n oasis-goc-config-login -f INSTALLED_FILES_CONFIG_OASIS_LOGIN
 %defattr(-,root,root)
 
 
