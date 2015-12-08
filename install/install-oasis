@@ -212,8 +212,22 @@ if [ -d /srv/cvmfs/oasis.opensciencegrid.org ]; then
     mv /srv/cvmfs/oasis.opensciencegrid.org /srv/cvmfs.save
 fi
 
-# add oasis repo
-CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
+# Use this new code with cvmfs-server-2.2.0
+# Then the code saving /srv/cvmfs.save above and restoring below can also
+#   be deleted.
+#if [ -d /srv/cvmfs/oasis.opensciencegrid.org ]; then
+#    # Old oasis repository data present.  Use import instead of mkfs.
+#    # It expects a masterkey and pub to be present from before.
+#    # Use ITB key for now and replace later.
+#    for KEY in pub masterkey; do
+#	cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/oasis.opensciencegrid.org.$KEY
+#	chown oasis /etc/cvmfs/oasis.opensciencegrid.org.$KEY
+#    done
+#    /net/nas01/Public/dwd/jump/cvmfs_server import -r -t -o oasis oasis.opensciencegrid.org
+#else
+    # add oasis repo
+    CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
+#fi
 echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
