@@ -317,6 +317,11 @@ cat >/etc/cron.d/oasis <<'xEOFx'
 * * * * *   root   /usr/share/oasis/do_oasis_update
 */3 * * * * root   /usr/share/oasis/oasis_status_stamp >/dev/null 2>&1
 xEOFx
+case $MYSHORTNAME in
+    *-itb)
+	echo "0 7 1,15 * * root  /usr/bin/resign_osg_whitelist >/dev/null 2>&1" >>/etc/cron.d/oasis
+	;;
+esac
 
 # request updates on all vos that have changed
 
