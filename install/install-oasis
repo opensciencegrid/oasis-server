@@ -104,14 +104,14 @@ for LOGD in oasis httpd; do
 done
 
 # install cvmfs
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
 rpm -i $CVMFSRELRPM
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
 rpm -e cvmfs-release
 rm $CVMFSRELRPM
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
 CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
 yum -y install $CVRPMS
 rm $CVRPMS
