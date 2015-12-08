@@ -223,7 +223,7 @@ fi
 #	cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/oasis.opensciencegrid.org.$KEY
 #	chown oasis /etc/cvmfs/oasis.opensciencegrid.org.$KEY
 #    done
-#    /net/nas01/Public/dwd/jump/cvmfs_server import -r -t -o oasis oasis.opensciencegrid.org
+#    cvmfs_server import -r -t -o oasis oasis.opensciencegrid.org
 #else
     # add oasis repo
     CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
