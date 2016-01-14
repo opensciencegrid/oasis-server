@@ -104,14 +104,14 @@ for LOGD in oasis httpd; do
 done
 
 # install cvmfs
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
 rpm -i $CVMFSRELRPM
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
 rpm -e cvmfs-release
 rm $CVMFSRELRPM
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
 CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
 yum -y install $CVRPMS
 rm $CVRPMS
@@ -212,8 +212,22 @@ if [ -d /srv/cvmfs/oasis.opensciencegrid.org ]; then
     mv /srv/cvmfs/oasis.opensciencegrid.org /srv/cvmfs.save
 fi
 
-# add oasis repo
-CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
+# Use this new code with cvmfs-server-2.2.0
+# Then the code saving /srv/cvmfs.save above and restoring below can also
+#   be deleted.
+#if [ -d /srv/cvmfs/oasis.opensciencegrid.org ]; then
+#    # Old oasis repository data present.  Use import instead of mkfs.
+#    # It expects a masterkey and pub to be present from before.
+#    # Use ITB key for now and replace later.
+#    for KEY in pub masterkey; do
+#	cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/oasis.opensciencegrid.org.$KEY
+#	chown oasis /etc/cvmfs/oasis.opensciencegrid.org.$KEY
+#    done
+#    cvmfs_server import -r -t -o oasis oasis.opensciencegrid.org
+#else
+    # add oasis repo
+    CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
+#fi
 echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
@@ -317,6 +331,11 @@ cat >/etc/cron.d/oasis <<'xEOFx'
 * * * * *   root   /usr/share/oasis/do_oasis_update
 */3 * * * * root   /usr/share/oasis/oasis_status_stamp >/dev/null 2>&1
 xEOFx
+case $MYSHORTNAME in
+    *-itb)
+	echo "0 7 1,15 * * root  /usr/bin/resign_osg_whitelist >/dev/null 2>&1" >>/etc/cron.d/oasis
+	;;
+esac
 
 # request updates on all vos that have changed
 

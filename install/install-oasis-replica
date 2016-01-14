@@ -108,15 +108,15 @@ done
 chown squid:squid /srv/log/squid
 
 # install cvmfs
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
 rpm -i $CVMFSRELRPM
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
 rpm -e cvmfs-release
 rm $CVMFSRELRPM
 CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
-wget -q -N https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
 yum -y install $CVRPMS
 rm $CVRPMS
 cp /etc/cvmfs/keys/egi.eu/egi.eu.pub /etc/cvmfs/keys
