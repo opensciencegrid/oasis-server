@@ -1,0 +1,7 @@
+# Created by install script.  Will be recreated next reinstall.
+. /etc/iptables.d/setup
+# open http port 80
+$ITFAI -p tcp --dport 80 -j ACCEPT
+$ITFAI4 -p tcp --dport 80 -j ACCEPT
+$ITFAI -p tcp -s 0/0 --dport 22 -j ACCEPT
+$ITFAI4 -p tcp -s 0/0 --dport 22 -j ACCEPT

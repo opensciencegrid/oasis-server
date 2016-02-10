@@ -52,7 +52,8 @@ etc_files = ['etc/oasis.conf',
              'etc/probes.conf',
             ]
 
-sysconfig_files = ['etc/sysconfig/oasis']
+sysconfig_files = ['etc/sysconfig/oasis',
+                  ]
 
 logrotate_files = ['etc/logrotate/oasis']
 
@@ -75,6 +76,25 @@ rpm_data_files=[('/usr/libexec/oasis', libexec_files),
                 ('/etc/sysconfig', sysconfig_files),
                 ('/etc/logrotate.d', logrotate_files),
                 ('/usr/sbin', sbin_files),
+
+                # custom GOC-only config files, 
+                # to be added to 3 extra RPMs, 
+                # as a temporary solution 
+                # before they are managed by puppet
+                ('/etc/cron.d', ['etc/configs/oasis/cron_oasis']),
+                ('/etc/httpd/conf.d', ['etc/configs/oasis/httpd_cvmfs.conf']),
+                ('/etc/iptables.d', ['etc/configs/oasis/60-local-iptables-oasis']),
+                ('/var/www/html', ['etc/configs/oasis/robots.txt']),
+            
+                ('/etc/iptables.d', ['etc/configs/oasis-replica/60-local-iptables-cvmfs']),
+                ('/etc/httpd/conf.d', ['etc/configs/oasis-replica/httpd_cvmfs-replica.conf']),
+                ('/etc/logrotate.d', ['etc/configs/oasis-replica/logrotate_cvmfs']),
+                ('/var/www/html', ['etc/configs/oasis-replica/robots.txt']),
+                ('/etc/squid', ['etc/configs/oasis-replica/squid_customize.sh']),
+
+                ('/etc/iptables.d', ['etc/configs/oasis-login/60-local-iptables-oasis-login']),
+                ('/etc/sysconfig', ['etc/configs/oasis-login/gsisshd']),
+
                ]
 
 # ===========================================================
