@@ -93,7 +93,8 @@ else
     echo "$REPOURL revision $REPOREVISION is OK"
 fi
 
-if [ "${REPO#*.}" = "opensciencegrid.org" ]; then
+REPODOM="${REPO#*.}"
+if [ "$REPODOM" = "opensciencegrid.org" ] || [ "$REPODOM" = "osgstorage.org" ]; then
     echo "Attempting to restore $REPO on $STRATUM0"
     OASISCMD="$MYDIR/add_osg_repository $REPOURL"
     if ! ssh -o ConnectTimeout=10 $STRATUM0 $OASISCMD; then
