@@ -45,7 +45,7 @@ else
     STAMP="`echo $PATHS|sed "s,^/srv/cvmfs/.$REPO\.,,"`"
 fi
 
-REPODIRS="/srv/cvmfs /etc/cvmfs/repositories.d /var/spool/cvmfs"
+REPODIRS="/srv/cvmfs /etc/cvmfs/repositories.d /var/spool/cvmfs /oasissrv/cvmfs"
 for D in $REPODIRS; do
     if [ ! -d "$D/.$REPO.$STAMP" ]; then
 	echo "$ME: $D/.$REPO.$STAMP not found" >&2

@@ -48,13 +48,18 @@ echo "Blank $REPO revision will be set to $REVISION"
 let REVISION-=1
 
 NOW="`date +%Y%m%d%H%M%S`"
-REPODIRS="/srv/cvmfs /etc/cvmfs/repositories.d /var/spool/cvmfs"
+REPODIRS="/srv/cvmfs /etc/cvmfs/repositories.d /var/spool/cvmfs /oasissrv/cvmfs"
 for D in $REPODIRS; do
     echo "Renaming $D/$REPO to $D/.$REPO.$NOW"
     mv $D/$REPO $D/.$REPO.$NOW
 done
 
+# restore if fails
+trap "echo;echo Failed, restoring; set +e; cvmfs_server rmfs -f $REPO; for D in $REPODIRS; do rm -rf \$D/$REPO; mv \$D/.$REPO.$NOW \$D/$REPO; done" 0
+
 echo "Making $REPO"
+# need to have apache view match actual view during this
+ln -s /srv/cvmfs/$REPO /oasissrv/cvmfs/$REPO
 cvmfs_server mkfs -o root -w http://localhost:8080/cvmfs/$REPO $REPO
 rm -f /etc/httpd/conf.d/cvmfs.$REPO.conf
 echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/$REPO/server.conf
@@ -90,4 +95,5 @@ else
     cvmfs_server transaction $REPO
     cvmfs_server publish $REPO
 fi
+trap 0
 echo "Blanking of $REPO completed successfully"
