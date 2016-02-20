@@ -1,0 +1,132 @@
+#!/bin/bash
+# Install and configure all application software on oasis-login or
+#   oasis-login-itb, or oasis-login-sl6 or oasis-login-sl6-itb
+# Written by Dave Dykstra 3-11-2015
+
+cd
+
+MYSHORTNAME="`hostname -s`"
+case "$MYSHORTNAME" in
+    oasis-login*);;
+    *)  echo "Only run this on an oasis-login* machine"
+	exit 2
+	;;
+esac
+
+case `lsb_release -a|sed -n 's/Release:[ \t]*\([0-9]\)*.*/\1/p'` in
+    5)  EL=el5
+	GSISSHCLIENTS=gsissh-clients
+	;;
+    6)  EL=el6
+	GSISSHCLIENTS=gsi-openssh-clients
+	;;
+    *)  echo "Not running on el5 or el6"
+        exit 2
+	;;
+esac
+
+set -ex
+
+# puppet sometimes returns error code if it is already running, ignore it
+case "$MYSHORTNAME" in
+    *-itb)
+	puppet agent -t --environment=testing || true
+	;;
+    *)
+	puppet agent -t || true
+	;;
+esac
+
+ARCH=`arch`
+OASISVER=2.1.0
+OASISSUBVER=1
+OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
+OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
+
+PATH="$PATH:/sbin:/usr/sbin"
+
+# import OSG key because we'll be directly downloading oasis rpm
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
+
+# need yum-priorities to make OSG a higher priority than EPEL
+yum -y install yum-priorities
+
+# install condor
+yum -y install condor
+chkconfig condor on
+service condor start
+
+# install oasis
+#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
+SCRATCHID=204092
+wget -O $OASISRPM "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM"
+#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
+wget -O $OASISRPM2 "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM2"
+#yum -y install $OASISRPM $OASISRPM2
+rpm -iv $OASISRPM $OASISRPM2
+rm $OASISRPM $OASISRPM2
+chkconfig oasis-login-initclean on
+# this is needed for oasis-login-initclean to be able to find the nas01 name
+ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
+
+service gociptables restart
+
+# install gsisshd and gsissh clients (client needed for gsiscp)
+yum -y install gsi-openssh-server $GSISSHCLIENTS
+
+ln -s /etc/ssh/ssh_host_rsa_key /etc/gsissh/ssh_host_rsa_key
+ln -s /etc/ssh/ssh_host_rsa_key.pub /etc/gsissh/ssh_host_rsa_key.pub
+ln -s /etc/ssh/ssh_host_dsa_key /etc/gsissh/ssh_host_dsa_key
+ln -s /etc/ssh/ssh_host_dsa_key.pub /etc/gsissh/ssh_host_dsa_key.pub
+
+service sshd stop
+chkconfig sshd off
+service gsisshd start
+chkconfig gsisshd on
+
+# for the status stamp
+yum -y install httpd
+chkconfig httpd on
+service httpd start
+
+# for generate_adduser
+yum -y install pwgen
+
+# add users
+TMPF=/tmp/install-oasis-login-$$
+/usr/share/oasis/generate_adduser >$TMPF.1
+while read CMD; do
+    OUSER="`echo "$CMD"|awk '{print $3}'`"
+    if [ ! -d /net/nas01/Public/$OUSER ]; then
+	# wasn't there before, let the cron create it
+	continue
+    fi
+    uid="`stat -c '%u' /net/nas01/Public/$OUSER`"
+    gid="`stat -c '%g' /net/nas01/Public/$OUSER`"
+    groupadd -g $gid $OUSER
+    eval "`echo "$CMD"|sed "s/useradd/useradd -u $uid -g $gid/"`"
+done <$TMPF.1
+rm $TMPF.1
+
+# add gridmap file
+/usr/share/oasis/generate_gridmap >/etc/grid-security/grid-mapfile
+
+# the user's want gcc to be able to compile
+yum -y install gcc
+
+# add cron entries
+cat >>/etc/cron.d/oasis-login <<'xEOFx'
+# Created by install script.  Will be recreated next reinstall.
+*/5 * * * * root /usr/share/oasis/generate_adduser | bash
+1-59/5 * * * * root cd /etc/grid-security; if /usr/share/oasis/generate_gridmap > grid-mapfile.tmp; then mv -f grid-mapfile.tmp grid-mapfile; fi
+4,19,34,49 * * * * root   /usr/share/oasis/oasis_login_status >/dev/null 2>&1
+xEOFx
+
+
+rm -f /root/show_install_msg.sh
+
+set +x
+
+echo
+echo "Installation of $MYSHORTNAME completed successfully at `date`"
+echo

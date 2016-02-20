@@ -1,0 +1,64 @@
+#!/bin/bash
+# Uninstall everything installed by install-oasis-replica, to facilitate
+#  testing install-oasis-replica without creating a new VM from scratch
+# Written by Dave Dykstra 2-4-2015
+
+case "`uname -n`" in
+    oasis-replica.*|oasis-replica-itb.*);;
+    *)  echo "Only run this on oasis-replica or oasis-replica-itb"
+	exit 2
+	;;
+esac
+
+set -x
+case $0 in
+    /tmp/*);;
+    *)  # get out of NFS filesystem because netfs stop kills it
+	cp $0 /tmp
+	exec /tmp/uninstall-oasis-replica
+	;;
+esac
+cd
+PATH="$PATH:/sbin"
+killall cvmfs_swissknife
+service frontier-squid stop
+service httpd stop
+service netfs stop
+chkconfig netfs off
+rm -f /etc/rc3.d/S24dnsmasq
+sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
+rmdir /srv
+rm -rf /oasissrv
+for REPO in `ls /etc/cvmfs/repositories.d`; do
+    cvmfs_server rmfs -f $REPO
+done
+rm /etc/cron.d/cvmfs
+rm -rf /var/log/cvmfs
+rm /opt/etc/osupdate.d/aufs.postupdate
+rm -rf /usr/src/redhat/*/aufs* /usr/src/redhat/RPMS/*/*aufs*
+rmdir /usr/src/redhat/RPMS/* /usr/src/redhat/* /usr/src/redhat
+yum -y remove elfutils-libs xz-libs gcc aufs kernel-module-aufs
+sed -i -e '/Added by install/d' -e '/^net.core.somaxconn/d' /etc/sysctl.conf
+sysctl -w net.core.somaxconn=128
+rpm -e cvmfs-release
+rpm -e frontier-release
+for r in `rpm -qa|grep gpg-pubkey|sed 's/\.(none)//'|sort -u`; do
+    rpm --allmatches -e $r
+done
+yum -y remove httpd fuse fuse-libs cvmfs-config gdb
+rm -rf /var/log/httpd
+rm -rf /etc/cvmfs
+sed -i '/nofile.*16384/d' /etc/security/limits.conf
+rm /etc/awstats/password-file
+yum -y remove frontier-squid
+rm -rf /var/log/squid
+rm /etc/squid/customize.sh.rpmsave
+rmdir /etc/squid
+rm /etc/sysconfig/frontier-squid
+service gociptables restart
+chkconfig oasis-replica-initclean off
+yum -y remove oasis-goc oasis-goc-replica
+yum clean all
+yum clean expire-cache  # temporarily until yum is updated
+service nfslock stop
+chkconfig nfslock off

@@ -1,0 +1,11 @@
+# Created by install script.  Will be recreated next reinstall.
+export LLGT_LOG_IDENT=gsisshd-lcmaps
+export LCMAPS_DB_FILE=/etc/lcmaps.db
+export LCMAPS_POLICY_NAME=authorize_only
+export LLGT_LIFT_PRIVILEGED_PROTECTION=1
+
+# level 0: no messages, 1: errors, 2: also warnings, 3: also notices, 4: also info, 5: maximum debug
+export LCMAPS_DEBUG_LEVEL=2
+
+export X509_USER_CERT=/etc/grid-security/host/cert.pem
+export X509_USER_KEY=/etc/grid-security/host/key.pem

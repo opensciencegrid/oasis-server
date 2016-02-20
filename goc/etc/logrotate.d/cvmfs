@@ -1,0 +1,6 @@
+# Created by install script.  Will be recreated next reinstall.
+/var/log/cvmfs/*.log {
+    weekly
+    missingok
+    notifempty
+}

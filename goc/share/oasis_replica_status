@@ -1,0 +1,125 @@
+#!/bin/bash
+
+## NOTE: repositories can be excluded from warnings by putting them on a line
+##  in /srv/etc/status_exclude_repos.conf
+
+## warning time since any snapshot was successfully completed (6 hours)
+warn_snap_age=21600
+
+## warning time since all whitelists were successfully replicated (24 hours)
+warn_white_age=86400
+
+## number of squid processes that must be running
+need_squids=2
+
+## required number of httpd running
+need_httpd=4
+
+overall_status=0
+
+set_status()
+{
+    # do not decrease status level
+    if [ "$1" -gt $overall_status ]; then
+        overall_status=$1
+   fi
+}
+
+## determine snapshot age
+
+oldest_snap_age=0
+warning_repos=""
+oldest_white_age=0
+whitelist_warning_repos=""
+for repo in `cd /etc/cvmfs/repositories.d;echo *.*`; do
+    if grep -q "^$repo$" /srv/etc/status_exclude_repos.conf 2>/dev/null; then
+        continue
+    fi
+    snapdate=`cat /srv/cvmfs/$repo/.cvmfs_last_snapshot 2>/dev/null`
+    if [ -n "$snapdate" ]; then
+        snapped=`date -d "$snapdate" +%s`
+        now=`date +%s`
+        snap_age=`expr $now - $snapped`
+    else
+        snap_age=999999
+    fi
+
+    if [ $snap_age -gt $oldest_snap_age ]; then
+        oldest_snap_age=$snap_age
+    fi
+    if [ $snap_age -ge $warn_snap_age ] ; then
+    ## go to warning
+        set_status 1
+        if [ -n "$warning_repos" ]; then
+            warning_repos="$warning_repos,"
+        fi
+        warning_repos="$warning_repos$repo"
+    fi
+
+    whitemodded=`stat -c %Y /oasissrv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`
+    if [ -n "$whitemodded" ]; then
+        now=`date +%s`
+        white_age=`expr $now - $whitemodded`
+    else
+        white_age=999999
+    fi
+    if [ $white_age -gt $oldest_white_age ]; then
+        oldest_white_age=$white_age
+    fi
+
+    origfingerprint="`sed -n '/^N/{n;p;q}' /srv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`"
+    oasisfingerprint="`sed -n '/^N/{n;p;q}' /oasissrv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`"
+
+    if [ $white_age -ge $warn_white_age ] || [ "$origfingerprint" != "$oasisfingerprint" ]; then
+    ## go to warning
+        set_status 1
+        if [ -n "$whitelist_warning_repos" ]; then
+            whitelist_warning_repos="$whitelist_warning_repos,"
+        fi
+        whitelist_warning_repos="$whitelist_warning_repos$repo"
+    fi
+done
+
+## are the squid processes running?
+squids=`ps -e | grep -c squid`
+
+squid_status="yes"
+if [ $squids -lt $need_squids ] ; then
+    set_status 2
+    squid_status="no"
+fi
+
+## are there httpd processes running?
+httpds=`ps -e | grep -c httpd`
+
+httpd_status="yes"
+if [ $httpds -lt $need_httpd ] ; then
+    set_status 2
+    httpd_status="no"
+fi
+
+kern=`uname -r`
+utime=` cat /proc/uptime | awk '{ print $1 }'`
+
+# begin output, overall status first. OK, WARNING, CRITICAL are allowed values
+(
+if [ $overall_status -eq 0 ]; then
+    echo "OK"
+elif [ $overall_status -eq 1 ]; then
+    echo "WARNING"
+elif [ $overall_status -eq 2 ]; then
+    echo "CRITICAL"
+fi
+
+# begin details output, only timestamp is mandatory
+
+echo "kernel:$kern" 
+echo "uptime:$utime" 
+echo "warning_repos:$warning_repos"
+echo "oldest_snapshot_age:$oldest_snap_age"
+echo "whitelist_warning_repos:$whitelist_warning_repos"
+echo "oldest_whitelist_age:$oldest_white_age"
+echo "squid_running:$squid_status"
+echo "httpd_running:$httpd_status"
+) > /var/www/html/stamp.new
+mv /var/www/html/stamp.new /var/www/html/stamp
