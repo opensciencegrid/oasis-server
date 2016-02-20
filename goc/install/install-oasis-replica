@@ -49,7 +49,10 @@ CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
-OASISRPM=oasis-2.0.37-1.osg32.el5.noarch.rpm
+OASISVER=2.1.0
+OASISSUBVER=1
+OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
+OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -125,53 +128,20 @@ yum -y install mod_wsgi
 
 echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
-cat >/etc/logrotate.d/cvmfs <<xEOFx
-# Created by install script.  Will be recreated next reinstall.
-/var/log/cvmfs/*.log {
-    weekly
-    missingok
-    notifempty
-}
-xEOFx
-cat >/etc/httpd/conf.d/cvmfs.conf <<"xEOFx"
-# Created by install script.  Will be recreated next reinstall.
-# 8080 is used for other stratum 1s and 8081 is used for squid
-Listen 8080
-Listen 8081
-KeepAlive On
-MaxClients 64
-ListenBackLog 1024
-RewriteEngine On
-RewriteRule ^/cvmfs/([^./]*)/(.*)$ /cvmfs/$1.opensciencegrid.org/$2
-RewriteRule ^/cvmfs/([^/]+)/api/(.*)$ /cvmfs/$1/api/$2 [PT]
-RewriteRule ^/cvmfs/([^/]+/.cvmfswhitelist)$ /oasissrv/cvmfs/$1
-RewriteRule ^/cvmfs/(.*)$ /srv/cvmfs/$1
-<Directory "/srv/cvmfs"> 
-    Options -MultiViews FollowSymLinks -Indexes
-    AllowOverride All 
-    Order allow,deny 
-    Allow from all
 
-    EnableMMAP Off 
-    EnableSendFile Off
+# install oasis
+#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
+SCRATCHID=204092
+wget -O $OASISRPM "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM"
+#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
+wget -O $OASISRPM2 "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM2"
+#yum -y install $OASISRPM $OASISRPM2
+rpm -iv $OASISRPM $OASISRPM2
+rm $OASISRPM $OASISRPM2
+chkconfig oasis-replica-initclean on
 
-    AddType application/x-cvmfs .cvmfspublished .cvmfswhitelist
+service gociptables restart
 
-    Header unset Last-Modified
-    FileETag None
-
-    ExpiresActive On
-    ExpiresDefault "access plus 3 days" 
-    ExpiresByType text/html "access plus 15 minutes" 
-    ExpiresByType application/x-cvmfs "access plus 2 minutes"
-</Directory>
-
-WSGIDaemonProcess cvmfs-api processes=2 display-name=%{GROUP} \
-    python-path=/usr/share/cvmfs-server/webapi
-WSGIProcessGroup cvmfs-api
-WSGISocketPrefix /var/run/wsgi
-WSGIScriptAliasMatch /cvmfs/([^/]+)/api /var/www/wsgi-scripts/cvmfs-api.wsgi/$1
-xEOFx
 chkconfig httpd on
 service httpd start
 
@@ -180,12 +150,6 @@ cat >>/etc/sysctl.conf <<xEOFx
 net.core.somaxconn = 1024
 xEOFx
 sysctl -w net.core.somaxconn=1024
-
-# add robots.txt
-cat >/var/www/html/robots.txt <<xEOFx
-User-agent: *
-Disallow: /
-xEOFx
 
 # install frontier-squid & frontier-awstats
 wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$FRONTIERRELRPM
@@ -196,6 +160,9 @@ wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/$ARCH/$SQUIDRPM
 wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$AWSTATSRPM
 yum -y install $SQUIDRPM $AWSTATSRPM
 rm $FRONTIERRELRPM $SQUIDRPM $AWSTATSRPM
+
+# maximum space used by logs is roughly 3 times this setting
+echo "export SQUID_MAX_ACCESS_LOG=1G" >/etc/sysconfig/frontier-squid
 cat >/etc/squid/customize.sh <<"xEOFx"
 #!/bin/bash
 # Created by install script.  Will be recreated next reinstall.
@@ -229,34 +196,6 @@ print
 }'
 xEOFx
 chmod +x /etc/squid/customize.sh
-# maximum space used by logs is roughly 3 times this setting
-echo "export SQUID_MAX_ACCESS_LOG=1G" >/etc/sysconfig/frontier-squid
-cat >/etc/iptables.d/60-local-cvmfs <<"xEOFx"
-# Created by install script.  Will be recreated next reinstall.
-. /etc/iptables.d/setup
-
-# redirect port 80 to port 8000
-$ITNAPRE4 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 8000
-$ITNAO4 -o lo -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 8000
-
-# open tcp port 80 and port 8000 for squid
-$ITFAI -p tcp --dport 80 -j ACCEPT
-$ITFAI -p tcp --dport 8000 -j ACCEPT
-$ITFAI4 -p tcp --dport 80 -j ACCEPT
-$ITFAI4 -p tcp --dport 8000 -j ACCEPT
-
-# open tcp port 8080 for httpd
-$ITFAI -p tcp --dport 8080 -j ACCEPT
-$ITFAI4 -p tcp --dport 8080 -j ACCEPT
-
-# open udp port 3401
-$ITFAI -p udp --dport 3401 -j ACCEPT
-$ITFAI4 -p udp --dport 3401 -j ACCEPT
-
-#
-xEOFx
-chmod +x /etc/iptables.d/60-local-cvmfs
-service gociptables restart
 chkconfig frontier-squid on
 service frontier-squid start
 
@@ -278,14 +217,6 @@ if [ -f $APWFILE ]; then
     cp $APWFILE /etc/awstats
     chown squid:squid /etc/awstats/password-file
 fi
-
-# install oasis
-OASISVER="`echo $OASISRPM|cut -d- -f2`"
-OASISSUBVER="`echo $OASISRPM|cut -d- -f3|cut -d. -f1-3`"
-wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-yum -y install $OASISRPM
-rm $OASISRPM
-chkconfig oasis-replica-initclean on
 
 # need nfslock for the repos to be on NFS
 chkconfig nfslock on

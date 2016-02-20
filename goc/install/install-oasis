@@ -49,7 +49,10 @@ CVMFSVER=2.1.20
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
-OASISRPM=oasis-2.0.38-1.osg32.el5.noarch.rpm
+OASISVER=2.1.0
+OASISSUBVER=1
+OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
+OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -125,82 +128,29 @@ ln -s /usr/spool/cvmfs /var/spool
 echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
 
-# The log rotate file is installed by the RPM
-#cat >/etc/logrotate.d/oasis <<xEOFx
-## Created by install script.  Will be recreated next reinstall.
-#/var/log/oasis/*.log {
-#    weekly
-#    missingok
-#    notifempty
-#}
-#xEOFx
-
-cat >/etc/httpd/conf.d/cvmfs.conf <<"xEOFx"
-# Created by install script.  Will be recreated next reinstall.
-Listen 8000
-KeepAlive On
-MaxClients 64
-ListenBackLog 1024
-RewriteEngine On
-RewriteRule ^/cvmfs/(.*)$ /srv/cvmfs/$1
-<Directory "/srv/cvmfs"> 
-    Options -MultiViews FollowSymLinks -Indexes
-    AllowOverride All 
-    Order allow,deny 
-    Allow from all
-
-    EnableMMAP Off 
-    EnableSendFile Off
-
-    AddType application/x-cvmfs .cvmfspublished .cvmfswhitelist
-
-    Header unset Last-Modified
-    FileETag None
-
-    ExpiresActive On
-    ExpiresDefault "access plus 3 days" 
-    ExpiresByType text/html "access plus 15 minutes" 
-    ExpiresByType application/x-cvmfs "access plus 2 minutes"
-</Directory>
-xEOFx
-chkconfig httpd on
-service httpd start
-
 cat >>/etc/sysctl.conf <<xEOFx
 # Controls maximum listen() backlog for apache.  Added by install script.
 net.core.somaxconn = 1024
 xEOFx
 sysctl -w net.core.somaxconn=1024
 
-# add robots.txt
-cat >/var/www/html/robots.txt <<xEOFx
-User-agent: *
-Disallow: /
-xEOFx
-
-cat >/etc/iptables.d/60-local-oasis <<"xEOFx"
-# Created by install script.  Will be recreated next reinstall.
-. /etc/iptables.d/setup
-# open tcp port 80 and port 8000
-$ITFAI -p tcp --dport 80 -j ACCEPT
-$ITFAI -p tcp --dport 8000 -j ACCEPT
-$ITFAI4 -p tcp --dport 80 -j ACCEPT
-$ITFAI4 -p tcp --dport 8000 -j ACCEPT
-xEOFx
-chmod +x /etc/iptables.d/60-local-oasis
-service gociptables restart
 mkdir -p /srv
 
 # install oasis
-OASISVER="`echo $OASISRPM|cut -d- -f2`"
-OASISSUBVER="`echo $OASISRPM|cut -d- -f3|cut -d. -f1-3`"
-wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-yum -y install $OASISRPM
-rm $OASISRPM
+#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
+SCRATCHID=204092
+wget -O $OASISRPM "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM"
+#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
+wget -O $OASISRPM2 "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM2"
+#yum -y install $OASISRPM $OASISRPM2
+rpm -iv $OASISRPM $OASISRPM2
+rm $OASISRPM $OASISRPM2
 chkconfig oasis-initclean on
 
-# copy in workaround for cvmfs-server-2.1.20 file leak bug
-cp /usr/share/oasis/cvmfs_server_hooks.sh /etc/cvmfs
+chkconfig httpd on
+service httpd start
+
+service gociptables restart
 
 # need nfslock for the repos to be on NFS
 chkconfig nfslock on
@@ -366,53 +316,6 @@ if [ "$PREVREVISION" -gt "$CURREVISION" ]; then
     $RUNUSER "cvmfs_server transaction"
     $RUNUSER "cvmfs_server publish -n $PREVREVISION"
 fi
-
-# -------- BEGIN OASIS-2 SECTION ---------
-# install OASIS-2 configuration
-# not yet enabled by default, just installed
-
-cat >/etc/oasis/oasis.conf <<xEOFx
-# Created by install script.  Will be recreated next reinstall.
-[OASIS]
-
-services = server
-sleep = 100
-
-#email = 
-#SMTPServer
-
-projectsconf = /etc/oasis/projects.conf
-repositoriesconf = /etc/oasis/repositories.conf
-
-probesconf = /etc/oasis/probes.conf
-
-flagfilebasedir = /net/nas01/Public/
-
-xEOFx
-
-cat >/etc/oasis/repositories.conf <<xEOFx
-# Created by install script.  Will be recreated next reinstall.
-[OASIS]
-
-repositoryname = oasis.opensciencegrid.org
-distributiontool = cvmfs21
-OSG_APP = /net/nas01/Public/
-repository_src_dir = %(OSG_APP)s
-repository_dest_dir = oasis.opensciencegrid.org
-repository_src_owner = root
-repository_dest_owner = oasis
-xEOFx
-
-# these two are empty for now
-touch /etc/oasis/probes.conf
-touch /etc/oasis/no_vo_probes.conf
-
-# generate projects.conf now and from cron
-python /usr/share/oasis/generate_config_projects > /etc/oasis/projects.conf
-cat >>/etc/cron.d/oasis <<xEOFx
-2-59/5 * * * * root cd /etc/oasis;if /usr/share/oasis/generate_config_projects > projects.conf.tmp; then if cmp -s projects.conf.tmp projects.conf; then rm projects.conf.tmp; else mv -f projects.conf.tmp projects.conf; /sbin/service oasisd condrestart; fi; fi
-xEOFx
-# -------- END OASIS-2 SECTION ---------
 
 set +x
 
