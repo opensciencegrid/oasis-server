@@ -31,7 +31,8 @@ rm -f /etc/rc3.d/S24dnsmasq
 sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
 rmdir /srv
 chkconfig oasis-initclean off
-yum -y remove oasis-goc oasis-goc-zero
+yum -y remove oasis
+rm -rf /etc/oasis
 cvmfs_server rmfs -f oasis.opensciencegrid.org # removes partially
 umount /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
 cvmfs_server rmfs -f oasis.opensciencegrid.org # finishes the remove
@@ -45,6 +46,7 @@ rm -rf /usr/src/redhat/*/aufs* /usr/src/redhat/RPMS/*/*aufs*
 rmdir /usr/src/redhat/RPMS/* /usr/src/redhat/* /usr/src/redhat
 yum -y remove elfutils-libs xz-libs gcc aufs kernel-module-aufs
 rm -rf /var/log/oasis
+rm /etc/logrotate.d/oasis
 service httpd stop
 sed -i -e '/Added by install/d' -e '/^net.core.somaxconn/d' /etc/sysctl.conf
 sysctl -w net.core.somaxconn=128
@@ -57,6 +59,8 @@ yum -y remove httpd fuse fuse-libs cvmfs-config gdb
 rm -rf /var/log/httpd
 sed -i '/nofile.*16384/d' /etc/security/limits.conf
 rm -rf /etc/cvmfs
+rm /etc/httpd/conf.d/cvmfs.conf
+rm /etc/iptables.d/60-local-oasis
 service gociptables restart
 yum clean all
 yum clean expire-cache  # temporarily until yum is updated
