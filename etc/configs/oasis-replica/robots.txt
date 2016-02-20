@@ -1,3 +1,0 @@
-cat >/var/www/html/robots.txt <<xEOFx
-User-agent: *
-Disallow: /
