@@ -67,9 +67,12 @@ echo "Restoring .$REPO.$STAMP to $REPO"
 if [ -d /etc/cvmfs/repositories.d/$REPO ]; then
     cvmfs_server rmfs -f $REPO
 fi
+if [ -L /oasissrv/cvmfs/$REPO ]; then
+    rm -f /oasissrv/cvmfs/$REPO
+fi
 
 for D in $REPODIRS; do
-    if [ -d $D/$REPO ]; then
+    if [ -e $D/$REPO ]; then
 	echo "$ME: $D/$REPO still exists" 2>&1
 	exit 1
     fi
