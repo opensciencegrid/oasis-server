@@ -50,9 +50,9 @@ CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
 OASISVER=2.1.0
-OASISSUBVER=1
-OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
-OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
+OASISSUBVER=1.osg32.el5
+OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
+OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -137,13 +137,9 @@ sysctl -w net.core.somaxconn=1024
 mkdir -p /srv
 
 # install oasis
-#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-SCRATCHID=204092
-wget -O $OASISRPM "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM"
-#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
-wget -O $OASISRPM2 "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM2"
-#yum -y install $OASISRPM $OASISRPM2
-rpm -iv $OASISRPM $OASISRPM2
+wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
+wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
+yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
 chkconfig oasis-initclean on
 

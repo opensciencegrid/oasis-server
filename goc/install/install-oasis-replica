@@ -50,9 +50,9 @@ FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
 OASISVER=2.1.0
-OASISSUBVER=1
-OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
-OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.osg32.el5.noarch.rpm
+OASISSUBVER=1.osg32.el5
+OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
+OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.noarch.rpm
 
 PATH="$PATH:/sbin"
 
@@ -130,13 +130,9 @@ echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
 
 # install oasis
-#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-SCRATCHID=204092
-wget -O $OASISRPM "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM"
-#wget -q -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
-wget -O $OASISRPM2 "http://koji-hub.batlab.org/koji/getfile?taskID=$SCRATCHID&name=$OASISRPM2"
-#yum -y install $OASISRPM $OASISRPM2
-rpm -iv $OASISRPM $OASISRPM2
+wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
+wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
+yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
 chkconfig oasis-replica-initclean on
 
