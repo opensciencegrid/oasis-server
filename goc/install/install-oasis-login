@@ -62,8 +62,6 @@ wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISS
 yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
 chkconfig oasis-login-initclean on
-# this is needed for oasis-login-initclean to be able to find the nas01 name
-ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
 
 service gociptables restart
 
