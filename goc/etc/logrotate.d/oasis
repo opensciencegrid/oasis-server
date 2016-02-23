@@ -1,0 +1,5 @@
+/var/log/oasis/*.log {
+    weekly
+    missingok
+    notifempty
+}

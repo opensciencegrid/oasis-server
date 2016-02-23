@@ -1,3 +1,0 @@
-# Created by install script.  Will be recreated next reinstall.
-* * * * *   root   /usr/share/oasis/do_oasis_update
-*/3 * * * * root   /usr/share/oasis/oasis_status_stamp >/dev/null 2>&1
