@@ -4,6 +4,11 @@ SRVDIR="/srv"
 if [ "`uname -n|cut -d. -f1`" != oasis ]; then
     LOCKPFX=${LOCKPFX}itb_
 fi
+if [ ! -d /var/log/oasis/ ]; then
+    # log directory does not exist, something very wrong. 
+    # exit silently to avoid cron email noise
+    exit
+fi
 ## was an update requested?
 if [ -f ${LOCKPFX}oasis_update_lock ]; then
 ## update was requested
@@ -28,6 +33,11 @@ if [ -f ${LOCKPFX}oasis_update_lock ]; then
 	# first see if .cvmfsdirtab needs to be updated
 	SRCDIRTAB=$SRVDIR/etc/repo/.cvmfsdirtab
 	DSTDIRTAB=/cvmfs/oasis.opensciencegrid.org/.cvmfsdirtab
+	if [ ! -f $DSTDIRTAB ]; then
+	    # sanity check failed
+	    echo "$DSTDIRTAB not found, aborting"
+	    exit
+	fi
 	if cmp $SRCDIRTAB $DSTDIRTAB >/dev/null 2>&1; then
 	    : no change
 	else
