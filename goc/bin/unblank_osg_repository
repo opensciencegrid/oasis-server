@@ -97,24 +97,13 @@ else
 fi
 
 REPODOM="${REPO#*.}"
-if [ "$REPODOM" = "opensciencegrid.org" ] || [ "$REPODOM" = "osgstorage.org" ]; then
-    echo "Attempting to restore $REPO on $STRATUM0"
-    OASISCMD="$MYDIR/add_osg_repository $REPOURL"
-    if ! ssh -o ConnectTimeout=10 $STRATUM0 $OASISCMD; then
-	echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
-	echo "  $OASISCMD" 2>&1
-	echo "and then notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
-    else
-	echo "Succeeded"
-	echo "Notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
-    fi
+echo "Attempting to restore $REPO on $STRATUM0"
+OASISCMD="$MYDIR/add_osg_repository $REPOURL"
+if ! ssh -o ConnectTimeout=10 $STRATUM0 $OASISCMD; then
+    echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
+    echo "  $OASISCMD" 2>&1
+    echo "and then notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
 else
-    echo "Attempting to clean up $REPO on $STRATUM0"
-    OASISCMD="rm -rf /srv/cvmfs/$REPO"
-    if ! ssh -o ConnectTimeout=10 $STRATUM0 $OASISCMD; then
-	echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
-	echo "  $OASISCMD" 2>&1
-    else
-	echo "Succeeded"
-    fi
+    echo "Succeeded"
+    echo "Notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
 fi
