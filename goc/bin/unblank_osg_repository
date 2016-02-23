@@ -96,7 +96,6 @@ else
     echo "$REPOURL revision $REPOREVISION is OK"
 fi
 
-REPODOM="${REPO#*.}"
 echo "Attempting to restore $REPO on $STRATUM0"
 OASISCMD="$MYDIR/add_osg_repository $REPOURL"
 if ! ssh -o ConnectTimeout=10 $STRATUM0 $OASISCMD; then
