@@ -4,7 +4,7 @@
 
 ME="`basename $0`"
 MYDIR="`dirname $0`"
-case "`uname -n|cut -d. -f1`" in
+case "`hostname -s`" in
     *-itb) 
 	STRATUM0=oasis-itb.opensciencegrid.org
 	STRATUM1=oasis-replica-itb.opensciencegrid.org
