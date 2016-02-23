@@ -1,6 +1,6 @@
 #!/bin/bash
 OASIS_SERVER="oasis.opensciencegrid.org"
-if [ "`uname -n|cut -d. -f1`" != oasis ]; then
+if [ "`hostname -s`" = oasis-replica-itb ]; then
     OASIS_SERVER="oasis-itb.opensciencegrid.org"
 fi
 
