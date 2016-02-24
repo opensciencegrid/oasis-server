@@ -42,10 +42,10 @@ esac
 ARCH=`arch`
 AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
 CVMFSRELRPM=cvmfs-release-2-4.el5.noarch.rpm
-CVMFSVER=2.1.20
+CVMFSVER=2.2.1
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
-CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
+CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
@@ -260,7 +260,7 @@ done
 mkdir -p /var/log/cvmfs
 cat >>/etc/cron.d/cvmfs <<'xEOFx'
 # Created by install script.  Will be recreated next reinstall.
-0,15,30,45 * * * * root test -d /srv/cvmfs||exit;TMPFILE=/tmp/cvmfscron.$$.log;LOGFILE=/var/log/cvmfs/updates.log;echo "Cron log in $TMPFILE starting at `date`" >>$LOGFILE;(for r in `cd /srv/cvmfs;echo *.*`; do echo; if [ -f /srv/cvmfs/$r/.cvmfspublished ]; then echo "Starting $r at `date`";if ! cvmfs_server snapshot -t $r;then echo "ERROR from cvmfs_server!"; fi;echo "Finished $r at `date`";fi;done) >$TMPFILE 2>&1;cat $TMPFILE >>$LOGFILE;rm -f $TMPFILE
+0,15,30,45 * * * * root test -d /srv/cvmfs||exit;cvmfs_server snapshot -ai
 5,20,35,50 * * * * root     (PATH=$PATH:/usr/sbin /usr/share/oasis/generate_replicas; /usr/share/oasis/replicate_whitelists) >>/var/log/cvmfs/generate_replicas.log 2>&1
 */3 * * * * root   /usr/share/oasis/oasis_replica_status >/dev/null 2>&1
 0 9 * * * root     find /srv/cvmfs/*.*/data/txn -name "*.*" -mtime +2 2>/dev/null|xargs rm -f
