@@ -15,6 +15,7 @@ need_squids=2
 ## required number of httpd running
 need_httpd=4
 
+now=`date +%s`
 overall_status=0
 
 set_status()
@@ -121,5 +122,6 @@ echo "whitelist_warning_repos:$whitelist_warning_repos"
 echo "oldest_whitelist_age:$oldest_white_age"
 echo "squid_running:$squid_status"
 echo "httpd_running:$httpd_status"
+echo "timestamp:$now"
 ) > /var/www/html/stamp.new
 mv /var/www/html/stamp.new /var/www/html/stamp

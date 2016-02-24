@@ -3,7 +3,7 @@
 
 ME="`basename $0`"
 MYDIR="`dirname $0`"
-case "`uname -n|cut -d. -f1`" in
+case "`hostname -s`" in
     *-itb) 
 	STRATUM0=oasis-itb.opensciencegrid.org
 	;;
@@ -67,9 +67,12 @@ echo "Restoring .$REPO.$STAMP to $REPO"
 if [ -d /etc/cvmfs/repositories.d/$REPO ]; then
     cvmfs_server rmfs -f $REPO
 fi
+if [ -L /oasissrv/cvmfs/$REPO ]; then
+    rm -f /oasissrv/cvmfs/$REPO
+fi
 
 for D in $REPODIRS; do
-    if [ -d $D/$REPO ]; then
+    if [ -e $D/$REPO ]; then
 	echo "$ME: $D/$REPO still exists" 2>&1
 	exit 1
     fi
@@ -93,25 +96,13 @@ else
     echo "$REPOURL revision $REPOREVISION is OK"
 fi
 
-REPODOM="${REPO#*.}"
-if [ "$REPODOM" = "opensciencegrid.org" ] || [ "$REPODOM" = "osgstorage.org" ]; then
-    echo "Attempting to restore $REPO on $STRATUM0"
-    OASISCMD="$MYDIR/add_osg_repository $REPOURL"
-    if ! ssh -o ConnectTimeout=10 $STRATUM0 $OASISCMD; then
-	echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
-	echo "  $OASISCMD" 2>&1
-	echo "and then notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
-    else
-	echo "Succeeded"
-	echo "Notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
-    fi
+echo "Attempting to restore $REPO on $STRATUM0"
+OASISCMD="$MYDIR/add_osg_repository $REPOURL"
+if ! ssh -o ConnectTimeout=10 $STRATUM0 $OASISCMD; then
+    echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
+    echo "  $OASISCMD" 2>&1
+    echo "and then notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
 else
-    echo "Attempting to clean up $REPO on $STRATUM0"
-    OASISCMD="rm -rf /srv/cvmfs/$REPO"
-    if ! ssh -o ConnectTimeout=10 $STRATUM0 $OASISCMD; then
-	echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
-	echo "  $OASISCMD" 2>&1
-    else
-	echo "Succeeded"
-    fi
+    echo "Succeeded"
+    echo "Notify repository owner to re-fetch .cvmfswhitelist and publish" 2>&1
 fi

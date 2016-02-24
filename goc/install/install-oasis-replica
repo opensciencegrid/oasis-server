@@ -93,10 +93,6 @@ mkdir -p /srv
 
 # need netfs to mount NFS at boot
 chkconfig netfs on
-# The chkconfig on by itself isn't enough, because /etc/resolv.conf listens
-#  only on 127.0.0.1 and the server doesn't start until late.  This works
-#  around it by starting the local dns caching server earlier.
-ln -s /etc/rc3.d/S99dnsmasq /etc/rc3.d/S24dnsmasq
 service netfs start
 
 
