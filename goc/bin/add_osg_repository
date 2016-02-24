@@ -6,11 +6,11 @@
 
 ME="`basename $0`"
 MYDIR="`dirname $0`"
-STRATUM0=oasis.opensciencegrid.org
+MAINREPO=oasis.opensciencegrid.org
 
 usage()
 {
-    echo "Usage: $ME [-a] http_url_of_repo_server" >&2
+    echo "Usage: $ME [-a] http_url_of_repo_server [extra_pubkey]" >&2
     echo " -a: add only, do not run snapshot" >&2
     exit 1
 }
@@ -21,7 +21,14 @@ if [ "$1" = "-a" ]; then
     shift
 fi
 
-if [ $# != 1 ]; then
+EXTRAPUBKEY=""
+if [ $# = 2 ]; then
+    if [ ! -f "$2" ]; then
+	echo "$ME: extra pubkey $2 does not exist" >&2
+	usage
+    fi
+    EXTRAPUBKEY=":$2"
+elif [ $# != 1 ]; then
     usage
 fi
 
@@ -32,30 +39,36 @@ case "$1" in
 	usage
 	;;
 esac
+REPOURL="$1"
 
-TMPFILE="/tmp/addosgrepo$$"
+TMPFILE="`mktemp /tmp/addosgrepo.XXXXXXXXXX`"
 trap "rm -f ${TMPFILE}" 0
-if ! wget -qO$TMPFILE "$1/.cvmfswhitelist"; then
-    echo "$ME: unable to wget $1/.cvmfswhitelist" >&2
+if ! wget -qO$TMPFILE "$REPOURL/.cvmfswhitelist"; then
+    echo "$ME: unable to wget $REPOURL/.cvmfswhitelist" >&2
     exit 1
 fi
 REPONAME="`cat -v $TMPFILE|sed -n '/^N/{s/^N//p;q}'`"
+if [ -z "$REPONAME" ]; then
+    echo "$ME: no repository name found in $REPOURL/.cvmfswhitelist" >&2
+    exit 1
+fi
 
 set -e
 
-MASTERKEY=/etc/cvmfs/keys/$STRATUM0.masterkey
+MASTERKEY=/etc/cvmfs/keys/$MAINREPO.masterkey
 if [ -f $MASTERKEY ]; then
     # on stratum 0 with masterkey installed
-    if [ -z "$REPONAME" ]; then
-	echo "$ME: no repository name found in $1/.cvmfswhitelist" >&2
-	exit 1
-    fi
+    # all we need here is a signed .cvmfswhitelist 
     REPODIR="/srv/cvmfs/$REPONAME"
     mkdir -p $REPODIR
     cp $TMPFILE $REPODIR/.cvmfswhitelist
     $MYDIR/resign_osg_whitelist "$REPONAME"
-elif [ -f /etc/cvmfs/repositories.d/$STRATUM0/replica.conf ]; then
-    # on stratum 1
+elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
+    # on stratum 1, create the replica
+    if [ -f /etc/cvmfs/repositories.d/$REPONAME/replica.conf ]; then
+	echo "Repository already exists, aborting" >&2
+	exit 1
+    fi
     DOMAIN=${REPONAME#*.}
     PUBKEY="/etc/cvmfs/keys/$DOMAIN.pub"
     if [ ! -f "$PUBKEY" ]; then
@@ -68,8 +81,26 @@ elif [ -f /etc/cvmfs/repositories.d/$STRATUM0/replica.conf ]; then
 	    exit 1
 	fi
     fi
-    cvmfs_server add-replica -o root $1 $PUBKEY
+    if [ -d /srv/cvmfs/$REPONAME ]; then
+	echo "Saving old /srv/cvmfs/$REPONAME data" >&2
+	if [ -d /srv/cvmfs/.$REPONAME.save ]; then
+	    echo " ... but saved data already existed, aborting" >&2
+	    exit 1
+	fi
+	mv /srv/cvmfs/$REPONAME /srv/cvmfs/.$REPONAME.save
+    fi
+    RET=0
+    if ! cvmfs_server add-replica -o root $REPOURL $PUBKEY$EXTRAPUBKEY; then
+	RET=1
+    fi
+    if [ -d /srv/cvmfs/.$REPONAME.save ]; then
+	rm -rf /srv/cvmfs/$REPONAME
+	mv /srv/cvmfs/.$REPONAME.save /srv/cvmfs/$REPONAME
+    fi
     rm -f /etc/httpd/conf.d/cvmfs.$REPONAME.conf
+    if [ $RET != 0 ]; then
+	exit $RET
+    fi
     # make this also look like a master because other stratum 1s
     #   may read from it
     touch /srv/cvmfs/$REPONAME/.cvmfs_master_replica
