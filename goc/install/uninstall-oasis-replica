@@ -25,7 +25,6 @@ service frontier-squid stop
 service httpd stop
 service netfs stop
 chkconfig netfs off
-rm -f /etc/rc3.d/S24dnsmasq
 sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
 rmdir /srv
 rm -rf /oasissrv
