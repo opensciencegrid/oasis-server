@@ -1,7 +1,7 @@
 #!/bin/bash
 
 LOCKPFX="/net/nas01/Public/"
-case "`uname -n|cut -d. -f1`" in
+case "`hostname -s`" in
     *-itb) LOCKPFX=${LOCKPFX}itb_;;
 esac
 
