@@ -53,7 +53,7 @@ if [ -f /srv/cvmfs/$REPO/pub/catalogs/.cvmfs_master_replica ]; then
     cvmfs_server publish
 elif [ -f /srv/cvmfs/$REPO/.cvmfs_master_replica ]; then
     # cvmfs 2.1.x
-    TMPFILE="/tmp/setrepoprop$$"
+    TMPFILE="`mktemp /tmp/setrepoprop.XXXXXXXXXX`"
     trap "rm -f ${TMPFILE}*" 0
     cvmfs_server transaction $REPO
     mknod $TMPFILE.in p

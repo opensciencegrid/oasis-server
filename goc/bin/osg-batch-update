@@ -1,5 +1,5 @@
 #!/bin/bash
-TMPFILE=/tmp/batch_update$$
+TMPFILE=`mktemp /tmp/batch_update.XXXXXXXXXX`
 trap "rm -f $TMPFILE" 0
 cat >$TMPFILE <<xEOFx
 Universe   = vanilla

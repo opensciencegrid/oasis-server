@@ -39,9 +39,9 @@ for name; do
     echo `date -u "+%Y%m%d%H%M%S"` > ${whitelist}.unsigned
     echo "E`date -u --date='+30 days' "+%Y%m%d%H%M%S"`" >> ${whitelist}.unsigned
     # copy the repo name and the fingerprint(s) from original
-    awk '/^N/ {doprint=1}
+    cat -v ${whitelist} | awk '/^N/ {doprint=1}
 	 /^--/ {exit}
-	 doprint==1 {print}' ${whitelist} >> ${whitelist}.unsigned
+	 doprint==1 {print}' >> ${whitelist}.unsigned
     sha1=`cat ${whitelist}.unsigned | openssl sha1 | head -c40`
     echo "--" >> ${whitelist}.unsigned
     echo $sha1 >> ${whitelist}.unsigned

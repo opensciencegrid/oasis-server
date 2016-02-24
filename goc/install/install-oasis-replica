@@ -49,7 +49,7 @@ CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
-OASISVER=2.1.0
+OASISVER=2.1.1
 OASISSUBVER=1.osg32.el5
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -215,35 +215,33 @@ chkconfig nfslock on
 service nfslock start
 
 # on itb install also the oasis-itb pub key and read from oasis-itb
-OASISPUBKEYS=/etc/cvmfs/keys/opensciencegrid.org.pub
+EXTRAPUBKEY=""
 case $MYSHORTNAME in
     *-itb)
 	cp "`echo $NETSRVDIR|sed 's/-replica-itb//'`"/etc/cvmfs/oasis-itb.opensciencegrid.org.pub /etc/cvmfs/keys
-	OASISPUBKEYS="$OASISPUBKEYS:/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub"
+	EXTRAPUBKEY="/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub"
 	REPOURLS="http://oasis-itb.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org"
 	;;
     *)
 	REPOURLS="http://oasis.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org"
 	;;
 esac
-REPOURLS="$REPOURLS http://cvmfs-stratum0.gridpp.rl.ac.uk:8000/cvmfs/config-egi.egi.eu"
-# usatlast3 is unreliable, let it be added later by generate_replicas
-REPOURLS="$REPOURLS `print_osg_repos -u|grep -v usatlast3`"
+
+# add repos hosted on our stratum 0
 for URL in $REPOURLS; do
-    REPO="`basename $URL`"
-    if [ -d /srv/cvmfs/$REPO ]; then
-	mv /srv/cvmfs/$REPO /srv/cvmfs/.$REPO.ins
-    fi
-    if [ "$REPO" = "oasis.opensciencegrid.org" ]; then
-	cvmfs_server add-replica -o root $URL $OASISPUBKEYS
-	rm /etc/httpd/conf.d/cvmfs.$REPO.conf
-    else
-	add_osg_repository -a "$URL"
-    fi
-    if [ -d /srv/cvmfs/.$REPO.ins ]; then
-	rm -rf /srv/cvmfs/$REPO
-	mv /srv/cvmfs/.$REPO.ins /srv/cvmfs/$REPO
-    fi
+    add_osg_repository -a "$URL" $EXTRAPUBKEY
+done
+
+# add other repos not registered in OIM
+REPOURLS="http://cvmfs-stratum0.gridpp.rl.ac.uk:8000/cvmfs/config-egi.egi.eu"
+for URL in $REPOURLS; do
+    add_osg_repository -a "$URL"
+done
+
+# Add repos registered in OIM.  It's OK if these fail because they will
+#  be added later by the generate_replicas cron.
+for URL in `print_osg_repos -u`; do
+    add_osg_repository -a "$URL" || true
 done
 
 # make copies of .cvmfswhitelists from oasis
