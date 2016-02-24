@@ -4,7 +4,7 @@
 
 ME="`basename $0`"
 MYDIR="`dirname $0`"
-case "`uname -n|cut -d. -f1`" in
+case "`hostname -s`" in
     *-itb) 
 	STRATUM0=oasis-itb.opensciencegrid.org
 	STRATUM1=oasis-replica-itb.opensciencegrid.org
@@ -78,7 +78,7 @@ wget -qO/dev/null --header="Pragma: no-cache" http://localhost:8000/cvmfs/$REPO/
 echo 
 echo "Attempting to add $REPO on $STRATUM0"
 OASISCMD="$MYDIR/add_osg_repository http://$STRATUM1:8000/cvmfs/$REPO"
-if ! ssh -o ConnectTimeout=10 $STRATUM0 $OASISCMD; then
+if ! ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no $STRATUM0 $OASISCMD; then
     echo "Could not ssh to $STRATUM0 so run the following by hand there" 2>&1
     echo "  $OASISCMD" 2>&1
     echo -n "and then hit return to continue: " 2>&1
