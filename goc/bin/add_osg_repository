@@ -62,6 +62,7 @@ if [ -f $MASTERKEY ]; then
     REPODIR="/srv/cvmfs/$REPONAME"
     mkdir -p $REPODIR
     cp $TMPFILE $REPODIR/.cvmfswhitelist
+    chmod 644 $REPODIR/.cvmfswhitelist
     $MYDIR/resign_osg_whitelist "$REPONAME"
 elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
     # on stratum 1, create the replica
