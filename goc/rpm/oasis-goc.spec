@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.0
+Version: 2.1.1
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -78,5 +78,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Wed Feb 24 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.1-1
+- Include a bunch of minor changes.  For details see tickets OO-122, 
+  OO-111, OO-109, OO-108, and OO-107.
+
 * Fri Feb 19 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.0-1
 - Extracted goc-specific pieces out of oasis package
