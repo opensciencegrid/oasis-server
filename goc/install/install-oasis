@@ -45,11 +45,11 @@ esac
 ARCH=`arch`
 AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
 CVMFSRELRPM=cvmfs-release-2-4.el5.noarch.rpm
-CVMFSVER=2.1.20
+CVMFSVER=2.2.1
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
-CVMFSCONFIGRPM=cvmfs-config-default-1.1-1.noarch.rpm
-OASISVER=2.1.1
+CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
+OASISVER=2.1.2
 OASISSUBVER=1.osg32.el5
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -149,27 +149,18 @@ chkconfig nfslock on
 service nfslock start
 
 if [ -d /srv/cvmfs/oasis.opensciencegrid.org ]; then
-    # old repository data present.  save it for later
-    mkdir -p /srv/cvmfs.save
-    mv /srv/cvmfs/oasis.opensciencegrid.org /srv/cvmfs.save
-fi
-
-# Use this new code with cvmfs-server-2.2.0
-# Then the code saving /srv/cvmfs.save above and restoring below can also
-#   be deleted.
-#if [ -d /srv/cvmfs/oasis.opensciencegrid.org ]; then
-#    # Old oasis repository data present.  Use import instead of mkfs.
-#    # It expects a masterkey and pub to be present from before.
-#    # Use ITB key for now and replace later.
-#    for KEY in pub masterkey; do
-#	cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/oasis.opensciencegrid.org.$KEY
-#	chown oasis /etc/cvmfs/oasis.opensciencegrid.org.$KEY
-#    done
-#    cvmfs_server import -r -t -o oasis oasis.opensciencegrid.org
-#else
+    # Old oasis repository data present.  Use import instead of mkfs.
+    # It expects a masterkey and pub to be present from before.
+    # Use ITB key for now and replace later.
+    for KEY in pub masterkey; do
+	cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/oasis.opensciencegrid.org.$KEY
+	chown oasis /etc/cvmfs/keys/oasis.opensciencegrid.org.$KEY
+    done
+    cvmfs_server import -r -t -o oasis oasis.opensciencegrid.org
+else
     # add oasis repo
     CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
-#fi
+fi
 echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
 echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
@@ -203,28 +194,6 @@ case $MYSHORTNAME in
 esac
 
 RUNUSER="runuser -s /bin/bash oasis -c"
-
-REPONAME=oasis.opensciencegrid.org
-if [ -d /srv/cvmfs.save/$REPONAME ]; then
-    # restore old repository data
-    # update the old .cvmfspublished with new certificate hash
-    CERTHASH="`cat -v /srv/cvmfs/$REPONAME/.cvmfspublished|sed -n '/^X/{s/^X//p;q}'`"
-    $RUNUSER "cd /srv/cvmfs.save/$REPONAME; cat -v .cvmfspublished | \
-	    sed 's/^X.*/X'$CERTHASH'/;/^--/q' > .cvmfspublished.unsigned"
-    CERTPATH="`echo $CERTHASH|sed 's,^\(..\),\1/,'`X"
-    $RUNUSER "cp /srv/cvmfs/$REPONAME/data/$CERTPATH /srv/cvmfs.save/$REPONAME/data/$CERTPATH"
-    rm -rf /srv/cvmfs/$REPONAME
-    mv /srv/cvmfs.save/$REPONAME /srv/cvmfs/$REPONAME
-    rmdir /srv/cvmfs.save
-    UPSTREAM="`sed -n 's/^CVMFS_UPSTREAM_STORAGE=//p' /etc/cvmfs/repositories.d/$REPONAME/server.conf`"
-    $RUNUSER "cd /srv/cvmfs/$REPONAME; cvmfs_swissknife sign -c /etc/cvmfs/keys/$REPONAME.crt -k /etc/cvmfs/keys/$REPONAME.key -n $REPONAME -m .cvmfspublished.unsigned -t /var/spool/cvmfs/$REPONAME/tmp -r $UPSTREAM; rm -f cvmfspublished.unsigned"
-    cvmfs_server resign
-
-    # sync up the view in /cvmfs/oasis.opensciencegrid.org with
-    #   new underlying data
-    $RUNUSER "cvmfs_server transaction"
-    $RUNUSER "cvmfs_server publish"
-fi
 
 # Manage repository content special content
 
