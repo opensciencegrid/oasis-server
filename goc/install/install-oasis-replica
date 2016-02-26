@@ -220,12 +220,18 @@ case $MYSHORTNAME in
     *-itb)
 	cp "`echo $NETSRVDIR|sed 's/-replica-itb//'`"/etc/cvmfs/oasis-itb.opensciencegrid.org.pub /etc/cvmfs/keys
 	EXTRAPUBKEY="/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub"
-	REPOURLS="http://oasis-itb.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org"
+	ITB="-itb"
 	;;
     *)
-	REPOURLS="http://oasis.opensciencegrid.org:8000/cvmfs/oasis.opensciencegrid.org"
+	ITB=""
 	;;
 esac
+
+REPOURLS=""
+for REPO in oasis config-osg; do
+    REPOURLS="$REPOURLS http://oasis$ITB.opensciencegrid.org:8000/cvmfs/$REPO.opensciencegrid.org"
+done
+ALLREPOURLS="$REPOURLS"
 
 # add repos hosted on our stratum 0
 for URL in $REPOURLS; do
@@ -234,13 +240,16 @@ done
 
 # add other repos not registered in OIM
 REPOURLS="http://cvmfs-stratum0.gridpp.rl.ac.uk:8000/cvmfs/config-egi.egi.eu"
+ALLREPOURLS="$ALLREPOURLS $REPOURLS"
 for URL in $REPOURLS; do
     add_osg_repository -a "$URL"
 done
 
 # Add repos registered in OIM.  It's OK if these fail because they will
 #  be added later by the generate_replicas cron.
-for URL in `print_osg_repos -u`; do
+REPOURLS="`print_osg_repos -u`"
+ALLREPOURLS="$ALLREPOURLS $REPOURLS"
+for URL in $REPOURLS; do
     add_osg_repository -a "$URL" || true
 done
 
@@ -249,7 +258,7 @@ mkdir -p /oasissrv/cvmfs
 /usr/share/oasis/replicate_whitelists
 
 # do initial snapshots for those repos that need it
-for URL in $REPOURLS; do
+for URL in $ALLREPOURLS; do
     REPO="`basename $URL`"
     if [ ! -f /srv/cvmfs/$REPO/.cvmfspublished ]; then
 	cvmfs_server snapshot $REPO

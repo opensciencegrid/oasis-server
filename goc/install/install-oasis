@@ -148,23 +148,37 @@ service gociptables restart
 chkconfig nfslock on
 service nfslock start
 
-if [ -d /srv/cvmfs/oasis.opensciencegrid.org ]; then
-    # Old oasis repository data present.  Use import instead of mkfs.
-    # It expects a masterkey and pub to be present from before.
-    # Use ITB key for now and replace later.
-    for KEY in pub masterkey; do
-	cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/oasis.opensciencegrid.org.$KEY
-	chown oasis /etc/cvmfs/keys/oasis.opensciencegrid.org.$KEY
-    done
-    cvmfs_server import -r -t -o oasis oasis.opensciencegrid.org
-else
-    # add oasis repo
-    CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis oasis.opensciencegrid.org
-fi
-echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
-echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
-echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/oasis.opensciencegrid.org/server.conf
-rm -f /etc/httpd/conf.d/cvmfs.oasis.opensciencegrid.org.conf
+case $MYSHORTNAME in
+    *-itb)
+	# on itb install the saved itb pub & master key
+	if [ ! -f /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub ]; then
+	    # make a copy from production srv directory of itb pub and masterkey
+	    PRODSRVDIR="`echo $NETSRVDIR|sed 's/-itb//'`"
+	    mkdir -p /srv/etc/cvmfs
+	    cp $PRODSRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.* /srv/etc/cvmfs
+	fi
+	;;
+esac
+
+
+for REPO in oasis config-osg; do 
+    if [ -d /srv/cvmfs/$REPO.opensciencegrid.org ]; then
+	# Old repository data present.  Use import instead of mkfs.
+	# It expects a masterkey and pub to be present from before.
+	# Use ITB key for now and replace later when on production.
+	for KEY in pub masterkey; do
+	    cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/$REPO.opensciencegrid.org.$KEY
+	done
+	cvmfs_server import -r -t -o oasis $REPO.opensciencegrid.org
+    else
+	# add repo
+	CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis $REPO.opensciencegrid.org
+    fi
+    echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
+    echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
+    echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
+    rm -f /etc/httpd/conf.d/cvmfs.$REPO.opensciencegrid.org.conf
+done
 
 # move scratch dir to attached storage
 umount /cvmfs/oasis.opensciencegrid.org
@@ -177,27 +191,11 @@ sed -i -e "/^cvmfs2#oasis/i`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'`/spool/o
 mount /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
 mount /cvmfs/oasis.opensciencegrid.org
 
-# on itb install the saved itb pub & master key
-case $MYSHORTNAME in
-    *-itb)
-	if [ ! -f /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub ]; then
-	    # make a copy from production srv directory of itb pub and masterkey
-	    PRODSRVDIR="`echo $NETSRVDIR|sed 's/-itb//'`"
-	    mkdir -p /srv/etc/cvmfs
-	    cp $PRODSRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.* /srv/etc/cvmfs
-	fi
-	for KEY in pub masterkey; do
-	    cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/oasis.opensciencegrid.org.$KEY
-	done
-	cvmfs_server resign
-	;;
-esac
-
 RUNUSER="runuser -s /bin/bash oasis -c"
 
 # Manage repository content special content
 
-$RUNUSER "cvmfs_server transaction"
+$RUNUSER "cvmfs_server transaction oasis.opensciencegrid.org"
 
 if [ -f /cvmfs/oasis.opensciencegrid.org/new_repository ]; then
     # clean out initial file
@@ -233,7 +231,7 @@ if [ ! -L /cvmfs/oasis.opensciencegrid.org/osg-software/osg-wn-client ]; then
 fi
 
 sleep 2 # when auto tagging is on, cvmfs-2.1.20 complains if two publishes done in the same second
-$RUNUSER "cvmfs_server publish"
+$RUNUSER "cvmfs_server publish oasis.opensciencegrid.org"
 
 # add cron entries
 mkdir -p /var/log/oasis
@@ -274,8 +272,8 @@ let PREVREVISION+=100
 CURREVISION="`cat -v /srv/cvmfs/oasis.opensciencegrid.org/.cvmfspublished|sed -n '/^S/{s/^S//p;q;}'`"
 
 if [ "$PREVREVISION" -gt "$CURREVISION" ]; then
-    $RUNUSER "cvmfs_server transaction"
-    $RUNUSER "cvmfs_server publish -n $PREVREVISION"
+    $RUNUSER "cvmfs_server transaction oasis.opensciencegrid.org"
+    $RUNUSER "cvmfs_server publish -n $PREVREVISION oasis.opensciencegrid.org"
 fi
 
 set +x
@@ -292,7 +290,15 @@ for REPO in config-egi.egi.eu `print_osg_repos`; do
 done
 
 case $MYSHORTNAME in
-    *-itb) resign_osg_whitelist;;
+    *-itb) 
+	# The itb key will already be in place if the creation was an import,
+	#   but in case it was new do analogous steps to production (below)
+	for REPO in oasis config-osg; do
+	    rm /etc/cvmfs/keys/$REPO.opensciencegrid.org.masterkey
+	    cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/$REPO.opensciencegrid.org.$KEY
+	done
+	resign_osg_whitelist
+	;;
 esac
 
 echo
@@ -301,8 +307,10 @@ echo
 case $MYSHORTNAME in
     *-itb);;
     *)  # on prod remove the temporary masterkey and install official public key
-	rm /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
-	cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/oasis.opensciencegrid.org.pub
+	for REPO in oasis config-osg; do
+	    rm /etc/cvmfs/keys/$REPO.opensciencegrid.org.masterkey
+	    cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/$REPO.opensciencegrid.org.pub
+	done
 	echo "Now temporarily install /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey"
 	echo "   and run resign_osg_whitelist"
 esac
