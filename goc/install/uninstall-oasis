@@ -25,7 +25,7 @@ rm /etc/cron.d/oasis
 killall rsync
 killall cvmfs_swissknife
 service httpd stop
-service netfs stop
+service netfs stop # umounts nfs-mounted filesystems
 chkconfig netfs off
 sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
 rmdir /srv
@@ -34,6 +34,7 @@ yum -y remove oasis-goc oasis-goc-zero
 cvmfs_server rmfs -f oasis.opensciencegrid.org # removes partially
 umount /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
 cvmfs_server rmfs -f oasis.opensciencegrid.org # finishes the remove
+cvmfs_server rmfs -f config-osg.opensciencegrid.org
 rm /var/spool/cvmfs
 rm -rf /usr/spool/cvmfs
 rmdir /usr/spool
