@@ -1,0 +1,48 @@
+#!/bin/bash
+
+if grep -v '^#' /etc/cron.d/cvmfs | grep -q snapshot; then
+    echo "snapshots must be disabled during rebuild" >&2
+    exit 1
+fi
+
+set -ex
+cd /etc/cvmfs/repositories.d
+for REPO in *; do
+    case "$REPO" in
+	*-rebuild) continue;;
+    esac
+    ADU=/srv/cvmfs/$REPO/afterdu
+    if [ -f $ADU ]; then
+	continue
+    fi
+    if [ ! -d $REPO-rebuild ]; then
+	if [ "$REPO" = "oasis.opensciencegrid.org" ]; then
+	    SERVER=$REPO:8000
+	    KEY=/etc/cvmfs/keys/opensciencegrid.org.pub
+	else
+	    SERVER=localhost:8080
+	    KEY=/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub
+	fi
+	cvmfs_server add-replica -o root -n $REPO-rebuild http://$SERVER/cvmfs/$REPO $KEY
+    fi
+    BDU=/srv/cvmfs/$REPO-rebuild/beforedu
+    if [ ! -f $BDU ]; then
+	DUOUT="`cd /srv/cvmfs && du -ks $REPO`"
+	if [ -z "$DUOUT" ]; then
+	    exit 1
+	fi
+	echo "$DUOUT" >$BDU
+    fi
+    cvmfs_server snapshot $REPO-rebuild
+    touch /srv/cvmfs/$REPO/.cvmfs_master_replica
+    if [ "$REPO" = "oasis.opensciencegrid.org" ]; then
+	# read from production, so copy in whitelist signature of itb
+	cp /oasissrv/cvmfs/$REPO/.cvmfswhitelist /srv/cvmfs/$REPO
+    fi
+    DUOUT="`cd /srv/cvmfs && du -ks $REPO-rebuild|sed 's/-rebuild//'`"
+    mv /srv/cvmfs/$REPO /srv/cvmfs/$REPO-remove
+    mv /srv/cvmfs/$REPO-rebuild /srv/cvmfs/$REPO
+    echo "$DUOUT" >$ADU
+    cvmfs_server rmfs -f $REPO-rebuild
+    rm -rf /srv/cvmfs/$REPO-remove &
+done
