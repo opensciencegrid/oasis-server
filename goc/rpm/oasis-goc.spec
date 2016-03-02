@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.2
+Version: 2.1.3
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -78,6 +78,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Wed Mar  2 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.3-1
+- Add support for cvmfs-servermon rpm.
+
 * Wed Feb 24 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.2-1
 - Rebuild.  2.1.1 did not have the full correct set of source files
   because all the branches weren't merged together.
