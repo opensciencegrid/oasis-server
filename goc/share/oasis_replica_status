@@ -26,6 +26,7 @@ set_status()
 ## check for problems with repositories from cvmfs-servermon
 ## to see full detailed output see
 ## http://oasis-replica.opensciencegrid.org/cvmfsmon/api/v1.0/all&format=details
+## repositories can be excluded in /etc/cvmfsmon/api.conf
 
 critical_repos=""
 warning_repos=""
@@ -49,6 +50,10 @@ fi
 oldest_white_age=0
 whitelist_warning_repos=""
 for repo in `cd /etc/cvmfs/repositories.d;echo *.*`; do
+    if [ ! -f /srv/cvmfs/$repo/.cvmfspublished ]; then
+	# ignore repositories that haven't finished their initial snapshot
+	continue
+    fi
     whitemodded=`stat -c %Y /oasissrv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`
     if [ -n "$whitemodded" ]; then
         now=`date +%s`
