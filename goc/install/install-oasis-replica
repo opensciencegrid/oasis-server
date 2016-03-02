@@ -46,10 +46,11 @@ CVMFSVER=2.2.1
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
+CVMFSSERVERMONRPM=cvmfs-servermon-1.1-1.el5.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-2.7.STABLE9-22.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-3.1.noarch.rpm
-OASISVER=2.1.2
+OASISVER=2.1.3
 OASISSUBVER=1.osg32.el5
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -112,11 +113,13 @@ rpm -i $CVMFSRELRPM
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
 rpm -e cvmfs-release
 rm $CVMFSRELRPM
-CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
+CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM $CVMFSSERVERMONRPM"
 curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
 curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
 curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
-yum -y install $CVRPMS
+curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-servermon/$CVMFSSERVERMONRPM
+# need nogpg for now because cvmfs-servermon is not yet signed
+yum -y --nogpg install $CVRPMS
 rm $CVRPMS
 cp /etc/cvmfs/keys/egi.eu/egi.eu.pub /etc/cvmfs/keys
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys

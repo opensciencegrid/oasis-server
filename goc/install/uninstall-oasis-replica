@@ -44,7 +44,7 @@ rpm -e frontier-release
 for r in `rpm -qa|grep gpg-pubkey|sed 's/\.(none)//'|sort -u`; do
     rpm --allmatches -e $r
 done
-yum -y remove httpd fuse fuse-libs cvmfs-config gdb
+yum -y remove httpd fuse fuse-libs cvmfs-config gdb python-anyjson python-dateutil
 rm -rf /var/log/httpd
 rm -rf /etc/cvmfs
 sed -i '/nofile.*16384/d' /etc/security/limits.conf
