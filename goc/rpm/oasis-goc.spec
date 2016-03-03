@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.3
+Version: 2.1.4
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -55,7 +55,6 @@ Group: Development/Libraries
 This package contains files for oasis-replica.opensciencegrid.org
 
 %files replica
-/etc/cvmfs/cvmfs_server_hooks.sh
 /etc/init.d/oasis-replica-initclean
 /etc/httpd/conf.d/cvmfs.conf
 /etc/iptables.d/60-local-cvmfs
@@ -71,15 +70,21 @@ Group: Development/Libraries
 This package contains files for oasis-login.opensciencegrid.org
 
 %files login
-/etc/init.d/oasis-login-initclean
 /etc/iptables.d/60-local-oasis-login
 /etc/sysconfig/gsisshd
 %defattr(-,root,root)
 
 
 %changelog
+* Wed Mar  2 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.4-1
+- Automatically add missing external repositories to oasis-itb (OO-124)
+- Prevent warning when a repo hasn't finished initial snapshot (OO-115)
+- Eliminate a file in communication between oasis and oasis-login (OO-116)
+- Remove /etc/cvmfs/cvmfs_server_hooks.sh on oasis-replica.  It's not
+    needed anymore with cvmfs-server-2.2.X (OO-126).
+
 * Wed Mar  2 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.3-1
-- Add support for cvmfs-servermon rpm.
+- Add support for cvmfs-servermon rpm (OO-125)
 
 * Wed Feb 24 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.2-1
 - Rebuild.  2.1.1 did not have the full correct set of source files
