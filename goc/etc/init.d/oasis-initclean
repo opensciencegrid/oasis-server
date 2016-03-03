@@ -7,5 +7,5 @@ if [ "$1" = "start" ]; then
     if [ "`uname -n|cut -d. -f1`" != oasis ]; then
 	LOCKPFX=${LOCKPFX}itb_
     fi
-    rm -f ${LOCKPFX}oasis_update_in_progress
+    rm -f ${LOCKPFX}oasis_update_in_progress ${LOCKPFX}oasis_update_requested_vo
 fi
