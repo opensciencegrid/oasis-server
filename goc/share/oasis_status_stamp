@@ -124,7 +124,7 @@ sig_age=`expr $sig_age / 86400`
 
 # look for old lock file age
 oldest_lock_age=-1
-for lockf in vo_update_requested oasis_update_in_progress oasis_update_lock; do
+for lockf in oasis_update_requested_vo oasis_update_in_progress; do
     if [ -f ${LOCKPFX}$lockf ]; then
 	update_time=`ls -la --time-style +%s ${LOCKPFX}$lockf | awk '{print $6}'`
 	lock_age=`expr $now - $update_time`

@@ -37,15 +37,11 @@ fi
 
 # look for old lock file age
 oldest_lock_age=-1
-for lockf in vo_update_requested oasis_update_lock; do
-    if [ -f ${LOCKPFX}$lockf ]; then
-	update_time=`ls -la --time-style +%s ${LOCKPFX}$lockf | awk '{print $6}'`
-	lock_age=`expr $now - $update_time`
-	if [ $lock_age -gt $oldest_lock_age ]; then
-	    oldest_lock_age=$lock_age
-	fi
-    fi
-done
+lockf=oasis_update_requested_vo
+if [ -f ${LOCKPFX}$lockf ]; then
+    update_time=`ls -la --time-style +%s ${LOCKPFX}$lockf | awk '{print $6}'`
+    oldest_lock_age=`expr $now - $update_time`
+fi
 
 if [ $oldest_lock_age -ge $max_lock_age ] ; then
 ## go to critical

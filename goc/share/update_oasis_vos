@@ -23,13 +23,12 @@ for VO in `/usr/share/oasis/print_oasis_vonames`; do
 	# already up to date, nothing to do
 	continue
     fi
-    if [ -f ${LOCKPFX}vo_update_requested ]; then
-	echo "Skipping update for $VO because `cat ${LOCKPFX}vo_update_requested` update in progress"
+    if [ -f ${LOCKPFX}oasis_update_requested_vo ]; then
+	echo "Skipping update for $VO because `cat ${LOCKPFX}oasis_update_requested_vo` update in progress"
 	exit 1
     fi
     echo "Requesting update for $VO at `date`"
-    echo $VO >${LOCKPFX}vo_update_requested
     # this waits for the request to complete
-    /usr/share/oasis/request_oasis_update
-    rm ${LOCKPFX}vo_update_requested
+    /usr/share/oasis/request_oasis_update $VO
 done
+
