@@ -6,6 +6,14 @@ case "`hostname -s`" in
     *-itb) LOCKPFX=${LOCKPFX}itb_;;
 esac
 
+for URL in `print_osg_repos -u`; do
+    REPO="`basename $URL`"
+    if [ ! -d /srv/cvmfs/$REPO ]; then
+	echo "Adding repository $REPO at `date`"
+	add_osg_repository $URL
+    fi
+done
+
 for VO in `/usr/share/oasis/print_oasis_vonames`; do
     if [ ! -f /net/nas01/Public/ouser.$VO/update.details ]; then
 	# skip because it hasn't been published yet
