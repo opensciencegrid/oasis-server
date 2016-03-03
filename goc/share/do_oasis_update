@@ -10,7 +10,7 @@ if [ ! -d /var/log/oasis/ ]; then
     exit
 fi
 ## was an update requested?
-if [ -f ${LOCKPFX}oasis_update_lock ]; then
+if [ -f ${LOCKPFX}oasis_update_requested_vo ]; then
 ## update was requested
 ## is an update in progress?
     if [ -f ${LOCKPFX}oasis_update_in_progress ]; then
@@ -19,54 +19,47 @@ if [ -f ${LOCKPFX}oasis_update_lock ]; then
     fi
     echo $$ >${LOCKPFX}oasis_update_in_progress
     runuser="/sbin/runuser -s /bin/bash oasis -c"
-    if [ -f ${LOCKPFX}vo_update_requested ]; then
-##      updating a single VO
-	vo=`cat ${LOCKPFX}vo_update_requested`
-	now=`date`
-	echo "$now starting vo update for $vo"
-	if ! $runuser "cvmfs_server transaction oasis.opensciencegrid.org"; then
-	    echo "transaction failed, trying abort and transaction again"
-	    $runuser "cvmfs_server abort -f oasis.opensciencegrid.org"
-	    $runuser "cvmfs_server transaction oasis.opensciencegrid.org"
-	fi
-
-	# first see if .cvmfsdirtab needs to be updated
-	SRCDIRTAB=$SRVDIR/etc/repo/.cvmfsdirtab
-	DSTDIRTAB=/cvmfs/oasis.opensciencegrid.org/.cvmfsdirtab
-	if [ ! -f $DSTDIRTAB ]; then
-	    # sanity check failed
-	    echo "$DSTDIRTAB not found, aborting"
-	    exit
-	fi
-	if cmp $SRCDIRTAB $DSTDIRTAB >/dev/null 2>&1; then
-	    : no change
-	else
-	    echo "updating .cvmfsdirtab from $SRCDIRTAB"
-	    $runuser "cp $SRCDIRTAB $DSTDIRTAB"
-	fi
-
-	$runuser "/usr/share/oasis/cvmfs_rsync -aW --stats --delete --force --ignore-errors /net/nas01/Public/ouser.$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
-
-	now=`date`
-	echo "$now starting cvmfs_server publish"
-	# increase the maximum number of open files because cvmfs_server
-	#   keeps all catalogs it is working with open simultaneously
-	ulimit -n 32768
-	$runuser "cvmfs_server publish oasis.opensciencegrid.org"
-	stat=$?
-	now=`date`
-	if [ $stat -eq 0 ]; then
-	    echo "$now finished cvmfs_server publish"
-	else
-	    echo "$now cvmfs-server publish returned $stat" >&2
-	    echo "$now finished cvmfs_server publish" >&2
-	fi
-    else
-	now=`date`
-	echo "$now no ${LOCKPFX}vo_update_requested found, cleaning up ${LOCKPFX}oasis_update_lock" >&2
+    vo=`cat ${LOCKPFX}oasis_update_requested_vo`
+    now=`date`
+    echo "$now starting vo update for $vo"
+    if ! $runuser "cvmfs_server transaction oasis.opensciencegrid.org"; then
+	echo "transaction failed, trying abort and transaction again"
+	$runuser "cvmfs_server abort -f oasis.opensciencegrid.org"
+	$runuser "cvmfs_server transaction oasis.opensciencegrid.org"
     fi
-    rm -f ${LOCKPFX}oasis_update_in_progress
-    rm -f ${LOCKPFX}oasis_update_lock
+
+    # first see if .cvmfsdirtab needs to be updated
+    SRCDIRTAB=$SRVDIR/etc/repo/.cvmfsdirtab
+    DSTDIRTAB=/cvmfs/oasis.opensciencegrid.org/.cvmfsdirtab
+    if [ ! -f $DSTDIRTAB ]; then
+	# sanity check failed
+	echo "$DSTDIRTAB not found, aborting"
+	exit
+    fi
+    if cmp $SRCDIRTAB $DSTDIRTAB >/dev/null 2>&1; then
+	: no change
+    else
+	echo "updating .cvmfsdirtab from $SRCDIRTAB"
+	$runuser "cp $SRCDIRTAB $DSTDIRTAB"
+    fi
+
+    $runuser "/usr/share/oasis/cvmfs_rsync -aW --stats --delete --force --ignore-errors /net/nas01/Public/ouser.$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
+
+    now=`date`
+    echo "$now starting cvmfs_server publish"
+    # increase the maximum number of open files because cvmfs_server
+    #   keeps all catalogs it is working with open simultaneously
+    ulimit -n 32768
+    $runuser "cvmfs_server publish oasis.opensciencegrid.org"
+    stat=$?
+    now=`date`
+    if [ $stat -eq 0 ]; then
+	echo "$now finished cvmfs_server publish"
+    else
+	echo "$now cvmfs-server publish returned $stat" >&2
+	echo "$now finished cvmfs_server publish" >&2
+    fi
+    rm -f ${LOCKPFX}oasis_update_requested_vo ${LOCKPFX}oasis_update_in_progress
 fi >>/var/log/oasis/updates.log 2>&1
 exit 0
 

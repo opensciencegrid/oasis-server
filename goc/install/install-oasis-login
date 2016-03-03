@@ -38,7 +38,7 @@ case "$MYSHORTNAME" in
 esac
 
 ARCH=`arch`
-OASISVER=2.1.2
+OASISVER=2.1.4
 OASISSUBVER=1.osg32.el5
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.noarch.rpm

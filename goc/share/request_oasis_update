@@ -5,10 +5,15 @@ case "`hostname -s`" in
     *-itb) LOCKPFX=${LOCKPFX}itb_;;
 esac
 
-## A cron job will detect that this file exists
-touch ${LOCKPFX}oasis_update_lock
+if [ -z "$1" ]; then
+    echo 'Usage: request_oasis_update voname' >&2
+    exit 1
+fi
+
+## A cron job will detect that this file exists and remove it when finished
+echo $1 > ${LOCKPFX}oasis_update_requested_vo
 
 ## don't return until the update is complete
-while [ -f ${LOCKPFX}oasis_update_lock ]; do
+while [ -f ${LOCKPFX}oasis_update_requested_vo ]; do
     sleep 10
 done

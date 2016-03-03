@@ -9,8 +9,10 @@ case "`hostname -s`" in
     *-itb) LOCKPFX=${LOCKPFX}itb_;;
 esac
 
-while [ -f ${LOCKPFX}vo_update_requested ]
+while [ -f ${LOCKPFX}oasis_update_requested_vo ]
 do
+   # normally shouldn't happen since this runs from a batch queue, but
+   #  can happen after a reboot or condor_rm
    sleep 60
 done
 
@@ -25,7 +27,6 @@ if [ $vo ]; then
 
 ##     home directory for VO exists
        echo "Found /home/ouser.$vo"
-       echo $vo > ${LOCKPFX}vo_update_requested
        mkdir -p /net/nas01/Public/ouser.$vo
 
 #
@@ -51,9 +52,8 @@ if [ $vo ]; then
        cp /tmp/update.details /net/nas01/Public/ouser.$vo/update.details
        rm /tmp/update.details
        echo "Beginning oasis server update"
-       . /usr/share/oasis/request_oasis_update
+       . /usr/share/oasis/request_oasis_update $vo
        echo "Finished, publish_age here: http://oasis.opensciencegrid.org/stamp should be zero"
-       rm -f ${LOCKPFX}vo_update_requested
        exit 0
    else
        echo "/home/ouser.$vo does not exist"
