@@ -38,7 +38,7 @@ case "$MYSHORTNAME" in
 esac
 
 ARCH=`arch`
-OASISVER=2.1.4
+OASISVER=2.1.5
 OASISSUBVER=1.osg32.el5
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -61,9 +61,26 @@ wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISS
 wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
 yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
-chkconfig oasis-login-initclean on
 
 service gociptables restart
+
+# mount /stage and /home/login directories
+if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
+    echo "vm08:/oasis-share/stage /stage			nfs 	vers=3	 	0 0" >>/etc/fstab
+fi
+mkdir -p /stage
+if ! grep -q "[ \t]/home/login[ \t]" /etc/fstab; then
+    echo "vm08:/oasis-share/home/login /home/login	nfs 	vers=3	 	0 0" >>/etc/fstab
+fi
+mkdir -p /home/login
+
+# need netfs to mount NFS at boot
+chkconfig netfs on
+service netfs start
+
+# make convenience link
+mkdir -p /cvmfs
+ln -s /stage/oasis /cvmfs/oasis.opensciencegrid.org
 
 # install gsisshd and gsissh clients (client needed for gsiscp)
 yum -y install gsi-openssh-server $GSISSHCLIENTS
@@ -91,12 +108,12 @@ TMPF=/tmp/install-oasis-login-$$
 /usr/share/oasis/generate_adduser >$TMPF.1
 while read CMD; do
     OUSER="`echo "$CMD"|awk '{print $3}'`"
-    if [ ! -d /net/nas01/Public/$OUSER ]; then
+    if [ ! -d /stage/oasis/$OUSER ]; then
 	# wasn't there before, let the cron create it
 	continue
     fi
-    uid="`stat -c '%u' /net/nas01/Public/$OUSER`"
-    gid="`stat -c '%g' /net/nas01/Public/$OUSER`"
+    uid="`stat -c '%u' /stage/oasis/$OUSER`"
+    gid="`stat -c '%g' /stage/oasis/$OUSER`"
     groupadd -g $gid $OUSER
     eval "`echo "$CMD"|sed "s/useradd/useradd -u $uid -g $gid/"`"
 done <$TMPF.1

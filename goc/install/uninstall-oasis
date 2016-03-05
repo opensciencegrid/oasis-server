@@ -28,7 +28,8 @@ service httpd stop
 service netfs stop # umounts nfs-mounted filesystems
 chkconfig netfs off
 sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
-rmdir /srv
+sed -i '/[ \t]\/stage[ \t]/d' /etc/fstab
+rmdir /srv /stage
 chkconfig oasis-initclean off
 yum -y remove oasis-goc oasis-goc-zero
 cvmfs_server rmfs -f oasis.opensciencegrid.org # removes partially
