@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.4
+Version: 2.1.5
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -76,24 +76,27 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
-* Wed Mar  2 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.4-1
+* Thu Mar  3 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.5-1
+- Remove dependency on nas01 (OO-120)
+
+* Wed Mar  2 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.4-1
 - Automatically add missing external repositories to oasis-itb (OO-124)
 - Prevent warning when a repo hasn't finished initial snapshot (OO-115)
 - Eliminate a file in communication between oasis and oasis-login (OO-116)
 - Remove /etc/cvmfs/cvmfs_server_hooks.sh on oasis-replica.  It's not
     needed anymore with cvmfs-server-2.2.X (OO-126).
 
-* Wed Mar  2 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.3-1
+* Wed Mar  2 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.3-1
 - Add support for cvmfs-servermon rpm (OO-125)
 
-* Wed Feb 24 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.2-1
+* Wed Feb 24 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.2-1
 - Rebuild.  2.1.1 did not have the full correct set of source files
   because all the branches weren't merged together.
 - Fix permission of whitelist created; mktemp made it mode 600.
 
-* Wed Feb 24 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.1-1
+* Wed Feb 24 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.1-1
 - Include a bunch of minor changes.  For details see tickets OO-122, 
   OO-111, OO-109, OO-108, and OO-107.
 
-* Fri Feb 19 2015 Dave Dykstra <dwd@fnal.gov> - 2.1.0-1
+* Fri Feb 19 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.0-1
 - Extracted goc-specific pieces out of oasis package
