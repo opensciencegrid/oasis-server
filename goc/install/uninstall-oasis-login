@@ -12,6 +12,14 @@ case "`uname -n`" in
 	;;
 esac
 
+case $0 in
+    /tmp/*);;
+    *)  # get out of NFS filesystem because netfs stop kills it
+	cp $0 /tmp
+	exec /tmp/uninstall-oasis-login
+	;;
+esac
+
 case `lsb_release -a|sed -n 's/Release:[ \t]*\([0-9]\)*.*/\1/p'` in
     5)  EXTRACONDORPKG=perl-DateManip
 	EXTRAHTTPDPKGS=
@@ -40,7 +48,7 @@ grep "^ouser\." /etc/passwd|cut -d: -f1|while read OUSER; do
     userdel -r $OUSER
 done
 grep "^ouser\." /etc/group|cut -d: -f1|while read OUSER; do
-    groupdel -r $OUSER
+    groupdel $OUSER
 done
 rm /etc/grid-security/grid-mapfile
 yum -y remove $GCCPKGS
@@ -51,10 +59,15 @@ rm /etc/gsissh/*
 rmdir /etc/gsissh
 # reverse yum install condor
 yum -y remove blahp condor-classads $EXTRACONDORPKG perl-XML-Simple globus-io globus-rsl gsoap voms globus-gssapi-error
-chkconfig oasis-login-initclean off
 yum -y remove oasis-goc oasis-goc-login
 rm -rf /etc/oasis
 service gociptables restart
+service netfs stop # umounts nfs-mounted filesystems
+chkconfig netfs off
+sed -i '/[ \t]\/stage[ \t]/d' /etc/fstab
+sed -i '/[ \t]\/home\/login[ \t]/d' /etc/fstab
+rm /cvmfs/oasis.opensciencegrid.org
+rmdir /stage /home/login /cvmfs
 service httpd stop
 rm -f /var/www/html/stamp
 yum -y remove httpd $EXTRAHTTPDPKGS

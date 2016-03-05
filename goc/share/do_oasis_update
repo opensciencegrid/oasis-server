@@ -1,5 +1,5 @@
 #!/bin/bash
-LOCKPFX="/net/nas01/Public/"
+LOCKPFX="/stage/locks/"
 SRVDIR="/srv"
 if [ "`hostname -s`" != oasis ]; then
     LOCKPFX=${LOCKPFX}itb_
@@ -43,7 +43,7 @@ if [ -f ${LOCKPFX}oasis_update_requested_vo ]; then
 	$runuser "cp $SRCDIRTAB $DSTDIRTAB"
     fi
 
-    $runuser "/usr/share/oasis/cvmfs_rsync -aW --stats --delete --force --ignore-errors /net/nas01/Public/ouser.$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
+    $runuser "/usr/share/oasis/cvmfs_rsync -aW --stats --delete --force --ignore-errors /stage/oasis/$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
 
     now=`date`
     echo "$now starting cvmfs_server publish"

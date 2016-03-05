@@ -49,7 +49,7 @@ CVMFSVER=2.2.1
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
-OASISVER=2.1.4
+OASISVER=2.1.5
 OASISSUBVER=1.osg32.el5
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -90,6 +90,11 @@ if ! grep -q "[ \t]/srv[ \t]" /etc/fstab; then
     echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	defaults 	0 0" >>/etc/fstab
 fi
 mkdir -p /srv
+# also mount /stage
+if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
+    echo "vm08:/oasis-share/stage /stage			nfs 	defaults 	0 0" >>/etc/fstab
+fi
+mkdir -p /stage
 
 # need netfs to mount NFS at boot
 chkconfig netfs on
@@ -248,10 +253,6 @@ esac
 
 # request updates on all vos that have changed
 
-LOCKPFX=/net/nas01/Public/
-case "$MYSHORTNAME" in
-    *-itb) LOCKPFX=${LOCKPFX}itb_;;
-esac
 /usr/share/oasis/update_oasis_vos
 
 case "$MYSHORTNAME" in
