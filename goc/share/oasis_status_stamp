@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOCKPFX="/net/nas01/Public/"
+LOCKPFX="/stage/locks/"
 if [ "`hostname -s`" != oasis ]; then
     LOCKPFX=${LOCKPFX}itb_
 fi

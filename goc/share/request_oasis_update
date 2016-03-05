@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOCKPFX="/net/nas01/Public/"
+LOCKPFX="/stage/locks/"
 case "`hostname -s`" in
     *-itb) LOCKPFX=${LOCKPFX}itb_;;
 esac

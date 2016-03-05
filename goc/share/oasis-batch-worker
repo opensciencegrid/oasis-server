@@ -4,7 +4,7 @@
 ### /var/log/cron must be world readable
 ###
 
-LOCKPFX="/net/nas01/Public/"
+LOCKPFX="/stage/locks/"
 case "`hostname -s`" in
     *-itb) LOCKPFX=${LOCKPFX}itb_;;
 esac
@@ -23,11 +23,11 @@ startip=$3
 
 if [ $vo ]; then
 ## VO name is not null
-   if [ -d /home/ouser.$vo ]; then
+   if [ -d /home/login/ouser.$vo ]; then
 
 ##     home directory for VO exists
-       echo "Found /home/ouser.$vo"
-       mkdir -p /net/nas01/Public/ouser.$vo
+       echo "Found /home/login/ouser.$vo"
+       mkdir -p /stage/oasis/$vo
 
 #
 # Write a file to track update initiator
@@ -49,14 +49,14 @@ if [ $vo ]; then
 	   initName=`host $initIP | awk '{print $5}'`
 	   echo "via ssh from: $initName  ($initIP)">>/tmp/update.details
        fi
-       cp /tmp/update.details /net/nas01/Public/ouser.$vo/update.details
+       cp /tmp/update.details /stage/oasis/$vo/update.details
        rm /tmp/update.details
        echo "Beginning oasis server update"
        . /usr/share/oasis/request_oasis_update $vo
        echo "Finished, publish_age here: http://oasis.opensciencegrid.org/stamp should be zero"
        exit 0
    else
-       echo "/home/ouser.$vo does not exist"
+       echo "/home/login/ouser.$vo does not exist"
        exit 1
    fi
 else
@@ -65,7 +65,7 @@ else
     youare=`whoami`
     echo "$youare is not a valid account for requesting an update"
     echo "Valid accounts are:"
-    list=`ls -1 /home | grep ouser`
+    list=`ls -1 /home/login | grep ouser`
     for vo in $list ; do
 	echo $vo
     done
