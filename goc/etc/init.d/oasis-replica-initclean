@@ -1,8 +1,0 @@
-#!/bin/bash
-# /etc/rc.d/init.d/oasis-replica-initclean
-#chkconfig: - 88 12
-#description: cleans up leftover cvmfs_server locks
-if [ "$1" = "start" ]; then
-    # this is needed for cvmfs-server-2.1.20 only
-    rm -rf /var/spool/cvmfs/*/is_snapshotting
-fi
