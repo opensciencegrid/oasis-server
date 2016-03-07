@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.5
+Version: 2.1.6
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -55,7 +55,6 @@ Group: Development/Libraries
 This package contains files for oasis-replica.opensciencegrid.org
 
 %files replica
-/etc/init.d/oasis-replica-initclean
 /etc/httpd/conf.d/cvmfs.conf
 /etc/iptables.d/60-local-cvmfs
 /etc/logrotate.d/cvmfs
@@ -76,6 +75,11 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Sun Mar  6 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.6-1
+- Remove oasis-replica-initclean (OO-126)
+- Mount all cvmfs repositories at boot in oasis-initclean (OO-126)
+- Remove harmless code in update_oasis_vos that printed an error (OO-120)
+
 * Thu Mar  3 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.5-1
 - Remove dependency on nas01 (OO-120)
 
