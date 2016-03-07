@@ -55,7 +55,6 @@ rm /etc/squid/customize.sh.rpmsave
 rmdir /etc/squid
 rm /etc/sysconfig/frontier-squid
 service gociptables restart
-chkconfig oasis-replica-initclean off
 yum -y remove oasis-goc oasis-goc-replica
 yum clean all
 yum clean expire-cache  # temporarily until yum is updated
