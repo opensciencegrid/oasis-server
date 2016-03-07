@@ -55,7 +55,6 @@ Group: Development/Libraries
 This package contains files for oasis-replica.opensciencegrid.org
 
 %files replica
-/etc/init.d/oasis-replica-initclean
 /etc/httpd/conf.d/cvmfs.conf
 /etc/iptables.d/60-local-cvmfs
 /etc/logrotate.d/cvmfs
@@ -76,6 +75,8 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+- Remove oasis-replica-initclean (OO-126)
+
 * Thu Mar  3 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.5-1
 - Remove dependency on nas01 (OO-120)
 
