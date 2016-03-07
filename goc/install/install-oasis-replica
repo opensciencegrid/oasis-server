@@ -133,7 +133,6 @@ wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISS
 wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
 yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
-chkconfig oasis-replica-initclean on
 
 service gociptables restart
 
