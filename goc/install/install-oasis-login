@@ -13,18 +13,6 @@ case "$MYSHORTNAME" in
 	;;
 esac
 
-case `lsb_release -a|sed -n 's/Release:[ \t]*\([0-9]\)*.*/\1/p'` in
-    5)  EL=el5
-	GSISSHCLIENTS=gsissh-clients
-	;;
-    6)  EL=el6
-	GSISSHCLIENTS=gsi-openssh-clients
-	;;
-    *)  echo "Not running on el5 or el6"
-        exit 2
-	;;
-esac
-
 set -ex
 
 # puppet sometimes returns error code if it is already running, ignore it
@@ -38,7 +26,7 @@ case "$MYSHORTNAME" in
 esac
 
 ARCH=`arch`
-OASISVER=2.1.5
+OASISVER=2.1.6
 OASISSUBVER=1.osg32.el5
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -82,18 +70,19 @@ service netfs start
 mkdir -p /cvmfs
 ln -s /stage/oasis /cvmfs/oasis.opensciencegrid.org
 
+# puppet is now configuring gsissh
 # install gsisshd and gsissh clients (client needed for gsiscp)
-yum -y install gsi-openssh-server $GSISSHCLIENTS
-
-ln -s /etc/ssh/ssh_host_rsa_key /etc/gsissh/ssh_host_rsa_key
-ln -s /etc/ssh/ssh_host_rsa_key.pub /etc/gsissh/ssh_host_rsa_key.pub
-ln -s /etc/ssh/ssh_host_dsa_key /etc/gsissh/ssh_host_dsa_key
-ln -s /etc/ssh/ssh_host_dsa_key.pub /etc/gsissh/ssh_host_dsa_key.pub
-
-service sshd stop
-chkconfig sshd off
-service gsisshd start
-chkconfig gsisshd on
+#yum -y install gsi-openssh-server gsi-openssh-clients
+#
+#ln -s /etc/ssh/ssh_host_rsa_key /etc/gsissh/ssh_host_rsa_key
+#ln -s /etc/ssh/ssh_host_rsa_key.pub /etc/gsissh/ssh_host_rsa_key.pub
+#ln -s /etc/ssh/ssh_host_dsa_key /etc/gsissh/ssh_host_dsa_key
+#ln -s /etc/ssh/ssh_host_dsa_key.pub /etc/gsissh/ssh_host_dsa_key.pub
+#
+#service sshd stop
+#chkconfig sshd off
+#service gsisshd start
+#chkconfig gsisshd on
 
 # for the status stamp
 yum -y install httpd
@@ -107,14 +96,14 @@ yum -y install pwgen
 TMPF=/tmp/install-oasis-login-$$
 /usr/share/oasis/generate_adduser >$TMPF.1
 while read CMD; do
-    OUSER="`echo "$CMD"|awk '{print $3}'`"
-    if [ ! -d /stage/oasis/$OUSER ]; then
+    USERNAME="`echo "$CMD"|awk '{print $3}'|sed 's/ouser.//'`"
+    if [ ! -d /stage/oasis/$USERNAME ]; then
 	# wasn't there before, let the cron create it
 	continue
     fi
-    uid="`stat -c '%u' /stage/oasis/$OUSER`"
-    gid="`stat -c '%g' /stage/oasis/$OUSER`"
-    groupadd -g $gid $OUSER
+    uid="`stat -c '%u' /stage/oasis/$USERNAME`"
+    gid="`stat -c '%g' /stage/oasis/$USERNAME`"
+    groupadd -g $gid ouser.$USERNAME
     eval "`echo "$CMD"|sed "s/useradd/useradd -u $uid -g $gid/"`"
 done <$TMPF.1
 rm $TMPF.1

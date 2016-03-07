@@ -37,15 +37,21 @@ esac
 set -x
 PATH="$PATH:/sbin:/usr/sbin"
 rm /etc/cron.d/oasis-login
-service gsisshd stop
-chkconfig gsisshd off
-service sshd start
-chkconfig sshd on
+#service gsisshd stop
+#chkconfig gsisshd off
+#service sshd start
+#chkconfig sshd on
+service netfs stop # umounts nfs-mounted filesystems
+chkconfig netfs off
+sed -i '/[ \t]\/stage[ \t]/d' /etc/fstab
+sed -i '/[ \t]\/home\/login[ \t]/d' /etc/fstab
+rm /cvmfs/oasis.opensciencegrid.org
+rmdir /stage /home/login /cvmfs
 for r in `rpm -qa|grep gpg-pubkey|sed 's/\.(none)//'|sort -u`; do
     rpm --allmatches -e $r
 done
 grep "^ouser\." /etc/passwd|cut -d: -f1|while read OUSER; do
-    userdel -r $OUSER
+    userdel $OUSER
 done
 grep "^ouser\." /etc/group|cut -d: -f1|while read OUSER; do
     groupdel $OUSER
@@ -54,20 +60,14 @@ rm /etc/grid-security/grid-mapfile
 yum -y remove $GCCPKGS
 yum -y remove yum-priorities
 # reverse yum install gsi-openssh-server gsissh-clients
-yum -y remove globus-common globus-gsi-proxy-ssl libtool-ltdl
-rm /etc/gsissh/*
-rmdir /etc/gsissh
+#yum -y remove globus-common globus-gsi-proxy-ssl libtool-ltdl
+#rm /etc/gsissh/*
+#rmdir /etc/gsissh
 # reverse yum install condor
 yum -y remove blahp condor-classads $EXTRACONDORPKG perl-XML-Simple globus-io globus-rsl gsoap voms globus-gssapi-error
 yum -y remove oasis-goc oasis-goc-login
 rm -rf /etc/oasis
 service gociptables restart
-service netfs stop # umounts nfs-mounted filesystems
-chkconfig netfs off
-sed -i '/[ \t]\/stage[ \t]/d' /etc/fstab
-sed -i '/[ \t]\/home\/login[ \t]/d' /etc/fstab
-rm /cvmfs/oasis.opensciencegrid.org
-rmdir /stage /home/login /cvmfs
 service httpd stop
 rm -f /var/www/html/stamp
 yum -y remove httpd $EXTRAHTTPDPKGS
