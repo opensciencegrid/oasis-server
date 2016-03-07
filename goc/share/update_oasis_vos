@@ -31,8 +31,6 @@ for VO in `/usr/share/oasis/print_oasis_vonames`; do
 	exit 1
     fi
     echo "Copying update for $VO at `date`"
-    mkdir -p /stage/oasis/$VO
-    chown ouser.$VO:ouser.$VO /stage/oasis/$VO
     rsync -aH --delete -v /net/nas01/Public/ouser.$VO/ /stage/oasis/$VO
     echo "Requesting update for $VO at `date`"
     # this waits for the request to complete
