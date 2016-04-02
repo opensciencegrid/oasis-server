@@ -47,6 +47,7 @@ done
 yum -y remove httpd fuse fuse-libs cvmfs-config gdb python-anyjson python-dateutil
 rm -rf /var/log/httpd
 rm -rf /etc/cvmfs
+rm -rf /var/lib/cvmfs-server
 sed -i '/nofile.*16384/d' /etc/security/limits.conf
 rm /etc/awstats/password-file
 yum -y remove frontier-squid
