@@ -128,6 +128,16 @@ yum -y --nogpg install $CVRPMS
 rm $CVRPMS
 cp /etc/cvmfs/keys/egi.eu/egi.eu.pub /etc/cvmfs/keys
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
+if [ ! -d /srv/etc/keys ]; then
+    mkdir -p /srv/etc/keys
+    case $MYSHORTNAME in
+	*-itb)
+	    # make a copy from production
+	    SRCKEYSDIR="`echo $NETSRVDIR|sed 's/-itb//'`/etc/keys"
+	    cp $SRCKEYSDIR/* /srv/etc/keys
+	    ;;
+    esac
+fi
 yum -y install mod_wsgi
 
 echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
