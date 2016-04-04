@@ -1,13 +1,14 @@
 # /bin/bash
 # rsync oasis.opensciencegrid.org data from oasis-replica-itb to oasis-itb
 #  to jumpstart a new copy of the oasis repository.  This can save time since
-#  rebuilding oasis from scratch is a lot slower.
-# This can be run before install-oasis on a new oasis-itb, and should be
+#  rebuilding oasis from scratch is a lot slower.  At the same time, also
+#  copy config-osg.opensciencegrid.org so it can be bootstrapped.
+# This should be run before install-oasis on a new oasis-itb, and should be
 #  run when the oasis-replica-itb cvmfs cron is not running.
 # Note that normally oasis-replica-itb reads from oasis-itb, so if both
 #  oasis-replica-itb and oasis-itb need to be rebuilt from scratch, 
-#  install-oasis-replica should be altered to read temporarily from the
-#  production oasis.
+#  install-oasis-replica should set ITBBOOTSTRAP=true to read temporarily
+#  from the production oasis.
 
 set -x
 PATH=/sbin:$PATH
@@ -18,4 +19,6 @@ if [ ! -d oasis-replica-itb/cvmfs/oasis.opensciencegrid.org ]; then
 fi
 mkdir -p oasis-itb/cvmfs
 chown oasis:oasis oasis-itb/cvmfs
-runuser -s /bin/bash oasis -c "rsync -a --delete --size-only --stats oasis-replica-itb/cvmfs/oasis.opensciencegrid.org oasis-itb/cvmfs; touch oasis-itb/cvmfs/oasis.opensciencegrid.org/.cvmfs_master_replica"
+for REPO in config-osg oasis; do 
+    runuser -s /bin/bash oasis -c "rsync -a --delete --size-only --stats oasis-replica-itb/cvmfs/$REPO.opensciencegrid.org oasis-itb/cvmfs; touch oasis-itb/cvmfs/$REPO.opensciencegrid.org/.cvmfs_master_replica"
+done
