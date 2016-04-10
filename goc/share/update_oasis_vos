@@ -14,15 +14,12 @@ for URL in `print_osg_repos -u`; do
     fi
 done
 
-# read from /net/nas01/Public and copy /stage/oasis only until
-#   /stage/oasis is put into production
-
 for VO in `/usr/share/oasis/print_oasis_vonames`; do
-    if [ ! -f /net/nas01/Public/ouser.$VO/update.details ]; then
+    if [ ! -f /stage/oasis/$VO/update.details ]; then
 	# skip because it hasn't been published yet
 	continue
     fi
-    if [ -n "`find /net/nas01/Public/ouser.$VO/update.details ! -newer /cvmfs/oasis.opensciencegrid.org/$VO/update.details 2>/dev/null`" ]; then
+    if cmp /stage/oasis/$VO/update.details /cvmfs/oasis.opensciencegrid.org/$VO/update.details >/dev/null 2>&1; then
 	# already up to date, nothing to do
 	continue
     fi
@@ -30,8 +27,6 @@ for VO in `/usr/share/oasis/print_oasis_vonames`; do
 	echo "Skipping update for $VO because `cat ${LOCKPFX}oasis_update_requested_vo` update in progress"
 	exit 1
     fi
-    echo "Copying update for $VO at `date`"
-    rsync -aH --delete -v /net/nas01/Public/ouser.$VO/ /stage/oasis/$VO
     echo "Requesting update for $VO at `date`"
     # this waits for the request to complete
     /usr/share/oasis/request_oasis_update $VO
