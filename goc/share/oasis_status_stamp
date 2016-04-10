@@ -17,7 +17,7 @@ max_lock_age=86400
 ## warning lock file age (6 hours)
 warn_lock_age=21600
 
-## warning time since a publish (4 days)
+## warning time since a publish (2 days)
 warn_pub_age=172800
 
 overall_status=0
