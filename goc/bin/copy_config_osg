@@ -1,0 +1,38 @@
+#!/bin/bash
+# Copy config-osg.opensciencegrid.org repository from oasis-itb to oasis
+
+ME="`basename $0`"
+
+usage()
+{
+    echo "Usage: $ME" >&2
+    exit 1
+}
+
+if [ $# != 0 ]; then
+    usage
+fi
+
+if [ ! -f /etc/cvmfs/repositories.d/config-osg.opensciencegrid.org/client.conf ]; then
+    echo "$ME: run this only on oasis or oasis-itb" >&2
+    exit 1
+fi
+
+set -ex
+mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
+cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
+CVMFS_SERVER_URL=http://oasis-itb.opensciencegrid.org:8000/cvmfs/@fqrn@
+CVMFS_PUBLIC_KEY=/srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub
+CVMFS_HTTP_PROXY=DIRECT
+unset CVMFS_CONFIG_REPOSITORY
+!EOF!
+mount -t cvmfs config-osg.opensciencegrid.org /cvmfs/config-osg-itb.opensciencegrid.org
+if ! cvmfs_server transaction config-osg.opensciencegrid.org; then
+    cvmfs_server abort -f config-osg.opensciencegrid.org
+    cvmfs_server transaction config-osg.opensciencegrid.org
+fi
+rsync -av --delete /cvmfs/config-osg-itb.opensciencegrid.org/ /cvmfs/config-osg.opensciencegrid.org
+umount /cvmfs/config-osg-itb.opensciencegrid.org
+rm /etc/cvmfs/config.d/config-osg.opensciencegrid.org.local
+rmdir /cvmfs/config-osg-itb.opensciencegrid.org
+cvmfs_server publish config-osg.opensciencegrid.org
