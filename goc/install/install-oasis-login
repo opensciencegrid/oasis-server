@@ -54,11 +54,11 @@ service gociptables restart
 
 # mount /stage and /home/login directories
 if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
-    echo "vm08:/oasis-share/stage /stage			nfs 	vers=3	 	0 0" >>/etc/fstab
+    echo "vm08:/oasis-share/stage /stage			nfs 	defaults	0 0" >>/etc/fstab
 fi
 mkdir -p /stage
 if ! grep -q "[ \t]/home/login[ \t]" /etc/fstab; then
-    echo "vm08:/oasis-share/home/login /home/login	nfs 	vers=3	 	0 0" >>/etc/fstab
+    echo "vm08:/oasis-share/home/login /home/login	nfs 	defaults	0 0" >>/etc/fstab
 fi
 mkdir -p /home/login
 
