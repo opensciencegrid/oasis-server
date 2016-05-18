@@ -41,6 +41,7 @@ Group: Development/Libraries
 This package contains files for oasis.opensciencegrid.org
 
 %files zero
+/etc/cron.d/oasis
 /etc/init.d/oasis-initclean
 /etc/httpd/conf.d/oasis.conf
 /etc/iptables.d/60-local-oasis
@@ -77,7 +78,8 @@ This package contains files for oasis-login.opensciencegrid.org
 
 %changelog
 * Wed May 18 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.9-1
-- Move /etc/cron.d/cvmfs into oasis-goc-replica
+- Move /etc/cron.d/cvmfs into oasis-goc-replica and /etc/cron.d/oasis into
+  oasis-goc-zero.
 
 * Wed May 18 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.8-1
 - Add copy_config_osg command (OO-142)
