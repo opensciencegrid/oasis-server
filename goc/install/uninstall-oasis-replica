@@ -31,7 +31,7 @@ rm -rf /oasissrv
 for REPO in `ls /etc/cvmfs/repositories.d`; do
     cvmfs_server rmfs -f $REPO
 done
-rm /etc/cron.d/cvmfs
+rm -rf /var/lib/oasis
 rm -rf /var/log/cvmfs
 rm /opt/etc/osupdate.d/aufs.postupdate
 rm -rf /usr/src/redhat/*/aufs* /usr/src/redhat/RPMS/*/*aufs*
