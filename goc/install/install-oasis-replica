@@ -253,7 +253,7 @@ REPOURLS=""
 for REPO in oasis config-osg; do
     REPOURLS="$REPOURLS http://oasis$ITB.opensciencegrid.org:8000/cvmfs/$REPO.opensciencegrid.org"
 done
-ALLREPOURLS="$REPOURLS"
+NONOIMREPOURLS="$REPOURLS"
 
 # add repos hosted on our stratum 0
 for URL in $REPOURLS; do
@@ -262,7 +262,7 @@ done
 
 # add other repos not registered in OIM
 REPOURLS="http://cvmfs-stratum0.gridpp.rl.ac.uk:8000/cvmfs/config-egi.egi.eu"
-ALLREPOURLS="$ALLREPOURLS $REPOURLS"
+NONOIMREPOURLS="$NONOIMREPOURLS $REPOURLS"
 for URL in $REPOURLS; do
     if $ITBBOOTSTRAP; then
 	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" $EXTRAPUBKEY
@@ -273,9 +273,8 @@ done
 
 # Add repos registered in OIM.  It's OK if these fail because they will
 #  be added later by the generate_replicas cron.
-REPOURLS="`print_osg_repos -u`"
-ALLREPOURLS="$ALLREPOURLS $REPOURLS"
-for URL in $REPOURLS; do
+OIMREPOURLS="`print_osg_repos -u`"
+for URL in $OIMREPOURLS; do
     if $ITBBOOTSTRAP; then
 	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" $EXTRAPUBKEY || true
     else
@@ -288,10 +287,19 @@ mkdir -p /oasissrv/cvmfs
 /usr/share/oasis/replicate_whitelists
 
 # do initial snapshots for those repos that need it
-for URL in $ALLREPOURLS; do
+for URL in $NONOIMREPOURLS; do
+    REPO="`basename $URL`"
+    cvmfs_server snapshot $REPO
+done
+
+for URL in $OIMREPOURLS; do
     REPO="`basename $URL`"
     if [ ! -f /srv/cvmfs/$REPO/.cvmfspublished ]; then
-	cvmfs_server snapshot $REPO
+	if ! cvmfs_server snapshot $REPO; then
+	    # initial snapshot failed so remove the repo so it can be
+	    #  added later by generate_replicas
+	    cvmfs_server rmfs -f $REPO || true
+	fi
     fi
 done
 
