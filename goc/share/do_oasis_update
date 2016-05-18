@@ -43,7 +43,7 @@ if [ -f ${LOCKPFX}oasis_update_requested_vo ]; then
 	$runuser "cp $SRCDIRTAB $DSTDIRTAB"
     fi
 
-    $runuser "/usr/share/oasis/cvmfs_rsync -aW --stats --delete --force --ignore-errors /stage/oasis/$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
+    $runuser "cvmfs_rsync -aW --stats --delete --force --ignore-errors /stage/oasis/$vo/ /cvmfs/oasis.opensciencegrid.org/$vo"
 
     now=`date`
     echo "$now starting cvmfs_server publish"
