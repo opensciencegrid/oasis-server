@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.8
+Version: 2.1.9
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -55,6 +55,7 @@ Group: Development/Libraries
 This package contains files for oasis-replica.opensciencegrid.org
 
 %files replica
+/etc/cron.d/cvmfs
 /etc/httpd/conf.d/cvmfs.conf
 /etc/iptables.d/60-local-cvmfs
 /etc/logrotate.d/cvmfs
@@ -75,6 +76,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Wed May 18 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.9-1
+- Move /etc/cron.d/cvmfs into oasis-goc-replica
+
 * Wed May 18 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.8-1
 - Add copy_config_osg command (OO-142)
 - Change /etc/init.d/oasis-initclean to use cvmfs_server mount -a (OO-144)
