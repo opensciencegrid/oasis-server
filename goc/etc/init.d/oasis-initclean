@@ -9,8 +9,5 @@ if [ "$1" = "start" ]; then
     fi
     rm -f ${LOCKPFX}oasis_update_in_progress ${LOCKPFX}oasis_update_requested_vo
 
-    # Beginning in cvmfs-server-2.2.0 we need to mount all cvmfs mountpoints
-    grep "CernVM-FS" /etc/fstab | awk '{print $2}' | while read M; do
-	mount $M
-    done
+    cvmfs_server mount -a
 fi

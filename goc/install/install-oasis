@@ -45,7 +45,7 @@ esac
 ARCH=`arch`
 AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
 CVMFSRELRPM=cvmfs-release-2-4.el5.noarch.rpm
-CVMFSVER=2.2.1
+CVMFSVER=2.2.2
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
