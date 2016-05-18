@@ -49,7 +49,7 @@ CVMFSVER=2.2.2
 CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
-OASISVER=2.1.8
+OASISVER=2.1.9
 OASISSUBVER=1.osg32.el5
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -238,18 +238,10 @@ fi
 sleep 2 # when auto tagging is on, cvmfs-2.1.20 complains if two publishes done in the same second
 $RUNUSER "cvmfs_server publish oasis.opensciencegrid.org"
 
-# add cron entries
-mkdir -p /var/log/oasis
-cat >/etc/cron.d/oasis <<'xEOFx'
-# Created by install script.  Will be recreated next reinstall.
-* * * * *   root   /usr/share/oasis/do_oasis_update
-*/3 * * * * root   /usr/share/oasis/oasis_status_stamp >/dev/null 2>&1
-xEOFx
-case $MYSHORTNAME in
-    *-itb)
-	echo "0 7 1,15 * * root  /usr/bin/resign_osg_whitelist >/dev/null 2>&1" >>/etc/cron.d/oasis
-	;;
-esac
+# enable cron entries; /etc/cron.d/oasis from rpm uses 'installed' file
+# this has to be done before oasis_update_vos
+mkdir -p /var/log/oasis /var/lib/oasis
+date >/var/lib/oasis/installed
 
 # request updates on all vos that have changed
 
@@ -257,9 +249,11 @@ esac
 
 case "$MYSHORTNAME" in
     *-itb) 
-	# on itb also update the vos once an hour if they have changed
-	cat >>/etc/cron.d/oasis <<xEOFx
+	# on itb update the vos once an hour if they have changed
+	# also do resign_osg_whitelist twice a month
+	cat >/etc/cron.d/oasis-itb <<xEOFx
 1 * * * *   root   /usr/share/oasis/update_oasis_vos >>/var/log/oasis/voupdates.log 2>&1
+0 7 1,15 * * root  /usr/bin/resign_osg_whitelist >/dev/null 2>&1
 xEOFx
 	;;
 esac
