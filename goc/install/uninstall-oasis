@@ -21,7 +21,8 @@ case $0 in
 esac
 cd
 PATH="$PATH:/sbin"
-rm /etc/cron.d/oasis
+rm -f /etc/cron.d/oasis-itb
+rm -rf /var/lib/oasis
 killall rsync
 killall cvmfs_swissknife
 service httpd stop
