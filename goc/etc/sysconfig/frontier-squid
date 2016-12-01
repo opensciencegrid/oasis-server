@@ -1,0 +1,1 @@
+export SQUID_MAX_ACCESS_LOG=1G
