@@ -1,0 +1,16 @@
+#!/bin/bash
+cd /etc/cvmfs/repositories.d
+for repo in *; do
+    if [ ! -f $repo/replica.conf ]; then
+        continue
+    fi
+    if grep -q ^CVMFS_REPLICA_ACTIVE=no $repo/replica.conf; then
+        continue
+    fi
+    eval "`grep ^CVMFS_STRATUM0= $repo/server.conf`"
+    if [ "`cvmfs_swissknife info -r $CVMFS_STRATUM0 -g`" = yes ]; then
+        echo "Starting $repo gc at `date`"
+        cvmfs_server gc -f $repo
+    fi
+done
+echo "Finished at `date`"
