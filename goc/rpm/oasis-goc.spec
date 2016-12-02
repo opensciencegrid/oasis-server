@@ -1,7 +1,7 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.10
-Release: 2%{?dist} 
+Version: 2.1.12
+Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
 Group: Development/Libraries
@@ -88,6 +88,15 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Thu Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.12-1
+- Change the oasis-replica cron so that on oasis-replica-itb it will
+  add the extra oasis-itb key to newly added repositories.  This is
+  needed for garbage collection to work on new repositories, because
+  we replace each .cvmfswhitelist file with one signed by oasis-itb.
+
+* Thu Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.11-1
+- Add gc-all-collectable and call it from cron on oasis-replica.
+
 * Wed Dec 01 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.10-2
 - Make /etc/squid/customize.sh executable after creating it.
 
