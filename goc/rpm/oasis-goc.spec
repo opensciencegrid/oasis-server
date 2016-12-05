@@ -100,6 +100,9 @@ This package contains files for oasis-login.opensciencegrid.org
   explanation why).  Also for future reference set the commented hour
   to 5am instead of 1am, because the clocks at the GOC are on UTC
   time.
+- Change update_oasis_vos to make sure it only runs on oasis-itb, and
+  to download from oasis any changed fingerprint in each external
+  repo's .cvmfswhitelist.
 
 * Thu Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.12-1
 - Change the oasis-replica cron so that on oasis-replica-itb it will
