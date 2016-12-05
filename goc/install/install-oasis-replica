@@ -202,6 +202,8 @@ case $MYSHORTNAME in
 	if $ITBBOOTSTRAP; then
 	    ITB=""
 	    EXTRAPUBKEY="/etc/cvmfs/keys/opensciencegrid.org.pub"
+	else
+	    ITB="-itb"
 	fi
 	;;
     *)
