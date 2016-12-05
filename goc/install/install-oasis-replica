@@ -55,7 +55,7 @@ CVMFSSERVERMONRPM=cvmfs-servermon-1.4-1.el5.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-3.5.22-2.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-4.1.noarch.rpm
-OASISVER=2.1.12
+OASISVER=2.1.13
 OASISSUBVER=1.osg32.el5
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -202,9 +202,6 @@ case $MYSHORTNAME in
 	if $ITBBOOTSTRAP; then
 	    ITB=""
 	    EXTRAPUBKEY="/etc/cvmfs/keys/opensciencegrid.org.pub"
-	else
-	    ITB="-itb"
-	    EXTRAPUBKEY="/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub"
 	fi
 	;;
     *)
@@ -230,7 +227,7 @@ for URL in $REPOURLS; do
     if $ITBBOOTSTRAP; then
 	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" $EXTRAPUBKEY
     else
-	add_osg_repository -a "$URL" $EXTRAPUBKEY
+	add_osg_repository -a "$URL"
     fi
 done
 
@@ -241,9 +238,7 @@ for URL in $OIMREPOURLS; do
     if $ITBBOOTSTRAP; then
 	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" $EXTRAPUBKEY || true
     else
-        # note that the EXTRAPUBKEY is only needed here for garbage
-        #  collection on ITB
-	add_osg_repository -a "$URL" $EXTRAPUBKEY || true
+	add_osg_repository -a "$URL" || true
     fi
 done
 

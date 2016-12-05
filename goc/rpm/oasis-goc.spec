@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.12
+Version: 2.1.13
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -88,6 +88,19 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Mon Dec 05 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.13-1
+- Instead of changing the cron to add a key only on oasis-replica-itb,
+  change add_osg_repository to add the key on both oasis-replica-itb and
+  oasis-replica.  That's because doing garbage collection on non-OSG
+  repositories on oasis-replica would have the same problem that was
+  seen on on OSG repositories on oasis-replica-itb; in both cases the
+  the .cvmfswhitelist is replaced by one signed with a different key
+  than the original.
+- Comment out garbage collection in cron for now (see OO-160 for an
+  explanation why).  Also for future reference set the commented hour
+  to 5am instead of 1am, because the clocks at the GOC are on UTC
+  time.
+
 * Thu Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.12-1
 - Change the oasis-replica cron so that on oasis-replica-itb it will
   add the extra oasis-itb key to newly added repositories.  This is
