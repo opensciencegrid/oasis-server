@@ -4,6 +4,8 @@
 LOCKPFX=/stage/locks/
 case "`hostname -s`" in
     *-itb) LOCKPFX=${LOCKPFX}itb_;;
+    *)  echo "Run this only on oasis-itb" >&2
+        exit 2;;
 esac
 
 for URL in `print_osg_repos -u`; do
@@ -11,6 +13,18 @@ for URL in `print_osg_repos -u`; do
     if [ ! -d /srv/cvmfs/$REPO ]; then
 	echo "Adding repository $REPO at `date`"
 	add_osg_repository $URL
+    else
+        # check to see if fingerprint has changed
+        NEWFPRINT="`wget -qO- $URL/.cvmfswhitelist|cat -v|grep ^-- -B 1|head -1`"
+        OLDFPRINT="`cat -v /srv/cvmfs/$REPO/.cvmfswhitelist|grep ^-- -B 1|head -1`"
+        if [ -n "$NEWFPRINT" ] && [ -n "$OLDFPRINT" ] && [ "$NEWFPRINT" != "$OLDFPRINT" ]; then
+            echo "$REPO fingerprint changed from"
+            echo "  $OLDFPRINT" 
+            echo "to"
+            echo "  $NEWFPRINT"
+            echo "Re-adding repository $REPO at `date`"
+            add_osg_repository $URL
+        fi
     fi
 done
 
