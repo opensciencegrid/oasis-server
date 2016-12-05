@@ -33,11 +33,8 @@ elif [ $# != 1 ]; then
 fi
 
 case "$1" in
-    http://*)
-	;;
-    *)
-	usage
-	;;
+    http://*) ;;
+    *)  usage ;;
 esac
 REPOURL="$1"
 
@@ -90,6 +87,15 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
 	fi
 	mv /srv/cvmfs/$REPONAME /srv/cvmfs/.$REPONAME.save
     fi
+    # Need to add the OSG key because the signature on each .cvmfswhitelist is
+    # overridden by OSG on the http service, and garbage collection uses that.
+    # On itb need to always add the OSG itb key.
+    case `hostname -s` in
+        *-itb) EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub" ;;
+        *)  if [ "$DOMAIN" != "opensciencegrid.org" ]; then
+                EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/opensciencegrid.org.pub"
+            fi ;;
+    esac
     RET=0
     if ! cvmfs_server add-replica -o root $REPOURL $PUBKEY$EXTRAPUBKEY; then
 	RET=1
