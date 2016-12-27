@@ -28,6 +28,10 @@ chkconfig netfs off
 sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
 rmdir /srv
 rm -rf /oasissrv
+if [ -d /srv ]; then
+    echo "/srv still exists!"
+    exit 1
+fi
 for REPO in `ls /etc/cvmfs/repositories.d`; do
     cvmfs_server rmfs -f $REPO
 done
