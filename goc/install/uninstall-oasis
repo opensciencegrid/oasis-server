@@ -31,6 +31,10 @@ chkconfig netfs off
 sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
 sed -i '/[ \t]\/stage[ \t]/d' /etc/fstab
 rmdir /srv /stage
+if [ -d /srv ]; then
+    echo "/srv still exists!"
+    exit 1
+fi
 chkconfig oasis-initclean off
 yum -y remove oasis-goc oasis-goc-zero
 cvmfs_server rmfs -f oasis.opensciencegrid.org # removes partially
