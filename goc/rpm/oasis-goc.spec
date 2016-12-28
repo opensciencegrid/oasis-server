@@ -88,6 +88,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+
+- Re-enable garbage collection cron.
+
 * Mon Dec 05 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.13-1
 - Instead of changing the cron to add a key only on oasis-replica-itb,
   change add_osg_repository to add the key on both oasis-replica-itb and
