@@ -291,8 +291,9 @@ case $MYSHORTNAME in
 	# The itb key will already be in place if the creation was an import,
 	#   but in case it was new do analogous steps to production (below)
 	for REPO in oasis config-osg; do
-	    rm /etc/cvmfs/keys/$REPO.opensciencegrid.org.masterkey
-	    cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/$REPO.opensciencegrid.org.$KEY
+            for KEY in pub masterkey; do
+                cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/$REPO.opensciencegrid.org.$KEY
+            done
 	done
 	resign_osg_whitelist
 	;;
@@ -311,3 +312,8 @@ case $MYSHORTNAME in
 	echo "Now temporarily install /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey"
 	echo "   and run resign_osg_whitelist"
 esac
+
+# One more thing, make config-osg masterkey the same as oasis.
+# This needs to be a symlink in production because the oasis masterkey
+#  gets removed when not in use, for security reasons.
+ln -f -s oasis.opensciencegrid.org.masterkey /etc/cvmfs/keys/config-osg.opensciencegrid.org.masterkey
