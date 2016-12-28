@@ -20,5 +20,10 @@ fi
 mkdir -p oasis-itb/cvmfs
 chown oasis:oasis oasis-itb/cvmfs
 for REPO in config-osg oasis; do 
-    runuser -s /bin/bash oasis -c "rsync -a --delete --size-only --stats oasis-replica-itb/cvmfs/$REPO.opensciencegrid.org oasis-itb/cvmfs; touch oasis-itb/cvmfs/$REPO.opensciencegrid.org/.cvmfs_master_replica"
+    CVMFSREPO=cvmfs/$REPO.opensciencegrid.org
+    runuser -s /bin/bash oasis -c "mkdir -p oasis-itb/$CVMFSREPO"
+    runuser -s /bin/bash oasis -c "rsync -a --delete --size-only --stats oasis-replica-itb/$CVMFSREPO/data oasis-itb/$CVMFSREPO"
+    # copy the .cvmfs* files separately because they may match --size-only
+    runuser -s /bin/bash oasis -c "cp -f oasis-replica-itb/$CVMFSREPO/.cvmfs* oasis-itb/$CVMFSREPO"
+    runuser -s /bin/bash oasis -c "touch oasis-itb/$CVMFSREPO/.cvmfs_master_replica"
 done
