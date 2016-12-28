@@ -95,6 +95,7 @@ This package contains files for oasis-login.opensciencegrid.org
   option settings chosen are default for httpd versions 2.3.11 and later,
   but leave them for now in case somebody tries running with an earlier
   version.
+- Re-enable garbage collection cron.
 
 * Tue Dec 27 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.13-2
 - Replace %files /usr/bin with /usr/bin/* because el7 yum install complained
