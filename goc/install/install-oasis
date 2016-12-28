@@ -239,17 +239,30 @@ fi
 sleep 2 # when auto tagging is on, cvmfs-2.1.20 complains if two publishes done in the same second
 $RUNUSER "cvmfs_server publish oasis.opensciencegrid.org"
 
+# Add missing signed external repositories whitelists from oasis-replica
+# this is safer than reading from the original sources, in case one is down.
+# Do this before update_oasis_vos because otherwise that would add from
+# original sources.
+set +x
+for REPO in config-egi.egi.eu `print_osg_repos`; do
+    if [ ! -f /srv/cvmfs/$REPO/.cvmfswhitelist ]; then
+	URL="http://oasis-replica.opensciencegrid.org:8000/cvmfs/$REPO/.cvmfswhitelist"
+	echo "Adding whitelist from $URL"
+	mkdir -p /srv/cvmfs/$REPO
+	wget -q -O/srv/cvmfs/$REPO/.cvmfswhitelist $URL
+    fi
+done
+set -x
+
 # enable cron entries; /etc/cron.d/oasis from rpm uses 'installed' file
-# this has to be done before oasis_update_vos
+# this has to be done before update_oasis_vos
 mkdir -p /var/log/oasis /var/lib/oasis
 date >/var/lib/oasis/installed
 
-# request updates on all vos that have changed
-
-/usr/share/oasis/update_oasis_vos
-
 case "$MYSHORTNAME" in
     *-itb) 
+        # request updates on all vos that have changed
+        /usr/share/oasis/update_oasis_vos
 	# on itb update the vos once an hour if they have changed
 	# also do resign_osg_whitelist twice a month
 	cat >/etc/cron.d/oasis-itb <<xEOFx
@@ -272,17 +285,6 @@ if [ "$PREVREVISION" -gt "$CURREVISION" ]; then
 fi
 
 set +x
-
-# add the signed external repositories whitelists from oasis-replica
-# this is safer than reading from the original sources, in case one is down
-for REPO in config-egi.egi.eu `print_osg_repos`; do
-    if [ ! -f /srv/cvmfs/$REPO/.cvmfswhitelist ]; then
-	URL="http://oasis-replica.opensciencegrid.org:8000/cvmfs/$REPO/.cvmfswhitelist"
-	echo "Adding whitelist from $URL"
-	mkdir -p /srv/cvmfs/$REPO
-	wget -q -O/srv/cvmfs/$REPO/.cvmfswhitelist $URL
-    fi
-done
 
 case $MYSHORTNAME in
     *-itb) 
