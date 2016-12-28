@@ -42,7 +42,13 @@ for name; do
     cat -v ${whitelist} | awk '/^N/ {doprint=1}
 	 /^--/ {exit}
 	 doprint==1 {print}' >> ${whitelist}.unsigned
-    sha1=`cat ${whitelist}.unsigned | openssl sha1 | head -c40`
+    # if hash is not the default sha1, it is appended to the repo key's
+    #  fingerprint in upper case, separated by a hyphen
+    alg="`tail -1 ${whitelist}.unsigned|sed -n 's/.*-//p'|tr '[A-Z]' '[a-z]'`"
+    if [ -z "$alg" ]; then
+        alg=sha1
+    fi
+    sha1=`cat ${whitelist}.unsigned | cvmfs_swissknife hash -a $alg`
     echo "--" >> ${whitelist}.unsigned
     echo $sha1 >> ${whitelist}.unsigned
     echo -n $sha1 > ${whitelist}.sha1
