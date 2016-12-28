@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.14
+Version: 2.1.15
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -88,6 +88,13 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Wed Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.15-1
+- Change resign_osg_whitelist to support el7.  The openssl sha1 command
+  had an extra "(stdin)= " in the output on el7.  resign_osg_whitelist
+  was originally based on cvmfs_server's create_whitelist() function
+  which is now using "cvmfs_swissknife hash" and allowing for more
+  than one hash algorithm, so now resign_osg_whitelist does as well.
+
 * Tue Dec 27 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.14-1
 - Add a '+' before the 'FollowSymLinks' option in the apache config files,
   because apache 2.4 in el7 requires that if there are any "-" options
