@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.15
+Version: 2.1.16
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -88,6 +88,10 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Wed Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.16-1
+- Add new script recover_oasis_rollback, to run after rolling back to
+  a previously installed oasis or oasis-itb VM.
+
 * Wed Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.15-1
 - Change resign_osg_whitelist to support el7.  The openssl sha1 command
   had an extra "(stdin)= " in the output on el7.  resign_osg_whitelist
