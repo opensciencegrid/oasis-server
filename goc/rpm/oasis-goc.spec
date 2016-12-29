@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.16
+Version: 2.1.17
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -88,6 +88,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Thu Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.17-1
+- Change add_osg_repository to remove .cvmfsreflog when re-using old data.
+
 * Wed Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.16-1
 - Add new script recover_oasis_rollback, to run after rolling back to
   a previously installed oasis or oasis-itb VM.
