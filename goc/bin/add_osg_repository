@@ -101,8 +101,13 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
 	RET=1
     fi
     if [ -d /srv/cvmfs/.$REPONAME.save ]; then
+	echo "Restoring old /srv/cvmfs/$REPONAME data" >&2
 	rm -rf /srv/cvmfs/$REPONAME
 	mv /srv/cvmfs/.$REPONAME.save /srv/cvmfs/$REPONAME
+        if [ -f /srv/cvmfs/$REPONAME/.cvmfsreflog ]; then
+            echo "Removing ${REPONAME}'s .cvmfsreflog" >&2
+            rm /srv/cvmfs/$REPONAME/.cvmfsreflog
+        fi
     fi
     rm -f /etc/httpd/conf.d/cvmfs.$REPONAME.conf
     if [ $RET != 0 ]; then
