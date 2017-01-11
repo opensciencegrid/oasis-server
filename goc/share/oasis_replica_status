@@ -1,8 +1,5 @@
 #!/bin/bash
 
-## NOTE: repositories can be excluded from warnings by putting them on a line
-##  in /srv/etc/status_exclude_repos.conf
-
 ## warning time since all whitelists were successfully replicated (24 hours)
 warn_white_age=86400
 
