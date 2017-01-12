@@ -101,11 +101,11 @@ CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
 yum -y install $CVRPMS
 rm $CVRPMS
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
-# move /var/spool/cvmfs to /usr/spool because /var is too small for cache & tmp
-rm -rf /usr/spool/cvmfs
-mkdir -p /usr/spool
-mv /var/spool/cvmfs /usr/spool
-ln -s /usr/spool/cvmfs /var/spool
+# move /var/spool/cvmfs to /usr/local because /var is too small for cache.
+#  tmp, and scratch
+rm -rf /usr/local/cvmfs
+mv /var/spool/cvmfs /usr/local
+ln -s /usr/local/cvmfs /var/spool
 
 echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
@@ -176,16 +176,6 @@ for REPO in oasis config-osg; do
     echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
     rm -f /etc/httpd/conf.d/cvmfs.$REPO.opensciencegrid.org.conf
 done
-
-# move scratch dir of oasis to /usr/local where we have space
-umount /cvmfs/oasis.opensciencegrid.org
-SCRATCHD=/usr/local/cvmfs/oasis.opensciencegrid.org
-rm -rf $SCRATCHD/scratch
-mkdir -p $SCRATCHD
-SPOOLD=/var/spool/cvmfs/oasis.opensciencegrid.org
-mv $SPOOLD/scratch $SCRATCHD
-ln -s $SCRATCHD/scratch $SPOOLD
-mount /cvmfs/oasis.opensciencegrid.org
 
 RUNUSER="runuser -s /bin/bash oasis -c"
 
