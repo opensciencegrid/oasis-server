@@ -40,7 +40,7 @@ REPOURL="$1"
 
 TMPFILE="`mktemp /tmp/addosgrepo.XXXXXXXXXX`"
 trap "rm -f ${TMPFILE}" 0
-if ! wget -qO$TMPFILE "$REPOURL/.cvmfswhitelist"; then
+if ! wget -qO$TMPFILE --timeout=10 --tries=2 "$REPOURL/.cvmfswhitelist"; then
     echo "$ME: unable to wget $REPOURL/.cvmfswhitelist" >&2
     exit 1
 fi

@@ -15,7 +15,7 @@ for URL in `print_osg_repos -u`; do
 	add_osg_repository $URL
     else
         # check to see if fingerprint has changed
-        NEWFPRINT="`wget -qO- $URL/.cvmfswhitelist|cat -v|grep ^-- -B 1|head -1`"
+        NEWFPRINT="`wget -qO- --timeout=10 --tries=2 $URL/.cvmfswhitelist|cat -v|grep ^-- -B 1|head -1`"
         OLDFPRINT="`cat -v /srv/cvmfs/$REPO/.cvmfswhitelist|grep ^-- -B 1|head -1`"
         if [ -n "$NEWFPRINT" ] && [ -n "$OLDFPRINT" ] && [ "$NEWFPRINT" != "$OLDFPRINT" ]; then
             echo "$REPO fingerprint changed from"
