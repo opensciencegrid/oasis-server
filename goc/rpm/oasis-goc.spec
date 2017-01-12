@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.17
+Version: 2.1.18
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -88,6 +88,11 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Thu Jan 12 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.18-1
+- Change the wget commands in add_osg_repository and update_oasis_vos
+  to have --timeout=10 --tries=2 so they won't hang indefinitely if
+  an external repository server is down.
+
 * Thu Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.17-1
 - Change add_osg_repository to remove .cvmfsreflog when re-using old data.
 
