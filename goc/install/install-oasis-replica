@@ -134,6 +134,9 @@ cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
 <Directory "/srv/cvmfs"> 
     Require all granted
 </Directory>
+<Directory "/oasissrv/cvmfs"> 
+    Require all granted
+</Directory>
 xEOFx
 
 chkconfig httpd on
