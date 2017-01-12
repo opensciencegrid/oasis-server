@@ -46,17 +46,17 @@ esac
 
 ARCH=`arch`
 AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
-CVMFSRELRPM=cvmfs-release-2-4.el5.noarch.rpm
+CVMFSRELRPM=cvmfs-release-2-6.noarch.rpm
 CVMFSVER=2.3.2
-CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
-CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
+CVMFSRPM=cvmfs-$CVMFSVER-1.el7.centos.$ARCH.rpm
+CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el7.centos.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
 CVMFSSERVERMONRPM=cvmfs-servermon-1.4-1.el5.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
 SQUIDRPM=frontier-squid-3.5.23-3.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-4.1.noarch.rpm
-OASISVER=2.1.17
-OASISSUBVER=1.osg32.el5
+OASISVER=2.1.18
+OASISSUBVER=1.osg33.el7
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.noarch.rpm
 
@@ -64,23 +64,6 @@ PATH="$PATH:/sbin"
 
 # import OSG key because we'll be directly downloading oasis rpm
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
-
-# download, build, and install aufs
-wget -q -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
-mkdir -p /usr/src/redhat/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-rpm -i $AUFSRPM
-rm $AUFSRPM
-# note: the kernel-devel install may not be needed; it's not removed in
-#  uninstall but try to install it because it's not guaranteed to be there
-yum install -y rpm-build kernel-devel-`uname -r` gcc
-rpmbuild -ba --target $ARCH --define "kernel `uname -r`" /usr/src/redhat/SPECS/aufs.spec
-rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
-
-# install aufs postupdate script so it will get rebuilt when kernel is rebuilt
-mkdir -p /opt/etc/osupdate.d
-cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
-# and run it now in case an osupdate happened before this install
-/opt/etc/osupdate.d/aufs.postupdate
 
 # create srv directory if it isn't there yet
 NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
@@ -96,11 +79,7 @@ if ! grep -q "[ \t]/srv[ \t]" /etc/fstab; then
     echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	defaults 	0 0" >>/etc/fstab
 fi
 mkdir -p /srv
-
-# need netfs to mount NFS at boot
-chkconfig netfs on
-service netfs start
-
+mount /srv
 
 # create symlinks for important log directories out to the big disk
 for LOGD in cvmfs httpd squid; do
@@ -149,10 +128,18 @@ wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISS
 yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
 
-service gociptables restart
+cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
+# created by install-oasis-replica
+# This is temporary until oasis.conf is no longer needed for el5
+<Directory "/srv/cvmfs"> 
+    Require all granted
+</Directory>
+xEOFx
 
 chkconfig httpd on
 service httpd start
+
+service iptables restart
 
 cat >>/etc/sysctl.conf <<xEOFx
 # Controls maximum listen() backlog for apache.  Added by install script.
