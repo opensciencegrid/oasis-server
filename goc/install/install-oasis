@@ -24,6 +24,13 @@ case "$MYSHORTNAME" in
 	;;
 esac
 
+case "`lsb_release -rs`" in
+    7.*);;
+    *)  echo "Only run this on el7"
+        exit 2
+        ;;
+esac
+
 set -ex
 
 SCRIPTDIR="`dirname $0`"
