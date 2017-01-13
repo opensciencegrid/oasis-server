@@ -1,0 +1,11 @@
+[Unit]
+Description=Oasis initialization boot cleanup
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/etc/init.d/oasis-initclean start
+
+[Install]
+WantedBy=multi-user.target
