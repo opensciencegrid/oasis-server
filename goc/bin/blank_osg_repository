@@ -55,9 +55,11 @@ for D in $REPODIRS; do
 done
 
 # restore if fails
-trap "echo;echo Failed, restoring; set +e; cvmfs_server rmfs -f $REPO; for D in $REPODIRS; do rm -rf \$D/$REPO; mv \$D/.$REPO.$NOW \$D/$REPO; done" 0
+trap "echo;echo Failed, restoring; set +e; set -x; cvmfs_server rmfs -f $REPO; for D in $REPODIRS; do rm -rf \$D/$REPO; mv \$D/.$REPO.$NOW \$D/$REPO; done" 0
 
 echo "Making $REPO"
+# this option needed for cvmfs-server-2.3.2 only
+export CVMFS_DONT_CHECK_OVERLAYFS_VERSION=true
 # need to have apache view match actual view during this
 ln -s /srv/cvmfs/$REPO /oasissrv/cvmfs/$REPO
 cvmfs_server mkfs -o root -w http://localhost:8080/cvmfs/$REPO $REPO
