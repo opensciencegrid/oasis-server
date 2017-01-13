@@ -101,7 +101,7 @@ This package contains files for oasis-login.opensciencegrid.org
   to have --timeout=10 --tries=2 so they won't hang indefinitely if
   an external repository server is down.
 
-* Thu Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.17-1
+* Thu Dec 29 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.17-1
 - Change add_osg_repository to remove .cvmfsreflog when re-using old data.
 
 * Wed Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.16-1
@@ -144,19 +144,19 @@ This package contains files for oasis-login.opensciencegrid.org
   to download from oasis any changed fingerprint in each external
   repo's .cvmfswhitelist.
 
-* Thu Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.12-1
+* Fri Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.12-1
 - Change the oasis-replica cron so that on oasis-replica-itb it will
   add the extra oasis-itb key to newly added repositories.  This is
   needed for garbage collection to work on new repositories, because
   we replace each .cvmfswhitelist file with one signed by oasis-itb.
 
-* Thu Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.11-1
+* Fri Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.11-1
 - Add gc-all-collectable and call it from cron on oasis-replica.
 
-* Wed Dec 01 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.10-2
+* Thu Dec 01 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.10-2
 - Make /etc/squid/customize.sh executable after creating it.
 
-* Wed Dec 01 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.10-1
+* Thu Dec 01 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.10-1
 - Move /etc/sysconfig/frontier-squid and /etc/squid/customize.sh into
   oasis-goc-replica.  Add a %post step to redirect customize.sh into a
   separate file oasiscustomize.sh, because the former is owned by the
