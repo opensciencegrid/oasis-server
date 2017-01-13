@@ -130,8 +130,8 @@ wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISS
 wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
 yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
-chkconfig oasis-initclean on
-/etc/init.d/oasis-initclean start
+systemctl enable oasis-initclean
+systemctl start oasis-initclean
 
 cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
 # created by install-oasis
@@ -141,14 +141,14 @@ cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
 </Directory>
 xEOFx
 
-chkconfig httpd on
-service httpd start
+systemctl enable httpd
+systemctl start httpd
 
-service iptables restart
+systemctl restart iptables
 
 # need nfslock for the repos to be on NFS
-chkconfig nfslock on
-service nfslock start
+systemctl enable nfslock
+systemctl start nfslock
 
 case $MYSHORTNAME in
     *-itb)
