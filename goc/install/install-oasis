@@ -49,6 +49,15 @@ case "$MYSHORTNAME" in
 	;;
 esac
 
+set +x
+for ID in oasis; do
+    while ! id $ID 2>/dev/null; do
+        echo "Waiting for $ID id to appear ..."
+        sleep 5
+    done
+done
+set -x
+
 ARCH=`arch`
 CVMFSRELRPM=cvmfs-release-2-6.noarch.rpm
 CVMFSVER=2.3.2
