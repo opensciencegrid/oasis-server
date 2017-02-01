@@ -12,7 +12,7 @@ cd $TMPD
 TOP=$PKG-$VERSION
 echo $TOP
 ln -s $BASE $TOP
-tar czhf $TOP.tar.gz $TOP/bin $TOP/etc $TOP/share $TOP/var
+tar czhf $TOP.tar.gz $TOP/bin $TOP/etc $TOP/share $TOP/usr $TOP/var
 # avoid accidental overwrite
 chmod 444 $TOP.tar.gz
 # this shares the connection so password only has to be entered once
