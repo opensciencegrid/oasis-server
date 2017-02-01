@@ -61,8 +61,9 @@ set -x
 ARCH=`arch`
 CVMFSRELRPM=cvmfs-release-2-6.noarch.rpm
 CVMFSVER=2.3.2
-CVMFSRPM=cvmfs-$CVMFSVER-1.el7.centos.$ARCH.rpm
-CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el7.centos.$ARCH.rpm
+CVMFSSUBVER=1.1.osg33.el7
+CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
+CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
 OASISVER=2.1.19
 OASISSUBVER=1.osg33.el7
@@ -110,8 +111,10 @@ rpm -i $CVMFSRELRPM
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
 rpm -e cvmfs-release
 rm $CVMFSRELRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+#curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
+#curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSRPM
+wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSSERVERRPM
 curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
 CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
 yum -y install $CVRPMS
