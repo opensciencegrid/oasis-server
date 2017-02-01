@@ -24,6 +24,13 @@ case "$MYSHORTNAME" in
 	;;
 esac
 
+case "`lsb_release -rs`" in
+    7.*);;
+    *)  echo "Only run this on el7"
+        exit 2
+        ;;
+esac
+
 set -ex
 
 SCRIPTDIR="`dirname $0`"
@@ -42,15 +49,24 @@ case "$MYSHORTNAME" in
 	;;
 esac
 
+set +x
+for ID in oasis; do
+    while ! id $ID 2>/dev/null; do
+        echo "Waiting for $ID id to appear ..."
+        sleep 5
+    done
+done
+set -x
+
 ARCH=`arch`
-AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
-CVMFSRELRPM=cvmfs-release-2-4.el5.noarch.rpm
+CVMFSRELRPM=cvmfs-release-2-6.noarch.rpm
 CVMFSVER=2.3.2
-CVMFSRPM=cvmfs-$CVMFSVER-1.el5.$ARCH.rpm
-CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-1.el5.$ARCH.rpm
+CVMFSSUBVER=1.1.osg33.el7
+CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
+CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
-OASISVER=2.1.18
-OASISSUBVER=1.osg32.el5
+OASISVER=2.1.19
+OASISSUBVER=1.osg33.el7
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.noarch.rpm
 
@@ -58,23 +74,6 @@ PATH="$PATH:/sbin"
 
 # import OSG key because we'll be directly downloading oasis rpm
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
-
-# download, build, and install aufs
-wget -q -N "http://ftp.scientificlinux.org/linux/scientific/5x/SRPMS/SL/$AUFSRPM"
-mkdir -p /usr/src/redhat/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-rpm -i $AUFSRPM
-rm $AUFSRPM
-# note: the kernel-devel install may not be needed; it's not removed in
-#  uninstall but try to install it because it's not guaranteed to be there
-yum install -y rpm-build kernel-devel-`uname -r` gcc
-rpmbuild -ba --target $ARCH --define "kernel `uname -r`" /usr/src/redhat/SPECS/aufs.spec
-rpm -iv /usr/src/redhat/RPMS/$ARCH/*aufs*.rpm
-
-# install aufs postupdate script so it will get rebuilt when kernel is rebuilt
-mkdir -p /opt/etc/osupdate.d
-cp $SCRIPTDIR/aufs.postupdate /opt/etc/osupdate.d
-# and run it now in case an osupdate happened before this install
-/opt/etc/osupdate.d/aufs.postupdate
 
 # create srv directory if it isn't there yet
 NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
@@ -90,15 +89,14 @@ if ! grep -q "[ \t]/srv[ \t]" /etc/fstab; then
     echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	defaults 	0 0" >>/etc/fstab
 fi
 mkdir -p /srv
+mount /srv
+
 # also mount /stage
 if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
     echo "vm08:/oasis-share/stage /stage			nfs 	defaults 	0 0" >>/etc/fstab
 fi
 mkdir -p /stage
-
-# need netfs to mount NFS at boot
-chkconfig netfs on
-service netfs start
+mount /stage
 
 # create symlinks for important log directories out to the NAS
 for LOGD in oasis httpd; do
@@ -113,18 +111,20 @@ rpm -i $CVMFSRELRPM
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
 rpm -e cvmfs-release
 rm $CVMFSRELRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+#curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
+#curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
+wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSRPM
+wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSSERVERRPM
 curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
 CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
 yum -y install $CVRPMS
 rm $CVRPMS
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
-# move /var/spool/cvmfs to /usr/spool because /var is too small for cache & tmp
-rm -rf /usr/spool/cvmfs
-mkdir -p /usr/spool
-mv /var/spool/cvmfs /usr/spool
-ln -s /usr/spool/cvmfs /var/spool
+# move /var/spool/cvmfs to /usr/local because /var is too small for cache.
+#  tmp, and scratch
+rm -rf /usr/local/cvmfs
+mv /var/spool/cvmfs /usr/local
+ln -s /usr/local/cvmfs /var/spool
 
 echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
@@ -142,17 +142,25 @@ wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISS
 wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
 yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
-chkconfig oasis-initclean on
-/etc/init.d/oasis-initclean start
+systemctl enable oasis-initclean
+systemctl start oasis-initclean
 
-chkconfig httpd on
-service httpd start
+cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
+# created by install-oasis
+# This is temporary until oasis.conf is no longer needed for el5
+<Directory "/srv/cvmfs"> 
+    Require all granted
+</Directory>
+xEOFx
 
-service gociptables restart
+systemctl enable httpd
+systemctl start httpd
+
+systemctl restart iptables
 
 # need nfslock for the repos to be on NFS
-chkconfig nfslock on
-service nfslock start
+systemctl enable nfslock
+systemctl start nfslock
 
 case $MYSHORTNAME in
     *-itb)
@@ -167,6 +175,8 @@ case $MYSHORTNAME in
 esac
 
 
+# this option needed for cvmfs-server-2.3.2 only
+export CVMFS_DONT_CHECK_OVERLAYFS_VERSION=true
 for REPO in oasis config-osg; do 
     if [ -d /srv/cvmfs/$REPO.opensciencegrid.org ]; then
 	# Old repository data present.  Use import instead of mkfs.
@@ -185,17 +195,6 @@ for REPO in oasis config-osg; do
     echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
     rm -f /etc/httpd/conf.d/cvmfs.$REPO.opensciencegrid.org.conf
 done
-
-# move scratch dir to attached storage
-umount /cvmfs/oasis.opensciencegrid.org
-rm -rf /srv/spool/oasis.opensciencegrid.org/scratch
-mkdir -p /srv/spool/oasis.opensciencegrid.org
-mv /var/spool/cvmfs/oasis.opensciencegrid.org/scratch /srv/spool/oasis.opensciencegrid.org
-mkdir /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
-# the second sed changes "/net/hostname" in $NETSRVDIR to "hostname:"
-sed -i -e "/^cvmfs2#oasis/i`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'`/spool/oasis.opensciencegrid.org/scratch /var/spool/cvmfs/oasis.opensciencegrid.org/scratch nfs defaults 0 0 # added by install-oasis" /etc/fstab
-mount /var/spool/cvmfs/oasis.opensciencegrid.org/scratch
-mount /cvmfs/oasis.opensciencegrid.org
 
 RUNUSER="runuser -s /bin/bash oasis -c"
 

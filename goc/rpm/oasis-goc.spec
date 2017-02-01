@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.18
+Version: 2.1.19
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -25,6 +25,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/bin $RPM_BUILD_ROOT/usr/share/oasis
 (cd bin;find *|cpio -pdv $RPM_BUILD_ROOT/usr/bin)
 find etc|cpio -pdv $RPM_BUILD_ROOT
 find var|cpio -pdv $RPM_BUILD_ROOT
+find usr|cpio -pdv $RPM_BUILD_ROOT
 
 
 %clean
@@ -47,6 +48,7 @@ This package contains files for oasis.opensciencegrid.org
 /etc/iptables.d/60-local-oasis
 /etc/logrotate.d/oasis
 /var/www/html/robots.txt
+/usr/lib/systemd/system/oasis-initclean.service
 %defattr(-,root,root)
 
 %package replica
@@ -88,12 +90,18 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Fri Jan 13 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.19-1
+- Add oasis-initclean systemd service in oasis-goc-zero, to make sure it
+  runs late enough at boot time.
+- Add CVMFS_DONT_CHECK_OVERLAYFS_VERSION=true to blank_osg_repository
+  to make overlayfs work with cvmfs-server-2.3.2.
+
 * Thu Jan 12 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.18-1
 - Change the wget commands in add_osg_repository and update_oasis_vos
   to have --timeout=10 --tries=2 so they won't hang indefinitely if
   an external repository server is down.
 
-* Thu Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.17-1
+* Thu Dec 29 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.17-1
 - Change add_osg_repository to remove .cvmfsreflog when re-using old data.
 
 * Wed Dec 28 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.16-1
@@ -136,19 +144,19 @@ This package contains files for oasis-login.opensciencegrid.org
   to download from oasis any changed fingerprint in each external
   repo's .cvmfswhitelist.
 
-* Thu Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.12-1
+* Fri Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.12-1
 - Change the oasis-replica cron so that on oasis-replica-itb it will
   add the extra oasis-itb key to newly added repositories.  This is
   needed for garbage collection to work on new repositories, because
   we replace each .cvmfswhitelist file with one signed by oasis-itb.
 
-* Thu Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.11-1
+* Fri Dec 02 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.11-1
 - Add gc-all-collectable and call it from cron on oasis-replica.
 
-* Wed Dec 01 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.10-2
+* Thu Dec 01 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.10-2
 - Make /etc/squid/customize.sh executable after creating it.
 
-* Wed Dec 01 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.10-1
+* Thu Dec 01 2016 Dave Dykstra <dwd@fnal.gov> - 2.1.10-1
 - Move /etc/sysconfig/frontier-squid and /etc/squid/customize.sh into
   oasis-goc-replica.  Add a %post step to redirect customize.sh into a
   separate file oasiscustomize.sh, because the former is owned by the

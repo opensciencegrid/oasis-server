@@ -3,6 +3,7 @@
 #  testing install-oasis without creating a new VM from scratch
 # Written by Dave Dykstra 2-26-2015
 
+# this is currently set up to uninstall on either el5 or el7
 
 case "`uname -n`" in
     oasis.*|oasis-itb.*);;
@@ -26,7 +27,9 @@ rm -rf /var/lib/oasis
 killall rsync
 killall cvmfs_swissknife
 service httpd stop
-service netfs stop # umounts nfs-mounted filesystems
+umount /srv
+umount /stage
+service netfs stop
 chkconfig netfs off
 sed -i '/[ \t]\/srv[ \t]/d' /etc/fstab
 sed -i '/[ \t]\/stage[ \t]/d' /etc/fstab
@@ -64,6 +67,7 @@ rm -rf /var/log/httpd
 sed -i '/nofile.*16384/d' /etc/security/limits.conf
 rm -rf /etc/cvmfs
 service gociptables restart
+service iptables restart
 yum clean all
 yum clean expire-cache  # temporarily until yum is updated
 service nfslock stop
