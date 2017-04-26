@@ -63,8 +63,8 @@ set -x
 ARCH=`arch`
 AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
 CVMFSRELRPM=cvmfs-release-2-6.noarch.rpm
-CVMFSVER=2.3.2
-CVMFSSUBVER=1.1.osg33.el7
+CVMFSVER=2.3.5
+CVMFSSUBVER=1.osg33.el7
 CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm

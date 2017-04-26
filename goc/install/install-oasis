@@ -60,8 +60,8 @@ set -x
 
 ARCH=`arch`
 CVMFSRELRPM=cvmfs-release-2-6.noarch.rpm
-CVMFSVER=2.3.2
-CVMFSSUBVER=1.1.osg33.el7
+CVMFSVER=2.3.5
+CVMFSSUBVER=1.osg33.el7
 CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
@@ -175,8 +175,6 @@ case $MYSHORTNAME in
 esac
 
 
-# this option needed for cvmfs-server-2.3.2 only
-export CVMFS_DONT_CHECK_OVERLAYFS_VERSION=true
 for REPO in oasis config-osg; do 
     if [ -d /srv/cvmfs/$REPO.opensciencegrid.org ]; then
 	# Old repository data present.  Use import instead of mkfs.
@@ -191,7 +189,6 @@ for REPO in oasis config-osg; do
 	CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis $REPO.opensciencegrid.org
     fi
     echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
-    echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
     echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
     rm -f /etc/httpd/conf.d/cvmfs.$REPO.opensciencegrid.org.conf
 done
