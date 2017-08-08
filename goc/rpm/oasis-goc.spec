@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.19
+Version: 2.1.20
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -90,6 +90,24 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Tue Aug 08 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.20-1
+- Add support for masterkeycard in add_osg_repository and oasis_status_stamp
+- Change resign_osg_whitelist to use new cvmfs-server-2.4.0 resign -w
+  option, and work with or without masterkeycard
+- Remove obsolete overlayfs override in blank_osg_repository
+- Change recover_oasis_rollback to be based on new resign -p command
+  along with resign_osg_whitelist
+- Remove gc-all-collectable, and instead call new cvmfs_server gc -af
+  from cron on oasis-replica
+- Add new generate_whitelists python script for automating adding new
+  repositories on the stratum 0 based on what is in OIM (as
+  generate_replicas currently does on the stratum 1), and add it to
+  the cron on oasis
+- Reduce the oasis-replica snapshot interval from 15 minutes to 5 minutes
+- Update the apache config files on oasis & oasis-replica to current
+  best practice, including 61 second expiration on .cvmfs* files, and
+  include the /oasissrv/cvmfs/*/.cvmfswhitelist files in the settings.
+
 * Fri Jan 13 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.19-1
 - Add oasis-initclean systemd service in oasis-goc-zero, to make sure it
   runs late enough at boot time.
