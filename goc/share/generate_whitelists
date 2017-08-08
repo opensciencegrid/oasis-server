@@ -1,0 +1,54 @@
+#!/usr/bin/python
+
+import urllib2
+import libxml2
+import sys
+import os
+import time
+
+def usage():
+    sys.stderr.write('Usage: generate_whitelists\n')
+    sys.stderr.write('  Adds missing CVMFS whitelists registered in OIM using add_repo_command.\n')
+    sys.stderr.write('  If whitelist exists but came from different URL, it will be re-added.\n')
+    sys.exit(1)
+
+if len(sys.argv) > 1:
+    usage()
+
+def logmsg(msg):
+    print time.asctime(time.localtime(time.time())) + ' ' + msg
+    sys.stdout.flush()
+
+logmsg('Starting')
+
+#download oasis vosummary
+response = urllib2.urlopen("http://myosg.grid.iu.edu/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name")
+xml = response.read()
+doc = libxml2.parseDoc(xml)
+
+#parse out OASISRepoURLs
+for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
+    url = urlfield.content
+    if url[-1] == '/':
+      # remove a trailing slash
+      url = url[:-1]
+    repo = url[url.rfind('/')+1:]
+    urlfile = '/srv/cvmfs/' + repo + '/.url'
+    if os.path.exists(urlfile):
+        with open(urlfile, 'r') as fd:
+            savedurl=fd.read().replace('\n','')
+        if url == savedurl:
+            # no change
+            continue
+    # whitelist does not exist or url has changed.  add it.
+    cmd = 'add_osg_repository ' + url
+    logmsg('Running ' + cmd)
+    code = os.system(cmd)
+    if code != 0:
+        logmsg('Add failed with exit code ' + hex(code))
+        continue
+    # write out the url too
+    with open(urlfile, 'w') as fd:
+        fd.write(url + '\n')
+
+logmsg('Finished')
