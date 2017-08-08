@@ -5,11 +5,11 @@ if [ "`hostname -s`" != oasis ]; then
     LOCKPFX=${LOCKPFX}itb_
 fi
 
-## maximum time since the catalog was signed (25 days)
-max_sig_age=2160000
+## maximum time since the catalog was signed (4 days)
+max_sig_age=345600
 
-## warning time since the catalog was signed (20 days)
-warn_sig_age=1728000
+## warning time since the catalog was signed (2 days)
+warn_sig_age=172800
 
 ## maximum lock file age (24 hours)
 max_lock_age=86400
@@ -122,6 +122,16 @@ fi
 
 sig_age=`expr $sig_age / 86400`
 
+# check the masterkeycard availability
+cvmfs_server masterkeycard -k 1>/dev/null 2>/dev/null
+status=$?
+if [ $status -eq 0 ]; then
+    masterkeycard_status="yes"
+else
+    masterkeycard_status="no"
+    set_status 1
+fi
+
 # look for old lock file age
 oldest_lock_age=-1
 for lockf in oasis_update_requested_vo oasis_update_in_progress; do
@@ -162,6 +172,7 @@ echo "uptime:$utime"
 echo "last_published:$update_time"
 echo "publish_age:$pub_age"
 echo "signature_age_days:$sig_age"
+echo "masterkeycard_status:$masterkeycard_status"
 echo "cvmfs2_running:$cvmfs_status"
 echo "httpd_running:$httpd_status"
 echo "cvmfs_oasis_mounted:$mounted_status"
