@@ -1,10 +1,11 @@
 #!/bin/bash
 # Recover after a rollback on the oasis machine, that is, after
 #   re-installing on a new VM and then going back to boot a previously
-#   installed VM.  Recreate repo keys for oasis & config-osg repos.
-# This is a temporary implementation, see CVM-1140.
+#   installed VM.
+# Recreate .cvmfspublished & .cvmfswhitelist for oasis & config-osg repos.
 
-if [ ! -f /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey ]; then
+MASTERKEY=/etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
+if [ ! -f $MASTERKEY ] && ! cvmfs_server masterkeycard -k >/dev/null; then
     echo "Only run this on the stratum 0 with the masterkey installed"
     exit 1
 fi
@@ -16,23 +17,8 @@ umountifmounted()
     fi
 }
 
-RUNUSER="/sbin/runuser -s /bin/bash oasis -c"
-
-# temporary for el7 and cvmfs-server-2.3.2
-export CVMFS_DONT_CHECK_OVERLAYFS_VERSION=true
-
 set -ex
 for REPO in oasis config-osg; do
-    cp /etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf /tmp
-    umountifmounted /cvmfs/$REPO.opensciencegrid.org
-    umountifmounted /usr/spool/cvmfs/$REPO.opensciencegrid.org/scratch
-    cvmfs_server rmfs -p -f $REPO.opensciencegrid.org
-    cvmfs_server import -o oasis -r -t $REPO.opensciencegrid.org
-    cp /tmp/server.conf /etc/cvmfs/repositories.d/$REPO.opensciencegrid.org
-    umount /cvmfs/$REPO.opensciencegrid.org
-    mount -a # re-mounts scratch filesystem
-    mount /cvmfs/$REPO.opensciencegrid.org
-    # make sure transaction & publish work
-    $RUNUSER "cvmfs_server transaction $REPO.opensciencegrid.org"
-    $RUNUSER "cvmfs_server publish $REPO.opensciencegrid.org"
+    cvmfs_server resign -p $REPO.opensciencegrid.org
+    resign_osg_whitelist $REPO.opensciencegrid.org
 done
