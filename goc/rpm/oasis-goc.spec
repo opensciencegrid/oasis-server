@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.20
+Version: 2.1.21
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -90,6 +90,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Tue Aug 08 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.21-1
+- Change add_osg_repository to always add the OSG pub key, even on ITB
+
 * Tue Aug 08 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.20-1
 - Add support for masterkeycard in add_osg_repository and oasis_status_stamp
 - Change resign_osg_whitelist to use new cvmfs-server-2.4.0 resign -w
