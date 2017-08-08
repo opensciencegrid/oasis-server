@@ -53,7 +53,7 @@ fi
 set -e
 
 MASTERKEY=/etc/cvmfs/keys/$MAINREPO.masterkey
-if [ -f $MASTERKEY ]; then
+if [ -f $MASTERKEY ] || cvmfs_server masterkeycard -k >/dev/null; then
     # on stratum 0 with masterkey installed
     # all we need here is a signed .cvmfswhitelist 
     REPODIR="/srv/cvmfs/$REPONAME"
