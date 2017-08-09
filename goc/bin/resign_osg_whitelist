@@ -23,8 +23,7 @@ if [ ! -f $MASTERKEY ] && ! cvmfs_server masterkeycard -k >/dev/null; then
     exit 1
 fi
 
-set -e
-
+RET=0
 for name; do
     if [ ! -d "/srv/cvmfs/$name" ]; then
 	echo "$ME: invalid repository name $name" >&2
@@ -42,9 +41,13 @@ for name; do
         fi
     fi
     echo -n "$name: "
-    cvmfs_server resign -w /srv/cvmfs/$name/.cvmfswhitelist $name
+    if ! cvmfs_server resign -w /srv/cvmfs/$name/.cvmfswhitelist $name; then
+        # if one fails, try the others but exit with an error code
+        RET=1
+    fi
     if [ -n "$REPOKEY" ]; then
         rm -f $REPOKEY
     fi
 done
 
+exit $RET
