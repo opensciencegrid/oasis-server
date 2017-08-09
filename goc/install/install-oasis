@@ -65,15 +65,15 @@ CVMFSSUBVER=1.1.osg34.el7
 CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
-OASISVER=2.1.20
-OASISSUBVER=1.osg33.el7
+OASISVER=2.1.22
+OASISSUBVER=1.osg34.el7
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.noarch.rpm
 
 PATH="$PATH:/sbin"
 
-# import OSG key because we'll be directly downloading oasis rpm
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
+# disable osg repo because we don't want cvmfs updates from there
+yum-config-manager --disable osg >/dev/null
 
 # create srv directory if it isn't there yet
 NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
