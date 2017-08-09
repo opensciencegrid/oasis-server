@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install and configure all application software on oasis-login or
-#   oasis-login-itb, or oasis-login-sl6 or oasis-login-sl6-itb
+#   oasis-login-itb
 # Written by Dave Dykstra 3-11-2015
 
 cd
@@ -26,8 +26,8 @@ case "$MYSHORTNAME" in
 esac
 
 ARCH=`arch`
-OASISVER=2.1.6
-OASISSUBVER=1.osg32.el5
+OASISVER=2.1.22
+OASISSUBVER=1.osg34.el6
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.noarch.rpm
 
