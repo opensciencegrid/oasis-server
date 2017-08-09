@@ -19,6 +19,9 @@ umountifmounted()
 
 set -ex
 for REPO in oasis config-osg; do
-    cvmfs_server resign -p $REPO.opensciencegrid.org
-    resign_osg_whitelist $REPO.opensciencegrid.org
+    REPOOSG=$REPO.opensciencegrid.org
+    rm -f /srv/cvmfs/$REPOOSG/.cvmfsreflog
+    rm -f /var/spool/cvmfs/$REPOOSG/reflog.chksum
+    cvmfs_server resign -p $REPOOSG
+    resign_osg_whitelist $REPOOSG
 done
