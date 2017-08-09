@@ -31,8 +31,8 @@ esac
 set -ex
 
 # Set ITBBOOTSTRAP to true to bootstrap oasis-replica-itb from
-#   the production oasis and oasis-replica servers.  Then uninstall
-#   and reinstall without the bootstrap to correct the server URLs.
+#   the production oasis and oasis-replica servers.  Then reinstall
+#   from scatch again without the bootstrap to correct the server URLs.
 ITBBOOTSTRAP=${ITBBOOTSTRAP:-false}
 
 SCRIPTDIR="`dirname $0`"
@@ -61,26 +61,25 @@ done
 set -x
 
 ARCH=`arch`
-AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
 CVMFSRELRPM=cvmfs-release-2-6.noarch.rpm
-CVMFSVER=2.3.5
-CVMFSSUBVER=1.osg33.el7
+CVMFSVER=2.4.0
+CVMFSSUBVER=1.1.osg34.el7
 CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
 CVMFSSERVERMONRPM=cvmfs-servermon-1.4-1.el5.noarch.rpm
 FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
-SQUIDRPM=frontier-squid-3.5.23-4.1.$ARCH.rpm
+SQUIDRPM=frontier-squid-3.5.24-3.1.$ARCH.rpm
 AWSTATSRPM=frontier-awstats-6.9-4.1.noarch.rpm
-OASISVER=2.1.19
-OASISSUBVER=1.osg33.el7
+OASISVER=2.1.22
+OASISSUBVER=1.osg34.el7
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.noarch.rpm
 
 PATH="$PATH:/sbin"
 
-# import OSG key because we'll be directly downloading oasis rpm
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
+# disable osg repo because we don't want cvmfs updates from there
+yum-config-manager --disable osg >/dev/null
 
 # create srv directory if it isn't there yet
 NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
@@ -147,17 +146,6 @@ wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISS
 yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
 
-cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
-# created by install-oasis-replica
-# This is temporary until oasis.conf is no longer needed for el5
-<Directory "/srv/cvmfs"> 
-    Require all granted
-</Directory>
-<Directory "/oasissrv/cvmfs"> 
-    Require all granted
-</Directory>
-xEOFx
-
 systemctl enable httpd
 systemctl start httpd
 
@@ -202,20 +190,14 @@ fi
 systemctl enable nfslock
 systemctl start nfslock
 
-# on itb install also the oasis-itb pub key and read from oasis-itb
-EXTRAPUBKEY=""
+# on itb read from oasis-itb unless bootstrapping
+ITB=""
 case $MYSHORTNAME in
     *-itb)
 	cp "`echo $NETSRVDIR|sed 's/-replica-itb//'`"/etc/cvmfs/oasis-itb.opensciencegrid.org.pub /etc/cvmfs/keys
-	if $ITBBOOTSTRAP; then
-	    ITB=""
-	    EXTRAPUBKEY="/etc/cvmfs/keys/opensciencegrid.org.pub"
-	else
+	if ! $ITBBOOTSTRAP; then
 	    ITB="-itb"
 	fi
-	;;
-    *)
-	ITB=""
 	;;
 esac
 
@@ -227,7 +209,7 @@ NONOIMREPOURLS="$REPOURLS"
 
 # add repos hosted on our stratum 0
 for URL in $REPOURLS; do
-    add_osg_repository -a "$URL" $EXTRAPUBKEY
+    add_osg_repository -a "$URL"
 done
 
 # add other repos not registered in OIM
@@ -235,7 +217,7 @@ REPOURLS="http://cvmfs-stratum0.gridpp.rl.ac.uk:8000/cvmfs/config-egi.egi.eu"
 NONOIMREPOURLS="$NONOIMREPOURLS $REPOURLS"
 for URL in $REPOURLS; do
     if $ITBBOOTSTRAP; then
-	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" $EXTRAPUBKEY
+	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`"
     else
 	add_osg_repository -a "$URL"
     fi
@@ -246,7 +228,7 @@ done
 OIMREPOURLS="`print_osg_repos -u`"
 for URL in $OIMREPOURLS; do
     if $ITBBOOTSTRAP; then
-	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" $EXTRAPUBKEY || true
+	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" || true
     else
 	add_osg_repository -a "$URL" || true
     fi
