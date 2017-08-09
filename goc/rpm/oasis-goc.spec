@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.21
+Version: 2.1.22
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -85,14 +85,17 @@ This package contains files for oasis-login.opensciencegrid.org
 
 %files login
 /etc/iptables.d/60-local-oasis-login
-/etc/sysconfig/gsisshd
 %defattr(-,root,root)
 
 
 %changelog
+* Wed Aug 09 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.22-1
+- Change resign_osg_whitelist to continue trying all repos even if one
+  fails.  I have seen about a 0.1% failure rate with masterkeycard signing.
+- Remove reflog files in recover_oasis_rollback
+- Remove /etc/sysconfig/gsisshd from oasis-login.
 * Tue Aug 08 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.21-1
 - Change add_osg_repository to always add the OSG pub key, even on ITB
-
 * Tue Aug 08 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.20-1
 - Add support for masterkeycard in add_osg_repository and oasis_status_stamp
 - Change resign_osg_whitelist to use new cvmfs-server-2.4.0 resign -w
