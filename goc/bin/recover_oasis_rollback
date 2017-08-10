@@ -23,5 +23,8 @@ for REPO in oasis config-osg; do
     rm -f /srv/cvmfs/$REPOOSG/.cvmfsreflog
     rm -f /var/spool/cvmfs/$REPOOSG/reflog.chksum
     cvmfs_server resign -p $REPOOSG
-    resign_osg_whitelist $REPOOSG
+    if ! resign_osg_whitelist $REPOOSG; then
+        # try twice because we have seen a ~0.1% failure rate
+        resign_osg_whitelist $REPOOSG
+    fi
 done
