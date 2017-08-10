@@ -10,6 +10,4 @@ if [ "$1" = "start" ]; then
     rm -f ${LOCKPFX}oasis_update_in_progress ${LOCKPFX}oasis_update_requested_vo
 
     recover_oasis_rollback
-
-    cvmfs_server mount -a
 fi
