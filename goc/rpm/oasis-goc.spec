@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.22
+Version: 2.1.23
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -89,6 +89,8 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Thu Aug 10 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.23-1
+- Try resign_osg_whitelist again if it fails during recover_oasis_rollback.
 * Wed Aug 09 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.22-1
 - Change resign_osg_whitelist to continue trying all repos even if one
   fails.  I have seen about a 0.1% failure rate with masterkeycard signing.
