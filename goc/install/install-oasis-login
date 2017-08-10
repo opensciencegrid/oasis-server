@@ -26,23 +26,20 @@ case "$MYSHORTNAME" in
 esac
 
 ARCH=`arch`
-OASISVER=2.1.22
-OASISSUBVER=1.osg34.el6
+OASISVER=2.1.23
+OASISSUBVER=1.osg34.el7
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.noarch.rpm
 
 PATH="$PATH:/sbin:/usr/sbin"
-
-# import OSG key because we'll be directly downloading oasis rpm
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
 
 # need yum-priorities to make OSG a higher priority than EPEL
 yum -y install yum-priorities
 
 # install condor
 yum -y install condor
-chkconfig condor on
-service condor start
+systemctl enable condor
+systemctl start condor
 
 # install oasis
 wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
@@ -50,7 +47,7 @@ wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISS
 yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
 
-service gociptables restart
+systemctl restart iptables
 
 # mount /stage and /home/login directories
 if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
@@ -62,27 +59,22 @@ if ! grep -q "[ \t]/home/login[ \t]" /etc/fstab; then
 fi
 mkdir -p /home/login
 
-# need netfs to mount NFS at boot
-chkconfig netfs on
-service netfs start
+# need nfslock for the repos to be on NFS
+systemctl enable nfslock
+systemctl start nfslock
 
 # make convenience link
 mkdir -p /cvmfs
 ln -s /stage/oasis /cvmfs/oasis.opensciencegrid.org
 
-# puppet is now configuring gsissh
-# install gsisshd and gsissh clients (client needed for gsiscp)
-#yum -y install gsi-openssh-server gsi-openssh-clients
-#
-#ln -s /etc/ssh/ssh_host_rsa_key /etc/gsissh/ssh_host_rsa_key
-#ln -s /etc/ssh/ssh_host_rsa_key.pub /etc/gsissh/ssh_host_rsa_key.pub
-#ln -s /etc/ssh/ssh_host_dsa_key /etc/gsissh/ssh_host_dsa_key
-#ln -s /etc/ssh/ssh_host_dsa_key.pub /etc/gsissh/ssh_host_dsa_key.pub
-#
-#service sshd stop
-#chkconfig sshd off
-#service gsisshd start
-#chkconfig gsisshd on
+# help puppet's gsisshd config a little.  See OO-197
+if [ ! -e /etc/grid-security/hostcert.pem ]; then
+    ln -s /etc/grid-security/host/cert.pem /etc/grid-security/hostcert.pem
+fi
+if [ ! -e /etc/grid-security/hostkey.pem ]; then
+    ln -s /etc/grid-security/host/key.pem /etc/grid-security/hostkey.pem
+fi
+systemctl restart gsisshd
 
 # for the status stamp
 yum -y install httpd
