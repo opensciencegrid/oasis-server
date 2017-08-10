@@ -60,7 +60,7 @@ set -x
 
 ARCH=`arch`
 CVMFSVER=2.4.0
-CVMFSSUBVER=1.1.osg34.el7
+CVMFSSUBVER=1.osg34.el7
 CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
 CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
@@ -137,7 +137,6 @@ wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISS
 yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
 systemctl enable oasis-initclean
-systemctl start oasis-initclean
 
 cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
 # created by install-oasis
@@ -197,10 +196,14 @@ for REPO in oasis config-osg; do
     rm -f /etc/httpd/conf.d/cvmfs.$REPO.opensciencegrid.org.conf
 done
 
+# Run this to clean up any lock files that might have been leftover.
+# It has to be after the masterkey is set up because it calls
+#  recover_oasis_rollback
+systemctl start oasis-initclean
+
 RUNUSER="runuser -s /bin/bash oasis -c"
 
-# Manage repository content special content
-
+# Manage repository special content
 $RUNUSER "cvmfs_server transaction oasis.opensciencegrid.org"
 
 if [ -f /cvmfs/oasis.opensciencegrid.org/new_repository ]; then
