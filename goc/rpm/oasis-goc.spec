@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.23
+Version: 2.1.24
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -89,6 +89,11 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Thu Aug 10 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.24-1
+- Switch to using cvmfs_server resign instead of resign_osg_whitelist
+  in recover_oasis_rollback.  It requires repositories to be healthy,
+  so recover_oasis_rollback first does a couple of transaction/aborts
+  to clean things up.
 * Thu Aug 10 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.23-1
 - Try resign_osg_whitelist again if it fails during recover_oasis_rollback.
 * Wed Aug 09 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.22-1
