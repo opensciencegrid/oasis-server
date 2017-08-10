@@ -1,0 +1,10 @@
+#!/bin/bash
+# Update vdt working directory with current version
+
+PKG=oasis-goc
+VDT=~/work/vdt-native/redhat/branches/goc/$PKG
+VERSION="`sed -n 's/^Version: //p' $PKG.spec`"
+FEATURE="`echo $VERSION|cut -d. -f1,2`"
+set -x
+echo $PKG/$FEATURE/$PKG-$VERSION.tar.gz >$VDT/upstream/developer.tarball.source
+cp $PKG.spec $VDT/osg
