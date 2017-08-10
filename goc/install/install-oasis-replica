@@ -107,6 +107,7 @@ done
 chown squid:squid /srv/log/squid
 
 # install cvmfs
+CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM $CVMFSSERVERMONRPM"
 wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSRPM
 wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSSERVERRPM
 curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
