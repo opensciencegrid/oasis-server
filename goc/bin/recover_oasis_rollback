@@ -17,14 +17,26 @@ umountifmounted()
     fi
 }
 
-set -ex
+RET=0
+set -x
 for REPO in oasis config-osg; do
     REPOOSG=$REPO.opensciencegrid.org
     rm -f /srv/cvmfs/$REPOOSG/.cvmfsreflog
     rm -f /var/spool/cvmfs/$REPOOSG/reflog.chksum
+    # Use transaction/abort to make it look "healthy".  
+    # In some cases it needs to be done twice.
+    # This clears it up better than cvmfs_server mount -a
+    cvmfs_server transaction $REPOOSG
+    cvmfs_server abort -f $REPOOSG
+    cvmfs_server transaction $REPOOSG
+    cvmfs_server abort -f $REPOOSG
+    # Now resign both .cvmfspublished and .cvmfswhitelist
     cvmfs_server resign -p $REPOOSG
-    if ! resign_osg_whitelist $REPOOSG; then
+    if ! cvmfs_server resign $REPOOSG; then
         # try twice because we have seen a ~0.1% failure rate
-        resign_osg_whitelist $REPOOSG
+        if ! cvmfs_server resign $REPOOSG; then
+            RET=1
+        fi
     fi
 done
+exit $RET
