@@ -1,3 +1,3 @@
-1,16,31,46 * * * * root test -f /var/lib/oasis/installed || exit; [[ $(uname -n) == *-itb* ]] && sleep 30; /usr/share/oasis/generate_adduser | bash
-*/5 * * * *        root test -f /var/lib/oasis/installed || exit; cd /etc/grid-security; if /usr/share/oasis/generate_gridmap > grid-mapfile.tmp; then mv -f grid-mapfile.tmp grid-mapfile; fi
+1,16,31,46 * * * * root test ! -f /var/lib/oasis/installed || ([[ $(uname -n) == *-itb* ]] && sleep 30; date; /usr/share/oasis/generate_adduser | bash) >>/var/log/oasis/generate_adduser.log 2>&1
+*/5 * * * *        root test ! -f /var/lib/oasis/installed || (date; cd /etc/grid-security; if /usr/share/oasis/generate_gridmap > grid-mapfile.tmp; then mv -f grid-mapfile.tmp grid-mapfile; fi) >>/var/log/oasis/generate_gridmap.log 2>&1
 */3 * * * *        root   /usr/share/oasis/oasis_login_status >/dev/null 2>&1
