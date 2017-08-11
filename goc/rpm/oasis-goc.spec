@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.25
+Version: 2.1.26
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -84,11 +84,14 @@ Group: Development/Libraries
 This package contains files for oasis-login.opensciencegrid.org
 
 %files login
+/etc/cron.d/oasis-login
 /etc/iptables.d/60-local-oasis-login
 %defattr(-,root,root)
 
 
 %changelog
+* Fri Aug 11 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.26-1
+- Move oasis-login cron to rpm from install script
 * Fri Aug 11 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.25-1
 - Fix copy/paste error in etc/cron.d/oasis
 * Thu Aug 10 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.24-1
