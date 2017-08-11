@@ -138,14 +138,6 @@ yum -y install $OASISRPM $OASISRPM2
 rm $OASISRPM $OASISRPM2
 systemctl enable oasis-initclean
 
-cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
-# created by install-oasis
-# This is temporary until oasis.conf is no longer needed for el5
-<Directory "/srv/cvmfs"> 
-    Require all granted
-</Directory>
-xEOFx
-
 systemctl enable httpd
 systemctl start httpd
 
