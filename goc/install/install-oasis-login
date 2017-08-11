@@ -26,7 +26,7 @@ case "$MYSHORTNAME" in
 esac
 
 ARCH=`arch`
-OASISVER=2.1.25
+OASISVER=2.1.26
 OASISSUBVER=1.osg34.el7
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -108,14 +108,9 @@ rm $TMPF.1
 # the user's want gcc to be able to compile
 yum -y install gcc
 
-# add cron entries
-cat >>/etc/cron.d/oasis-login <<'xEOFx'
-# Created by install script.  Will be recreated next reinstall.
-*/5 * * * * root /usr/share/oasis/generate_adduser | bash
-1-59/5 * * * * root cd /etc/grid-security; if /usr/share/oasis/generate_gridmap > grid-mapfile.tmp; then mv -f grid-mapfile.tmp grid-mapfile; fi
-4,19,34,49 * * * * root   /usr/share/oasis/oasis_login_status >/dev/null 2>&1
-xEOFx
-
+# used by /etc/cron.d/oasis-login
+mkdir -p /var/lib/oasis
+date >/var/lib/oasis/installed
 
 rm -f /root/show_install_msg.sh
 
