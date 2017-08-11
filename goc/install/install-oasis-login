@@ -26,7 +26,7 @@ case "$MYSHORTNAME" in
 esac
 
 ARCH=`arch`
-OASISVER=2.1.24
+OASISVER=2.1.25
 OASISSUBVER=1.osg34.el7
 OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
 OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.noarch.rpm
@@ -54,10 +54,12 @@ if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
     echo "vm08:/oasis-share/stage /stage			nfs 	defaults	0 0" >>/etc/fstab
 fi
 mkdir -p /stage
+mount /stage
 if ! grep -q "[ \t]/home/login[ \t]" /etc/fstab; then
     echo "vm08:/oasis-share/home/login /home/login	nfs 	defaults	0 0" >>/etc/fstab
 fi
 mkdir -p /home/login
+mount /home/login
 
 # need nfslock for the repos to be on NFS
 systemctl enable nfslock
