@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.26
+Version: 2.1.27
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -84,12 +84,19 @@ Group: Development/Libraries
 This package contains files for oasis-login.opensciencegrid.org
 
 %files login
+/etc/logrotate.d/oasis
 /etc/cron.d/oasis-login
 /etc/iptables.d/60-local-oasis-login
 %defattr(-,root,root)
 
 
 %changelog
+* Fri Aug 11 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.27-1
+- Send oasis-login cron output to log files
+- Have copy_config_osg allow either itb or production key on oasis-itb's
+  config repository
+- Have blank_osg_repository always assume production masterkey even on itb
+- Add a log message in generate_whitelists when the url changes
 * Fri Aug 11 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.26-1
 - Move oasis-login cron to rpm from install script
 * Fri Aug 11 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.25-1
