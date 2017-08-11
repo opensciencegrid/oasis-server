@@ -35,11 +35,13 @@ for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
     repo = url[url.rfind('/')+1:]
     urlfile = '/srv/cvmfs/' + repo + '/.url'
     if os.path.exists(urlfile):
+        savedurl=""
         with open(urlfile, 'r') as fd:
             savedurl=fd.read().replace('\n','')
         if url == savedurl:
             # no change
             continue
+        print urlfile + " changed from " + savedurl + " to " + url
     # whitelist does not exist or url has changed.  add it.
     cmd = 'add_osg_repository ' + url
     logmsg('Running ' + cmd)
