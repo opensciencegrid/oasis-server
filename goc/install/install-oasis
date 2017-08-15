@@ -58,21 +58,26 @@ for ID in oasis; do
 done
 set -x
 
-ARCH=`arch`
-CVMFSVER=2.4.0
-CVMFSSUBVER=1.osg34.el7
-CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
-CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
-CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
-OASISVER=2.1.27
-OASISSUBVER=1.osg34.el7
-OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
-OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.noarch.rpm
-
 PATH="$PATH:/sbin"
+
+if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
+    # update to osg34
+    rpm -Uv https://repo.grid.iu.edu/osg/3.4/el7/release/x86_64/osg-release-3.4-1.osg34.el7.noarch.rpm
+    yum clean --enablerepo='*' all
+fi
 
 # disable osg repo because we don't want cvmfs updates from there
 yum-config-manager --disable osg >/dev/null
+
+# enable appropriate goc repo
+if [[ $MYSHORTNAME == *-itb ]]; then
+    yum-config-manager --enable goc-itb >/dev/null
+else
+    yum-config-manager --enable goc >/dev/null
+fi
+if [ -n "$OASISDEVREPO" ]; then
+    yum-config-manager --enable $OASISDEVREPO >/dev/null
+fi
 
 # create srv directory if it isn't there yet
 NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
@@ -105,12 +110,7 @@ for LOGD in oasis httpd; do
 done
 
 # install cvmfs
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSSERVERRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
-CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
-yum -y install $CVRPMS opensc yubico-piv-tool engine_pkcs11
-rm $CVRPMS
+yum -y install cvmfs cvmfs-server cvmfs-servermon opensc yubico-piv-tool engine_pkcs11
 systemctl enable pcscd.socket
 systemctl start pcscd.socket
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
@@ -132,10 +132,7 @@ sysctl -w net.core.somaxconn=1024
 mkdir -p /srv
 
 # install oasis
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
-yum -y install $OASISRPM $OASISRPM2
-rm $OASISRPM $OASISRPM2
+yum -y install oasis-goc oasis-goc-zero
 systemctl enable oasis-initclean
 
 systemctl enable httpd

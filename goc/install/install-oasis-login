@@ -25,13 +25,26 @@ case "$MYSHORTNAME" in
 	;;
 esac
 
-ARCH=`arch`
-OASISVER=2.1.27
-OASISSUBVER=1.osg34.el7
-OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
-OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.noarch.rpm
-
 PATH="$PATH:/sbin:/usr/sbin"
+
+if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
+    # update to osg34
+    rpm -Uv https://repo.grid.iu.edu/osg/3.4/el7/release/x86_64/osg-release-3.4-1.osg34.el7.noarch.rpm
+    yum clean --enablerepo='*' all
+fi
+
+# disable osg repo because we don't want condor updates from there
+yum-config-manager --disable osg >/dev/null
+
+# enable appropriate goc repo
+if [[ $MYSHORTNAME == *-itb ]]; then
+    yum-config-manager --enable goc-itb >/dev/null
+else
+    yum-config-manager --enable goc >/dev/null
+fi
+if [ -n "$OASISDEVREPO" ]; then
+    yum-config-manager --enable $OASISDEVREPO >/dev/null
+fi
 
 # need yum-priorities to make OSG a higher priority than EPEL
 yum -y install yum-priorities
@@ -42,10 +55,7 @@ systemctl enable condor
 systemctl start condor
 
 # install oasis
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
-yum -y install $OASISRPM $OASISRPM2
-rm $OASISRPM $OASISRPM2
+yum -y install oasis-goc oasis-goc-login
 
 systemctl restart iptables
 

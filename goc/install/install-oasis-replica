@@ -60,25 +60,26 @@ for ID in oasis squid; do
 done
 set -x
 
-ARCH=`arch`
-CVMFSVER=2.4.0
-CVMFSSUBVER=1.osg34.el7
-CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
-CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
-CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
-CVMFSSERVERMONRPM=cvmfs-servermon-1.4-1.el5.noarch.rpm
-FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
-SQUIDRPM=frontier-squid-3.5.24-3.1.$ARCH.rpm
-AWSTATSRPM=frontier-awstats-6.9-4.1.noarch.rpm
-OASISVER=2.1.27
-OASISSUBVER=1.osg34.el7
-OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
-OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.noarch.rpm
-
 PATH="$PATH:/sbin"
+
+if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
+    # update to osg34
+    rpm -Uv https://repo.grid.iu.edu/osg/3.4/el7/release/x86_64/osg-release-3.4-1.osg34.el7.noarch.rpm
+    yum clean --enablerepo='*' all
+fi
 
 # disable osg repo because we don't want cvmfs updates from there
 yum-config-manager --disable osg >/dev/null
+
+# enable appropriate goc repo
+if [[ $MYSHORTNAME == *-itb ]]; then
+    yum-config-manager --enable goc-itb >/dev/null
+else
+    yum-config-manager --enable goc >/dev/null
+fi
+if [ -n "$OASISDEVREPO" ]; then
+    yum-config-manager --enable $OASISDEVREPO >/dev/null
+fi
 
 # create srv directory if it isn't there yet
 NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
@@ -107,15 +108,8 @@ done
 chown squid:squid /srv/log/squid
 
 # install cvmfs
-CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM $CVMFSSERVERMONRPM"
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSSERVERRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-servermon/$CVMFSSERVERMONRPM
-# need nogpg for now because cvmfs-servermon is not yet signed
-yum -y --nogpg install $CVRPMS
-rm $CVRPMS
-cp /etc/cvmfs/keys/egi.eu/egi.eu.pub /etc/cvmfs/keys
+yum -y install cvmfs cvmfs-server cvmfs-servermon
+
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
 if [ ! -d /srv/etc/keys ]; then
     mkdir -p /srv/etc/keys
@@ -133,10 +127,7 @@ echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
 
 # install oasis
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
-yum -y install $OASISRPM $OASISRPM2
-rm $OASISRPM $OASISRPM2
+yum -y install oasis-goc oasis-goc-replica
 
 systemctl enable httpd
 systemctl start httpd
@@ -150,14 +141,7 @@ xEOFx
 sysctl -w net.core.somaxconn=1024
 
 # install frontier-squid & frontier-awstats
-wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$FRONTIERRELRPM
-rpm -i $FRONTIERRELRPM
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-cern-frontier
-rpm -e frontier-release
-wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/$ARCH/$SQUIDRPM
-wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$AWSTATSRPM
-yum -y install $SQUIDRPM $AWSTATSRPM
-rm $FRONTIERRELRPM $SQUIDRPM $AWSTATSRPM
+yum -y install frontier-squid frontier-awstats
 
 # install frontier-awstats password if available
 APWFILE=/srv/etc/awstats/password-file
