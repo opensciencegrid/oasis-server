@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install and configure all application software on oasis-login or
-#   oasis-login-itb, or oasis-login-sl6 or oasis-login-sl6-itb
+#   oasis-login-itb
 # Written by Dave Dykstra 3-11-2015
 
 cd
@@ -25,64 +25,68 @@ case "$MYSHORTNAME" in
 	;;
 esac
 
-ARCH=`arch`
-OASISVER=2.1.6
-OASISSUBVER=1.osg32.el5
-OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
-OASISRPM2=oasis-goc-login-$OASISVER-$OASISSUBVER.noarch.rpm
-
 PATH="$PATH:/sbin:/usr/sbin"
 
-# import OSG key because we'll be directly downloading oasis rpm
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
+if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
+    # update to osg34
+    rpm -Uv https://repo.grid.iu.edu/osg/3.4/el7/release/x86_64/osg-release-3.4-1.osg34.el7.noarch.rpm
+    yum clean --enablerepo='*' all
+fi
+
+# disable osg repo because we don't want condor updates from there
+yum-config-manager --disable osg >/dev/null
+
+# enable appropriate goc repo
+if [[ $MYSHORTNAME == *-itb ]]; then
+    yum-config-manager --enable goc-itb >/dev/null
+else
+    yum-config-manager --enable goc >/dev/null
+fi
+if [ -n "$OASISDEVREPO" ]; then
+    yum-config-manager --enable $OASISDEVREPO >/dev/null
+fi
 
 # need yum-priorities to make OSG a higher priority than EPEL
 yum -y install yum-priorities
 
 # install condor
 yum -y install condor
-chkconfig condor on
-service condor start
+systemctl enable condor
+systemctl start condor
 
 # install oasis
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
-yum -y install $OASISRPM $OASISRPM2
-rm $OASISRPM $OASISRPM2
+yum -y install oasis-goc oasis-goc-login
 
-service gociptables restart
+systemctl restart iptables
 
 # mount /stage and /home/login directories
 if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
     echo "vm08:/oasis-share/stage /stage			nfs 	defaults	0 0" >>/etc/fstab
 fi
 mkdir -p /stage
+mount /stage
 if ! grep -q "[ \t]/home/login[ \t]" /etc/fstab; then
     echo "vm08:/oasis-share/home/login /home/login	nfs 	defaults	0 0" >>/etc/fstab
 fi
 mkdir -p /home/login
+mount /home/login
 
-# need netfs to mount NFS at boot
-chkconfig netfs on
-service netfs start
+# need nfslock for the repos to be on NFS
+systemctl enable nfslock
+systemctl start nfslock
 
 # make convenience link
 mkdir -p /cvmfs
 ln -s /stage/oasis /cvmfs/oasis.opensciencegrid.org
 
-# puppet is now configuring gsissh
-# install gsisshd and gsissh clients (client needed for gsiscp)
-#yum -y install gsi-openssh-server gsi-openssh-clients
-#
-#ln -s /etc/ssh/ssh_host_rsa_key /etc/gsissh/ssh_host_rsa_key
-#ln -s /etc/ssh/ssh_host_rsa_key.pub /etc/gsissh/ssh_host_rsa_key.pub
-#ln -s /etc/ssh/ssh_host_dsa_key /etc/gsissh/ssh_host_dsa_key
-#ln -s /etc/ssh/ssh_host_dsa_key.pub /etc/gsissh/ssh_host_dsa_key.pub
-#
-#service sshd stop
-#chkconfig sshd off
-#service gsisshd start
-#chkconfig gsisshd on
+# help puppet's gsisshd config a little.  See OO-197
+if [ ! -e /etc/grid-security/hostcert.pem ]; then
+    ln -s /etc/grid-security/host/cert.pem /etc/grid-security/hostcert.pem
+fi
+if [ ! -e /etc/grid-security/hostkey.pem ]; then
+    ln -s /etc/grid-security/host/key.pem /etc/grid-security/hostkey.pem
+fi
+systemctl restart gsisshd
 
 # for the status stamp
 yum -y install httpd
@@ -114,14 +118,10 @@ rm $TMPF.1
 # the user's want gcc to be able to compile
 yum -y install gcc
 
-# add cron entries
-cat >>/etc/cron.d/oasis-login <<'xEOFx'
-# Created by install script.  Will be recreated next reinstall.
-*/5 * * * * root /usr/share/oasis/generate_adduser | bash
-1-59/5 * * * * root cd /etc/grid-security; if /usr/share/oasis/generate_gridmap > grid-mapfile.tmp; then mv -f grid-mapfile.tmp grid-mapfile; fi
-4,19,34,49 * * * * root   /usr/share/oasis/oasis_login_status >/dev/null 2>&1
-xEOFx
-
+# used by /etc/cron.d/oasis-login
+mkdir -p /srv/log/oasis /var/lib/oasis
+ln -s /srv/log/oasis /var/log
+date >/var/lib/oasis/installed
 
 rm -f /root/show_install_msg.sh
 

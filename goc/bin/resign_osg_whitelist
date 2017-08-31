@@ -12,49 +12,42 @@ usage()
 }
 
 case $# in
-    0) set -- `ls /srv/cvmfs`;;
+    0) set -- `cd /srv/cvmfs && ls -d *.*`;;
     1) ;;
     *) usage;;
 esac
 
 MASTERKEY=/etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
-if [ ! -f $MASTERKEY ]; then
-    echo "$ME: this should only be run on the stratum 0 when the masterkey is installed" >&2
+if [ ! -f $MASTERKEY ] && ! cvmfs_server masterkeycard -k >/dev/null; then
+    echo "$ME: this should only be run on the stratum 0 when the masterkey is available" >&2
     exit 1
 fi
 
-set -e
-
+RET=0
 for name; do
     if [ ! -d "/srv/cvmfs/$name" ]; then
 	echo "$ME: invalid repository name $name" >&2
 	exit 1
     fi
 
-    # much of the following was copied from cvmfs_server's 
-    #   create_whitelist() function
-    whitelist="/srv/cvmfs/$name/.cvmfswhitelist"
-
-    echo -n "Signing 30-day whitelist of $name with master key... "
-    echo `date -u "+%Y%m%d%H%M%S"` > ${whitelist}.unsigned
-    echo "E`date -u --date='+30 days' "+%Y%m%d%H%M%S"`" >> ${whitelist}.unsigned
-    # copy the repo name and the fingerprint(s) from original
-    cat -v ${whitelist} | awk '/^N/ {doprint=1}
-	 /^--/ {exit}
-	 doprint==1 {print}' >> ${whitelist}.unsigned
-    # if hash is not the default sha1, it is appended to the repo key's
-    #  fingerprint in upper case, separated by a hyphen
-    alg="`tail -1 ${whitelist}.unsigned|sed -n 's/.*-//p'|tr '[A-Z]' '[a-z]'`"
-    if [ -z "$alg" ]; then
-        alg=sha1
+    REPOKEY=""
+    if [ -f $MASTERKEY ]; then
+        # just in case masterkeycard isn't working
+        REPOKEY=/etc/cvmfs/keys/$name.masterkey
+        if [ ! -f $REPOKEY ]; then
+            cp $MASTERKEY $REPOKEY
+        else
+            REPOKEY=""
+        fi
     fi
-    sha1=`cat ${whitelist}.unsigned | cvmfs_swissknife hash -a $alg`
-    echo "--" >> ${whitelist}.unsigned
-    echo $sha1 >> ${whitelist}.unsigned
-    echo -n $sha1 > ${whitelist}.sha1
-    openssl rsautl -inkey $MASTERKEY -sign -in ${whitelist}.sha1 -out ${whitelist}.signature
-    cat ${whitelist}.unsigned ${whitelist}.signature > $whitelist
-    rm -f ${whitelist}.unsigned ${whitelist}.signature ${whitelist}.sha1
-    echo "done"
+    echo -n "$name: "
+    if ! cvmfs_server resign -w /srv/cvmfs/$name/.cvmfswhitelist $name; then
+        # if one fails, try the others but exit with an error code
+        RET=1
+    fi
+    if [ -n "$REPOKEY" ]; then
+        rm -f $REPOKEY
+    fi
 done
 
+exit $RET

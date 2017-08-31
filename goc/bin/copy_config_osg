@@ -22,7 +22,7 @@ set -ex
 mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
 cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
 CVMFS_SERVER_URL=http://oasis-itb.opensciencegrid.org:8000/cvmfs/@fqrn@
-CVMFS_PUBLIC_KEY=/srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub
+CVMFS_PUBLIC_KEY=/etc/cvmfs/keys/opensciencegrid.org.pub:/srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub
 CVMFS_HTTP_PROXY=DIRECT
 unset CVMFS_CONFIG_REPOSITORY
 !EOF!

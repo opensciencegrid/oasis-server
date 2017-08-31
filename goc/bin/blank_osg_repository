@@ -8,12 +8,10 @@ case "`hostname -s`" in
     *-itb) 
 	STRATUM0=oasis-itb.opensciencegrid.org
 	STRATUM1=oasis-replica-itb.opensciencegrid.org
-	OSGPUBKEY=/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub
 	;;
     *)
 	STRATUM0=oasis.opensciencegrid.org
 	STRATUM1=oasis-replica.opensciencegrid.org
-	OSGPUBKEY=/etc/cvmfs/keys/opensciencegrid.org.pub
 	;;
 esac
 
@@ -58,8 +56,6 @@ done
 trap "echo;echo Failed, restoring; set +e; set -x; cvmfs_server rmfs -f $REPO; for D in $REPODIRS; do rm -rf \$D/$REPO; mv \$D/.$REPO.$NOW \$D/$REPO; done" 0
 
 echo "Making $REPO"
-# this option needed for cvmfs-server-2.3.2 only
-export CVMFS_DONT_CHECK_OVERLAYFS_VERSION=true
 # need to have apache view match actual view during this
 ln -s /srv/cvmfs/$REPO /oasissrv/cvmfs/$REPO
 cvmfs_server mkfs -o root -w http://localhost:8080/cvmfs/$REPO $REPO
@@ -89,7 +85,7 @@ fi
 
 wget --header="Pragma: no-cache" -O/srv/cvmfs/$REPO/.cvmfswhitelist "http://$STRATUM0:8000/cvmfs/$REPO/.cvmfswhitelist"
 rm -f /etc/cvmfs/keys/$REPO.pub
-cp $OSGPUBKEY /etc/cvmfs/keys/$REPO.pub
+cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/$REPO.pub
 if [ "$PUBLISHREV" = "" ]; then
     $MYDIR/set_repository_property revision $REVISION $REPO
 else

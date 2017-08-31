@@ -31,8 +31,8 @@ esac
 set -ex
 
 # Set ITBBOOTSTRAP to true to bootstrap oasis-replica-itb from
-#   the production oasis and oasis-replica servers.  Then uninstall
-#   and reinstall without the bootstrap to correct the server URLs.
+#   the production oasis and oasis-replica servers.  Then reinstall
+#   from scatch again without the bootstrap to correct the server URLs.
 ITBBOOTSTRAP=${ITBBOOTSTRAP:-false}
 
 SCRIPTDIR="`dirname $0`"
@@ -60,27 +60,26 @@ for ID in oasis squid; do
 done
 set -x
 
-ARCH=`arch`
-AUFSRPM=aufs-0.20090202.cvs-6.sl5.src.rpm
-CVMFSRELRPM=cvmfs-release-2-6.noarch.rpm
-CVMFSVER=2.3.5
-CVMFSSUBVER=1.osg33.el7
-CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
-CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
-CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
-CVMFSSERVERMONRPM=cvmfs-servermon-1.4-1.el5.noarch.rpm
-FRONTIERRELRPM=frontier-release-1.1-1.noarch.rpm
-SQUIDRPM=frontier-squid-3.5.23-4.1.$ARCH.rpm
-AWSTATSRPM=frontier-awstats-6.9-4.1.noarch.rpm
-OASISVER=2.1.19
-OASISSUBVER=1.osg33.el7
-OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
-OASISRPM2=oasis-goc-replica-$OASISVER-$OASISSUBVER.noarch.rpm
-
 PATH="$PATH:/sbin"
 
-# import OSG key because we'll be directly downloading oasis rpm
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
+if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
+    # update to osg34
+    rpm -Uv https://repo.grid.iu.edu/osg/3.4/el7/release/x86_64/osg-release-3.4-1.osg34.el7.noarch.rpm
+    yum clean --enablerepo='*' all
+fi
+
+# disable osg repo because we don't want cvmfs updates from there
+yum-config-manager --disable osg >/dev/null
+
+# enable appropriate goc repo
+if [[ $MYSHORTNAME == *-itb ]]; then
+    yum-config-manager --enable goc-itb >/dev/null
+else
+    yum-config-manager --enable goc >/dev/null
+fi
+if [ -n "$OASISDEVREPO" ]; then
+    yum-config-manager --enable $OASISDEVREPO >/dev/null
+fi
 
 # create srv directory if it isn't there yet
 NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
@@ -109,22 +108,8 @@ done
 chown squid:squid /srv/log/squid
 
 # install cvmfs
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
-rpm -i $CVMFSRELRPM
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
-rpm -e cvmfs-release
-rm $CVMFSRELRPM
-CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM $CVMFSSERVERMONRPM"
-#curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
-#curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSSERVERRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-servermon/$CVMFSSERVERMONRPM
-# need nogpg for now because cvmfs-servermon is not yet signed
-yum -y --nogpg install $CVRPMS
-rm $CVRPMS
-cp /etc/cvmfs/keys/egi.eu/egi.eu.pub /etc/cvmfs/keys
+yum -y install cvmfs cvmfs-server cvmfs-servermon
+
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
 if [ ! -d /srv/etc/keys ]; then
     mkdir -p /srv/etc/keys
@@ -142,21 +127,7 @@ echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
 
 # install oasis
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
-yum -y install $OASISRPM $OASISRPM2
-rm $OASISRPM $OASISRPM2
-
-cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
-# created by install-oasis-replica
-# This is temporary until oasis.conf is no longer needed for el5
-<Directory "/srv/cvmfs"> 
-    Require all granted
-</Directory>
-<Directory "/oasissrv/cvmfs"> 
-    Require all granted
-</Directory>
-xEOFx
+yum -y install oasis-goc oasis-goc-replica
 
 systemctl enable httpd
 systemctl start httpd
@@ -170,14 +141,7 @@ xEOFx
 sysctl -w net.core.somaxconn=1024
 
 # install frontier-squid & frontier-awstats
-wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$FRONTIERRELRPM
-rpm -i $FRONTIERRELRPM
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-cern-frontier
-rpm -e frontier-release
-wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/$ARCH/$SQUIDRPM
-wget -q -N http://frontier.cern.ch/dist/rpms/RPMS/noarch/$AWSTATSRPM
-yum -y install $SQUIDRPM $AWSTATSRPM
-rm $FRONTIERRELRPM $SQUIDRPM $AWSTATSRPM
+yum -y install frontier-squid frontier-awstats
 
 # install frontier-awstats password if available
 APWFILE=/srv/etc/awstats/password-file
@@ -202,20 +166,14 @@ fi
 systemctl enable nfslock
 systemctl start nfslock
 
-# on itb install also the oasis-itb pub key and read from oasis-itb
-EXTRAPUBKEY=""
+# on itb read from oasis-itb unless bootstrapping
+ITB=""
 case $MYSHORTNAME in
     *-itb)
 	cp "`echo $NETSRVDIR|sed 's/-replica-itb//'`"/etc/cvmfs/oasis-itb.opensciencegrid.org.pub /etc/cvmfs/keys
-	if $ITBBOOTSTRAP; then
-	    ITB=""
-	    EXTRAPUBKEY="/etc/cvmfs/keys/opensciencegrid.org.pub"
-	else
+	if ! $ITBBOOTSTRAP; then
 	    ITB="-itb"
 	fi
-	;;
-    *)
-	ITB=""
 	;;
 esac
 
@@ -227,7 +185,7 @@ NONOIMREPOURLS="$REPOURLS"
 
 # add repos hosted on our stratum 0
 for URL in $REPOURLS; do
-    add_osg_repository -a "$URL" $EXTRAPUBKEY
+    add_osg_repository -a "$URL"
 done
 
 # add other repos not registered in OIM
@@ -235,7 +193,7 @@ REPOURLS="http://cvmfs-stratum0.gridpp.rl.ac.uk:8000/cvmfs/config-egi.egi.eu"
 NONOIMREPOURLS="$NONOIMREPOURLS $REPOURLS"
 for URL in $REPOURLS; do
     if $ITBBOOTSTRAP; then
-	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" $EXTRAPUBKEY
+	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`"
     else
 	add_osg_repository -a "$URL"
     fi
@@ -246,7 +204,7 @@ done
 OIMREPOURLS="`print_osg_repos -u`"
 for URL in $OIMREPOURLS; do
     if $ITBBOOTSTRAP; then
-	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" $EXTRAPUBKEY || true
+	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" || true
     else
 	add_osg_repository -a "$URL" || true
     fi
@@ -278,7 +236,7 @@ done
 systemctl enable frontier-squid
 systemctl start frontier-squid
 
-# finish installation, create 'installed' file used /etc/cron.d/cvmfs
+# finish installation, create 'installed' file used by /etc/cron.d/cvmfs
 mkdir -p /var/log/cvmfs /var/lib/oasis
 date >/var/lib/oasis/installed
 

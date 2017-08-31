@@ -58,22 +58,26 @@ for ID in oasis; do
 done
 set -x
 
-ARCH=`arch`
-CVMFSRELRPM=cvmfs-release-2-6.noarch.rpm
-CVMFSVER=2.3.5
-CVMFSSUBVER=1.osg33.el7
-CVMFSRPM=cvmfs-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
-CVMFSSERVERRPM=cvmfs-server-$CVMFSVER-$CVMFSSUBVER.$ARCH.rpm
-CVMFSCONFIGRPM=cvmfs-config-default-1.2-2.noarch.rpm
-OASISVER=2.1.19
-OASISSUBVER=1.osg33.el7
-OASISRPM=oasis-goc-$OASISVER-$OASISSUBVER.noarch.rpm
-OASISRPM2=oasis-goc-zero-$OASISVER-$OASISSUBVER.noarch.rpm
-
 PATH="$PATH:/sbin"
 
-# import OSG key because we'll be directly downloading oasis rpm
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-OSG
+if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
+    # update to osg34
+    rpm -Uv https://repo.grid.iu.edu/osg/3.4/el7/release/x86_64/osg-release-3.4-1.osg34.el7.noarch.rpm
+    yum clean --enablerepo='*' all
+fi
+
+# disable osg repo because we don't want cvmfs updates from there
+yum-config-manager --disable osg >/dev/null
+
+# enable appropriate goc repo
+if [[ $MYSHORTNAME == *-itb ]]; then
+    yum-config-manager --enable goc-itb >/dev/null
+else
+    yum-config-manager --enable goc >/dev/null
+fi
+if [ -n "$OASISDEVREPO" ]; then
+    yum-config-manager --enable $OASISDEVREPO >/dev/null
+fi
 
 # create srv directory if it isn't there yet
 NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
@@ -106,19 +110,9 @@ for LOGD in oasis httpd; do
 done
 
 # install cvmfs
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/$CVMFSRELRPM
-rpm -i $CVMFSRELRPM
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM
-rpm -e cvmfs-release
-rm $CVMFSRELRPM
-#curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSRPM
-#curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-$CVMFSVER/$CVMFSSERVERRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/cvmfs/$CVMFSVER/$CVMFSSUBVER/$ARCH/$CVMFSSERVERRPM
-curl -O https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/$CVMFSCONFIGRPM
-CVRPMS="$CVMFSRPM $CVMFSSERVERRPM $CVMFSCONFIGRPM"
-yum -y install $CVRPMS
-rm $CVRPMS
+yum -y install cvmfs cvmfs-server cvmfs-servermon opensc yubico-piv-tool engine_pkcs11
+systemctl enable pcscd.socket
+systemctl start pcscd.socket
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
 # move /var/spool/cvmfs to /usr/local because /var is too small for cache.
 #  tmp, and scratch
@@ -138,20 +132,8 @@ sysctl -w net.core.somaxconn=1024
 mkdir -p /srv
 
 # install oasis
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM
-wget -N http://koji-hub.batlab.org/mnt/koji/packages/oasis-goc/$OASISVER/$OASISSUBVER/noarch/$OASISRPM2
-yum -y install $OASISRPM $OASISRPM2
-rm $OASISRPM $OASISRPM2
+yum -y install oasis-goc oasis-goc-zero
 systemctl enable oasis-initclean
-systemctl start oasis-initclean
-
-cat >/etc/httpd/conf.d/apache22compat.conf <<xEOFx
-# created by install-oasis
-# This is temporary until oasis.conf is no longer needed for el5
-<Directory "/srv/cvmfs"> 
-    Require all granted
-</Directory>
-xEOFx
 
 systemctl enable httpd
 systemctl start httpd
@@ -164,39 +146,53 @@ systemctl start nfslock
 
 case $MYSHORTNAME in
     *-itb)
-	# on itb install the saved itb pub & master key
-	if [ ! -f /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub ]; then
-	    # make a copy from production srv directory of itb pub and masterkey
-	    PRODSRVDIR="`echo $NETSRVDIR|sed 's/-itb//'`"
-	    mkdir -p /srv/etc/cvmfs
-	    cp $PRODSRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.* /srv/etc/cvmfs
-	fi
-	;;
+        if [ ! -f /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub ]; then
+            # make a copy of itb pub and masterkey from the production
+            #   srv directory to the itb srv directory
+            PRODSRVDIR="`echo $NETSRVDIR|sed 's/-itb//'`"
+            mkdir -p /srv/etc/cvmfs
+            cp $PRODSRVDIR/etc/cvmfs/oasis-itb.opensciencegrid.org.* /srv/etc/cvmfs
+        fi
+        ;;
 esac
 
+if cvmfs_server masterkeycard -k; then
+    NO_MASTERKEYCARD=false
+else
+    NO_MASTERKEYCARD=true
+fi
 
 for REPO in oasis config-osg; do 
     if [ -d /srv/cvmfs/$REPO.opensciencegrid.org ]; then
 	# Old repository data present.  Use import instead of mkfs.
-	# It expects a masterkey and pub to be present from before.
-	# Use ITB key for now and replace later when on production.
-	for KEY in pub masterkey; do
-	    cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/$REPO.opensciencegrid.org.$KEY
-	done
+        if $NO_MASTERKEYCARD; then
+            # masterkeycard not working, so import expects a
+            # masterkey and pub to be present from before.
+            # Use ITB key for now and replace later when on production.
+            for KEY in pub masterkey; do
+                cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/$REPO.opensciencegrid.org.$KEY
+            done
+        else
+            cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/$REPO.opensciencegrid.org.pub
+        fi
 	cvmfs_server import -r -t -o oasis $REPO.opensciencegrid.org
     else
 	# add repo
-	CVMFS_AUFS_WARNING=false cvmfs_server mkfs -m -o oasis $REPO.opensciencegrid.org
+	cvmfs_server mkfs -m -o oasis $REPO.opensciencegrid.org
     fi
-    echo "CVMFS_AUFS_WARNING=false" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
+    echo "CVMFS_GENERATE_LEGACY_BULK_CHUNKS=no" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
     echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
     rm -f /etc/httpd/conf.d/cvmfs.$REPO.opensciencegrid.org.conf
 done
 
+# Run this to clean up any lock files that might have been leftover.
+# It has to be after the masterkey is set up because it calls
+#  recover_oasis_rollback
+systemctl start oasis-initclean
+
 RUNUSER="runuser -s /bin/bash oasis -c"
 
-# Manage repository content special content
-
+# Manage repository special content
 $RUNUSER "cvmfs_server transaction oasis.opensciencegrid.org"
 
 if [ -f /cvmfs/oasis.opensciencegrid.org/new_repository ]; then
@@ -260,10 +256,8 @@ case "$MYSHORTNAME" in
         # request updates on all vos that have changed
         /usr/share/oasis/update_oasis_vos
 	# on itb update the vos once an hour if they have changed
-	# also do resign_osg_whitelist twice a month
 	cat >/etc/cron.d/oasis-itb <<xEOFx
 1 * * * *   root   /usr/share/oasis/update_oasis_vos >>/var/log/oasis/voupdates.log 2>&1
-0 7 1,15 * * root  /usr/bin/resign_osg_whitelist >/dev/null 2>&1
 xEOFx
 	;;
 esac
@@ -287,32 +281,44 @@ set +x
 
 case $MYSHORTNAME in
     *-itb) 
-	# The itb key will already be in place if the creation was an import,
-	#   but in case it was new do analogous steps to production (below)
-	for REPO in oasis config-osg; do
-            for KEY in pub masterkey; do
-                cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/$REPO.opensciencegrid.org.$KEY
+        if $NO_MASTERKEYCARD; then
+            # The itb key will already be in place if the creation was an import,
+            #   but in case it was new do analogous steps to production (below)
+            for REPO in oasis config-osg; do
+                for KEY in pub masterkey; do
+                    cp /srv/etc/cvmfs/oasis-itb.opensciencegrid.org.$KEY /etc/cvmfs/keys/$REPO.opensciencegrid.org.$KEY
+                done
             done
-	done
-	resign_osg_whitelist
+            resign_osg_whitelist
+        fi
 	;;
 esac
+
+if $NO_MASTERKEYCARD; then
+    echo "Installation completed, however ..."
+    echo "WARNING: the masterkeycard is not functioning!"
+
+    case $MYSHORTNAME in
+        *-itb)
+            echo "Try to get it fixed.  An ITB key has been installed instead for now."
+            ;;
+        *)  # on prod remove the temporary masterkey and install official public key
+            for REPO in oasis config-osg; do
+                rm /etc/cvmfs/keys/$REPO.opensciencegrid.org.masterkey
+                cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/$REPO.opensciencegrid.org.pub
+            done
+            echo "Either try to get it fixed or temporarily install copy of"
+            echo "   /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey"
+            echo "from backup and run resign_osg_whitelist"
+    esac
+
+    # One more thing, make config-osg masterkey the same as oasis.
+    # This needs to be a symlink because the oasis masterkey
+    #  gets removed when not in use on production, for security reasons.
+    ln -f -s oasis.opensciencegrid.org.masterkey /etc/cvmfs/keys/config-osg.opensciencegrid.org.masterkey
+    exit 1
+fi
 
 echo
 echo "Installation of $MYSHORTNAME completed successfully at `date`"
 echo
-case $MYSHORTNAME in
-    *-itb);;
-    *)  # on prod remove the temporary masterkey and install official public key
-	for REPO in oasis config-osg; do
-	    rm /etc/cvmfs/keys/$REPO.opensciencegrid.org.masterkey
-	    cp /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/$REPO.opensciencegrid.org.pub
-	done
-	echo "Now temporarily install /etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey"
-	echo "   and run resign_osg_whitelist"
-esac
-
-# One more thing, make config-osg masterkey the same as oasis.
-# This needs to be a symlink in production because the oasis masterkey
-#  gets removed when not in use, for security reasons.
-ln -f -s oasis.opensciencegrid.org.masterkey /etc/cvmfs/keys/config-osg.opensciencegrid.org.masterkey
