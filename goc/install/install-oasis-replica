@@ -64,7 +64,7 @@ PATH="$PATH:/sbin"
 
 if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
     # update to osg34
-    rpm -Uv https://repo.grid.iu.edu/osg/goc/el6/production/x86_64/osg-release-3.4-2.osg34.el6.noarch.rpm
+    rpm -Uv https://repo.grid.iu.edu/osg/goc/el7/production/x86_64/osg-release-3.4-2.osg34.el7.noarch.rpm
     yum clean --enablerepo='*' all
 fi
 
