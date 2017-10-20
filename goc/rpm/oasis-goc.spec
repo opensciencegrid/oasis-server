@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.27
+Version: 2.1.28
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -76,6 +76,13 @@ echo ". /etc/squid/oasiscustomize.sh"
 ) >/etc/squid/customize.sh
 chmod +x /etc/squid/customize.sh
 
+# restart apache and frontier-squid if they are active
+for service in httpd frontier-squid; do
+    if systemctl is-active --quiet $service; then
+        systemctl reload $service
+    fi
+done
+
 
 %package login
 Summary: files for OASIS login host
@@ -91,6 +98,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Fri Oct 20 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.28-1
+- Update cvmfs.conf to go with cvmfs-2.4.2 on oasis-replica.  Reload apache
+  there if it is active, and frontier-squid too while we're at it.
 * Fri Aug 11 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.27-1
 - Send oasis-login cron output to log files
 - Have copy_config_osg allow either itb or production key on oasis-itb's
