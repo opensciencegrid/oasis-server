@@ -5,7 +5,9 @@
 # Recreate .cvmfspublished & .cvmfswhitelist for oasis & config-osg repos.
 
 MASTERKEY=/etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
-if [ ! -f $MASTERKEY ] && ! cvmfs_server masterkeycard -k >/dev/null; then
+# try masterkeycard -k twice if needed, because sometimes it fails
+if [ ! -f $MASTERKEY ] && ! cvmfs_server masterkeycard -k >/dev/null &&
+        ! cvmfs_server masterkeycard -k >/dev/null; then
     echo "Only run this on the stratum 0 with the masterkey installed"
     exit 1
 fi
