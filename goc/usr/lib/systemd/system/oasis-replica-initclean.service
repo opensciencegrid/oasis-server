@@ -1,0 +1,11 @@
+[Unit]
+Description=Oasis replica initialization boot cleanup
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/etc/init.d/oasis-replica-initclean start
+
+[Install]
+WantedBy=multi-user.target
