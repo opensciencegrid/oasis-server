@@ -10,13 +10,6 @@ if [ ! -f $MASTERKEY ] && ! cvmfs_server masterkeycard -k >/dev/null; then
     exit 1
 fi
 
-umountifmounted()
-{
-    if mount | grep -q " on $1"; then
-        umount $1
-    fi
-}
-
 RET=0
 set -x
 for REPO in oasis config-osg; do
