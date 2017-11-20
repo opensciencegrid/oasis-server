@@ -1,0 +1,8 @@
+#!/bin/bash
+# /etc/rc.d/init.d/oasis-replica-initclean
+#chkconfig: - 88 12
+#description: cleans up any leftover .cvmfsreflog and reflog.chksum files
+if [ "$1" = "start" ]; then
+    rm -f /srv/cvmfs/*/.cvmfsreflog
+    rm -f /var/spool/cvmfs/*/reflog.chksum
+fi
