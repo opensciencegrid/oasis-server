@@ -9,6 +9,8 @@ insertline("^http_access deny all", "cache deny !CVMFSAPI")
 # port 80 is also supported, through an iptables redirect
 setoption("http_port", "8000 accel defaultsite=localhost:8081 no-vhost")
 setoption("cache_peer", "localhost parent 8081 0 no-query originserver")
+# listen on additional port for Cloudflare CDN
+insertline("^(# |)http_port", "http_port 8080 accel defaultsite=127.0.0.1:8081 no-vhost")
 
 # allow incoming http accesses from anywhere
 # all requests will be forwarded to the originserver
