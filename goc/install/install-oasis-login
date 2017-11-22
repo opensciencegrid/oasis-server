@@ -90,8 +90,8 @@ systemctl restart gsisshd
 
 # for the status stamp
 yum -y install httpd
-chkconfig httpd on
-service httpd start
+systemctl enable httpd
+systemctl start httpd
 
 # for generate_adduser
 yum -y install pwgen
@@ -115,8 +115,15 @@ rm $TMPF.1
 # add gridmap file
 /usr/share/oasis/generate_gridmap >/etc/grid-security/grid-mapfile
 
-# the user's want gcc to be able to compile
+# the users want gcc to be able to compile
 yum -y install gcc
+
+if [[ $MYSHORTNAME != *-itb ]]; then
+    # install mis cron jobs if source file exists
+    if [ -f ~ouser.mis/cronjobs ]; then
+        runuser ouser.mis -c "crontab ~/cronjobs"
+    fi
+fi
 
 # used by /etc/cron.d/oasis-login
 mkdir -p /srv/log/oasis /var/lib/oasis
