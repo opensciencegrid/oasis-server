@@ -1,7 +1,7 @@
 #!/bin/bash
 # /etc/rc.d/init.d/oasis-initclean
 #chkconfig: - 88 12
-#description: cleans up any leftover do_oasis_update locks, mounts cvmfs 
+#description: cleans up any leftover do_oasis_update locks, recovers rollbacks
 if [ "$1" = "start" ]; then
     LOCKPFX="/stage/locks/"
     if [ "`uname -n|cut -d. -f1`" != oasis ]; then

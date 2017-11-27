@@ -18,7 +18,9 @@ case $# in
 esac
 
 MASTERKEY=/etc/cvmfs/keys/oasis.opensciencegrid.org.masterkey
-if [ ! -f $MASTERKEY ] && ! cvmfs_server masterkeycard -k >/dev/null; then
+# masterkeycard access sometimes fails, so check it twice if needed
+if [ ! -f $MASTERKEY ] && ! cvmfs_server masterkeycard -k >/dev/null &&
+        ! cvmfs_server masterkeycard -k >/dev/null; then
     echo "$ME: this should only be run on the stratum 0 when the masterkey is available" >&2
     exit 1
 fi

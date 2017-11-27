@@ -128,6 +128,7 @@ ulimit -n 16384
 
 # install oasis
 yum -y install oasis-goc oasis-goc-replica
+systemctl enable oasis-replica-initclean
 
 systemctl enable httpd
 systemctl start httpd

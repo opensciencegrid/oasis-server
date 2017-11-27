@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.27
+Version: 2.1.29
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -59,13 +59,23 @@ This package contains files for oasis-replica.opensciencegrid.org
 
 %files replica
 /etc/cron.d/cvmfs
+/etc/init.d/oasis-replica-initclean
 /etc/squid/oasiscustomize.sh
 /etc/httpd/conf.d/cvmfs.conf
 /etc/iptables.d/60-local-cvmfs
 /etc/logrotate.d/cvmfs
 /etc/sysconfig/frontier-squid
 /var/www/html/robots.txt
+/usr/lib/systemd/system/oasis-replica-initclean.service
 %defattr(-,root,root)
+
+%post
+# restart apache and iptables if they are active
+for service in httpd iptables; do
+    if systemctl is-active --quiet $service; then
+        systemctl reload $service
+    fi
+done
 
 %post replica
 # redirect customize.sh to oasiscustomize.sh; we can't directly install
@@ -75,6 +85,13 @@ echo "#!/bin/bash"
 echo ". /etc/squid/oasiscustomize.sh"
 ) >/etc/squid/customize.sh
 chmod +x /etc/squid/customize.sh
+
+# restart apache, frontier-squid, and iptables if they are active
+for service in httpd frontier-squid iptables; do
+    if systemctl is-active --quiet $service; then
+        systemctl reload $service
+    fi
+done
 
 
 %package login
@@ -91,6 +108,23 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Mon Nov 20 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.29-1
+- Remove temporary WSGI config for cvmfs-servermon because that is now
+  built in to new version of cvmfs-servermon.
+- Add 61 second expiration of .json on stratum 0, to be consistent with
+  stratum 1.
+- Add additional listening port 8080 for squid, and move apache's port
+  for stratum 1s to 8880.
+- Reload iptables during postinstall on oasis and oasis-replica.
+- Reload httpd during postinstall on oasis as it had been on oasis-replica.
+- Run cvmfs_server masterkeycard -k twice if necessary in oasis_status_stamp,
+  resign_osg_whitelist, and recover_oasis_rollback, because sometimes the
+  key card access fails.
+- Add oasis-replica-initclean and corresponding systemd service to clean up
+  reflogs at boot time, in case of rollback.
+* Fri Oct 20 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.28-1
+- Update cvmfs.conf to go with cvmfs-2.4.2 on oasis-replica.  Reload apache
+  there if it is active, and frontier-squid too while we're at it.
 * Fri Aug 11 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.27-1
 - Send oasis-login cron output to log files
 - Have copy_config_osg allow either itb or production key on oasis-itb's
