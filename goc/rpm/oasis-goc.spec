@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.29
+Version: 2.1.30
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -108,6 +108,12 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Mon Dec 18 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.30-1
+- Change add_osg_repository to use cvmfs_server add-replica -p to avoid
+  creating any apache configuration, instead of removing it after the
+  fact. This is now crucial because without -p an extra wsgi configuration
+  file is created which clashes with the wsgi config in cvmfs.conf.
+
 * Mon Nov 20 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.29-1
 - Remove temporary WSGI config for cvmfs-servermon because that is now
   built in to new version of cvmfs-servermon.
