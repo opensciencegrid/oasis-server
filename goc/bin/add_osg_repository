@@ -97,7 +97,7 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
         *-itb) EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub" ;;
     esac
     RET=0
-    if ! cvmfs_server add-replica -o root $REPOURL $PUBKEY$EXTRAPUBKEY; then
+    if ! cvmfs_server add-replica -p -o root $REPOURL $PUBKEY$EXTRAPUBKEY; then
 	RET=1
     fi
     if [ -d /srv/cvmfs/.$REPONAME.save ]; then
@@ -109,7 +109,6 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
             rm /srv/cvmfs/$REPONAME/.cvmfsreflog
         fi
     fi
-    rm -f /etc/httpd/conf.d/cvmfs.$REPONAME.conf
     if [ $RET != 0 ]; then
 	exit $RET
     fi
