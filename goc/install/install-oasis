@@ -16,7 +16,7 @@
 #
 # Initial version written by Dave Dykstra 2-26-2015
 
-MYSHORTNAME="`hostname -s`"
+MYSHORTNAME="`hostname -s|sed 's/hcc-//'`"
 case "$MYSHORTNAME" in
     oasis|oasis-itb);;
     *)  echo "Only run this on oasis or oasis-itb"
@@ -39,16 +39,6 @@ if [ "$SCRIPTDIR" = "." ]; then
 fi
 cd
 
-# puppet sometimes returns error code if it is already running, ignore it
-case "$MYSHORTNAME" in
-    *-itb)
-	puppet agent -t --environment=testing || true
-	;;
-    *)
-	puppet agent -t || true
-	;;
-esac
-
 set +x
 for ID in oasis; do
     while ! id $ID 2>/dev/null; do
@@ -60,44 +50,28 @@ set -x
 
 PATH="$PATH:/sbin"
 
-if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
-    # update to osg34
-    rpm -Uv https://repo.grid.iu.edu/osg/goc/el7/production/x86_64/osg-release-3.4-2.osg34.el7.noarch.rpm
-    yum clean --enablerepo='*' all
-fi
-
-# disable osg repo because we don't want cvmfs updates from there
-yum-config-manager --disable osg >/dev/null
-
-# enable appropriate goc repo
-if [[ $MYSHORTNAME == *-itb ]]; then
-    yum-config-manager --enable goc-itb >/dev/null
-else
-    yum-config-manager --enable goc >/dev/null
-fi
-if [ -n "$OASISDEVREPO" ]; then
-    yum-config-manager --enable $OASISDEVREPO >/dev/null
-fi
-
 # create srv directory if it isn't there yet
-NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
+SRVER=c1324
+SRVBASE=export/oasis
+NETSRVDIR="/net/$SRVER/$SRVBASE/srv/$MYSHORTNAME"
 if [ ! -d $NETSRVDIR ]; then
     mkdir $NETSRVDIR
     setfacl -b $NETSRVDIR
     chmod 755 $NETSRVDIR
 fi
 
+MNTOPTS="tcp,nolock,rsize=32768,wsize=32768,intr,noatime,actimeo=3"
 # mount srv directory permanently at /srv
 if ! grep -q "[ \t]/srv[ \t]" /etc/fstab; then
-    # the sed changes "/net/vm08" in $NETSRVDIR to "vm08:"
-    echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	defaults 	0 0" >>/etc/fstab
+    # the sed changes "/net/$SRVER" in $NETSRVDIR to "$SRVER:"
+    echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	$MNTOPTS 	0 0" >>/etc/fstab
 fi
 mkdir -p /srv
 mount /srv
 
 # also mount /stage
 if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
-    echo "vm08:/oasis-share/stage /stage			nfs 	defaults 	0 0" >>/etc/fstab
+    echo "$SRVER:/$SRVBASE/stage /stage			nfs 	$MNTOPTS 	0 0" >>/etc/fstab
 fi
 mkdir -p /stage
 mount /stage
@@ -137,8 +111,6 @@ systemctl enable oasis-initclean
 
 systemctl enable httpd
 systemctl start httpd
-
-systemctl restart iptables
 
 # need nfslock for the repos to be on NFS
 systemctl enable nfslock
@@ -301,6 +273,11 @@ if $NO_MASTERKEYCARD; then
     case $MYSHORTNAME in
         *-itb)
             echo "Try to get it fixed.  An ITB key has been installed instead for now."
+            echo "After fixing, do these commands:"
+            echo "rm -f /etc/cvmfs/keys/*.masterkey"
+            echo "cp -f /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/oasis.opensciencegrid.org.pub"
+            echo "cp -f /etc/cvmfs/keys/opensciencegrid.org.pub /etc/cvmfs/keys/config-osg.opensciencegrid.org.pub"
+            echo "resign_osg_whitelist"
             ;;
         *)  # on prod remove the temporary masterkey and install official public key
             for REPO in oasis config-osg; do
