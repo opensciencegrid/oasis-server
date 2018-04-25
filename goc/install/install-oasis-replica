@@ -13,9 +13,9 @@
 #
 # Initial version written by Dave Dykstra 2-4-2015
 
-MYSHORTNAME="`hostname -s`"
+MYSHORTNAME="`hostname -s|sed 's/hcc-//'`"
 case "$MYSHORTNAME" in
-    oasis-replica|oasis-replica-itb);;
+    oasis-replica|oasis-replica-itb|cvmfs|cvmfs-itb);;
     *)  echo "Only run this on oasis-replica or oasis-replica-itb"
 	exit 2
 	;;
@@ -41,86 +41,25 @@ if [ "$SCRIPTDIR" = "." ]; then
 fi
 cd
 
-# puppet sometimes returns error code if it is already running, ignore it
-case "$MYSHORTNAME" in
-    *-itb)
-	puppet agent -t --environment=testing || true
-	;;
-    *)
-	puppet agent -t || true
-	;;
-esac
-
-set +x
-for ID in oasis squid; do
-    while ! id $ID 2>/dev/null; do
-        echo "Waiting for $ID id to appear ..."
-        sleep 5
-    done
-done
-set -x
-
 PATH="$PATH:/sbin"
 
-if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
-    # update to osg34
-    rpm -Uv https://repo.grid.iu.edu/osg/goc/el7/production/x86_64/osg-release-3.4-2.osg34.el7.noarch.rpm
-    yum clean --enablerepo='*' all
-fi
-
-# disable osg repo because we don't want cvmfs updates from there
-yum-config-manager --disable osg >/dev/null
-
-# enable appropriate goc repo
-if [[ $MYSHORTNAME == *-itb ]]; then
-    yum-config-manager --enable goc-itb >/dev/null
-else
-    yum-config-manager --enable goc >/dev/null
-fi
-if [ -n "$OASISDEVREPO" ]; then
-    yum-config-manager --enable $OASISDEVREPO >/dev/null
-fi
-
-# create srv directory if it isn't there yet
-NETSRVDIR="/net/vm08/oasis-share/srv/$MYSHORTNAME"
-if [ ! -d $NETSRVDIR ]; then
-    mkdir $NETSRVDIR
-    setfacl -b $NETSRVDIR
-    chmod 755 $NETSRVDIR
-fi
-
-# mount srv directory permanently at /srv
-if ! grep -q "[ \t]/srv[ \t]" /etc/fstab; then
-    # the sed changes "/net/vm08" in $NETSRVDIR to "vm08:"
-    echo "`echo $NETSRVDIR|sed 's,/net/\([^/]*\),\1:,'` /srv	nfs 	defaults 	0 0" >>/etc/fstab
-fi
-mkdir -p /srv
-mount /srv
-
-# create symlinks for important log directories out to the big disk
-for LOGD in cvmfs httpd squid; do
-    mkdir -p /srv/log/$LOGD
-    rm -rf /var/log/$LOGD
-    ln -s /srv/log/$LOGD /var/log
+# symlink /srv/cvmfs and /srv/etc to the big disk
+for D in cvmfs etc; do 
+    rm -rf /srv/$D
+    ln -s /storage/$D /srv
 done
 
-# squid log dir has to be owned by squid user id
-chown squid:squid /srv/log/squid
+# symlink important log directories to the big disk
+for LOGD in cvmfs httpd squid; do
+    mkdir -p /storage/log/$LOGD
+    rm -rf /var/log/$LOGD
+    ln -s /storage/log/$LOGD /var/log
+done
 
 # install cvmfs
 yum -y install cvmfs cvmfs-server cvmfs-servermon
 
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
-if [ ! -d /srv/etc/keys ]; then
-    mkdir -p /srv/etc/keys
-    case $MYSHORTNAME in
-	*-itb)
-	    # make a copy from production
-	    SRCKEYSDIR="`echo $NETSRVDIR|sed 's/-itb//'`/etc/keys"
-	    cp $SRCKEYSDIR/* /srv/etc/keys
-	    ;;
-    esac
-fi
 yum -y install mod_wsgi
 
 echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
@@ -133,31 +72,14 @@ systemctl enable oasis-replica-initclean
 systemctl enable httpd
 systemctl start httpd
 
-systemctl restart iptables
-
-cat >>/etc/sysctl.conf <<xEOFx
-# Controls maximum listen() backlog for apache.  Added by install script.
-net.core.somaxconn = 1024
-xEOFx
-sysctl -w net.core.somaxconn=1024
-
 # install frontier-squid & frontier-awstats
 yum -y install frontier-squid frontier-awstats
 
+# squid log dir has to be owned by squid user id
+chown squid:squid /srv/log/squid
+
 # install frontier-awstats password if available
 APWFILE=/srv/etc/awstats/password-file
-if [ ! -f $APWFILE ]; then
-    case $MYSHORTNAME in
-	*-itb)
-	    # make a copy from production
-	    SRCAPWFILE="`echo $NETSRVDIR|sed 's/-itb//'`/etc/awstats/password-file"
-	    if [ -f $SRCAPWFILE ]; then
-		mkdir -p `dirname $APWFILE`
-		cp $SRCAPWFILE $APWFILE
-	    fi
-	    ;;
-    esac
-fi
 if [ -f $APWFILE ]; then
     cp $APWFILE /etc/awstats
     chown squid:squid /etc/awstats/password-file
@@ -171,7 +93,6 @@ systemctl start nfslock
 ITB=""
 case $MYSHORTNAME in
     *-itb)
-	cp "`echo $NETSRVDIR|sed 's/-replica-itb//'`"/etc/cvmfs/oasis-itb.opensciencegrid.org.pub /etc/cvmfs/keys
 	if ! $ITBBOOTSTRAP; then
 	    ITB="-itb"
 	fi
