@@ -5,7 +5,7 @@
 
 cd
 
-MYSHORTNAME="`hostname -s`"
+MYSHORTNAME="`hostname -s|sed 's/hcc-//'`"
 case "$MYSHORTNAME" in
     oasis-login*);;
     *)  echo "Only run this on an oasis-login* machine"
@@ -15,39 +15,7 @@ esac
 
 set -ex
 
-# puppet sometimes returns error code if it is already running, ignore it
-case "$MYSHORTNAME" in
-    *-itb)
-	puppet agent -t --environment=testing || true
-	;;
-    *)
-	puppet agent -t || true
-	;;
-esac
-
 PATH="$PATH:/sbin:/usr/sbin"
-
-if [[ $(rpm -qa|grep osg-release) != *osg34* ]]; then
-    # update to osg34
-    rpm -Uv https://repo.grid.iu.edu/osg/goc/el7/production/x86_64/osg-release-3.4-2.osg34.el7.noarch.rpm
-    yum clean --enablerepo='*' all
-fi
-
-# disable osg repo because we don't want condor updates from there
-yum-config-manager --disable osg >/dev/null
-
-# enable appropriate goc repo
-if [[ $MYSHORTNAME == *-itb ]]; then
-    yum-config-manager --enable goc-itb >/dev/null
-else
-    yum-config-manager --enable goc >/dev/null
-fi
-if [ -n "$OASISDEVREPO" ]; then
-    yum-config-manager --enable $OASISDEVREPO >/dev/null
-fi
-
-# need yum-priorities to make OSG a higher priority than EPEL
-yum -y install yum-priorities
 
 # install condor
 yum -y install condor
@@ -57,16 +25,18 @@ systemctl start condor
 # install oasis
 yum -y install oasis-goc oasis-goc-login
 
-systemctl restart iptables
+SRVER=c1324
+SRVBASE=export/oasis
+MNTOPTS="tcp,nolock,rsize=32768,wsize=32768,intr,noatime,actimeo=3"
 
 # mount /stage and /home/login directories
 if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
-    echo "vm08:/oasis-share/stage /stage			nfs 	defaults	0 0" >>/etc/fstab
+    echo "$SRVER:/$SRVBASE/stage /stage			nfs 	$MNTOPTS	0 0" >>/etc/fstab
 fi
 mkdir -p /stage
 mount /stage
 if ! grep -q "[ \t]/home/login[ \t]" /etc/fstab; then
-    echo "vm08:/oasis-share/home/login /home/login	nfs 	defaults	0 0" >>/etc/fstab
+    echo "$SRVER:/$SRVBASE/home/login /home/login	nfs 	$MNTOPTS	0 0" >>/etc/fstab
 fi
 mkdir -p /home/login
 mount /home/login
@@ -78,15 +48,6 @@ systemctl start nfslock
 # make convenience link
 mkdir -p /cvmfs
 ln -s /stage/oasis /cvmfs/oasis.opensciencegrid.org
-
-# help puppet's gsisshd config a little.  See OO-197
-if [ ! -e /etc/grid-security/hostcert.pem ]; then
-    ln -s /etc/grid-security/host/cert.pem /etc/grid-security/hostcert.pem
-fi
-if [ ! -e /etc/grid-security/hostkey.pem ]; then
-    ln -s /etc/grid-security/host/key.pem /etc/grid-security/hostkey.pem
-fi
-systemctl restart gsisshd
 
 # for the status stamp
 yum -y install httpd

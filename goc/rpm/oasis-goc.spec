@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.1.30
+Version: 2.2.1
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -45,7 +45,6 @@ This package contains files for oasis.opensciencegrid.org
 /etc/cron.d/oasis
 /etc/init.d/oasis-initclean
 /etc/httpd/conf.d/oasis.conf
-/etc/iptables.d/60-local-oasis
 /etc/logrotate.d/oasis
 /var/www/html/robots.txt
 /usr/lib/systemd/system/oasis-initclean.service
@@ -62,7 +61,6 @@ This package contains files for oasis-replica.opensciencegrid.org
 /etc/init.d/oasis-replica-initclean
 /etc/squid/oasiscustomize.sh
 /etc/httpd/conf.d/cvmfs.conf
-/etc/iptables.d/60-local-cvmfs
 /etc/logrotate.d/cvmfs
 /etc/sysconfig/frontier-squid
 /var/www/html/robots.txt
@@ -70,8 +68,8 @@ This package contains files for oasis-replica.opensciencegrid.org
 %defattr(-,root,root)
 
 %post
-# restart apache and iptables if they are active
-for service in httpd iptables; do
+# reload apache if it is active
+for service in httpd; do
     if systemctl is-active --quiet $service; then
         systemctl reload $service
     fi
@@ -86,8 +84,8 @@ echo ". /etc/squid/oasiscustomize.sh"
 ) >/etc/squid/customize.sh
 chmod +x /etc/squid/customize.sh
 
-# restart apache, frontier-squid, and iptables if they are active
-for service in httpd frontier-squid iptables; do
+# reload apache and frontier-squid if they are active
+for service in httpd frontier-squid; do
     if systemctl is-active --quiet $service; then
         systemctl reload $service
     fi
@@ -103,11 +101,13 @@ This package contains files for oasis-login.opensciencegrid.org
 %files login
 /etc/logrotate.d/oasis
 /etc/cron.d/oasis-login
-/etc/iptables.d/60-local-oasis-login
 %defattr(-,root,root)
 
 
 %changelog
+* Thu Apr 19 2018 Dave Dykstra <dwd@fnal.gov> - 2.2.1-1
+- Make many changes for running at UNL.
+
 * Mon Dec 18 2017 Dave Dykstra <dwd@fnal.gov> - 2.1.30-1
 - Change add_osg_repository to use cvmfs_server add-replica -p to avoid
   creating any apache configuration, instead of removing it after the

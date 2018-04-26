@@ -22,7 +22,7 @@ def logmsg(msg):
 logmsg('Starting')
 
 #download oasis vosummary
-response = urllib2.urlopen("http://myosg.grid.iu.edu/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name")
+response = urllib2.urlopen("http://my.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name")
 xml = response.read()
 doc = libxml2.parseDoc(xml)
 
