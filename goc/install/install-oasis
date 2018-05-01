@@ -16,7 +16,7 @@
 #
 # Initial version written by Dave Dykstra 2-26-2015
 
-MYSHORTNAME="`hostname -s|sed 's/hcc-//'`"
+MYSHORTNAME="`echo ${1:-$(hostname -s)}|sed 's/hcc-//'`"
 case "$MYSHORTNAME" in
     oasis|oasis-itb);;
     *)  echo "Only run this on oasis or oasis-itb"
