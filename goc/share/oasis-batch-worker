@@ -5,9 +5,9 @@
 ###
 
 LOCKPFX="/stage/locks/"
-case "`hostname -s`" in
-    *-itb) LOCKPFX=${LOCKPFX}itb_;;
-esac
+if [[ $(hostname -s) == *-itb ]]; then
+    LOCKPFX=${LOCKPFX}itb_
+fi
 
 while [ -f ${LOCKPFX}oasis_update_requested_vo ]
 do
