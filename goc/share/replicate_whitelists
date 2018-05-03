@@ -1,11 +1,15 @@
 #!/bin/bash
 OASIS_SERVER="oasis.opensciencegrid.org"
-if [ "`hostname -s`" = oasis-replica-itb ]; then
+if [[ $(hostname -s) == *-itb ]]; then
     OASIS_SERVER="oasis-itb.opensciencegrid.org"
 fi
 
 echo `date` Replicating .cvmfswhitelists
 for repo in `cd /etc/cvmfs/repositories.d;echo *.*`; do
+    if [[ "$repo" == *.cern.ch ]]; then
+        # cern.ch repos are grandfathered, not signed by OSG key
+        continue
+    fi
     repopath=/oasissrv/cvmfs/$repo
     mkdir -p $repopath
     wget --timeout=5 -qO- http://$OASIS_SERVER:8000/cvmfs/$repo/.cvmfswhitelist >$repopath/.cvmfswhitelist.new

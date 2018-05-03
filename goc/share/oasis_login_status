@@ -1,9 +1,9 @@
 #!/bin/bash
 
 LOCKPFX="/stage/locks/"
-case "`hostname -s`" in
-    *-itb) LOCKPFX=${LOCKPFX}itb_;;
-esac
+if [[ $(hostname -s) == *-itb ]]; then
+    LOCKPFX=${LOCKPFX}itb_
+fi
 
 ## maximum lock file age (24 hours)
 max_lock_age=86400
