@@ -87,15 +87,17 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
 	fi
 	mv /srv/cvmfs/$REPONAME /srv/cvmfs/.$REPONAME.save
     fi
-    # Need to add the OSG key because the signature on each .cvmfswhitelist is
-    # overridden by OSG on the http service, and garbage collection uses that.
-    if [ "$DOMAIN" != "opensciencegrid.org" ]; then
-        EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/opensciencegrid.org.pub"
+    if [ "$DOMAIN" != "cern.ch" ]; then
+        # Need to add the OSG key because the signature on each .cvmfswhitelist is
+        # overridden by OSG on the http service, and garbage collection uses that.
+        if [ "$DOMAIN" != "opensciencegrid.org" ]; then
+            EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/opensciencegrid.org.pub"
+        fi
+        # On itb always add the OSG itb key in case the masterkeycard isn't working.
+        case `hostname -s` in
+            *-itb) EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub" ;;
+        esac
     fi
-    # On itb always add the OSG itb key in case the masterkeycard isn't working.
-    case `hostname -s` in
-        *-itb) EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub" ;;
-    esac
     RET=0
     if ! cvmfs_server add-replica -p -o root $REPOURL $PUBKEY$EXTRAPUBKEY; then
 	RET=1
@@ -112,6 +114,14 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
     if [ $RET != 0 ]; then
 	exit $RET
     fi
+    # For cern.ch and opensciencegrid.org create shortname symlink
+    #   for backward compatibility to old client configs
+    case "$DOMAIN" in
+        cern.ch|opensciencegrid.org)
+            ln -sf $REPONAME /srv/cvmfs/${REPONAME%%.*}
+            ;;
+    esac
+
     # make this also look like a master because other stratum 1s
     #   may read from it
     touch /srv/cvmfs/$REPONAME/.cvmfs_master_replica
@@ -119,6 +129,9 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
 	# pull initial snapshot
 	cvmfs_server snapshot $REPONAME
     fi
+    # reload the systemd-based snapshotter
+    systemctl daemon-reload
+    systemctl restart cvmfs-snapshot || true
 else
     # on stratum 0 without masterkey installed
     echo "$ME: this should only be run on the stratum 0 when the masterkey is installed" >&2
