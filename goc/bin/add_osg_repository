@@ -86,10 +86,14 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
         if [ ! -f "$PUBKEY" ]; then
             # Also look in a directory that persists between reinstalls for
             #  keys that are installed by hand, and only mention that
-            #  directory in an error message so they'll be installed there.
+            #  directory in the error message so they'll be installed there.
+            # There may be more than one key for a domain in a subdirectory.
+            PUBDIR="/srv/etc/keys/$DOMAIN"
             PUBKEY="/srv/etc/keys/$DOMAIN.pub"
-            if [ ! -f "$PUBKEY" ]; then
-                echo "$ME: $PUBKEY not found" >&2
+            if [ -d "$PUBDIR" ]; then
+                PUBKEY="`echo $PUBDIR/*.pub|tr ' ' ':'`"
+            elif [ ! -f "$PUBKEY" ]; then
+                echo "$ME: $PUBKEY and $PUBDIR not found" >&2
                 exit 1
             fi
         fi
