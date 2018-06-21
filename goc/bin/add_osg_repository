@@ -10,8 +10,9 @@ MAINREPO=oasis.opensciencegrid.org
 
 usage()
 {
-    echo "Usage: $ME [-a] http_url_of_repo_server [extra_pubkey]" >&2
+    echo "Usage: $ME [-a] {http_url_of_repo_server|continue*/repo} [extra_pubkey]}" >&2
     echo " -a: add only, do not run snapshot" >&2
+    echo ' If the first parameter begins with "continue", only run snapshot on repo' >&2
     exit 1
 }
 
@@ -32,22 +33,29 @@ elif [ $# != 1 ]; then
     usage
 fi
 
+
+CREATEREPO=true
+REPOURL=""
 case "$1" in
-    http://*) ;;
+    http://*) REPOURL="$1";;
+    continue*)
+        REPONAME="${1##*/}"
+        CREATEREPO=false;;
     *)  usage ;;
 esac
-REPOURL="$1"
 
-TMPFILE="`mktemp /tmp/addosgrepo.XXXXXXXXXX`"
-trap "rm -f ${TMPFILE}" 0
-if ! wget -qO$TMPFILE --timeout=10 --tries=2 "$REPOURL/.cvmfswhitelist"; then
-    echo "$ME: unable to wget $REPOURL/.cvmfswhitelist" >&2
-    exit 1
-fi
-REPONAME="`cat -v $TMPFILE|sed -n '/^N/{s/^N//p;q}'`"
-if [ -z "$REPONAME" ]; then
-    echo "$ME: no repository name found in $REPOURL/.cvmfswhitelist" >&2
-    exit 1
+if [ -n "$REPOURL" ]; then
+    TMPFILE="`mktemp /tmp/addosgrepo.XXXXXXXXXX`"
+    trap "rm -f ${TMPFILE}" 0
+    if ! wget -qO$TMPFILE --timeout=10 --tries=2 "$REPOURL/.cvmfswhitelist"; then
+        echo "$ME: unable to wget $REPOURL/.cvmfswhitelist" >&2
+        exit 1
+    fi
+    REPONAME="`cat -v $TMPFILE|sed -n '/^N/{s/^N//p;q}'`"
+    if [ -z "$REPONAME" ]; then
+        echo "$ME: no repository name found in $REPOURL/.cvmfswhitelist" >&2
+        exit 1
+    fi
 fi
 
 set -e
@@ -56,75 +64,82 @@ MASTERKEY=/etc/cvmfs/keys/$MAINREPO.masterkey
 if [ -f $MASTERKEY ] || cvmfs_server masterkeycard -k >/dev/null 2>&1; then
     # on stratum 0 with masterkey installed
     # all we need here is a signed .cvmfswhitelist 
+    if ! $CREATEREPO; then
+        echo "$ME: cannot use continue on stratum 0" >&2
+        exit 1
+    fi
     REPODIR="/srv/cvmfs/$REPONAME"
     mkdir -p $REPODIR
     cp $TMPFILE $REPODIR/.cvmfswhitelist
     chmod 644 $REPODIR/.cvmfswhitelist
     $MYDIR/resign_osg_whitelist "$REPONAME"
 elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
-    # on stratum 1, create the replica
-    if [ -f /etc/cvmfs/repositories.d/$REPONAME/replica.conf ]; then
-	echo "Repository already exists, aborting" >&2
-	exit 1
-    fi
-    DOMAIN=${REPONAME#*.}
-    PUBKEY="/etc/cvmfs/keys/$DOMAIN.pub"
-    if [ ! -f "$PUBKEY" ]; then
-	# Also look in a directory that persists between reinstalls for
-	#  keys that are installed by hand, and only mention that
-	#  directory in an error message so they'll be installed there.
-	PUBKEY="/srv/etc/keys/$DOMAIN.pub"
-	if [ ! -f "$PUBKEY" ]; then
-	    echo "$ME: $PUBKEY not found" >&2
-	    exit 1
-	fi
-    fi
-    if [ -d /srv/cvmfs/$REPONAME ]; then
-	echo "Saving old /srv/cvmfs/$REPONAME data" >&2
-	if [ -d /srv/cvmfs/.$REPONAME.save ]; then
-	    echo " ... but saved data already existed, aborting" >&2
-	    exit 1
-	fi
-	mv /srv/cvmfs/$REPONAME /srv/cvmfs/.$REPONAME.save
-    fi
-    if [ "$DOMAIN" != "cern.ch" ]; then
-        # Need to add the OSG key because the signature on each .cvmfswhitelist is
-        # overridden by OSG on the http service, and garbage collection uses that.
-        if [ "$DOMAIN" != "opensciencegrid.org" ]; then
-            EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/opensciencegrid.org.pub"
+    # on stratum 1
+    if $CREATEREPO; then
+        # create the replica
+        if [ -f /etc/cvmfs/repositories.d/$REPONAME/replica.conf ]; then
+            echo "Repository already exists, aborting" >&2
+            exit 1
         fi
-        # On itb always add the OSG itb key in case the masterkeycard isn't working.
-        case `hostname -s` in
-            *-itb) EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub" ;;
+        DOMAIN=${REPONAME#*.}
+        PUBKEY="/etc/cvmfs/keys/$DOMAIN.pub"
+        if [ ! -f "$PUBKEY" ]; then
+            # Also look in a directory that persists between reinstalls for
+            #  keys that are installed by hand, and only mention that
+            #  directory in an error message so they'll be installed there.
+            PUBKEY="/srv/etc/keys/$DOMAIN.pub"
+            if [ ! -f "$PUBKEY" ]; then
+                echo "$ME: $PUBKEY not found" >&2
+                exit 1
+            fi
+        fi
+        if [ -d /srv/cvmfs/$REPONAME ]; then
+            echo "Saving old /srv/cvmfs/$REPONAME data" >&2
+            if [ -d /srv/cvmfs/.$REPONAME.save ]; then
+                echo " ... but saved data already existed, aborting" >&2
+                exit 1
+            fi
+            mv /srv/cvmfs/$REPONAME /srv/cvmfs/.$REPONAME.save
+        fi
+        if [ "$DOMAIN" != "cern.ch" ]; then
+            # Need to add the OSG key because the signature on each .cvmfswhitelist is
+            # overridden by OSG on the http service, and garbage collection uses that.
+            if [ "$DOMAIN" != "opensciencegrid.org" ]; then
+                EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/opensciencegrid.org.pub"
+            fi
+            # On itb always add the OSG itb key in case the masterkeycard isn't working.
+            case `hostname -s` in
+                *-itb) EXTRAPUBKEY="$EXTRAPUBKEY:/etc/cvmfs/keys/oasis-itb.opensciencegrid.org.pub" ;;
+            esac
+        fi
+        RET=0
+        if ! cvmfs_server add-replica -p -o root $REPOURL $PUBKEY$EXTRAPUBKEY; then
+            RET=1
+        fi
+        if [ -d /srv/cvmfs/.$REPONAME.save ]; then
+            echo "Restoring old /srv/cvmfs/$REPONAME data" >&2
+            rm -rf /srv/cvmfs/$REPONAME
+            mv /srv/cvmfs/.$REPONAME.save /srv/cvmfs/$REPONAME
+            if [ -f /srv/cvmfs/$REPONAME/.cvmfsreflog ]; then
+                echo "Removing ${REPONAME}'s .cvmfsreflog" >&2
+                rm /srv/cvmfs/$REPONAME/.cvmfsreflog
+            fi
+        fi
+        if [ $RET != 0 ]; then
+            exit $RET
+        fi
+        # For cern.ch and opensciencegrid.org create shortname symlink
+        #   for backward compatibility to old client configs
+        case "$DOMAIN" in
+            cern.ch|opensciencegrid.org)
+                ln -sf $REPONAME /srv/cvmfs/${REPONAME%%.*}
+                ;;
         esac
-    fi
-    RET=0
-    if ! cvmfs_server add-replica -p -o root $REPOURL $PUBKEY$EXTRAPUBKEY; then
-	RET=1
-    fi
-    if [ -d /srv/cvmfs/.$REPONAME.save ]; then
-	echo "Restoring old /srv/cvmfs/$REPONAME data" >&2
-	rm -rf /srv/cvmfs/$REPONAME
-	mv /srv/cvmfs/.$REPONAME.save /srv/cvmfs/$REPONAME
-        if [ -f /srv/cvmfs/$REPONAME/.cvmfsreflog ]; then
-            echo "Removing ${REPONAME}'s .cvmfsreflog" >&2
-            rm /srv/cvmfs/$REPONAME/.cvmfsreflog
-        fi
-    fi
-    if [ $RET != 0 ]; then
-	exit $RET
-    fi
-    # For cern.ch and opensciencegrid.org create shortname symlink
-    #   for backward compatibility to old client configs
-    case "$DOMAIN" in
-        cern.ch|opensciencegrid.org)
-            ln -sf $REPONAME /srv/cvmfs/${REPONAME%%.*}
-            ;;
-    esac
 
-    # make this also look like a master because other stratum 1s
-    #   may read from it
-    touch /srv/cvmfs/$REPONAME/.cvmfs_master_replica
+        # make this also look like a master because other stratum 1s
+        #   may read from it
+        touch /srv/cvmfs/$REPONAME/.cvmfs_master_replica
+    fi
     if $DOSNAPSHOT; then
 	# pull initial snapshot
 	cvmfs_server snapshot $REPONAME
@@ -134,7 +149,7 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
     systemctl restart cvmfs-snapshot || true
 else
     # on stratum 0 without masterkey installed
-    echo "$ME: this should only be run on the stratum 0 when the masterkey is installed" >&2
+    echo "$ME: on stratum 0, this should only be run when the masterkey is installed" >&2
     exit 1
 fi
 
