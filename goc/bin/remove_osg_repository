@@ -1,0 +1,49 @@
+#!/bin/bash
+# Remove a CVMFS repository
+# This can be run on either host.
+# Written by Dave Dykstra 2 September 2014
+
+usage()
+{
+    echo "Usage: remove_osg_repository [-f] fqrn" >&2
+    exit 1
+}
+
+FORCE=""
+if [ "$1" = "-f" ]; then
+    FORCE="-f"
+    shift
+fi
+
+if [ $# != 1 ]; then
+    usage
+fi
+
+if [ "`id -u`" != 0 ]; then
+    echo "Not running as root" >&2
+    exit 1
+fi
+
+REPO="$1"
+
+SHORTREPO=""
+case "$REPO" in
+    *.cern.ch|*.opensciencegrid.org)
+	SHORTREPO="${REPO%%.*}"
+	;;
+esac
+
+if [ ! -d "/srv/cvmfs/$REPO" ]; then
+    echo "/srv/cvmfs/$REPO does not exist" >&2
+    exit 1
+fi
+
+if [ -n "$SHORTREPO" ]; then
+    rm -f /srv/cvmfs/$SHORTREPO
+fi
+set -x
+cvmfs_server rmfs $FORCE $REPO
+# This causes systemd to reload the list of repositories and remove the
+# deleted timer unit.
+systemctl daemon-reload
+systemctl restart cvmfs-snapshot || true

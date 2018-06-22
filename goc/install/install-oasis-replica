@@ -46,6 +46,7 @@ PATH="$PATH:/sbin"
 # symlink /srv/cvmfs and /srv/etc to the big disk
 for D in cvmfs etc; do 
     rm -rf /srv/$D
+    mkdir -p /storage/$D
     ln -s /storage/$D /srv
 done
 
@@ -58,6 +59,7 @@ done
 
 # install cvmfs
 yum -y install cvmfs cvmfs-server cvmfs-servermon
+yum -y install cvmfs-stratum1-replicator cvmfs-manage-replicas
 
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
 yum -y install mod_wsgi
@@ -76,7 +78,7 @@ systemctl start httpd
 yum -y install frontier-squid frontier-awstats
 
 # squid log dir has to be owned by squid user id
-chown squid:squid /srv/log/squid
+chown squid:squid /var/log/squid
 
 # install frontier-awstats password if available
 APWFILE=/srv/etc/awstats/password-file
@@ -84,10 +86,6 @@ if [ -f $APWFILE ]; then
     cp $APWFILE /etc/awstats
     chown squid:squid /etc/awstats/password-file
 fi
-
-# need nfslock for the repos to be on NFS
-systemctl enable nfslock
-systemctl start nfslock
 
 # on itb read from oasis-itb unless bootstrapping
 ITB=""
@@ -99,13 +97,31 @@ case $MYSHORTNAME in
 	;;
 esac
 
+# first start up the replication of cern.ch repositories because
+#  those will run in the background
+if $ITBBOOTSTRAP; then
+    STRATUMSOURCE=http://oasis-replica.opensciencegrid.org:8001
+else
+    STRATUMSOURCE=http://cvmfs-stratum-zero.cern.ch:8000
+fi
+cat >>/etc/cvmfs/manage-replicas.conf <<!EOF!
+addcmd add_osg_repository @url@/cvmfs/@fqrn@
+remcmd remove_osg_repository -f @fqrn@
+replist http://cvmfs-egi.gridpp.rl.ac.uk:8000/cvmfs/info/v1/repositories.json
+source $STRATUMSOURCE
+exclude alice-nightlies.cern.ch
+repos   belle.cern.ch cms-ib.cern.ch cvmfs-config.cern.ch
+repos   *.cern.ch
+!EOF!
+
+echo '*/5 * * * * root PATH=$PATH:/usr/sbin manage-replicas-log -c -f /etc/cvmfs/manage-replicas.conf' >/etc/cron.d/manage-replicas
+
+# add repos hosted on our stratum 0
 REPOURLS=""
 for REPO in oasis config-osg; do
     REPOURLS="$REPOURLS http://oasis$ITB.opensciencegrid.org:8000/cvmfs/$REPO.opensciencegrid.org"
 done
 NONOIMREPOURLS="$REPOURLS"
-
-# add repos hosted on our stratum 0
 for URL in $REPOURLS; do
     add_osg_repository -a "$URL"
 done
@@ -115,7 +131,7 @@ REPOURLS="http://cvmfs-stratum0.gridpp.rl.ac.uk:8000/cvmfs/config-egi.egi.eu"
 NONOIMREPOURLS="$NONOIMREPOURLS $REPOURLS"
 for URL in $REPOURLS; do
     if $ITBBOOTSTRAP; then
-	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`"
+	add_osg_repository -a "$STRATUMSOURCE/cvmfs/`basename $URL`"
     else
 	add_osg_repository -a "$URL"
     fi
@@ -126,7 +142,7 @@ done
 OIMREPOURLS="`print_osg_repos -u`"
 for URL in $OIMREPOURLS; do
     if $ITBBOOTSTRAP; then
-	add_osg_repository -a "http://oasis-replica.opensciencegrid.org:8080/cvmfs/`basename $URL`" || true
+	add_osg_repository -a "$STRATUMSOURCE/cvmfs/`basename $URL`" || true
     else
 	add_osg_repository -a "$URL" || true
     fi
@@ -148,7 +164,7 @@ for URL in $OIMREPOURLS; do
 	if ! cvmfs_server snapshot $REPO; then
 	    # initial snapshot failed so remove the repo so it can be
 	    #  added later by generate_replicas
-	    cvmfs_server rmfs -f $REPO || true
+	    remove_osg_repository -f $REPO || true
 	fi
     fi
 done

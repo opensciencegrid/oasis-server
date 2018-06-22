@@ -7,7 +7,7 @@ import os
 import time
 
 default_add_repo_command = 'add_osg_repository %u'
-default_undo_command = 'cvmfs_server rmfs -f %r'
+default_undo_command = 'remove_osg_repository -f %r'
 
 def usage():
     sys.stderr.write('Usage: generate_replicas ["add_repo_command" ["undo_command"]]\n')

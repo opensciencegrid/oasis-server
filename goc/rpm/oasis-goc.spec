@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.2.2
+Version: 2.2.4
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -105,6 +105,13 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Thu Jun 21 2018 Dave Dykstra <dwd@fnal.gov> - 2.2.4-1
+- Add continue option to add_osg_repository
+- Add support for directory of pub keys to add_osg_repository
+
+* Wed Jun 20 2018 Dave Dykstra <dwd@fnal.gov> - 2.2.3-1
+- Finish support for UNL oasis-replica
+
 * Wed May 02 2018 Dave Dykstra <dwd@fnal.gov> - 2.2.2-1
 - Make itb checks consistent
 - Don't replicate cern.ch whitelists because they are not signed by 
