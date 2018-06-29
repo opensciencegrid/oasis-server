@@ -105,6 +105,8 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+- Rationalize the my.opensciencegrid.org URLs (OO-223)
+
 * Thu Jun 21 2018 Dave Dykstra <dwd@fnal.gov> - 2.2.4-1
 - Add continue option to add_osg_repository
 - Add support for directory of pub keys to add_osg_repository
