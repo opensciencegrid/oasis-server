@@ -6,7 +6,7 @@ import sys
 import re
 
 #download vosummary (for oasis enabled)
-response = urllib2.urlopen("https://my.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&start_type=7daysago&end_type=now&all_vos=on&active_value=1&oasis=on&oasis_value=1&sort_key=name")
+response = urllib2.urlopen("https://my.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&oasis=on&oasis_value=1&sort_key=name")
 xml = response.read()
 doc = libxml2.parseDoc(xml)
 
