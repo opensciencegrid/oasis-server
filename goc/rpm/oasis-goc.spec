@@ -105,7 +105,7 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
-* Tue July 03 2018 Marian Zvada <marian.zvada@cern.ch> - 2.2.5-1
+* Tue Jul 03 2018 Marian Zvada <marian.zvada@cern.ch> - 2.2.5-1
 - Deny .cvmfs_master_replica on the primary service (OO-222)
 - Rationalize the my.opensciencegrid.org URLs (OO-223)
 
