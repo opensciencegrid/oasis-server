@@ -9,6 +9,14 @@ awk --file `dirname $0`/customhelps.awk --source '{
 insertline("^http_access deny all", "acl CVMFSAPI urlpath_regex ^/cvmfs/[^/]*/api/")
 insertline("^http_access deny all", "cache deny !CVMFSAPI")
 
+# deny .cvmfs_master_replica on the primary service
+if ($0 == "http_access deny all") {
+    print "if ${service_name} = 0"
+    print "acl master_replica urlpath_regex cvmfs_master_replica$"
+    print "http_access deny master_replica"
+    print "endif"
+}
+
 # port 80 is also supported, through an iptables redirect to port 8000
 if ($1 == "http_port") {
     $0 = "# " $0
