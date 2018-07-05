@@ -4,7 +4,7 @@
 #description: cleans up any leftover do_oasis_update locks, recovers rollbacks
 if [ "$1" = "start" ]; then
     LOCKPFX="/stage/locks/"
-    if [ "`uname -n|cut -d. -f1`" != oasis ]; then
+    if [[ "`uname -n|cut -d. -f1`" != *oasis ]]; then
 	LOCKPFX=${LOCKPFX}itb_
     fi
     rm -f ${LOCKPFX}oasis_update_in_progress ${LOCKPFX}oasis_update_requested_vo

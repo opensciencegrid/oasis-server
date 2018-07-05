@@ -153,7 +153,9 @@ for REPO in oasis config-osg; do
 	cvmfs_server mkfs -m -o oasis $REPO.opensciencegrid.org
     fi
     echo "CVMFS_GENERATE_LEGACY_BULK_CHUNKS=no" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
-    echo "CVMFS_AUTO_TAG=false" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
+    echo "CVMFS_AUTO_TAG=true" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
+    echo "CVMFS_AUTO_TAG_TIMESPAN='2 weeks ago'" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
+    echo "CVMFS_IGNORE_XDIR_HARDLINKS=true" >>/etc/cvmfs/repositories.d/$REPO.opensciencegrid.org/server.conf
     rm -f /etc/httpd/conf.d/cvmfs.$REPO.opensciencegrid.org.conf
 done
 
