@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.2.5
+Version: 2.2.6
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -105,6 +105,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Wed Dec 12 2018 Marian Zvada <marian.zvada@cern.ch> - 2.2.6-1
+- Make oasis-replica ignore If-Modified-Since requests (OO-253)
+
 * Tue Jul 03 2018 Marian Zvada <marian.zvada@cern.ch> - 2.2.5-1
 - Deny .cvmfs_master_replica on the primary service (OO-222)
 - Rationalize the my.opensciencegrid.org URLs (OO-223)
