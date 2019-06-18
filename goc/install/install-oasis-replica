@@ -110,7 +110,7 @@ remcmd remove_osg_repository -f @fqrn@
 replist http://cvmfs-egi.gridpp.rl.ac.uk:8000/cvmfs/info/v1/repositories.json
 source $STRATUMSOURCE
 exclude alice-nightlies.cern.ch
-repos   belle.cern.ch cms-ib.cern.ch cvmfs-config.cern.ch
+repos   cms-ib.cern.ch
 repos   *.cern.ch
 !EOF!
 
