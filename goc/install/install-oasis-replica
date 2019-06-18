@@ -15,7 +15,7 @@
 
 MYSHORTNAME="`echo ${1:-$(hostname -s)}|sed 's/hcc-//'`"
 case "$MYSHORTNAME" in
-    oasis-replica|oasis-replica-itb|cvmfs|cvmfs-itb);;
+    oasis-replica|oasis-replica-itb|cvmfs|cvmfs2|cvmfs-itb);;
     *)  echo "Only run this on oasis-replica or oasis-replica-itb"
 	exit 2
 	;;
@@ -90,7 +90,7 @@ fi
 # on itb read from oasis-itb unless bootstrapping
 ITB=""
 case $MYSHORTNAME in
-    *-itb)
+    *-itb|*2)
 	if ! $ITBBOOTSTRAP; then
 	    ITB="-itb"
 	fi
@@ -110,7 +110,7 @@ remcmd remove_osg_repository -f @fqrn@
 replist http://cvmfs-egi.gridpp.rl.ac.uk:8000/cvmfs/info/v1/repositories.json
 source $STRATUMSOURCE
 exclude alice-nightlies.cern.ch
-repos   belle.cern.ch cms-ib.cern.ch cvmfs-config.cern.ch
+repos   cms-ib.cern.ch
 repos   *.cern.ch
 !EOF!
 
