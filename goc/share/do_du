@@ -1,0 +1,20 @@
+#!/bin/bash
+LOCKFILE=/run/cvmfs/do_du.lock
+if [ -f $LOCKFILE ]; then
+    OTHERPID="`cat $LOCKFILE`"
+    if kill -0 $OTHERPID; then
+        echo "Another process $OTHERPID is doing du at `date`, exiting" >&2
+        exit 1
+    fi
+fi
+
+trap "rm -f $LOCKFILE" 0
+echo $$ >$LOCKFILE
+
+cd /srv/cvmfs
+for d in *.*; do
+    echo "Starting du of $d at `date`"
+    du -ks $d
+done
+echo "Finished at `date`"
+echo
