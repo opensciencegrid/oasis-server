@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.2.7
+Version: 2.2.8
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -105,6 +105,11 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Fri Jun 28 2019 Dave Dykstra <dwd@fnal.gov> - 2.2.8-1
+- Update cron to run do_du daily (OO-267)
+- Update cron to do snapshots 4 times per minute and to send log output
+  to a separate file in /var/log/cvmfs for each repository (OO-266)
+
 * Fri Jun 28 2019 Dave Dykstra <dwd@fnal.gov> - 2.2.7-1
 - Add do_du script (OO-267)
 
