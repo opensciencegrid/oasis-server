@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.2.6
+Version: 2.2.7
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -105,6 +105,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Fri Jun 28 2019 Dave Dykstra <dwd@fnal.gov> - 2.2.7-1
+- Add do_du script (OO-267)
+
 * Wed Dec 12 2018 Marian Zvada <marian.zvada@cern.ch> - 2.2.6-1
 - Make oasis-replica ignore If-Modified-Since requests (OO-253)
 
