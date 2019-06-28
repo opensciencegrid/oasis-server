@@ -87,16 +87,6 @@ if [ -f $APWFILE ]; then
     chown squid:squid /etc/awstats/password-file
 fi
 
-# on itb read from oasis-itb unless bootstrapping
-ITB=""
-case $MYSHORTNAME in
-    *-itb|*2)
-	if ! $ITBBOOTSTRAP; then
-	    ITB="-itb"
-	fi
-	;;
-esac
-
 # first start up the replication of cern.ch repositories because
 #  those will run in the background
 if $ITBBOOTSTRAP; then
@@ -119,7 +109,7 @@ echo '*/5 * * * * root PATH=$PATH:/usr/sbin manage-replicas-log -c -f /etc/cvmfs
 # add repos hosted on our stratum 0
 REPOURLS=""
 for REPO in oasis config-osg; do
-    REPOURLS="$REPOURLS http://oasis$ITB.opensciencegrid.org:8000/cvmfs/$REPO.opensciencegrid.org"
+    REPOURLS="$REPOURLS http://oasis.opensciencegrid.org:8000/cvmfs/$REPO.opensciencegrid.org"
 done
 NONOIMREPOURLS="$REPOURLS"
 for URL in $REPOURLS; do
