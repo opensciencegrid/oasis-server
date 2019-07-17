@@ -59,7 +59,7 @@ done
 
 # install cvmfs
 yum -y install cvmfs cvmfs-server cvmfs-servermon
-yum -y install cvmfs-stratum1-replicator cvmfs-manage-replicas
+yum -y install cvmfs-manage-replicas
 
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
 yum -y install mod_wsgi
