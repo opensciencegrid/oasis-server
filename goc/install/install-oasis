@@ -84,7 +84,7 @@ for LOGD in oasis httpd; do
 done
 
 # install cvmfs
-yum -y install cvmfs cvmfs-server cvmfs-servermon opensc yubico-piv-tool engine_pkcs11
+yum -y install cvmfs cvmfs-server cvmfs-servermon opensc yubico-piv-tool
 systemctl enable pcscd.socket
 systemctl start pcscd.socket
 cp /etc/cvmfs/keys/opensciencegrid.org/opensciencegrid.org.pub /etc/cvmfs/keys
