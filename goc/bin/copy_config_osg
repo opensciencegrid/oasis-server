@@ -18,21 +18,52 @@ if [ ! -f /etc/cvmfs/repositories.d/config-osg.opensciencegrid.org/client.conf ]
     exit 1
 fi
 
-set -ex
-mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
-cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
-CVMFS_SERVER_URL=http://oasis-itb.opensciencegrid.org:8000/cvmfs/@fqrn@
-CVMFS_PUBLIC_KEY=/etc/cvmfs/keys/opensciencegrid.org.pub:/srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub
-CVMFS_HTTP_PROXY=DIRECT
-unset CVMFS_CONFIG_REPOSITORY
-!EOF!
-mount -t cvmfs config-osg.opensciencegrid.org /cvmfs/config-osg-itb.opensciencegrid.org
-if ! cvmfs_server transaction config-osg.opensciencegrid.org; then
-    cvmfs_server abort -f config-osg.opensciencegrid.org
-    cvmfs_server transaction config-osg.opensciencegrid.org
+if [[ $(hostname -s) = *-itb ]]; then
+    # exit if /opt/config-repo/ doesn't exist
+    if ! cd /opt/config-repo/ &>/dev/null; then
+        >&2 echo "/opt/config-repo doesn't exist, exiting..."
+        exit 1
+    fi
+
+    # get branch name
+    raw_current_branch=`git branch | grep "*"`
+    current_branch=${raw_current_branch#* }
+    # get last component of branch name
+    current_branch_name=${current_branch##*\/}
+
+    if [[ ${current_branch_name} != "osg" ]]; then
+        echo "Make sure to checkout osg branch, exiting..."
+        exit 1
+    fi
+
+    git pull &>/dev/null
+
+    # exit if config directory is different from github source
+    if ! diff -q -r /cvmfs/config-osg.opensciencegrid.org/ /opt/config-repo/ --exclude=.git &>/dev/null; then
+        >&2 echo "config directories:"
+        >&2 echo "   /cvmfs/config-osg.opensciencegrid.org/"
+        >&2 echo "and"
+        >&2 echo "   /opt/config-repo/"
+        >&2 echo "are different! Exiting..."
+        exit 1
+    fi
+else
+    set -ex
+    mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
+    cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
+    CVMFS_SERVER_URL=http://oasis-itb.opensciencegrid.org:8000/cvmfs/@fqrn@
+    CVMFS_PUBLIC_KEY=/etc/cvmfs/keys/opensciencegrid.org.pub:/srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub
+    CVMFS_HTTP_PROXY=DIRECT
+    unset CVMFS_CONFIG_REPOSITORY
+    !EOF!
+    mount -t cvmfs config-osg.opensciencegrid.org /cvmfs/config-osg-itb.opensciencegrid.org
+    if ! cvmfs_server transaction config-osg.opensciencegrid.org; then
+        cvmfs_server abort -f config-osg.opensciencegrid.org
+        cvmfs_server transaction config-osg.opensciencegrid.org
+    fi
+    rsync -av --delete /cvmfs/config-osg-itb.opensciencegrid.org/ /cvmfs/config-osg.opensciencegrid.org
+    umount /cvmfs/config-osg-itb.opensciencegrid.org
+    rm /etc/cvmfs/config.d/config-osg.opensciencegrid.org.local
+    rmdir /cvmfs/config-osg-itb.opensciencegrid.org
+    cvmfs_server publish config-osg.opensciencegrid.org
 fi
-rsync -av --delete /cvmfs/config-osg-itb.opensciencegrid.org/ /cvmfs/config-osg.opensciencegrid.org
-umount /cvmfs/config-osg-itb.opensciencegrid.org
-rm /etc/cvmfs/config.d/config-osg.opensciencegrid.org.local
-rmdir /cvmfs/config-osg-itb.opensciencegrid.org
-cvmfs_server publish config-osg.opensciencegrid.org
