@@ -45,7 +45,6 @@ confirm()
 if [[ $(hostname -s) = *-itb ]]; then
     # run only if non-root
     if ! [ $(id -u) = 0 ]; then
-
         if git remote -v 2>/dev/null | grep -q /config-repo.git; then
             current_dir="$(git rev-parse --show-toplevel)"
             cd ${current_dir}
@@ -54,6 +53,7 @@ if [[ $(hostname -s) = *-itb ]]; then
         else
             >&2 echo "Make sure you're in config-repo.git repo directory, exiting..."
             exit 1
+        fi
     else
         # exit if /opt/config-repo/ doesn't exist
         if ! cd /opt/config-repo/ &>/dev/null; then
