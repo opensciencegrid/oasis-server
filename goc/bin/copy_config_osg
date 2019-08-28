@@ -18,35 +18,58 @@ if [ ! -f /etc/cvmfs/repositories.d/config-osg.opensciencegrid.org/client.conf ]
     exit 1
 fi
 
-if [[ $(hostname -s) = *-itb ]]; then
-    # exit if /opt/config-repo/ doesn't exist
-    if ! cd /opt/config-repo/ &>/dev/null; then
-        >&2 echo "/opt/config-repo doesn't exist, exiting..."
-        exit 1
-    fi
-
+get_branch()
+{
     # get branch name
     raw_current_branch=`git branch | grep "*"`
     current_branch=${raw_current_branch#* }
     # get last component of branch name
     current_branch_name=${current_branch##*\/}
+}
 
-    if [[ ${current_branch_name} != "osg" ]]; then
-        echo "Make sure to checkout osg branch, exiting..."
+confirm() 
+{
+    # call with a prompt string or use a default
+    read -r -p "${1:-Are you sure? [y/N]} " response
+    case "$response" in
+        [yY][eE][sS]|[yY]) 
+            false
+            ;;
+        *)
+            true
+            ;;
+    esac
+}
+
+# run only on -itb host if non-root
+if [[ $(hostname -s) = *-itb && $(id -u) != 0 ]]; then
+
+    inside_git_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
+
+    if [ "$inside_git_repo" ]; then
+        current_dir=`pwd`
+        get_branch
+        # make sure osg branch is set
+        if [[ ${current_branch_name} != "osg" ]]; then
+            echo "Make sure to checkout osg branch, exiting..."
+            exit 1
+        fi
+        git pull &>/dev/null
+    else
+        >&2 echo "Make sure you're in .git repo directory, exiting..."
         exit 1
     fi
-
-    git pull &>/dev/null
 
     # exit if config directory is different from github source
-    if ! diff -q -r /cvmfs/config-osg.opensciencegrid.org/ /opt/config-repo/ --exclude=.git &>/dev/null; then
-        >&2 echo "config directories:"
+    if ! diff -q -r /cvmfs/config-osg.opensciencegrid.org/ ${current_dir} --exclude=.git &>/dev/null; then
+        >&2 echo "Config directories:"
         >&2 echo "   /cvmfs/config-osg.opensciencegrid.org/"
         >&2 echo "and"
-        >&2 echo "   /opt/config-repo/"
-        >&2 echo "are different! Exiting..."
+        >&2 echo "   ${current_dir}"
+        >&2 echo "are different! Make sure to submit PR with changes first, exiting..."
         exit 1
     fi
+
 else
     set -ex
     mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
@@ -61,6 +84,32 @@ else
         cvmfs_server abort -f config-osg.opensciencegrid.org
         cvmfs_server transaction config-osg.opensciencegrid.org
     fi
+
+    # exit if /opt/config-repo/ doesn't exist
+    if ! cd /opt/config-repo/ &>/dev/null; then
+        >&2 echo "/opt/config-repo doesn't exist, exiting..."
+        exit 1
+    fi
+
+    get_branch
+
+    # make sure osg branch is set
+    if [[ ${current_branch_name} != "osg" ]]; then
+        echo "Make sure to checkout osg branch, exiting..."
+        exit 1
+    fi
+
+    git pull &>/dev/null
+
+    if ! diff -q -r /cvmfs/config-osg.opensciencegrid.org/ /opt/config-repo --exclude=.git &>/dev/null; then
+        >&2 echo "Config directories:"
+        >&2 echo "   /cvmfs/config-osg-itb.opensciencegrid.org/"
+        >&2 echo "and"
+        >&2 echo "   /opt/config-repo"
+        >&2 echo "are different! Meaning .git changes didn't catch up yet..."
+        confirm "Would you really like to continue?" && exit 1
+    fi
+
     rsync -av --delete /cvmfs/config-osg-itb.opensciencegrid.org/ /cvmfs/config-osg.opensciencegrid.org
     umount /cvmfs/config-osg-itb.opensciencegrid.org
     rm /etc/cvmfs/config.d/config-osg.opensciencegrid.org.local
