@@ -41,36 +41,41 @@ confirm()
     esac
 }
 
-# run only on -itb host if non-root
-if [[ $(hostname -s) = *-itb && $(id -u) != 0 ]]; then
+# run only on -itb host 
+if [[ $(hostname -s) = *-itb ]]; then
+    # run only if non-root
+    if ! [ $(id -u) = 0 ]; then
 
-    inside_git_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
-
-    if [ "$inside_git_repo" ]; then
-        current_dir=`pwd`
+        if git remote -v 2>/dev/null | grep -q /config-repo.git; then
+            current_dir="$(git rev-parse --show-toplevel)"
+            cd ${current_dir}
+            git pull upstream osg
+            rsync -av /cvmfs/config-osg.opensciencegrid.org ${current_dir}
+        else
+            >&2 echo "Make sure you're in config-repo.git repo directory, exiting..."
+            exit 1
+    else
+        # exit if /opt/config-repo/ doesn't exist
+        if ! cd /opt/config-repo/ &>/dev/null; then
+            >&2 echo "/opt/config-repo doesn't exist, exiting..."
+            exit 1
+        fi
         get_branch
         # make sure osg branch is set
         if [[ ${current_branch_name} != "osg" ]]; then
-            echo "Make sure to checkout osg branch, exiting..."
-            exit 1
+            git checkout osg
         fi
-        git pull &>/dev/null
-    else
-        >&2 echo "Make sure you're in .git repo directory, exiting..."
-        exit 1
-    fi
-
-    # exit if config directory is different from github source
-    if ! diff -q -r /cvmfs/config-osg.opensciencegrid.org/ ${current_dir} --exclude=.git &>/dev/null; then
-        >&2 echo "Config directories:"
-        >&2 echo "   /cvmfs/config-osg.opensciencegrid.org/"
-        >&2 echo "and"
-        >&2 echo "   ${current_dir}"
-        >&2 echo "are different! Make sure to submit PR with changes first, exiting..."
-        exit 1
+        git pull
+        rsync -av /cvmfs/config-osg.opensciencegrid.org $(git rev-parse --show-toplevel)
     fi
 
 else
+
+    if ! [ $(id -u) = 0 ]; then
+       echo "I am not root!"
+       exit 1
+    fi
+
     set -ex
     mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
     cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
@@ -95,19 +100,18 @@ else
 
     # make sure osg branch is set
     if [[ ${current_branch_name} != "osg" ]]; then
-        echo "Make sure to checkout osg branch, exiting..."
-        exit 1
+        git checkout osg
     fi
 
-    git pull &>/dev/null
+    git pull
 
-    if ! diff -q -r /cvmfs/config-osg.opensciencegrid.org/ /opt/config-repo --exclude=.git &>/dev/null; then
+    if ! diff -q -r /cvmfs/config-osg-itb.opensciencegrid.org/ /opt/config-repo --exclude=.git &>/dev/null; then
         >&2 echo "Config directories:"
         >&2 echo "   /cvmfs/config-osg-itb.opensciencegrid.org/"
         >&2 echo "and"
         >&2 echo "   /opt/config-repo"
         >&2 echo "are different! Meaning .git changes didn't catch up yet..."
-        confirm "Would you really like to continue?" && exit 1
+        confirm "Would you really like to continue? [y/N]" && exit 1
     fi
 
     rsync -av --delete /cvmfs/config-osg-itb.opensciencegrid.org/ /cvmfs/config-osg.opensciencegrid.org
