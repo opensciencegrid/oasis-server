@@ -49,8 +49,13 @@ if [[ $(hostname -s) = *-itb ]]; then
             current_dir="$(git rev-parse --show-toplevel)"
             set -ex
             cd ${current_dir}
-            git pull upstream osg
-            rsync -av /cvmfs/config-osg.opensciencegrid.org ${current_dir}
+            if [[ ${current_branch_name} == "osg" ]]; then
+                git pull upstream osg
+                rsync -av /cvmfs/config-osg.opensciencegrid.org ${current_dir}
+            else
+                >&2 echo "You are on the ${current_branch_name} branch, please swith to the osg, exiting..."
+                exit 1
+            fi
         else
             >&2 echo "Make sure to git clone config-repo.git and you're inside the repo directory, exiting..."
             exit 1
@@ -66,14 +71,13 @@ else
        echo "I am not root!"
        exit 1
     fi
-
-    set -ex
     # exit if /opt/config-repo/ doesn't exist
     if ! cd /opt/config-repo/ &>/dev/null; then
         >&2 echo "/opt/config-repo doesn't exist, exiting..."
         exit 1
     fi
 
+    set -ex
     mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
     cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
     CVMFS_SERVER_URL=http://oasis-itb.opensciencegrid.org:8000/cvmfs/@fqrn@
