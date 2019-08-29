@@ -47,26 +47,17 @@ if [[ $(hostname -s) = *-itb ]]; then
     if ! [ $(id -u) = 0 ]; then
         if git remote -v 2>/dev/null | grep -q /config-repo.git; then
             current_dir="$(git rev-parse --show-toplevel)"
+            set -ex
             cd ${current_dir}
             git pull upstream osg
             rsync -av /cvmfs/config-osg.opensciencegrid.org ${current_dir}
         else
-            >&2 echo "Make sure you're in config-repo.git repo directory, exiting..."
+            >&2 echo "Make sure to git clone config-repo.git and you're inside the repo directory, exiting..."
             exit 1
         fi
     else
-        # exit if /opt/config-repo/ doesn't exist
-        if ! cd /opt/config-repo/ &>/dev/null; then
-            >&2 echo "/opt/config-repo doesn't exist, exiting..."
-            exit 1
-        fi
-        get_branch
-        # make sure osg branch is set
-        if [[ ${current_branch_name} != "osg" ]]; then
-            git checkout osg
-        fi
-        git pull
-        rsync -av /cvmfs/config-osg.opensciencegrid.org $(git rev-parse --show-toplevel)
+        >&2 echo "Make sure to run ${ME} as non-root, exiting..."
+        exit 1
     fi
 
 else
@@ -77,6 +68,12 @@ else
     fi
 
     set -ex
+    # exit if /opt/config-repo/ doesn't exist
+    if ! cd /opt/config-repo/ &>/dev/null; then
+        >&2 echo "/opt/config-repo doesn't exist, exiting..."
+        exit 1
+    fi
+
     mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
     cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
     CVMFS_SERVER_URL=http://oasis-itb.opensciencegrid.org:8000/cvmfs/@fqrn@
@@ -88,12 +85,6 @@ else
     if ! cvmfs_server transaction config-osg.opensciencegrid.org; then
         cvmfs_server abort -f config-osg.opensciencegrid.org
         cvmfs_server transaction config-osg.opensciencegrid.org
-    fi
-
-    # exit if /opt/config-repo/ doesn't exist
-    if ! cd /opt/config-repo/ &>/dev/null; then
-        >&2 echo "/opt/config-repo doesn't exist, exiting..."
-        exit 1
     fi
 
     get_branch
