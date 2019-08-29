@@ -54,7 +54,7 @@ if [[ $(hostname -s) = *-itb ]]; then
                 git pull upstream osg
                 rsync -av /cvmfs/config-osg.opensciencegrid.org ${current_dir}
             else
-                >&2 echo "You are on the ${current_branch_name} branch, please swith to the osg, exiting..."
+                >&2 echo "You are on the ${current_branch_name} branch, please switch to the osg, exiting..."
                 exit 1
             fi
         else

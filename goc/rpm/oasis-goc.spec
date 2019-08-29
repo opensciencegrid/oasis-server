@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.2.8
+Version: 2.2.9
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -11,7 +11,7 @@ BuildArch: noarch
 Url: http://www.opensciencegrid.org
 
 %description
-This package contains OASIS software for the OSG Global Operations Center
+This package contains OASIS software for the OSG Operations
 
 %prep
 %setup -q
@@ -105,7 +105,12 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
-# - Remove references to cvmfs-snapshot in {add|remove}_osg_repository
+* Thu Aug 29 2019 Marian Zvada <marian.zvada@cern.ch> - 2.2.9-1
+- Remove references to cvmfs-snapshot in {add|remove}_osg_repository
+- Add test to compare current github source with config-osg repo 
+  to copy_config_osg (OO-236) 
+- Add functionality to copy_config_osg that assists with submitting 
+  a PR for changes to the config-osg repo on the -itb host
 
 * Fri Jun 28 2019 Dave Dykstra <dwd@fnal.gov> - 2.2.8-1
 - Update cron to run do_du daily (OO-267)
