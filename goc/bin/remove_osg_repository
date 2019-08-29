@@ -43,7 +43,3 @@ if [ -n "$SHORTREPO" ]; then
 fi
 set -x
 cvmfs_server rmfs $FORCE $REPO
-# This causes systemd to reload the list of repositories and remove the
-# deleted timer unit.
-systemctl daemon-reload
-systemctl restart cvmfs-snapshot || true

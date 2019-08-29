@@ -148,9 +148,6 @@ elif [ ! -f /etc/cvmfs/repositories.d/$MAINREPO/client.conf ]; then
 	# pull initial snapshot
 	cvmfs_server snapshot $REPONAME
     fi
-    # reload the systemd-based snapshotter
-    systemctl daemon-reload
-    systemctl restart cvmfs-snapshot || true
 else
     # on stratum 0 without masterkey installed
     echo "$ME: on stratum 0, this should only be run when the masterkey is installed" >&2

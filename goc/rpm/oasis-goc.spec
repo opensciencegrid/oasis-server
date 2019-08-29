@@ -105,6 +105,8 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+# - Remove references to cvmfs-snapshot in {add|remove}_osg_repository
+
 * Fri Jun 28 2019 Dave Dykstra <dwd@fnal.gov> - 2.2.8-1
 - Update cron to run do_du daily (OO-267)
 - Update cron to do snapshots 4 times per minute and to send log output
