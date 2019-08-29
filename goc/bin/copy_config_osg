@@ -49,6 +49,7 @@ if [[ $(hostname -s) = *-itb ]]; then
             current_dir="$(git rev-parse --show-toplevel)"
             set -ex
             cd ${current_dir}
+            get_branch
             if [[ ${current_branch_name} == "osg" ]]; then
                 git pull upstream osg
                 rsync -av /cvmfs/config-osg.opensciencegrid.org ${current_dir}
