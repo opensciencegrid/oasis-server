@@ -47,12 +47,12 @@ if [[ $(hostname -s) = *-itb ]]; then
     if ! [ $(id -u) = 0 ]; then
         if git remote -v 2>/dev/null | grep -q /config-repo.git; then
             current_dir="$(git rev-parse --show-toplevel)"
+            get_branch
             set -ex
             cd ${current_dir}
-            get_branch
-            if [[ ${current_branch_name} == "osg" ]]; then
+            if [ ${current_branch_name} == "osg" ]; then
                 git pull upstream osg
-                rsync -av /cvmfs/config-osg.opensciencegrid.org ${current_dir}
+                rsync -avc /cvmfs/config-osg.opensciencegrid.org/ ${current_dir}
             else
                 >&2 echo "You are on the ${current_branch_name} branch, please switch to the osg, exiting..."
                 exit 1
@@ -78,39 +78,48 @@ else
         exit 1
     fi
 
-    set -ex
-    mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
-    cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
-    CVMFS_SERVER_URL=http://oasis-itb.opensciencegrid.org:8000/cvmfs/@fqrn@
-    CVMFS_PUBLIC_KEY=/etc/cvmfs/keys/opensciencegrid.org.pub:/srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub
-    CVMFS_HTTP_PROXY=DIRECT
-    unset CVMFS_CONFIG_REPOSITORY
-    !EOF!
-    mount -t cvmfs config-osg.opensciencegrid.org /cvmfs/config-osg-itb.opensciencegrid.org
-    if ! cvmfs_server transaction config-osg.opensciencegrid.org; then
-        cvmfs_server abort -f config-osg.opensciencegrid.org
-        cvmfs_server transaction config-osg.opensciencegrid.org
-    fi
-
     get_branch
-
     # make sure osg branch is set
-    if [[ ${current_branch_name} != "osg" ]]; then
+    if [ ${current_branch_name} != "osg" ]; then
         git checkout osg
     fi
 
+    set -ex
+    cd $PWD  # just to show the user the directory
     git pull
 
+    mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
+    cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
+CVMFS_SERVER_URL=http://oasis-itb.opensciencegrid.org:8000/cvmfs/@fqrn@
+CVMFS_PUBLIC_KEY=/etc/cvmfs/keys/opensciencegrid.org.pub:/srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub
+CVMFS_HTTP_PROXY=DIRECT
+unset CVMFS_CONFIG_REPOSITORY
+!EOF!
+    mount -t cvmfs config-osg.opensciencegrid.org /cvmfs/config-osg-itb.opensciencegrid.org
+
     if ! diff -q -r /cvmfs/config-osg-itb.opensciencegrid.org/ /opt/config-repo --exclude=.git &>/dev/null; then
+	set +x
         >&2 echo "Config directories:"
         >&2 echo "   /cvmfs/config-osg-itb.opensciencegrid.org/"
         >&2 echo "and"
         >&2 echo "   /opt/config-repo"
         >&2 echo "are different! Meaning .git changes didn't catch up yet..."
-        confirm "Would you really like to continue? [y/N]" && exit 1
+        if confirm "Would you really like to continue? [y/N]"; then
+	    set -x
+	    umount /cvmfs/config-osg-itb.opensciencegrid.org
+	    rm /etc/cvmfs/config.d/config-osg.opensciencegrid.org.local
+	    rmdir /cvmfs/config-osg-itb.opensciencegrid.org
+	    exit 1
+	fi
+	set -x
     fi
 
-    rsync -av --delete /cvmfs/config-osg-itb.opensciencegrid.org/ /cvmfs/config-osg.opensciencegrid.org
+    if ! cvmfs_server transaction config-osg.opensciencegrid.org; then
+        cvmfs_server abort -f config-osg.opensciencegrid.org
+        cvmfs_server transaction config-osg.opensciencegrid.org
+    fi
+
+    rsync -avc --delete /cvmfs/config-osg-itb.opensciencegrid.org/ /cvmfs/config-osg.opensciencegrid.org
     umount /cvmfs/config-osg-itb.opensciencegrid.org
     rm /etc/cvmfs/config.d/config-osg.opensciencegrid.org.local
     rmdir /cvmfs/config-osg-itb.opensciencegrid.org
