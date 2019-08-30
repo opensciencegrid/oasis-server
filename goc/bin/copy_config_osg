@@ -18,21 +18,110 @@ if [ ! -f /etc/cvmfs/repositories.d/config-osg.opensciencegrid.org/client.conf ]
     exit 1
 fi
 
-set -ex
-mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
-cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
+get_branch()
+{
+    # get branch name
+    raw_current_branch=`git branch | grep "*"`
+    current_branch=${raw_current_branch#* }
+    # get last component of branch name
+    current_branch_name=${current_branch##*\/}
+}
+
+confirm() 
+{
+    # call with a prompt string or use a default
+    read -r -p "${1:-Are you sure? [y/N]} " response
+    case "$response" in
+        [yY][eE][sS]|[yY]) 
+            false
+            ;;
+        *)
+            true
+            ;;
+    esac
+}
+
+# run only on -itb host 
+if [[ $(hostname -s) = *-itb ]]; then
+    # run only if non-root
+    if ! [ $(id -u) = 0 ]; then
+        if git remote -v 2>/dev/null | grep -q /config-repo.git; then
+            current_dir="$(git rev-parse --show-toplevel)"
+            get_branch
+            set -ex
+            cd ${current_dir}
+            if [ ${current_branch_name} == "osg" ]; then
+                git pull upstream osg
+                rsync -avc /cvmfs/config-osg.opensciencegrid.org/ ${current_dir}
+            else
+                >&2 echo "You are on the ${current_branch_name} branch, please switch to the osg, exiting..."
+                exit 1
+            fi
+        else
+            >&2 echo "Make sure to git clone config-repo.git and you're inside the repo directory, exiting..."
+            exit 1
+        fi
+    else
+        >&2 echo "Make sure to run ${ME} as non-root, exiting..."
+        exit 1
+    fi
+
+else
+
+    if ! [ $(id -u) = 0 ]; then
+       echo "I am not root!"
+       exit 1
+    fi
+    # exit if /opt/config-repo/ doesn't exist
+    if ! cd /opt/config-repo/ &>/dev/null; then
+        >&2 echo "/opt/config-repo doesn't exist, exiting..."
+        exit 1
+    fi
+
+    get_branch
+    # make sure osg branch is set
+    if [ ${current_branch_name} != "osg" ]; then
+        git checkout osg
+    fi
+
+    set -ex
+    cd $PWD  # just to show the user the directory
+    git pull
+
+    mkdir -p /cvmfs/config-osg-itb.opensciencegrid.org /etc/cvmfs/config.d
+    cat >/etc/cvmfs/config.d/config-osg.opensciencegrid.org.local <<!EOF!
 CVMFS_SERVER_URL=http://oasis-itb.opensciencegrid.org:8000/cvmfs/@fqrn@
 CVMFS_PUBLIC_KEY=/etc/cvmfs/keys/opensciencegrid.org.pub:/srv/etc/cvmfs/oasis-itb.opensciencegrid.org.pub
 CVMFS_HTTP_PROXY=DIRECT
 unset CVMFS_CONFIG_REPOSITORY
 !EOF!
-mount -t cvmfs config-osg.opensciencegrid.org /cvmfs/config-osg-itb.opensciencegrid.org
-if ! cvmfs_server transaction config-osg.opensciencegrid.org; then
-    cvmfs_server abort -f config-osg.opensciencegrid.org
-    cvmfs_server transaction config-osg.opensciencegrid.org
+    mount -t cvmfs config-osg.opensciencegrid.org /cvmfs/config-osg-itb.opensciencegrid.org
+
+    if ! diff -q -r /cvmfs/config-osg-itb.opensciencegrid.org/ /opt/config-repo --exclude=.git &>/dev/null; then
+	set +x
+        >&2 echo "Config directories:"
+        >&2 echo "   /cvmfs/config-osg-itb.opensciencegrid.org/"
+        >&2 echo "and"
+        >&2 echo "   /opt/config-repo"
+        >&2 echo "are different! Meaning .git changes didn't catch up yet..."
+        if confirm "Would you really like to continue? [y/N]"; then
+	    set -x
+	    umount /cvmfs/config-osg-itb.opensciencegrid.org
+	    rm /etc/cvmfs/config.d/config-osg.opensciencegrid.org.local
+	    rmdir /cvmfs/config-osg-itb.opensciencegrid.org
+	    exit 1
+	fi
+	set -x
+    fi
+
+    if ! cvmfs_server transaction config-osg.opensciencegrid.org; then
+        cvmfs_server abort -f config-osg.opensciencegrid.org
+        cvmfs_server transaction config-osg.opensciencegrid.org
+    fi
+
+    rsync -avc --delete /cvmfs/config-osg-itb.opensciencegrid.org/ /cvmfs/config-osg.opensciencegrid.org
+    umount /cvmfs/config-osg-itb.opensciencegrid.org
+    rm /etc/cvmfs/config.d/config-osg.opensciencegrid.org.local
+    rmdir /cvmfs/config-osg-itb.opensciencegrid.org
+    cvmfs_server publish config-osg.opensciencegrid.org
 fi
-rsync -av --delete /cvmfs/config-osg-itb.opensciencegrid.org/ /cvmfs/config-osg.opensciencegrid.org
-umount /cvmfs/config-osg-itb.opensciencegrid.org
-rm /etc/cvmfs/config.d/config-osg.opensciencegrid.org.local
-rmdir /cvmfs/config-osg-itb.opensciencegrid.org
-cvmfs_server publish config-osg.opensciencegrid.org
