@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.2.9
+Version: 2.2.10
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -105,6 +105,10 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Wed Apr 08 2020 Dave Dykstra <dwd@fnal.gov> - 2.2.10-1
+- Add share/make_stashservers_list and run it every 3 hours from the
+    stratum zero cron.
+
 * Thu Aug 29 2019 Marian Zvada <marian.zvada@cern.ch> - 2.2.9-1
 - Remove references to cvmfs-snapshot in {add|remove}_osg_repository
 - Add test to compare current github source with config-osg repo 

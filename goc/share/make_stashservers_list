@@ -1,0 +1,42 @@
+#!/bin/bash
+
+if ! cd /opt/config-repo/ 2>/dev/null; then
+	echo "/opt/config-repo doesn't exist, exiting..." >&2
+	exit 1
+fi
+
+git checkout master
+git pull
+
+CVMFS_MOUNT_DIR=/opt
+CVMFS_CONFIG_REPOSITORY=config-repo
+
+cd etc/cvmfs/domain.d
+. osgstorage.org.conf
+XROOT="`echo "$CVMFS_EXTERNAL_URL"|sed 's,http://,,g;s,:[^;]*,,g;s/\;/,/g'`"
+if [ -z "$XROOT" ]; then
+	echo "No XROOT servers found, exiting... " >&2
+	exit 1
+fi
+cd ../config.d
+. ligo.osgstorage.org.conf
+XROOTS="`echo "$CVMFS_EXTERNAL_URL"|sed 's,https://,,g;s,:[^;]*,,g;s/\;/,/g'`"
+
+echo "xroot=$XROOT"
+echo "xroots=$XROOTS"
+
+# resign sometimes fails, so make it in a temporary directory and
+#  move into place if it succeeds.
+mkdir -p /srv/cvmfs/stashservers /srv/cvmfs/stash-servers
+(
+echo
+echo
+echo N
+# must end with end with a -hash algorithm
+echo "xroot=$XROOT;xroots=$XROOTS;hash=-sha1"
+) >/srv/cvmfs/stash-servers/.cvmfswhitelist
+
+if resign_osg_whitelist stash-servers; then
+    mv /srv/cvmfs/stash-servers/.cvmfswhitelist /srv/cvmfs/stashservers
+    rmdir /srv/cvmfs/stash-servers
+fi
