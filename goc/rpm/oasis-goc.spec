@@ -1,6 +1,6 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.2.10
+Version: 2.2.11
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -105,6 +105,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Tue May 05 2020 Dave Dykstra <dwd@fnal.gov> - 2.2.11-1
+- Add list of cms servers to make_stashservers_list.
+
 * Wed Apr 08 2020 Dave Dykstra <dwd@fnal.gov> - 2.2.10-1
 - Add share/make_stashservers_list and run it every 3 hours from the
     stratum zero cron.
