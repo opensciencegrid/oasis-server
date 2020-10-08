@@ -43,7 +43,7 @@ if [ "$vo" ]; then
        echo "via ssh from: $initName  ($initIP)">>/tmp/update.details
        if [ -n "$CILOGONID" ]; then
            echo "using ssh key of $CILOGONID" >>/tmp/update.details
-       elif [ ! -f "$cert" ] ; then
+       elif [ -z "$cert" ] || [ ! -f "$cert" ] ; then
 	   echo "No proxy or cilogonid found for user $user" >>/tmp/update.details
        else
 	   certinfo=`openssl x509 -noout -in $cert -subject`
