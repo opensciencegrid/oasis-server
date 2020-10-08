@@ -1,0 +1,58 @@
+#!/usr/bin/python
+
+import sys
+import os
+import pwd, grp
+import re
+import subprocess
+import json
+
+# it's much easier to switch to curl for the authenticated lookup than
+#  to use native python
+cmd = 'curl -s --cert /etc/grid-security/hostcert.pem --key /etc/grid-security/hostkey.pem https://topology.opensciencegrid.org/oasis-managers/json?vo="*"'
+p = subprocess.Popen( ('/bin/bash', '-cx', cmd), bufsize=1, stdout=subprocess.PIPE)
+body = p.stdout.read()
+data = json.loads(body)
+
+for vo in data:
+        username = "ouser."+re.sub(r'[^/a-z0-9]+', '', vo.lower())
+
+        origauthkeys = ''
+        authkeysfile = os.path.expanduser('~' + username + '/.ssh/authorized_keys')
+        if os.path.exists(authkeysfile):
+            with open(authkeysfile, 'r') as file:
+                origauthkeys = file.read()
+
+        newauthkeys = ''
+        for line in origauthkeys.splitlines(True):
+            if 'CILOGONID=' not in line:
+                newauthkeys += line
+
+        for entry in data[vo]:
+            if 'CILogonID' in entry and 'sshPublicKeys' in entry:
+                for sshkey in entry['sshPublicKeys']:
+                    newauthkeys += 'environment="CILOGONID='
+                    newauthkeys += entry['CILogonID']
+                    newauthkeys += '" ' + sshkey + '\n'
+
+        if origauthkeys != newauthkeys:
+            uid = pwd.getpwnam(username).pw_uid
+            gid = grp.getgrnam(username).gr_gid
+
+            sshdir = os.path.dirname(authkeysfile)
+            if not os.path.exists(sshdir):
+                os.mkdir(sshdir, 0700)
+                os.chown(sshdir, uid, gid)
+
+            with open(authkeysfile + '.new', 'w') as file:
+                file.write(newauthkeys)
+            os.chown(authkeysfile + '.new', uid, gid)
+
+            if origauthkeys == '':
+                print 'Creating ' + authkeysfile + ':'
+                sys.stdout.write(newauthkeys)
+            else:
+                print 'Updating ' + authkeysfile + ':'
+                os.system('diff ' + authkeysfile + ' ' + authkeysfile + '.new')
+
+            os.rename(authkeysfile + '.new', authkeysfile)
