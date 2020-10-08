@@ -39,8 +39,10 @@ if [ $vo ]; then
        echo "Update initiated: $now">/tmp/update.details
        now=`date +%s`
        echo "Update unix time: $now">>/tmp/update.details
-       if [ ! -f $cert ] ; then
-	   echo "No proxy found for user $user" >>/tmp/update.details
+       if [ -n "$CILOGONID ]; then
+           echo "via ssh from $CILOGONID" >>/tmp/update.details
+       elif [ ! -f $cert ] ; then
+	   echo "No proxy or cilogonid found for user $user" >>/tmp/update.details
        else
 	   certinfo=`openssl x509 -noout -in $cert -subject`
 	   echo "Initiated by: "$user>>/tmp/update.details
