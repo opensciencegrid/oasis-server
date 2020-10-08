@@ -5,13 +5,14 @@ cat >$TMPFILE <<xEOFx
 Universe   = vanilla
 Executable = /usr/share/oasis/oasis-batch-worker
 notification = Never
+getenv = True
 Log        = /dev/null
 Output     = /dev/null
 Error      = /dev/null
 xEOFx
 ## determine the vo requesting the update
 vo=`whoami | awk -F. '{print $2}'`
-echo "Arguments = $vo $X509_USER_PROXY $SSH_CLIENT" >> $TMPFILE
+echo "Arguments = $vo" >> $TMPFILE
 echo "Queue" >> $TMPFILE
 if condor_submit $TMPFILE; then
     sleep 2
