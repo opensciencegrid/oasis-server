@@ -55,6 +55,7 @@ Summary: files for OASIS stratum one
 Group: Development/Libraries
 %description replica
 This package contains files for oasis-replica.opensciencegrid.org
+Requires: parallel
 
 %files replica
 /etc/cron.d/cvmfs
@@ -105,6 +106,8 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+#- Limit parallel snapshots on stratum 1 to the number of cores
+
 * Tue May 05 2020 Dave Dykstra <dwd@fnal.gov> - 2.2.11-1
 - Add list of cms servers to make_stashservers_list.
 
