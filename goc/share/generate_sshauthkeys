@@ -53,6 +53,6 @@ for vo in data:
                 sys.stdout.write(newauthkeys)
             else:
                 print 'Updating ' + authkeysfile + ':'
-                subprocess.call('diff ' + authkeysfile + ' ' + authkeysfile + '.new')
+                subprocess.call(['diff', authkeysfile, authkeysfile + '.new'])
 
             os.rename(authkeysfile + '.new', authkeysfile)
