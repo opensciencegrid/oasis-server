@@ -17,11 +17,9 @@ do
 done
 
 ## determine the vo requesting the update
-vo=$1
-proxy=$2
-startip=$3
+vo="$1"
 
-if [ $vo ]; then
+if [ "$vo" ]; then
 ## VO name is not null
    if [ -d /home/login/ouser.$vo ]; then
 
@@ -33,21 +31,23 @@ if [ $vo ]; then
 # Write a file to track update initiator
 #
        user=`whoami`
-       cert=$proxy
+       cert="$X509_USER_PROXY"
 
        now=`date`
        echo "Update initiated: $now">/tmp/update.details
        now=`date +%s`
        echo "Update unix time: $now">>/tmp/update.details
-       if [ ! -f $cert ] ; then
-	   echo "No proxy found for user $user" >>/tmp/update.details
+       echo "Initiated by: "$user>>/tmp/update.details
+       initIP=`echo $SSH_CLIENT | awk '{print $1}'`
+       initName=`host $initIP | awk '{print $5}'`
+       echo "via ssh from: $initName  ($initIP)">>/tmp/update.details
+       if [ -n "$CILOGONID" ]; then
+           echo "using ssh key of $CILOGONID" >>/tmp/update.details
+       elif [ -z "$cert" ] || [ ! -f "$cert" ] ; then
+	   echo "No proxy or cilogonid found for user $user" >>/tmp/update.details
        else
 	   certinfo=`openssl x509 -noout -in $cert -subject`
-	   echo "Initiated by: "$user>>/tmp/update.details
 	   echo "With proxy  : "$certinfo>>/tmp/update.details
-	   initIP=`echo $startip | awk '{print $1}'`
-	   initName=`host $initIP | awk '{print $5}'`
-	   echo "via ssh from: $initName  ($initIP)">>/tmp/update.details
        fi
        cp /tmp/update.details /stage/oasis/$vo/update.details
        rm /tmp/update.details

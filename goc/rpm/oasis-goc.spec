@@ -1,12 +1,10 @@
 Summary: OASIS GOC package
 Name: oasis-goc
-Version: 2.2.11
+Version: 2.2.12
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
 Group: Development/Libraries
-#BuildRoot requried only on RHEL5
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildArch: noarch
 Url: http://www.opensciencegrid.org
 
@@ -106,7 +104,10 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
-#- Limit parallel snapshots on stratum 1 to the number of cores
+* Thu Oct 08 2020 Dave Dykstra <dwd@fnal.gov> - 2.2.12-1
+- Add generate_sshauthkeys to create ssh authorized key file entries
+  for those who have such keys registered in topology.
+- Limit parallel snapshots on stratum 1 to the number of cores
 
 * Tue May 05 2020 Dave Dykstra <dwd@fnal.gov> - 2.2.11-1
 - Add list of cms servers to make_stashservers_list.
