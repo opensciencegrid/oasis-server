@@ -8,6 +8,8 @@ Group: Development/Libraries
 BuildArch: noarch
 Url: http://www.opensciencegrid.org
 
+Obsoletes: oasis-goc
+
 %description
 This package contains OASIS server software for OSG Operations
 
@@ -36,6 +38,9 @@ rm -rf $RPM_BUILD_ROOT
 %package zero
 Summary: files for OASIS stratum zero
 Group: Development/Libraries
+
+Obsoletes: oasis-goc-zero
+
 %description zero
 This package contains files for oasis.opensciencegrid.org
 
@@ -51,6 +56,9 @@ This package contains files for oasis.opensciencegrid.org
 %package replica
 Summary: files for OASIS stratum one
 Group: Development/Libraries
+
+Obsoletes: oasis-goc-replica
+
 %description replica
 This package contains files for oasis-replica.opensciencegrid.org
 Requires: parallel
@@ -94,6 +102,9 @@ done
 %package login
 Summary: files for OASIS login host
 Group: Development/Libraries
+
+Obsoletes: oasis-goc-login
+
 %description login
 This package contains files for oasis-login.opensciencegrid.org
 
