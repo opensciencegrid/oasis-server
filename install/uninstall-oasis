@@ -1,4 +1,6 @@
 #!/bin/bash
+# NOTE: this is no longer maintained or up to date
+#
 # Uninstall everything installed by install-oasis, to facilitate
 #  testing install-oasis without creating a new VM from scratch
 # Written by Dave Dykstra 2-26-2015

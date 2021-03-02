@@ -1,4 +1,6 @@
 #!/bin/bash
+# NOTE: this is no longer maintained or up to date
+#
 # Uninstall everything installed by install-oasis-replica, to facilitate
 #  testing install-oasis-replica without creating a new VM from scratch
 # Written by Dave Dykstra 2-4-2015

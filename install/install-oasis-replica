@@ -68,7 +68,7 @@ echo -e "*\t\t-\tnofile\t\t16384" >>/etc/security/limits.conf
 ulimit -n 16384
 
 # install oasis
-yum -y install oasis-goc oasis-goc-replica libxml2-python
+yum -y install oasis-server oasis-server-replica libxml2-python
 systemctl enable oasis-replica-initclean
 
 systemctl enable httpd

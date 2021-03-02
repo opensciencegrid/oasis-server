@@ -2,7 +2,7 @@
 # Upload source tarball to OSG
 
 REM=library.cs.wisc.edu
-PKG=oasis-goc
+PKG=oasis-server
 VERSION="`sed -n 's/^Version: //p' $PKG.spec`"
 TMPD=`mktemp -d /tmp/uploadtarball.XXXXXXXXXX`
 trap "rm -rf $TMPD" 0

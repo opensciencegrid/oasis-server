@@ -106,7 +106,7 @@ sysctl -w net.core.somaxconn=1024
 mkdir -p /srv
 
 # install oasis
-yum -y install oasis-goc oasis-goc-zero
+yum -y install oasis-server oasis-server-zero
 systemctl enable oasis-initclean
 
 systemctl enable httpd

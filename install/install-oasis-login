@@ -23,7 +23,7 @@ systemctl enable condor
 systemctl start condor
 
 # install oasis
-yum -y install oasis-goc oasis-goc-login
+yum -y install oasis-server oasis-server-login
 
 SRVER=c1324
 SRVBASE=export/oasis
