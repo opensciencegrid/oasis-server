@@ -1,0 +1,29 @@
+#!/bin/bash
+# Upload source tarball to OSG
+
+REM=library.cs.wisc.edu
+PKG=oasis-server
+VERSION="`sed -n 's/^Version: //p' $PKG.spec`"
+TMPD=`mktemp -d /tmp/uploadtarball.XXXXXXXXXX`
+trap "rm -rf $TMPD" 0
+set -e
+BASE="`dirname $PWD`"
+cd $TMPD
+TOP=$PKG-$VERSION
+echo $TOP
+ln -s $BASE $TOP
+tar czhf $TOP.tar.gz $TOP/bin $TOP/etc $TOP/share $TOP/usr $TOP/var
+# avoid accidental overwrite
+chmod 444 $TOP.tar.gz
+# this shares the connection so password only has to be entered once
+SSHOPTS="-o ControlMaster=auto -o ControlPath=$TMPD/controlpath"
+DEST="/p/vdt/public/html/upstream/$PKG/`echo "$VERSION"|cut -d. -f1,2`"
+# first connection is just for entering the password and waiting in background
+ssh $SSHOPTS -f $REM "sleep 10"
+ssh $SSHOPTS $REM mkdir -p $DEST
+if [ "$1" = "-f" ]; then
+    ssh $SSHOPTS $REM rm -f $DEST/$TOP.tar.gz
+fi
+scp $SSHOPTS $TOP.tar.gz $REM:$DEST
+# get out of the temporary directory, it is about to be deleted
+cd

@@ -1,0 +1,12 @@
+#!/bin/bash
+# Update vdt working directory with current version
+
+PKG=oasis-server
+VDT=~/work/vdt-native/redhat/branches/devops/$PKG
+VERSION="`sed -n 's/^Version: //p' $PKG.spec`"
+FEATURE="`echo $VERSION|cut -d. -f1,2`"
+FILEPATH=$PKG/$FEATURE/$PKG-$VERSION.tar.gz
+set -x
+SUM="`curl -s https://vdt.cs.wisc.edu/upstream/$FILEPATH|sha1sum -|awk '{print $1}'`"
+echo $FILEPATH sha1sum=$SUM >$VDT/upstream/developer.tarball.source
+cp $PKG.spec $VDT/osg

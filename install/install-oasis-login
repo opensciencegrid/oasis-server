@@ -1,0 +1,100 @@
+#!/bin/bash
+# Install and configure all application software on oasis-login or
+#   oasis-login-itb
+# Written by Dave Dykstra 3-11-2015
+
+cd
+
+MYSHORTNAME="`echo ${1:-$(hostname -s)}|sed 's/hcc-//'`"
+case "$MYSHORTNAME" in
+    oasis-login*);;
+    *)  echo "Only run this on an oasis-login* machine"
+	exit 2
+	;;
+esac
+
+set -ex
+
+PATH="$PATH:/sbin:/usr/sbin"
+
+# install condor
+yum -y install condor
+systemctl enable condor
+systemctl start condor
+
+# install oasis
+yum -y install oasis-server oasis-server-login
+
+SRVER=c1324
+SRVBASE=export/oasis
+MNTOPTS="tcp,nolock,rsize=32768,wsize=32768,intr,noatime,actimeo=3"
+
+# mount /stage and /home/login directories
+if ! grep -q "[ \t]/stage[ \t]" /etc/fstab; then
+    echo "$SRVER:/$SRVBASE/stage /stage			nfs 	$MNTOPTS	0 0" >>/etc/fstab
+fi
+mkdir -p /stage
+mount /stage
+if ! grep -q "[ \t]/home/login[ \t]" /etc/fstab; then
+    echo "$SRVER:/$SRVBASE/home/login /home/login	nfs 	$MNTOPTS	0 0" >>/etc/fstab
+fi
+mkdir -p /home/login
+mount /home/login
+
+# need nfslock for the repos to be on NFS
+systemctl enable nfslock
+systemctl start nfslock
+
+# make convenience link
+mkdir -p /cvmfs
+ln -s /stage/oasis /cvmfs/oasis.opensciencegrid.org
+
+# for the status stamp
+yum -y install httpd
+systemctl enable httpd
+systemctl start httpd
+
+# for generate_adduser
+yum -y install pwgen
+
+# add users
+TMPF=/tmp/install-oasis-login-$$
+/usr/share/oasis/generate_adduser >$TMPF.1
+while read CMD; do
+    USERNAME="`echo "$CMD"|awk '{print $3}'|sed 's/ouser.//'`"
+    if [ ! -d /stage/oasis/$USERNAME ]; then
+	# wasn't there before, let the cron create it
+	continue
+    fi
+    uid="`stat -c '%u' /stage/oasis/$USERNAME`"
+    gid="`stat -c '%g' /stage/oasis/$USERNAME`"
+    groupadd -g $gid ouser.$USERNAME
+    eval "`echo "$CMD"|sed "s/useradd/useradd -u $uid -g $gid/"`"
+done <$TMPF.1
+rm $TMPF.1
+
+# add gridmap file
+/usr/share/oasis/generate_gridmap >/etc/grid-security/grid-mapfile
+
+# the users want gcc to be able to compile
+yum -y install gcc
+
+if [[ $MYSHORTNAME != *-itb ]]; then
+    # install mis cron jobs if source file exists
+    if [ -f ~ouser.mis/cronjobs ]; then
+        runuser ouser.mis -c "crontab ~/cronjobs"
+    fi
+fi
+
+# used by /etc/cron.d/oasis-login
+mkdir -p /srv/log/oasis /var/lib/oasis
+ln -s /srv/log/oasis /var/log
+date >/var/lib/oasis/installed
+
+rm -f /root/show_install_msg.sh
+
+set +x
+
+echo
+echo "Installation of $MYSHORTNAME completed successfully at `date`"
+echo
