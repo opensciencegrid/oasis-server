@@ -1,8 +1,5 @@
 #!/bin/bash
 
-## warning time since all whitelists were successfully replicated (24 hours)
-warn_white_age=86400
-
 ## number of squid processes that must be running
 need_squids=2
 
@@ -41,44 +38,6 @@ else
     fi
 fi
 
-
-## determine whitelist age
-
-oldest_white_age=0
-whitelist_warning_repos=""
-for repo in `cd /etc/cvmfs/repositories.d;echo *.*`; do
-    if [[ "$repo" == *.cern.ch ]]; then
-        # cern.ch repos are grandfathered, not signed by OSG key
-        continue
-    fi
-    if [ ! -f /srv/cvmfs/$repo/.cvmfspublished ]; then
-	# ignore repositories that haven't finished their initial snapshot
-	continue
-    fi
-    whitemodded=`stat -c %Y /oasissrv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`
-    if [ -n "$whitemodded" ]; then
-        now=`date +%s`
-        white_age=`expr $now - $whitemodded`
-    else
-        white_age=999999
-    fi
-    if [ $white_age -gt $oldest_white_age ]; then
-        oldest_white_age=$white_age
-    fi
-
-    origfingerprint="`sed -n '/^N/{n;p;q}' /srv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`"
-    oasisfingerprint="`sed -n '/^N/{n;p;q}' /oasissrv/cvmfs/$repo/.cvmfswhitelist 2>/dev/null`"
-
-    if [ $white_age -ge $warn_white_age ] || [ "$origfingerprint" != "$oasisfingerprint" ]; then
-    ## go to warning
-        set_status 1
-        if [ -n "$whitelist_warning_repos" ]; then
-            whitelist_warning_repos="$whitelist_warning_repos,"
-        fi
-        whitelist_warning_repos="$whitelist_warning_repos$repo"
-    fi
-done
-
 ## are the squid processes running?
 squids=`ps -e | grep -c squid`
 
@@ -116,8 +75,6 @@ echo "kernel:$kern"
 echo "uptime:$utime" 
 echo "critical_repos:$critical_repos"
 echo "warning_repos:$warning_repos"
-echo "whitelist_warning_repos:$whitelist_warning_repos"
-echo "oldest_whitelist_age:$oldest_white_age"
 echo "squid_running:$squid_status"
 echo "httpd_running:$httpd_status"
 echo "timestamp:$now"

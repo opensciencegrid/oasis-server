@@ -26,6 +26,12 @@ response = urllib2.urlopen("https://my.opensciencegrid.org/vosummary/xml?summary
 xml = response.read()
 doc = libxml2.parseDoc(xml)
 
+# NOTE: although this downloads whitelists for all registered repositories,
+#   they are only really used by opensciencegrid.org and osgstorage.org
+#   repositories.  Repositories from other domains are registered when we
+#   want to replicate them to the OSG stratum 1s, but nobody uses the
+#   downloaded .cvmfswhitelist files.
+
 #parse out OASISRepoURLs
 for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
     url = urlfield.content

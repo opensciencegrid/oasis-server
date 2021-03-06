@@ -138,10 +138,6 @@ for URL in $OIMREPOURLS; do
     fi
 done
 
-# make copies of .cvmfswhitelists from oasis
-mkdir -p /oasissrv/cvmfs
-/usr/share/oasis/replicate_whitelists
-
 # do initial snapshots for those repos that need it
 for URL in $NONOIMREPOURLS; do
     REPO="`basename $URL`"

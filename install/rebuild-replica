@@ -1,4 +1,5 @@
 #!/bin/bash
+# NOTE: this is no longer maintained or up to date
 
 if grep -v '^#' /etc/cron.d/cvmfs | grep -q snapshot; then
     echo "snapshots must be disabled during rebuild" >&2
@@ -35,10 +36,6 @@ for REPO in *; do
     fi
     cvmfs_server snapshot $REPO-rebuild
     touch /srv/cvmfs/$REPO/.cvmfs_master_replica
-    if [ "$REPO" = "oasis.opensciencegrid.org" ]; then
-	# read from production, so copy in whitelist signature of itb
-	cp /oasissrv/cvmfs/$REPO/.cvmfswhitelist /srv/cvmfs/$REPO
-    fi
     DUOUT="`cd /srv/cvmfs && du -ks $REPO-rebuild|sed 's/-rebuild//'`"
     mv /srv/cvmfs/$REPO /srv/cvmfs/$REPO-remove
     mv /srv/cvmfs/$REPO-rebuild /srv/cvmfs/$REPO
