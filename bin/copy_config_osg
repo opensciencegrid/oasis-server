@@ -1,5 +1,8 @@
 #!/bin/bash
-# Copy config-osg.opensciencegrid.org repository from oasis-itb to oasis
+# Publish changes from git to /cvmfs/config-osg.opensciencegrid.org
+# On oasis-itb, copy from unprivileged user's git workspace.  Requires
+#   ability to ssh back to oasis-itb as root.
+# On oasis, as root copy directly from github in /opt/config-repo workspace.
 
 ME="`basename $0`"
 
@@ -41,22 +44,26 @@ confirm()
     esac
 }
 
-# run only on -itb host 
-if [[ $(hostname -s) = *-itb ]]; then
-    # run only if non-root
+MYNAME=$(hostname -s)
+if [[ $MYNAME = *-itb ]]; then
+    # run only if non-root on itb host
     if ! [ $(id -u) = 0 ]; then
         if git remote -v 2>/dev/null | grep -q /config-repo.git; then
             current_dir="$(git rev-parse --show-toplevel)"
             get_branch
             set -ex
             cd ${current_dir}
+            set +x
             if [ ${current_branch_name} == "osg" ]; then
+                set -x
                 git pull upstream osg
-                rsync -avc /cvmfs/config-osg.opensciencegrid.org/ ${current_dir}
-            else
-                >&2 echo "You are on the ${current_branch_name} branch, please switch to the osg, exiting..."
-                exit 1
+                set +x
             fi
+            echo "Copying from branch ${current_branch_name} to /cvmfs/config-osg.opensciencegrid.org"
+            set -x
+            ssh root@$MYNAME cvmfs_server transaction config-osg.opensciencegrid.org
+            rsync -avc --delete --no-owner --no-group --exclude .git . root@$MYNAME:/cvmfs/config-osg.opensciencegrid.org/
+            ssh root@$MYNAME cvmfs_server publish config-osg.opensciencegrid.org
         else
             >&2 echo "Make sure to git clone config-repo.git and you're inside the repo directory, exiting..."
             exit 1
@@ -67,6 +74,7 @@ if [[ $(hostname -s) = *-itb ]]; then
     fi
 
 else
+    # on production host
 
     if ! [ $(id -u) = 0 ]; then
        echo "I am not root!"
