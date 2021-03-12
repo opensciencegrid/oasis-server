@@ -71,7 +71,7 @@ Obsoletes: oasis-goc-replica
 Requires: cvmfs-config-osg = 2.5
 Requires: cvmfs = 2.8.0
 Requires: cvmfs-server = 2.8.0
-Requires: frontier-squid = 4.13
+Requires: frontier-squid = 11:4.13
 
 %description replica
 This package contains files for oasis-replica.opensciencegrid.org
