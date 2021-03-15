@@ -41,5 +41,13 @@ fi
 if [ -n "$SHORTREPO" ]; then
     rm -f /srv/cvmfs/$SHORTREPO
 fi
-set -x
-cvmfs_server rmfs $FORCE $REPO
+MAINREPO=oasis.opensciencegrid.org
+MASTERKEY=/etc/cvmfs/keys/$MAINREPO.masterkey
+if [ -f $MASTERKEY ] || cvmfs_server masterkeycard -k >/dev/null 2>&1; then
+    # on stratum 0 with masterkey installed
+    set -x
+    rm -rf /srv/cvmfs/$REPO
+else
+    set -x
+    cvmfs_server rmfs $FORCE $REPO
+fi
