@@ -50,7 +50,9 @@ if [ -f ${LOCKPFX}oasis_update_requested_vo ]; then
     # increase the maximum number of open files because cvmfs_server
     #   keeps all catalogs it is working with open simultaneously
     ulimit -n 32768
-    $runuser "cvmfs_server publish oasis.opensciencegrid.org"
+    # The cd is to avoid a warning message from find
+    #   see https://sft.its.cern.ch/jira/browse/CVM-1529
+    $runuser "cd; cvmfs_server publish oasis.opensciencegrid.org"
     stat=$?
     now=`date`
     if [ $stat -eq 0 ]; then
