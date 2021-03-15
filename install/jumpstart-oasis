@@ -1,4 +1,5 @@
 # /bin/bash
+#NOTE: this is no longer maintained nor up to date
 # rsync oasis.opensciencegrid.org data from oasis-replica-itb to oasis-itb
 #  to jumpstart a new copy of the oasis repository.  This can save time since
 #  rebuilding oasis from scratch is a lot slower.  At the same time, also
@@ -14,7 +15,7 @@ set -x
 PATH=/sbin:$PATH
 cd /net/vm08/oasis-share/srv
 if [ ! -d oasis-replica-itb/cvmfs/oasis.opensciencegrid.org ]; then
-    echo "$PWD/oasis-replica-itb/oasis-replica-itb/cvmfs/oasis.opensciencegrid.org not found" >&2
+    echo "$PWD/oasis-replica-itb/cvmfs/oasis.opensciencegrid.org not found" >&2
     exit 1
 fi
 mkdir -p oasis-itb/cvmfs

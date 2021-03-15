@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.0.0
+Version: 3.1.0
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -57,6 +57,7 @@ This package contains files for oasis.opensciencegrid.org
 Summary: files for OASIS stratum one
 Group: Development/Libraries
 
+Requires: cvmfs-manage-replicas
 Obsoletes: oasis-goc-replica
 
 %description replica
@@ -115,6 +116,13 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Thu Mar 04 2021 Dave Dykstra <dwd@fnal.gov> - 3.1.0-1
+- Remove all the code related to re-signing incoming repositories
+- Remove blank_osg_repository, unblank_osg_repository, 
+  replicate_whitelists, and set_repository_property commands
+- Replace generate_replicas with a script that generates a
+  manage_replicas config file and runs manage_replicas
+
 * Tue Mar 02 2021 Dave Dykstra <dwd@fnal.gov> - 3.0.0-1
 - Rename package to oasis-server, remove old code from git repo
 
