@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.1.0
+Version: 3.2
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -41,6 +41,12 @@ Group: Development/Libraries
 
 Obsoletes: oasis-goc-zero
 
+# Require specific versions of packages from osg yum repo so 
+#  they can't be upgraded without being tested first on itb
+Requires: cvmfs-config-osg = 2.5
+Requires: cvmfs = 2.8.0
+Requires: cvmfs-server = 2.8.0
+
 %description zero
 This package contains files for oasis.opensciencegrid.org
 
@@ -59,6 +65,13 @@ Group: Development/Libraries
 
 Requires: cvmfs-manage-replicas
 Obsoletes: oasis-goc-replica
+
+# Require specific versions of packages from osg yum repo so 
+#  they can't be upgraded without being tested first on itb
+Requires: cvmfs-config-osg = 2.5
+Requires: cvmfs = 2.8.0
+Requires: cvmfs-server = 2.8.0
+Requires: frontier-squid = 11:4.13
 
 %description replica
 This package contains files for oasis-replica.opensciencegrid.org
@@ -116,6 +129,15 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Fri Mar 12 2021 Dave Dykstra <dwd@fnal.gov> - 3.2-1
+- Remove third version digit
+- Require specific versions of cvmfs and frontier-squid packages from osg
+- Eliminate warning from find during publish on stratum 0
+- Make remove_osg_repository work on stratum 0 or stratum 1
+- Reverse the order of copy_config_osg when running as unprivileged user
+  on oasis-itb, so it copies to test config repo from user workspace
+  instead of vice versa.
+
 * Thu Mar 04 2021 Dave Dykstra <dwd@fnal.gov> - 3.1.0-1
 - Remove all the code related to re-signing incoming repositories
 - Remove blank_osg_repository, unblank_osg_repository, 
