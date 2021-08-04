@@ -71,7 +71,10 @@ Obsoletes: oasis-goc-replica
 Requires: cvmfs-config-osg = 2.5
 Requires: cvmfs = 2.8.1
 Requires: cvmfs-server = 2.8.1
-Requires: frontier-squid = 11:4.15-2.1%{?dist}
+# Using a specific release (e.g. -2.1) requires adding %{?dist} but
+#  that doesn't work because this builds in the devops dist.  Would
+#  have to instead add a specific osg dist name, e.g. .osg36.
+Requires: frontier-squid = 11:4.15
 
 %description replica
 This package contains files for oasis-replica.opensciencegrid.org
@@ -132,7 +135,7 @@ This package contains files for oasis-login.opensciencegrid.org
 * Wed Aug  4 2021 Dave Dykstra <dwd@fnal.gov> - 3.4-1
 - Change gc and du crons to skip Saturday night/Sunday morning so as not
   to interfere with monthly zfs scrub
-- Update to frontier-squid 4.15-2.1
+- Update to frontier-squid 4.15
 
 * Wed Mar 31 2021 Dave Dykstra <dwd@fnal.gov> - 3.3-1
 - Update to cvmfs 2.8.1 and frontier-squid 4.13-5.2
