@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.2
+Version: 3.4
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -44,8 +44,8 @@ Obsoletes: oasis-goc-zero
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.8.0
-Requires: cvmfs-server = 2.8.0
+Requires: cvmfs = 2.8.1
+Requires: cvmfs-server = 2.8.1
 
 %description zero
 This package contains files for oasis.opensciencegrid.org
@@ -69,9 +69,9 @@ Obsoletes: oasis-goc-replica
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.8.0
-Requires: cvmfs-server = 2.8.0
-Requires: frontier-squid = 11:4.13
+Requires: cvmfs = 2.8.1
+Requires: cvmfs-server = 2.8.1
+Requires: frontier-squid = 11:4.15-2.1%{?dist}
 
 %description replica
 This package contains files for oasis-replica.opensciencegrid.org
@@ -129,6 +129,14 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Wed Aug  4 2021 Dave Dykstra <dwd@fnal.gov> - 3.4-1
+- Change gc and du crons to skip Saturday night/Sunday morning so as not
+  to interfere with monthly zfs scrub
+- Update to frontier-squid 4.15-2.1
+
+* Wed Mar 31 2021 Dave Dykstra <dwd@fnal.gov> - 3.3-1
+- Update to cvmfs 2.8.1 and frontier-squid 4.13-5.2
+
 * Fri Mar 12 2021 Dave Dykstra <dwd@fnal.gov> - 3.2-1
 - Remove third version digit
 - Require specific versions of cvmfs and frontier-squid packages from osg
