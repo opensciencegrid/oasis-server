@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # this only runs from cron so a very simple lock file in RAM is sufficient
-mkdir -p /var/run/cvmfs
-LOCKFILE=/var/run/cvmfs/generating_whitelists
+mkdir -p /run/cvmfs
+LOCKFILE=/run/cvmfs/generating_whitelists
 if [ -f $LOCKFILE ]; then
     exit
 fi

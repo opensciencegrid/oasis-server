@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir -p /run/cvmfs
 LOCKFILE=/run/cvmfs/do_du.lock
 if [ -f $LOCKFILE ]; then
     OTHERPID="`cat $LOCKFILE`"
