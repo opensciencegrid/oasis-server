@@ -7,5 +7,5 @@
 # zfs scrub starts first Saturday evenings, so skip gc & du on
 #  Saturday night/Sunday morning
 8 5 * * 1-6 root test -f /var/lib/oasis/installed && cvmfs_server gc -af
-0 21 * * 0-15 root test -f /var/lib/oasis/installed && /usr/share/oasis/do_du >>/var/log/cvmfs/du.log 2>&1
+0 21 * * 0-5 root test -f /var/lib/oasis/installed && /usr/share/oasis/do_du >>/var/log/cvmfs/du.log 2>&1
 0 9 * * * root find /srv/cvmfs/*.*/data/txn -name "*.*" -mtime +2 2>/dev/null|xargs rm -f
