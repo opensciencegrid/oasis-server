@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.4
+Version: 3.5
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -132,6 +132,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Tue Aug 17 2021 Dave Dykstra <dwd@fnal.gov> - 3.5-1
+- Fix typo in the du cron that caused it to still run on Saturday night
+
 * Wed Aug  4 2021 Dave Dykstra <dwd@fnal.gov> - 3.4-1
 - Change gc and du crons to skip Saturday night/Sunday morning so as not
   to interfere with monthly zfs scrub
