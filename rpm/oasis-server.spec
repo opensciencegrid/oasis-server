@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.5
+Version: 3.6
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -44,8 +44,8 @@ Obsoletes: oasis-goc-zero
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.8.1
-Requires: cvmfs-server = 2.8.1
+Requires: cvmfs = 2.9.2
+Requires: cvmfs-server = 2.9.2
 
 %description zero
 This package contains files for oasis.opensciencegrid.org
@@ -65,12 +65,13 @@ Group: Development/Libraries
 
 Requires: cvmfs-manage-replicas
 Obsoletes: oasis-goc-replica
+Requires: python3-lxml
 
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.8.1
-Requires: cvmfs-server = 2.8.1
+Requires: cvmfs = 2.9.2
+Requires: cvmfs-server = 2.9.2
 # Using a specific release (e.g. -2.1) requires adding %{?dist} but
 #  that doesn't work because this builds in the devops dist.  Would
 #  have to instead add a specific osg dist name, e.g. .osg36.
@@ -132,6 +133,13 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Wed Apr  6 2022 Dave Dykstra <dwd@fnal.gov> - 3.6-1
+- Require cvmfs 2.9.2
+- Add cvmfs_server check -a on oasis-replica and oasis-replica-itb
+- Only generate ssh auth keys on oasis-login, not oasis-login-itb
+- Update generate_sshauthkeys to catch json decode errors and to flush
+  output to the log file
+
 * Tue Aug 17 2021 Dave Dykstra <dwd@fnal.gov> - 3.5-1
 - Fix typo in the du cron that caused it to still run on Saturday night
 
