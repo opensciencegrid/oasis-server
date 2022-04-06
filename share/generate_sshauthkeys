@@ -12,7 +12,14 @@ import json
 cmd = 'curl -sS --cert /etc/grid-security/hostcert.pem --key /etc/grid-security/hostkey.pem "https://topology.opensciencegrid.org/oasis-managers/json?vo=*"'
 p = subprocess.Popen( ('/bin/bash', '-cx', cmd), stdout=subprocess.PIPE)
 body = p.stdout.read()
-data = json.loads(body)
+try:
+    data = json.loads(body)
+except Exception as e:
+    print >>sys.stderr, 'Error decoding json: ' + str(e)
+    print >>sys.stderr, str(body)
+    sys.exit(2)
+
+
 
 for vo in data:
         username = "ouser."+re.sub(r'[^/a-z0-9]+', '', vo.lower())
@@ -53,6 +60,7 @@ for vo in data:
                 sys.stdout.write(newauthkeys)
             else:
                 print 'Updating ' + authkeysfile + ':'
+                sys.stdout.flush()
                 subprocess.call(['diff', authkeysfile, authkeysfile + '.new'])
 
             os.rename(authkeysfile + '.new', authkeysfile)
