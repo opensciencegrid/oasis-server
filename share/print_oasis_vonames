@@ -13,8 +13,8 @@ vonames = []
 for vo in doc.xpathEval("//VO"):
     voname = vo.xpathEval("Name")[0].content
     if vo.xpathEval("OASIS/Managers/Manager"):
-	voname = re.sub(r'[^/a-z0-9]+', '', voname.lower())
-	vonames.append(voname)
+        voname = re.sub(r'[^/a-z0-9]+', '', voname.lower())
+        vonames.append(voname)
 
 vonames.sort()
 for voname in vonames:
