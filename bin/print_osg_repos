@@ -11,7 +11,7 @@ elif len(sys.argv) != 1:
     sys.exit("Usage: print_osg_repos [-u]")
 
 response = urllib.request.urlopen("https://my.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name")
-xml = response.read()
+xml = response.read().decode(response.headers.get_content_charset(failobj='utf-8'))
 doc = libxml2.parseDoc(xml)
 
 repos = []
