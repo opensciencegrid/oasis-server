@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import urllib2
+import urllib.request
 import libxml2
 import sys
 import os
@@ -16,13 +16,13 @@ if len(sys.argv) > 1:
     usage()
 
 def logmsg(msg):
-    print time.asctime(time.localtime(time.time())) + ' ' + msg
+    print(time.asctime(time.localtime(time.time())) + ' ' + msg)
     sys.stdout.flush()
 
 logmsg('Starting')
 
 #download oasis vosummary
-response = urllib2.urlopen("https://my.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name")
+response = urllib.request.urlopen("https://my.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name")
 xml = response.read()
 doc = libxml2.parseDoc(xml)
 
@@ -47,7 +47,7 @@ for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
         if url == savedurl:
             # no change
             continue
-        print urlfile + " changed from " + savedurl + " to " + url
+        print(urlfile + " changed from " + savedurl + " to " + url)
     # whitelist does not exist or url has changed.  add it.
     cmd = 'add_osg_repository ' + url
     logmsg('Running ' + cmd)
