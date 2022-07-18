@@ -1,21 +1,21 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import urllib2
+import urllib.request
 import libxml2
 import sys
 import re
 
-response = urllib2.urlopen("https://my.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&oasis=on&oasis_value=1&sort_key=name")
-xml = response.read()
+response = urllib.request.urlopen("https://topology.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&oasis=on&oasis_value=1&sort_key=name")
+xml = response.read().decode(response.headers.get_content_charset(failobj='utf-8'))
 doc = libxml2.parseDoc(xml)
 
 vonames = []
 for vo in doc.xpathEval("//VO"):
     voname = vo.xpathEval("Name")[0].content
     if vo.xpathEval("OASIS/Managers/Manager"):
-	voname = re.sub(r'[^/a-z0-9]+', '', voname.lower())
-	vonames.append(voname)
+        voname = re.sub(r'[^/a-z0-9]+', '', voname.lower())
+        vonames.append(voname)
 
 vonames.sort()
 for voname in vonames:
-    print voname
+    print(voname)

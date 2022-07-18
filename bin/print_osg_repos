@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import libxml2
 import sys
 
@@ -10,8 +10,8 @@ if (len(sys.argv) == 2) and (sys.argv[1] == '-u'):
 elif len(sys.argv) != 1:
     sys.exit("Usage: print_osg_repos [-u]")
 
-response = urllib2.urlopen("https://my.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name")
-xml = response.read()
+response = urllib.request.urlopen("https://topology.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name")
+xml = response.read().decode(response.headers.get_content_charset(failobj='utf-8'))
 doc = libxml2.parseDoc(xml)
 
 repos = []
@@ -27,4 +27,4 @@ for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
 
 repos.sort()
 for repo in repos:
-    print repo
+    print(repo)

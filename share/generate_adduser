@@ -1,13 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import urllib2
+import urllib.request
 import libxml2
 import sys
 import re
 
 #download vosummary (for oasis enabled)
-response = urllib2.urlopen("https://my.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&oasis=on&oasis_value=1&sort_key=name")
-xml = response.read()
+response = urllib.request.urlopen("https://topology.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&oasis=on&oasis_value=1&sort_key=name")
+xml = response.read().decode(response.headers.get_content_charset(failobj='utf-8'))
 doc = libxml2.parseDoc(xml)
 
 #parse out the VO names
@@ -20,4 +20,4 @@ for vo in doc.xpathEval("//VO"):
         username = "ouser."+voname
         stagedir="/stage/oasis/"+voname
 
-        print "id -u",username,"&>/dev/null || (/usr/sbin/useradd",username,"-d","/home/login/"+username,"-p","`pwgen 24 -y -n -s` && ([ -d",stagedir,"] || (mkdir",stagedir,"&& chown",username,stagedir,"&& chgrp",username,stagedir,"&& chmod 755",stagedir,")))"
+        print("id -u",username,"&>/dev/null || (/usr/sbin/useradd",username,"-d","/home/login/"+username,"-p","`pwgen 24 -y -n -s` && ([ -d",stagedir,"] || (mkdir",stagedir,"&& chown",username,stagedir,"&& chgrp",username,stagedir,"&& chmod 755",stagedir,")))")
