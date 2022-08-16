@@ -9,7 +9,7 @@ import json
 
 # it's much easier to switch to curl for the authenticated lookup than
 #  to use native python
-cmd = 'curl -sS --cert /etc/grid-security/hostcert.pem --key /etc/grid-security/hostkey.pem "https://topology.opensciencegrid.org/oasis-managers/json?vo=*"'
+cmd = 'curl -sS --max-time 30 --cert /etc/grid-security/hostcert.pem --key /etc/grid-security/hostkey.pem "https://topology.opensciencegrid.org/oasis-managers/json?vo=*"'
 p = subprocess.Popen( ('/bin/bash', '-cx', cmd), stdout=subprocess.PIPE)
 body = p.stdout.read()
 try:
