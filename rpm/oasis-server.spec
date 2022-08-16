@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.7
+Version: 3.8
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -133,6 +133,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Tue Aug 16 2022 John Thiltges <jthiltges2@unl.edu> - 3.8-1
+- Add 30-second timeout to urlopen and curl calls (SOFTWARE-5288)
+
 * Thu Jul 28 2022 John Thiltges <jthiltges2@unl.edu> - 3.7-1
 - Convert python 2 to 3 and make EL8 compatible
 
