@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.9
+Version: 3.10
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -9,6 +9,7 @@ BuildArch: noarch
 Url: http://www.opensciencegrid.org
 
 Obsoletes: oasis-goc
+Requires: python3-lxml
 
 %description
 This package contains OASIS server software for OSG Operations
@@ -39,6 +40,7 @@ rm -rf $RPM_BUILD_ROOT
 Summary: files for OASIS stratum zero
 Group: Development/Libraries
 
+Requires: oasis-server = %{version}-%{release}
 Obsoletes: oasis-goc-zero
 
 # Require specific versions of packages from osg yum repo so 
@@ -63,9 +65,9 @@ This package contains files for oasis.opensciencegrid.org
 Summary: files for OASIS stratum one
 Group: Development/Libraries
 
+Requires: oasis-server = %{version}-%{release}
 Requires: cvmfs-manage-replicas
 Obsoletes: oasis-goc-replica
-Requires: python3-lxml
 
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
@@ -120,6 +122,7 @@ done
 Summary: files for OASIS login host
 Group: Development/Libraries
 
+Requires: oasis-server = %{version}-%{release}
 Obsoletes: oasis-goc-login
 
 %description login
@@ -132,6 +135,12 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Thu Mar 23 2023 Dave Dykstra <dwd@fnal.gov> - 3.10-1
+- Make python3 usable on both el7 & el8 by converting python tools from
+  libxml2 to lxml.
+- Require python3-lxml on all hosts.
+- Make each of the subpackages require the main package.
+
 * Tue Mar 21 2023 Dave Dykstra <dwd@fnal.gov> - 3.9-1
 - Update cvmfs & cvmfs-server to 2.10.1, including removing the use
   of the sem command for snapshots since limiting parallelism is 

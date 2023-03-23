@@ -1,18 +1,18 @@
 #!/usr/bin/python3
 
 import urllib.request
-import libxml2
+from lxml import etree
 import sys
 import re
 
 response = urllib.request.urlopen("https://topology.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&oasis=on&oasis_value=1&sort_key=name", timeout=30)
-xml = response.read().decode(response.headers.get_content_charset(failobj='utf-8'))
-doc = libxml2.parseDoc(xml)
+xml = response.read()
+doc = etree.XML(xml)
 
 vonames = []
-for vo in doc.xpathEval("//VO"):
-    voname = vo.xpathEval("Name")[0].content
-    if vo.xpathEval("OASIS/Managers/Manager"):
+for vo in doc.xpath("//VO"):
+    voname = vo.xpath("Name")[0].text
+    if vo.xpath("OASIS/Managers/Manager"):
         voname = re.sub(r'[^/a-z0-9]+', '', voname.lower())
         vonames.append(voname)
 
