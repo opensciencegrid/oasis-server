@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import urllib.request
-import libxml2
+from lxml import etree
 import sys
 import os
 import time
@@ -23,8 +23,8 @@ logmsg('Starting')
 
 #download oasis vosummary
 response = urllib.request.urlopen("https://topology.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&sort_key=name", timeout=30)
-xml = response.read().decode(response.headers.get_content_charset(failobj='utf-8'))
-doc = libxml2.parseDoc(xml)
+xml = response.read()
+doc = etree.XML(xml)
 
 # NOTE: although this downloads whitelists for all registered repositories,
 #   they are only really used by opensciencegrid.org and osgstorage.org
@@ -33,8 +33,8 @@ doc = libxml2.parseDoc(xml)
 #   downloaded .cvmfswhitelist files.
 
 #parse out OASISRepoURLs
-for urlfield in doc.xpathEval("//VO/OASIS/OASISRepoURLs/URL"):
-    url = urlfield.content
+for urlfield in doc.xpath("//VO/OASIS/OASISRepoURLs/URL"):
+    url = urlfield.text
     if url[-1] == '/':
       # remove a trailing slash
       url = url[:-1]

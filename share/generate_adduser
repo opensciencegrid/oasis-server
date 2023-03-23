@@ -1,20 +1,20 @@
 #!/usr/bin/python3
 
 import urllib.request
-import libxml2
+from lxml import etree
 import sys
 import re
 
 #download vosummary (for oasis enabled)
 response = urllib.request.urlopen("https://topology.opensciencegrid.org/vosummary/xml?summary_attrs_showoasis=on&all_vos=on&active=on&active_value=1&oasis=on&oasis_value=1&sort_key=name", timeout=30)
-xml = response.read().decode(response.headers.get_content_charset(failobj='utf-8'))
-doc = libxml2.parseDoc(xml)
+xml = response.read()
+doc = etree.XML(xml)
 
 #parse out the VO names
-for vo in doc.xpathEval("//VO"):
+for vo in doc.xpath("//VO"):
 
         #create good unixname
-        voname = vo.xpathEval("Name")[0].content
+        voname = vo.xpath("Name")[0].text
         voname = re.sub(r'[^/a-z0-9]+', '', voname.lower())
 
         username = "ouser."+voname
