@@ -21,6 +21,11 @@ print_osg_repos -u|sed 's,\([^/]*/[^/]*/[^/]*\)/cvmfs/\(.*\),\1 \2,'| \
     fi
     echo repos $REPO
 done
-) | manage-replicas -c -f /dev/stdin
+# Don't use manage-replicas -c to continue failed adds, because it is 
+# normal for there to be a period of time between a new repository getting
+# added to the stratum 0 and it being ready to replicate (after it is has
+# copied in the new whitelist).  Meanwhile with a -c it will show up in
+# monitoring as "initial snapshot not in progress".
+) | manage-replicas -f /dev/stdin
 
 rm -f $LOCKFILE
