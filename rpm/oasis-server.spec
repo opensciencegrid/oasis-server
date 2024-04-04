@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.11
+Version: 3.12
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -46,8 +46,8 @@ Obsoletes: oasis-goc-zero
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.10.1
-Requires: cvmfs-server = 2.10.1
+Requires: cvmfs = 2.11.2
+Requires: cvmfs-server = 2.11.2
 
 %description zero
 This package contains files for oasis.opensciencegrid.org
@@ -72,12 +72,12 @@ Obsoletes: oasis-goc-replica
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.10.1
-Requires: cvmfs-server = 2.10.1
+Requires: cvmfs = 2.11.2
+Requires: cvmfs-server = 2.11.2
 # Using a specific release (e.g. -2.1) requires adding %{?dist} but
 #  that doesn't work because this builds in the devops dist.  Would
 #  have to instead add a specific osg dist name, e.g. .osg36.
-Requires: frontier-squid = 11:5.7
+Requires: frontier-squid = 11:5.9
 
 %description replica
 This package contains files for oasis-replica.opensciencegrid.org
@@ -135,6 +135,12 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Thu Apr  4 2024 Dave Dykstra <dwd@fnal.gov> - 3.12-1
+- Add the "-i" option cvmfs_server check -a to check the integrity of
+  all files
+- Update to cvmfs and cvmfs-server 2.11.2
+- Update to frontier-squid 5.9
+
 * Thu Jun 29 2023 Dave Dykstra <dwd@fnal.gov> - 3.11-1
 - Remove the "-c" from manage-replicas in generate_replicas, so it will
   cleanup from failed adds of new repository and so avoid "initial
