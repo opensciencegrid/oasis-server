@@ -135,9 +135,10 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
-* Thu Apr  4 2024 Dave Dykstra <dwd@fnal.gov> - 3.12-1
+* Fri Apr  5 2024 Dave Dykstra <dwd@fnal.gov> - 3.12-1
 - Add the "-i" option cvmfs_server check -a to check the integrity of
-  all files
+  all files.  That makes the data chunk existense check unnecessary,
+  so also add the "-c" option which greatly speeds up the checks.
 - Update to cvmfs and cvmfs-server 2.11.2
 - Update to frontier-squid 5.9
 
