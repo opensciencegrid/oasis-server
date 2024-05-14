@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.12
+Version: 3.13
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -46,8 +46,8 @@ Obsoletes: oasis-goc-zero
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.11.2
-Requires: cvmfs-server = 2.11.2
+Requires: cvmfs = 2.11.3
+Requires: cvmfs-server = 2.11.3
 
 %description zero
 This package contains files for oasis.opensciencegrid.org
@@ -72,8 +72,8 @@ Obsoletes: oasis-goc-replica
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.11.2
-Requires: cvmfs-server = 2.11.2
+Requires: cvmfs = 2.11.3
+Requires: cvmfs-server = 2.11.3
 # Using a specific release (e.g. -2.1) requires adding %{?dist} but
 #  that doesn't work because this builds in the devops dist.  Would
 #  have to instead add a specific osg dist name, e.g. .osg36.
@@ -135,6 +135,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Tue May 14 2024 Dave Dykstra <dwd@fnal.gov> - 3.13-1
+- Update to cvmfs and cvmfs-server 2.11.3
+
 * Fri Apr  5 2024 Dave Dykstra <dwd@fnal.gov> - 3.12-1
 - Add the "-i" option cvmfs_server check -a to check the integrity of
   all files.  That makes the data chunk existense check unnecessary,
