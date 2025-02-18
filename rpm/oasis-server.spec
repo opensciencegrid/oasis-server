@@ -1,6 +1,6 @@
 Summary: OASIS server package
 Name: oasis-server
-Version: 3.13
+Version: 3.14
 Release: 1%{?dist} 
 Source0: %{name}-%{version}.tar.gz
 License: Apache 2.0
@@ -10,6 +10,8 @@ Url: http://www.opensciencegrid.org
 
 Obsoletes: oasis-goc
 Requires: python3-lxml
+
+%define cvmfs_version 2.12.6
 
 %description
 This package contains OASIS server software for OSG Operations
@@ -46,8 +48,8 @@ Obsoletes: oasis-goc-zero
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.11.3
-Requires: cvmfs-server = 2.11.3
+Requires: cvmfs = %{cvmfs_version}
+Requires: cvmfs-server = %{cvmfs_version}
 
 %description zero
 This package contains files for oasis.opensciencegrid.org
@@ -72,8 +74,8 @@ Obsoletes: oasis-goc-replica
 # Require specific versions of packages from osg yum repo so 
 #  they can't be upgraded without being tested first on itb
 Requires: cvmfs-config-osg = 2.5
-Requires: cvmfs = 2.11.3
-Requires: cvmfs-server = 2.11.3
+Requires: cvmfs = %{cvmfs_version}
+Requires: cvmfs-server = %{cvmfs_version}
 # Using a specific release (e.g. -2.1) requires adding %{?dist} but
 #  that doesn't work because this builds in the devops dist.  Would
 #  have to instead add a specific osg dist name, e.g. .osg36.
@@ -135,6 +137,9 @@ This package contains files for oasis-login.opensciencegrid.org
 
 
 %changelog
+* Tue Feb 18 2025 John Thiltges <jthiltges@unl.edu> - 3.14-1
+- Update to cvmfs and cvmfs-server 2.12.6
+
 * Tue May 14 2024 Dave Dykstra <dwd@fnal.gov> - 3.13-1
 - Update to cvmfs and cvmfs-server 2.11.3
 
