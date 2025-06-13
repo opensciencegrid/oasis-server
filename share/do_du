@@ -15,7 +15,9 @@ echo $$ >$LOCKFILE
 cd /srv/cvmfs
 for d in *.*; do
     echo "Starting du of $d at `date`"
+    SECONDS=0 # reset counter
     du -ks $d
+    logger -t oasis-do_du "Finished du of $d in $SECONDS sec"
 done
 echo "Finished at `date`"
 echo
